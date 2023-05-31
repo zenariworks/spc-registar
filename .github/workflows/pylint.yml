@@ -25,7 +25,7 @@ jobs:
                     djangorestframework==3.14.0
     - name: Analysing the code with pylint
       run: |
-        pylint --output-format=pylint_junit.JUnitReporter --score=n --fail-under=9.0 $(git ls-files '*.py') > pylint-report.xml
+        pylint --output-format=pylint_junit.JUnitReporter --fail-under=9.0 $(git ls-files '*.py') > pylint-report.xml
 
     - name: Upload Pylint report
       uses: actions/upload-artifact@v2
