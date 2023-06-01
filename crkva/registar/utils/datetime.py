@@ -1,6 +1,6 @@
 """Utilities set for data processing"""
 from datetime import datetime
-from dateutil import relativedelta
+from dateutil.relativedelta import relativedelta
 
 from django.utils import timezone
 
