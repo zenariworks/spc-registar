@@ -1,2 +1,6 @@
+[PYLINT]
+fail-under=9
+output-format = colorized
+
 [MESSAGES CONTROL]
 disable = R0903,C0114,C0115

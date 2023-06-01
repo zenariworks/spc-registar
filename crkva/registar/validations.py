@@ -39,6 +39,8 @@ def check_value_context(unit_code: str, value: float) -> ValidationError:
             return ValidationError("Rapportcijfer is more than 10")
         elif value < 0:
             return ValidationError("Rapportcijfer is negative")
+        else:
+            return None
 
 
 # model validation
