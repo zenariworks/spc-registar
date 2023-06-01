@@ -4,7 +4,7 @@ Model class for representing errors in the database.
 from django.db import models
 
 
-class hsperror(models.Model):
+class Error(models.Model):
     err_rbr = models.IntegerField()
     err_dt = models.TextField()
     err_user = models.TextField()

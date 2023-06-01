@@ -4,7 +4,7 @@ Model class for representing priests in the database.
 from django.db import models
 
 
-class HSPSVEST(models.Model):
+class Svestenik(models.Model):
     sv_rbr = models.IntegerField()
     sv_sifra = models.IntegerField()
     sv_ime = models.TextField()

@@ -3,7 +3,7 @@ Model class for representing baptisms in the database.
 """
 from django.db import models
 
-class HSPKRST(models.Model):
+class Krstenje(models.Model):
     k_rbr = models.IntegerField()
     k_sifra = models.IntegerField()
     k_aktgod = models.IntegerField()

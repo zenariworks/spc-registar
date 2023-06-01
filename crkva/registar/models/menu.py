@@ -4,7 +4,7 @@ Model class for representing menus in the database.
 from django.db import models
 
 
-class hspmeni(models.Model):
+class Menu(models.Model):
     men_rbr = models.IntegerField()
     men_sifra = models.TextField()
     men_naziv = models.TextField()

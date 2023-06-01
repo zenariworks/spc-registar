@@ -4,7 +4,7 @@ Model class for representing sets in the database.
 from django.db import models
 
 
-class hspset(models.Model):
+class Set(models.Model):
     hsp_godina = models.IntegerField()
 
     def __str__(self):

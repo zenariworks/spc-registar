@@ -4,7 +4,7 @@ Model class for representing weddings in the database.
 from django.db import models
 
 
-class HSPVENC(models.Model):
+class Vencanje(models.Model):
     v_rbr = models.IntegerField()
     v_sifra = models.IntegerField()
     v_aktgod = models.IntegerField()
