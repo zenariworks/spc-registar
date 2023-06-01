@@ -1,3 +1,6 @@
+"""
+Model class for representing weddings in the database.
+"""
 from django.db import models
 
 
@@ -55,7 +58,7 @@ class HSPVENC(models.Model):
     v_razrtxt = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.v_rbr}"
 
     class Meta:
         managed = True

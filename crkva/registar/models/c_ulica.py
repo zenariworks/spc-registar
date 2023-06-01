@@ -1,3 +1,6 @@
+"""
+Model class for representing streets in the database.
+"""
 from django.db import models
 
 
@@ -10,7 +13,7 @@ class HSPULICE(models.Model):
     ul_flag = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.ul_rbr}"
 
     class Meta:
         managed = True

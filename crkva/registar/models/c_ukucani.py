@@ -1,3 +1,6 @@
+"""
+Model class for representing residents in the database.
+"""
 from django.db import models
 
 
@@ -9,7 +12,7 @@ class HSPUKUCANI(models.Model):
     uk_flag = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.uk_rbr}"
 
     class Meta:
         managed = True

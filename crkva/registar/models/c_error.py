@@ -1,3 +1,6 @@
+"""
+Model class for representing errors in the database.
+"""
 from django.db import models
 
 
@@ -11,7 +14,7 @@ class hsperror(models.Model):
     err_prog = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.err_rbr}"
 
     class Meta:
         managed = True

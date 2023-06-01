@@ -1,3 +1,6 @@
+"""
+Model class for representing baptisms in the database.
+"""
 from django.db import models
 
 class HSPKRST(models.Model):
@@ -58,7 +61,7 @@ class HSPKRST(models.Model):
     k_regstr = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.k_rbr}"
 
     class Meta:
         managed = True
