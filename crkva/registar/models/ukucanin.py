@@ -4,7 +4,7 @@ Model class for representing residents in the database.
 from django.db import models
 
 
-class HSPUKUCANI(models.Model):
+class Ukucanin(models.Model):
     uk_rbr = models.IntegerField()
     uk_rbrdom = models.IntegerField()
     uk_ime = models.TextField()

@@ -5,7 +5,7 @@ Model class for representing passes in the database.
 from django.db import models
 
 
-class HSPPASS(models.Model):
+class Password(models.Model):
     pas_rbr = models.IntegerField()
     pas_sifra = models.IntegerField()
     pas_naziv = models.TextField()

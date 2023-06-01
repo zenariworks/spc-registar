@@ -4,7 +4,7 @@ Model class for representing households in the database.
 from django.db import models
 
 
-class HSPDOMACINI(models.Model):
+class Domacinstvo(models.Model):
     dom_rbr = models.IntegerField()
     dom_sifra = models.IntegerField()
     dom_ime = models.TextField()

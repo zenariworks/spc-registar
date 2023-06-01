@@ -4,7 +4,7 @@ Model class for representing streets in the database.
 from django.db import models
 
 
-class HSPULICE(models.Model):
+class Ulica(models.Model):
     ul_rbr = models.IntegerField()
     ul_sifra = models.IntegerField()
     ul_naziv = models.TextField()

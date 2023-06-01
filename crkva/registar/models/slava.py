@@ -4,7 +4,7 @@ Model class for representing slavas in the database.
 from django.db import models
 
 
-class hspslave(models.Model):
+class Slava(models.Model):
     sl_rbr = models.IntegerField()
     sl_sifra = models.IntegerField()
     sl_naziv = models.TextField()
