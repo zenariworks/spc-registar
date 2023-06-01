@@ -1,3 +1,6 @@
+"""
+Model class for representing menus in the database.
+"""
 from django.db import models
 
 
@@ -10,7 +13,7 @@ class hspmeni(models.Model):
     men_flag = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.men_rbr}"
 
     class Meta:
         managed = True

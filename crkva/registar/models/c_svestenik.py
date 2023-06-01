@@ -1,3 +1,6 @@
+"""
+Model class for representing priests in the database.
+"""
 from django.db import models
 
 
@@ -12,7 +15,7 @@ class HSPSVEST(models.Model):
     sv_flag = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.sv_rbr}"
 
     class Meta:
         managed = True

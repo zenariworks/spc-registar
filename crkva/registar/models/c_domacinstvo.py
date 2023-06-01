@@ -1,3 +1,6 @@
+"""
+Model class for representing households in the database.
+"""
 from django.db import models
 
 
@@ -21,7 +24,7 @@ class HSPDOMACINI(models.Model):
     dom_flag = models.TextField()
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.dom_rbr}"
 
     class Meta:
         managed = True
