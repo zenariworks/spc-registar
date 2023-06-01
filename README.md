@@ -1,4 +1,5 @@
 # Crkva Sv. Petke
+[![Pylint](https://github.com/zenariworks/crkva/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/zenariworks/crkva/actions/workflows/pylint.yml)
 
 ## Install instructions
 
