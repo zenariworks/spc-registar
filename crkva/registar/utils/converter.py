@@ -1,6 +1,6 @@
-def convert(value: str, to: str = "float"):
+def convert(value: str, into: str = "float"):
 
-    if "float" == to:
+    if "float" == into:
         try:
             value = float(value.replace(",", "."))
         finally:
