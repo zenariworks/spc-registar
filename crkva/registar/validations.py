@@ -1,5 +1,4 @@
-# # validation of the input data
-
+"""Validation of the input data"""
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.exceptions import ValidationError
 
@@ -17,7 +16,7 @@ def check_value_uppercase(value: str) -> ValidationError:
     """
 
     if value != value.upper():
-        return ValidationError(f"This field needs to be in Uppercase")
+        return ValidationError("This field needs to be in Uppercase")
 
 
 def check_value_context(unit_code: str, value: float) -> ValidationError:
@@ -34,12 +33,12 @@ def check_value_context(unit_code: str, value: float) -> ValidationError:
 
     if unit_code == "P":
         if value > 200:
-            return ValidationError(f"Percentage is more than 200")
+            return ValidationError("Percentage is more than 200")
     elif unit_code == "R":
         if value > 10:
-            return ValidationError(f"Rapportcijfer is more than 10")
+            return ValidationError("Rapportcijfer is more than 10")
         elif value < 0:
-            return ValidationError(f"Rapportcijfer is negative")
+            return ValidationError("Rapportcijfer is negative")
 
 
 # model validation
@@ -64,6 +63,17 @@ def check_code_in_name(code: str, name: str) -> ValidationError:
 
 
 def get_instance(model, field, row, column):
+    """Get an instance from the database
+
+    Args:
+        model (_type_): _description_
+        field (_type_): _description_
+        row (_type_): _description_
+        column (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     try:
         instance = model.objects.get(**{f"{field}__iexact": row[column]})
         error = False
