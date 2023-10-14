@@ -13,3 +13,5 @@ class Set(models.Model):
     class Meta:
         managed = True
         db_table = "sets"
+        verbose_name = "Скуп"
+        verbose_name_plural = "Скупови"

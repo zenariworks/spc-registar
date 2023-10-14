@@ -18,3 +18,5 @@ class Password(models.Model):
     class Meta:
         managed = True
         db_table = "passes"
+        verbose_name = "Лозинка"
+        verbose_name_plural = "Лозинке"

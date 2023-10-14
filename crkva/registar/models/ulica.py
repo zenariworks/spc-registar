@@ -18,3 +18,5 @@ class Ulica(models.Model):
     class Meta:
         managed = True
         db_table = "ulice"
+        verbose_name = "Улица"
+        verbose_name_plural = "Улице"

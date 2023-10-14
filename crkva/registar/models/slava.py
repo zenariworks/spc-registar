@@ -19,3 +19,5 @@ class Slava(models.Model):
     class Meta:
         managed = True
         db_table = "slave"
+        verbose_name = "Слава"
+        verbose_name_plural = "Славе"
