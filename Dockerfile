@@ -20,7 +20,8 @@ RUN apk add --update --no-cache --virtual .tmp-deps \
     apk del .tmp-deps
 
 RUN adduser --disabled-password --no-create-home app && \
-    mkdir -p /vol/web/static /vol/static/media && \
+    mkdir -p /vol/web/static && \
+    mkdir -p /vol/static/media && \
     chown -R app:app /vol && \
     chmod -R 755 /vol && \
     chmod -R +x /scripts

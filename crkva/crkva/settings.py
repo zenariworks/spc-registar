@@ -81,7 +81,10 @@ SCHEMA = os.environ.get("DB_SCHEMA")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "OPTIONS": {"options": f"-c search_path={SCHEMA}"},
+        "OPTIONS": {
+            "options": f"-c search_path={SCHEMA}",
+            "client_encoding": 'UTF8',
+        },
         "HOST": os.environ.get("DB_HOST"),
         "PORT": os.environ.get("DB_PORT"),
         "NAME": os.environ.get("DB_NAME"),
