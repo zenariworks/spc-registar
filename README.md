@@ -1,133 +1,111 @@
-# Crkva Sv. Petke
+# Црква св. Петке
+
 [![Pylint](https://github.com/zenariworks/crkva/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/zenariworks/crkva/actions/workflows/pylint.yml)
 
-## Install instructions
+## Садржај
 
-### Development environment
+- [Предуслови](#предуслови)
+- [Први кораци](#први-кораци)
+- [Производно окружење](#производно-окружење)
+- [Развој и тестирање](#развој-и-тестирање)
 
-1. From the root directory run:
+## Предуслови
+
+Пре него што започнете, потребно је да имате следеће софтвере инсталиране на вашем систему:
+
+- [Docker](https://www.docker.com/products/docker-desktop)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+Пратите упутства за инсталацију на званичним вебсајтовима.
+
+## Први кораци
+
+### 1. Инсталација и подешавање
 
    ```bash
    docker compose build
    ```
 
-   **Note:** If you get the error:
-   > Got permission denied while trying to connect to the Docker daemon socket
+   У случају проблема са дозволама, погледајте [додатне белешке](#додатне-белешке).
 
-   Try one of these options:
+### 2. Миграције базе података и учитавање тест података
 
-    1. Manage docker as a non-root user:
-
-       Create the docker group:
-
-        ```bash
-        sudo groupadd docker
-        ```
-
-       Add your user to the docker group
-
-        ```bash
-        sudo usermod -aG docker $USER
-        ```
-
-       Log out and in so that your group membership is re-evaluated.
-
-    2. or set read-write permissions to `docker.sock`:
-
-        ```bash
-        sudo chmod a+rw /var/run/docker.sock
-        ```
-
-2. Apply migrations:
+- Креирање и примена миграција:
 
    ```bash
-   docker compose run --rm app sh -c "python manage.py migrate"
+   docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
    ```
 
-   **Note:** If you get the warning that darabase structure is out-of-date, then first make migrations before applying them:
-
-   1. Make migrations
-
-        ```bash
-        docker compose run --rm app sh -c "python manage.py makemigrations"
-        ```
-
-3. Check if the build works
-
-   ```bash
-   docker compose up
-   ```
-
-4. When you confirm the successful build, stop the running container with `Ctrl-C` and fill the database with testdata
+- Учитавање тест података:
 
    ```bash
    docker compose run --rm app sh -c "python manage.py loaddata import_svestenik"
    ```
 
-5. Last, when you want to add a super-user for django admin:
+### 3. Креирање суперкорисника и покретање апликације
+
+- Креирајте суперкорисника:
 
    ```bash
    docker compose run --rm app sh -c "python manage.py createsuperuser"
    ```
 
-6. Now all is set and you can run the Composer
+- Покретање апликације:
 
    ```bash
    docker compose up
    ```
 
-Test your development environment on [localhost:8000/admin](http://localhost:8000/admin).
+   Админ панелу сада можете приступити на [localhost:8000/admin](localhost:8000/admin).
 
-### Acceptance environment
+## Производно окружење
 
-1. Rename `.example.env` to `.acc.env`:
+### 1. Подешавање конфигурационог фајла
 
    ```bash
    mv .example.env .acc.env
    ```
 
-2. Replace example variable values with proper remote database values:
+   Ажурирајте вредности променљивих у `.acc.env`.
 
-   ```conf
-   DB_HOST=<remote_url>
-   DB_PORT=5432
-   DB_NAME=<postgre_database_name>
-   DB_SCHEMA=<postgre_database_schema>
-   DB_USER=<postgre_database_user>
-   DB_PASS=<postgre_database_password>
-   ```
-
-3. Build Docker images:
+### 2. Изградња и покретање апликације
 
    ```bash
    docker compose -f docker-compose-acc.yml build
-   ```
-
-4. Launch Django localy with the remote database:
-
-   ```bash
    docker compose -f docker-compose-acc.yml up
    ```
 
-5. Login on http://127.0.0.1:80/admin/ or just http://127.0.0.1/admin/
+   Приступите админ панелу на [127.0.0.1/admin](127.0.0.1/admin).
 
-6. If it asks for admin user, make one with:
+### 3. Креирање суперкорисника
 
    ```bash
    docker compose -f docker-compose-acc.yml run --rm app sh -c "python manage.py createsuperuser"
    ```
 
-## Development and testing
+## Развој и тестирање
 
-```bash
-docker compose run --rm app sh -c "python manage.py test"
-```
+### 1. Покретање тестова
 
-## Project structure
+   ```bash
+   docker compose run --rm app sh -c "python manage.py test"
+   ```
 
-TBA
+## Додатне белешке
 
-## Model ER-diagrams
+### Проблем са дозволама код Докера
 
-![metadata model](references/images/Screenshot_measures.png)
-![observation model](references/images/Screenshot_observations.png)
+1. Коришћење Docker-а као не-root корисник:
+
+   ```bash
+   sudo groupadd docker
+   sudo usermod -aG docker $USER
+   ```
+
+   Одјавите се и поново пријавите.
+
+2. Подешавање дозвола за `docker.sock`:
+
+   ```bash
+   sudo chmod a+rw /var/run/docker.sock
+   ```
