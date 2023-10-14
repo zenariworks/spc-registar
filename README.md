@@ -35,7 +35,7 @@
     2. or set read-write permissions to `docker.sock`:
 
         ```bash
-        sudo chmod 666 /var/run/docker.sock
+        sudo chmod a+rw /var/run/docker.sock
         ```
 
 2. Apply migrations:
@@ -61,13 +61,7 @@
 4. When you confirm the successful build, stop the running container with `Ctrl-C` and fill the database with testdata
 
    ```bash
-   docker compose run --rm app sh -c "python manage.py loaddata import_auth.json"
-   docker compose run --rm app sh -c "python manage.py loaddata import_codetables.json"
-   docker compose run --rm app sh -c "python manage.py loaddata import_metadata.json"
-   docker compose run --rm app sh -c "python manage.py loaddata import_measures.json"
-   docker compose run --rm app sh -c "python manage.py loaddata import_filters.json"
-   docker compose run --rm app sh -c "python manage.py loaddata import_topicsets.json"
-   docker compose run --rm app sh -c "python manage.py loaddata import_spatialdimensions.json"
+   docker compose run --rm app sh -c "python manage.py loaddata import_svestenik"
    ```
 
 5. Last, when you want to add a super-user for django admin:
