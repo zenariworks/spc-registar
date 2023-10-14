@@ -63,3 +63,5 @@ class Vencanje(models.Model):
     class Meta:
         managed = True
         db_table = "vencanja"
+        verbose_name = "Венчање"
+        verbose_name_plural = "Венчања"

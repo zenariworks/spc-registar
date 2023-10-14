@@ -66,3 +66,5 @@ class Krstenje(models.Model):
     class Meta:
         managed = True
         db_table = "krstenja"
+        verbose_name = "Крштењe"
+        verbose_name_plural = "Крштења"

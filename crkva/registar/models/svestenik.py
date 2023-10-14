@@ -20,3 +20,5 @@ class Svestenik(models.Model):
     class Meta:
         managed = True
         db_table = "svestenici"
+        verbose_name = "Свештеник"
+        verbose_name_plural = "Свештеници"

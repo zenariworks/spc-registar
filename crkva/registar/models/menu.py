@@ -18,3 +18,5 @@ class Menu(models.Model):
     class Meta:
         managed = True
         db_table = "meni"
+        verbose_name = "Мени"
+        verbose_name_plural = "Мени"

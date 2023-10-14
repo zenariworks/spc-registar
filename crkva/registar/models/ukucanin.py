@@ -17,3 +17,5 @@ class Ukucanin(models.Model):
     class Meta:
         managed = True
         db_table = "ukucani"
+        verbose_name = "Укућанин"
+        verbose_name_plural = "Укућани"

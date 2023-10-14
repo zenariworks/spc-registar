@@ -19,3 +19,5 @@ class Error(models.Model):
     class Meta:
         managed = True
         db_table = "errors"
+        verbose_name = "Грешка"
+        verbose_name_plural = "Грешке"

@@ -29,3 +29,5 @@ class Domacinstvo(models.Model):
     class Meta:
         managed = True
         db_table = "domacinstva"
+        verbose_name = "Домаћинство"
+        verbose_name_plural = "Домаћинства"
