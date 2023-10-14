@@ -1,0 +1,16 @@
+[
+    {
+      "model": "registar.svestenik",
+      "pk": 1,
+      "fields": {
+        "sv_rbr": 1,
+        "sv_sifra": 1,
+        "sv_ime": "Милош Милошевић",
+        "sv_zvanje": "свештеник",
+        "sv_paroh": "Никола Николић",
+        "sv_datrod": "12. 12. 1987",
+        "sv_akt": "да",
+        "sv_flag": "не"
+      }
+    }
+  ]
