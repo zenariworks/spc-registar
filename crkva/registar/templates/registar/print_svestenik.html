@@ -1,0 +1,9 @@
+<!-- registar/templates/registar/pdf_template.html -->
+{% extends 'easy_pdf/base.html' %}
+
+{% block content %}
+    <h1>{{ object.sv_ime }}</h1>
+    <p>Sifra: {{ object.sv_sifra }}</p>
+    <p>Zvanje: {{ object.sv_zvanje }}</p>
+    <!-- ...other fields... -->
+{% endblock %}
