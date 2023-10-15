@@ -1,0 +1,21 @@
+@startuml
+
+package "Докер окружење" {
+
+    [Апликација] as django
+    [Nginx прокси] as nginx
+    [Постгрес база] as postgres
+
+    django --> nginx: HTTP
+    django --> postgres: SQL
+
+    note right of django: Апликација
+    note right of nginx: Прокси сервер
+    note bottom of postgres: База података
+
+}
+
+actor "Корисник" as user
+user --> nginx: Захтев
+
+@enduml
