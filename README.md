@@ -112,3 +112,4 @@
    ```bash
    sudo chmod a+rw /var/run/docker.sock
    ```
+![Alt text](docs/structure.png)
