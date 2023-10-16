@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+from .krstenje_view import *
 from .svestenik_view import *
 
 
