@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detail of Krstenje {{ krstenje.k_rbr }}</title>
+</head>
+<body>
+    <!-- Add this part into krstenica.html where you want the button to appear -->
+<a href="{% url 'krstenje_pdf' krstenje.pk %}" target="_blank">
+    <button type="button">Print</button>
+</a>
+    <h1>{{ krstenje.k_detime }}</h1>
+    <p>Hram: {{ krstenje.k_krshram }}</p>
+    <p>Mesto: {{ krstenje.k_krsmest }}</p>
+    <p>Roditelj: {{ krstenje.k_rodime }}</p>
+    <p>God Rodjenja: {{ krstenje.k_rodjgod }}</p>
+</body>
+</html>
