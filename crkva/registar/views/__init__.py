@@ -5,4 +5,4 @@ from .svestenik_view import *
 
 
 def index(request):
-    return render(request, 'registar/index.html')
+    return render(request, "registar/index.html")

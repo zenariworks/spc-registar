@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "registar",
     "import_export",
-    "easy_pdf"
+    "easy_pdf",
 ]
 
 MIDDLEWARE = [
@@ -83,7 +83,7 @@ DATABASES = {
         "ENGINE": "django.db.backends.postgresql",
         "OPTIONS": {
             "options": f"-c search_path={SCHEMA}",
-            "client_encoding": 'UTF8',
+            "client_encoding": "UTF8",
         },
         "HOST": os.environ.get("DB_HOST"),
         "PORT": os.environ.get("DB_PORT"),

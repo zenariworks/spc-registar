@@ -8,17 +8,17 @@ from registar.models.krstenje import Krstenje
 
 class KrstenjePDF(PDFTemplateResponseMixin, DetailView):
     model = Krstenje
-    template_name = 'registar/print_krstenje.html'
+    template_name = "registar/print_krstenje.html"
 
 
 class KrstenjeView(DetailView):
     model = Krstenje
-    template_name = 'registar/view_krstenje.html'
-    context_object_name = 'krstenje'
-    pk_url_kwarg = 'k_rbr'
+    template_name = "registar/view_krstenje.html"
+    context_object_name = "krstenje"
+    pk_url = "k_rbr"
 
-    font_name = 'DejaVuSans'
+    font_name = "DejaVuSans"
 
     def get_object(self):
-        k_rbr = self.kwargs.get(self.pk_url_kwarg)
+        k_rbr = self.kwargs.get(self.pk_url)
         return get_object_or_404(Krstenje, k_rbr=k_rbr)
