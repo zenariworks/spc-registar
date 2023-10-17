@@ -1,19 +1,21 @@
 """
 Model class for representing streets in the database.
 """
+import uuid
+
 from django.db import models
 
 
 class Ulica(models.Model):
-    ul_rbr = models.IntegerField()
-    ul_sifra = models.IntegerField()
-    ul_naziv = models.TextField()
-    ul_rbrsv = models.IntegerField()
-    ul_akt = models.TextField()
-    ul_flag = models.TextField()
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    sifra = models.IntegerField()
+    naziv = models.CharField()
+    svestenik = models.IntegerField()
+    akt = models.TextField()
+    flag = models.TextField()
 
     def __str__(self):
-        return f"{self.ul_rbr}"
+        return f"{self.naziv}"
 
     class Meta:
         managed = True

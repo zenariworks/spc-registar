@@ -41,6 +41,7 @@
    ```bash
    docker compose run --rm app sh -c "python manage.py loaddata import_svestenik"
    ```
+
    Након овог корака, у базу је унет пример података о свештенику.
    Након покретања, могућ је и приказ ових података.
 

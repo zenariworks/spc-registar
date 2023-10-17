@@ -1,23 +1,28 @@
 """
 Model class for representing slavas in the database.
 """
+import uuid
+
 from django.db import models
+
+from .dan import Dan
+from .mesec import Mesec
 
 
 class Slava(models.Model):
-    sl_rbr = models.IntegerField()
-    sl_sifra = models.IntegerField()
-    sl_naziv = models.TextField()
-    sl_dan = models.IntegerField()
-    sl_mesec = models.IntegerField()
-    sl_akt = models.TextField()
-    sl_flag = models.TextField()
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    sifra = models.IntegerField(name="шифра")
+    naziv = models.CharField(name="назив")
+    dan = models.ForeignKey(Dan, on_delete=models.CASCADE, name="дан")
+    mesec = models.ForeignKey(Mesec, on_delete=models.CASCADE, name="месец")
+    akt = models.CharField(name="акт")
+    flag = models.CharField(name="флаг")
 
     def __str__(self):
-        return f"{self.sl_rbr}"
+        return f"{self.naziv}"
 
     class Meta:
         managed = True
-        db_table = "slave"
+        db_table = "славе"
         verbose_name = "Слава"
         verbose_name_plural = "Славе"

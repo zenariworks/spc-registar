@@ -1,20 +1,22 @@
 """
 Model class for representing errors in the database.
 """
+import uuid
+
 from django.db import models
 
 
 class Error(models.Model):
-    err_rbr = models.IntegerField()
-    err_dt = models.TextField()
-    err_user = models.TextField()
-    err_id = models.IntegerField()
-    err_mess = models.TextField()
-    err_mess1 = models.TextField()
-    err_prog = models.TextField()
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    dt = models.TextField()
+    user = models.TextField()
+    id = models.IntegerField()
+    mess = models.TextField()
+    mess1 = models.TextField()
+    prog = models.TextField()
 
     def __str__(self):
-        return f"{self.err_rbr}"
+        return f"{self.uid}"
 
     class Meta:
         managed = True

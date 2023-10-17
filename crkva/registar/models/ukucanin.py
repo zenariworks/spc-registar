@@ -1,18 +1,21 @@
 """
 Model class for representing residents in the database.
 """
+import uuid
+
 from django.db import models
+from registar.models import Domacinstvo
 
 
 class Ukucanin(models.Model):
-    uk_rbr = models.IntegerField()
-    uk_rbrdom = models.IntegerField()
-    uk_ime = models.TextField()
-    uk_akt = models.TextField()
-    uk_flag = models.TextField()
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    rbrdom = models.IntegerField()
+    ime = models.CharField()
+    akt = models.CharField()
+    flag = models.CharField()
 
     def __str__(self):
-        return f"{self.uk_rbr}"
+        return f"{self.uid}"
 
     class Meta:
         managed = True
