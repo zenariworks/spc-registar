@@ -1,30 +1,36 @@
 """
 Model class for representing households in the database.
 """
+import uuid
+
 from django.db import models
+
+from .slava import Slava
 
 
 class Domacinstvo(models.Model):
-    dom_rbr = models.IntegerField()
-    dom_sifra = models.IntegerField()
-    dom_ime = models.TextField()
-    dom_ukuc = models.TextField()
-    dom_rbrul = models.IntegerField()
-    dom_ulbroj = models.TextField()
-    dom_broj = models.IntegerField()
-    dom_oznaka = models.TextField()
-    dom_stan = models.TextField()
-    dom_teldir = models.TextField()
-    dom_telmob = models.TextField()
-    dom_rbrsl = models.IntegerField()
-    dom_slavod = models.TextField()
-    dom_uskvod = models.TextField()
-    dom_napom = models.TextField()
-    dom_akt = models.TextField()
-    dom_flag = models.TextField()
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    sifra = models.IntegerField()
+    ime = models.CharField()
+    ukuc = models.TextField()
+    rbrul = models.IntegerField()
+    ulbroj = models.IntegerField()
+    broj = models.IntegerField()
+    oznaka = models.CharField()
+    stan = models.IntegerField()
+    teldir = models.IntegerField()
+    telmob = models.IntegerField()
+
+    slava = models.ForeignKey(Slava, on_delete=models.CASCADE, name="слава")
+
+    slavod = models.CharField()
+    uskvod = models.CharField()
+    napom = models.CharField()
+    akt = models.CharField()
+    flag = models.CharField()
 
     def __str__(self):
-        return f"{self.dom_rbr}"
+        return f"{self.uid}"
 
     class Meta:
         managed = True

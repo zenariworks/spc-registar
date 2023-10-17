@@ -1,21 +1,23 @@
 """
 Model class for representing priests in the database.
 """
+import uuid
+
 from django.db import models
 
 
 class Svestenik(models.Model):
-    sv_rbr = models.IntegerField()
-    sv_sifra = models.IntegerField()
-    sv_ime = models.TextField()
-    sv_zvanje = models.TextField()
-    sv_paroh = models.TextField()
-    sv_datrod = models.TextField()
-    sv_akt = models.TextField()
-    sv_flag = models.TextField()
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    sifra = models.IntegerField()
+    ime = models.CharField()
+    zvanje = models.CharField()
+    paroh = models.CharField()
+    datrod = models.DateField()
+    akt = models.CharField()
+    flag = models.CharField()
 
     def __str__(self):
-        return f"{self.sv_rbr}"
+        return f"{self.uid}"
 
     class Meta:
         managed = True

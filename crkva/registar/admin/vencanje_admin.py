@@ -3,5 +3,5 @@ from import_export.admin import ImportExportMixin
 
 
 class VencanjeAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ("v_rbr", "v_z_ime", "v_n_ime", "v_aktgod", "v_knjiga")
-    ordering = ("v_rbr",)
+    list_display = ("uid", "z_ime", "n_ime", "aktgod", "knjiga")
+    ordering = ("uid",)

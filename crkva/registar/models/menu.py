@@ -1,19 +1,21 @@
 """
 Model class for representing menus in the database.
 """
+import uuid
+
 from django.db import models
 
 
 class Menu(models.Model):
-    men_rbr = models.IntegerField()
-    men_sifra = models.TextField()
-    men_naziv = models.TextField()
-    men_nivo = models.TextField()
-    men_kod = models.IntegerField()
-    men_flag = models.TextField()
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    sifra = models.TextField()
+    naziv = models.TextField()
+    nivo = models.TextField()
+    kod = models.IntegerField()
+    flag = models.TextField()
 
     def __str__(self):
-        return f"{self.men_rbr}"
+        return f"{self.uid}"
 
     class Meta:
         managed = True

@@ -1,19 +1,20 @@
 """
 Model class for representing passes in the database.
 """
+import uuid
 
 from django.db import models
 
 
 class Password(models.Model):
-    pas_rbr = models.IntegerField()
-    pas_sifra = models.IntegerField()
-    pas_naziv = models.TextField()
-    pas_nivo = models.IntegerField()
-    pas_flag = models.TextField()
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    sifra = models.IntegerField()
+    naziv = models.TextField()
+    nivo = models.IntegerField()
+    flag = models.TextField()
 
     def __str__(self):
-        return f"{self.pas_naziv}"
+        return f"{self.naziv}"
 
     class Meta:
         managed = True
