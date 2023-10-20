@@ -120,6 +120,4 @@
 
 ### Структура базе података
 
-![Alt text](https://dbdiagram.io/embed/65319d89ffbf5169f00f803f)
-
-<iframe width="560" height="315" src='https://dbdiagram.io/embed/65319d89ffbf5169f00f803f'> </iframe>
+- [Дијаграм базе](https://dbdiagram.io/d/65319d89ffbf5169f00f803f)
