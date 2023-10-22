@@ -11,40 +11,33 @@ from .svestenik import Svestenik
 
 class Krstenje(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    sifra = models.IntegerField()
+    
+    datum_krstenja = models.DateTimeField()
+    mesto_krstenja = models.CharField()
+    krshram = models.CharField()
+
     aktgod = models.IntegerField()
     datum = models.DateField()
     mesto = models.CharField()
     proknj = models.CharField()
     protbr = models.IntegerField()
     protst = models.IntegerField()
+
     iz = models.CharField()
     ulica = models.CharField()
     broj = models.IntegerField()
-    krsgod = models.IntegerField()
-    krsmese = models.IntegerField()
-    krsdan = models.IntegerField()
-    krsvre = models.TextField()
-    krsmest = models.CharField()
-    krshram = models.CharField()
 
     dete = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="дете")
-
-    detimeg = models.TextField()
-    rodjopst = models.TextField()
+    detmana = models.BooleanField()
+    detimeg = models.CharField()
+    detkoje = models.IntegerField()
+    detbrac = models.IntegerField()
+    blizanac = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="близанац")
 
     otac = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="отац")
     majka = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="мајка")
 
-    detzivo = models.TextField()
-    detkoje = models.IntegerField()
-    detbrac = models.TextField()
-    detbliz = models.TextField()
-    detbliz2 = models.TextField()
-    detmana = models.TextField()
-    rbrsve = models.IntegerField()
-
-    svestenik = models.ForeignKey(Svestenik, on_delete=models.CASCADE, related_name="свештеник")
+    svestenik = models.ForeignKey(Svestenik, on_delete=models.CASCADE, related_name="свештеник_крштени")
     
     kum = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="кум")
 
