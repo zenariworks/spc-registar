@@ -5,7 +5,7 @@ from registar.models.error import Error
 from registar.models.krstenje import Krstenje
 from registar.models.menu import Menu
 from registar.models.password import Password
-from registar.models.set import Set
+from registar.models.osoba import Osoba
 from registar.models.slava import Slava
 from registar.models.svestenik import Svestenik
 from registar.models.ukucanin import Ukucanin
@@ -27,7 +27,7 @@ admin.site.register(Error)
 admin.site.register(Krstenje, KrstenjeAdmin)
 admin.site.register(Menu)
 admin.site.register(Password)
-admin.site.register(Set)
+admin.site.register(Osoba)
 admin.site.register(Slava, SlavaAdmin)
 admin.site.register(Svestenik, SvestenikAdmin)
 admin.site.register(Ukucanin, UkucaninAdmin)

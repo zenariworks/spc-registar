@@ -5,7 +5,7 @@ class Command(BaseCommand):
     help = 'Populates the Dan table with days of the month'
 
     def handle(self, *args, **kwargs):
-        for day in range(1, 32):  # Days from 1 to 31
-            Dan.objects.get_or_create(дан=day)
+        for dan in range(1, 32):  # Days from 1 to 31
+            Dan.objects.get_or_create(dan=dan)
 
         self.stdout.write(self.style.SUCCESS('Successfully populated Dan table'))
