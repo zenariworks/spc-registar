@@ -15,7 +15,7 @@ class Osoba(models.Model):
     datum_rodjenja = models.DateTimeField(verbose_name="датум рођења")
     mesto_rodjenja = models.CharField(verbose_name="место рођења")
 
-    pol = models.CharField(verbose_name="пол", blank=True)
+    pol = models.CharField(verbose_name="пол", blank=True, choices=[("М", "мушки"), ("Ж", "женски")])
     zanimanje = models.CharField(verbose_name="занимање", blank=True)
     veroispovest = models.CharField(verbose_name="вероисповест", blank=True)
     narodnost = models.CharField(verbose_name="народност", blank=True)
