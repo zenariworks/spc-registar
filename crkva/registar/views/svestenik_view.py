@@ -15,10 +15,10 @@ class SvestenikView(DetailView):
     model = Svestenik
     template_name = "registar/view_svestenik.html"
     context_object_name = "svestenik"
-    pk_url = "sv_rbr"
+    pk_url = "uid"
 
     font_name = "DejaVuSans"
 
     def get_object(self):
-        sv_rbr = self.kwargs.get(self.pk_url)
-        return get_object_or_404(Svestenik, sv_rbr=sv_rbr)
+        uid = self.kwargs.get(self.pk_url)
+        return get_object_or_404(Svestenik, uid=uid)

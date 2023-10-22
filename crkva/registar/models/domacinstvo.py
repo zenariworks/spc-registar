@@ -4,16 +4,20 @@ Model class for representing households in the database.
 import uuid
 
 from django.db import models
+from pkg_resources import require
 
 from .slava import Slava
+from .ulica import Ulica
 
 
 class Domacinstvo(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    sifra = models.IntegerField()
+
     ime = models.CharField()
-    ukuc = models.TextField()
-    rbrul = models.IntegerField()
+    ukuc = models.CharField()
+
+    ulica = models.ForeignKey(Ulica, verbose_name="улица", on_delete=models.CASCADE)
+
     ulbroj = models.IntegerField()
     broj = models.IntegerField()
     oznaka = models.CharField()
@@ -23,11 +27,9 @@ class Domacinstvo(models.Model):
 
     slava = models.ForeignKey(Slava, on_delete=models.CASCADE, name="слава")
 
-    slavod = models.CharField()
-    uskvod = models.CharField()
-    napom = models.CharField()
-    akt = models.CharField()
-    flag = models.CharField()
+    slavod = models.BooleanField()
+    uskvod = models.BooleanField()
+    napomena = models.TextField(null=True)
 
     def __str__(self):
         return f"{self.uid}"

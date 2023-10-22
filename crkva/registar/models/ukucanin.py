@@ -9,10 +9,10 @@ from registar.models import Domacinstvo
 
 class Ukucanin(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+
     rbrdom = models.IntegerField()
+
     ime = models.CharField()
-    akt = models.CharField()
-    flag = models.CharField()
 
     def __str__(self):
         return f"{self.uid}"
