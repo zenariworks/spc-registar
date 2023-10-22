@@ -6,6 +6,8 @@ import uuid
 from django.db import models
 
 from .zanimanje import Zanimanje
+from .narodnost import Narodnost
+from .veroispovest import Veroispovest
 
 
 class Osoba(models.Model):
@@ -18,10 +20,9 @@ class Osoba(models.Model):
     mesto_rodjenja = models.CharField(verbose_name="место рођења")
 
     pol = models.CharField(verbose_name="пол", blank=True, choices=[("М", "мушки"), ("Ж", "женски")])
-    # zanimanje = models.CharField(verbose_name="занимање", blank=True)
     zanimanje = models.ForeignKey(Zanimanje, verbose_name="занимање", on_delete=models.CASCADE, blank=True)
-    veroispovest = models.CharField(verbose_name="вероисповест", blank=True)
-    narodnost = models.CharField(verbose_name="народност", blank=True)
+    veroispovest = models.ForeignKey(Veroispovest, verbose_name="вероисповест", on_delete=models.CASCADE, blank=True)
+    narodnost = models.ForeignKey(Narodnost, verbose_name="народност", on_delete=models.CASCADE, blank=True)
     adresa = models.CharField(verbose_name="адреса", blank=True)
 
 
