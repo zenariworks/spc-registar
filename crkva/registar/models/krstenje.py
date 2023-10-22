@@ -5,6 +5,9 @@ import uuid
 
 from django.db import models
 
+from .osoba import Osoba
+from .svestenik import Svestenik
+
 
 class Krstenje(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
@@ -18,32 +21,21 @@ class Krstenje(models.Model):
     iz = models.CharField()
     ulica = models.CharField()
     broj = models.IntegerField()
-    rodjgod = models.IntegerField()
-    rodjmese = models.IntegerField()
-    rodjdan = models.IntegerField()
-    rodjvre = models.TextField()
-    rodjmest = models.TextField()
-    rodjopst = models.TextField()
     krsgod = models.IntegerField()
     krsmese = models.IntegerField()
     krsdan = models.IntegerField()
     krsvre = models.TextField()
     krsmest = models.CharField()
     krshram = models.CharField()
-    detime = models.CharField()
+
+    dete = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="дете")
+
     detimeg = models.TextField()
-    detpol = models.CharField()
-    rodime = models.TextField()
-    rodprez = models.TextField()
-    rodzanim = models.CharField()
-    rodmest = models.TextField()
-    rodvera = models.TextField()
-    rodnarod = models.TextField()
-    rod2ime = models.TextField()
-    rod2prez = models.TextField()
-    rod2zan = models.TextField()
-    rod2mest = models.TextField()
-    rod2vera = models.TextField()
+    rodjopst = models.TextField()
+
+    otac = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="отац")
+    majka = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="мајка")
+
     detzivo = models.TextField()
     detkoje = models.IntegerField()
     detbrac = models.TextField()
@@ -51,13 +43,11 @@ class Krstenje(models.Model):
     detbliz2 = models.TextField()
     detmana = models.TextField()
     rbrsve = models.IntegerField()
-    sveime = models.TextField()
-    svezva = models.TextField()
-    svepar = models.TextField()
-    kumime = models.TextField()
-    kumprez = models.TextField()
-    kumzanim = models.TextField()
-    kummest = models.TextField()
+
+    svestenik = models.ForeignKey(Svestenik, on_delete=models.CASCADE, related_name="свештеник")
+    
+    kum = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="кум")
+
     regmesto = models.TextField()
     regkada = models.TextField()
     regbroj = models.TextField()

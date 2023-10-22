@@ -5,7 +5,7 @@ from .krstenje import Krstenje
 from .menu import Menu
 from .mesec import Mesec
 from .password import Password
-from .set import Set
+from .osoba import Osoba
 from .slava import Slava
 from .svestenik import Svestenik
 from .ukucanin import Ukucanin
