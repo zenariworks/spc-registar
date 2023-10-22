@@ -8,3 +8,4 @@ from .svestenik import Svestenik
 from .ukucanin import Ukucanin
 from .ulica import Ulica
 from .vencanje import Vencanje
+from .zanimanje import Zanimanje
