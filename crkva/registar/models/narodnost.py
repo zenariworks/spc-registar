@@ -6,7 +6,7 @@ import uuid
 from django.db import models
 
 
-class Zanimanje(models.Model):
+class Narodnost(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     sifra = models.CharField(verbose_name="шифра")
@@ -18,6 +18,6 @@ class Zanimanje(models.Model):
 
     class Meta:
         managed = True
-        db_table = "zanimanja"
-        verbose_name = "Занимање"
-        verbose_name_plural = "Занимања"
+        db_table = "narodnosti"
+        verbose_name = "Народност"
+        verbose_name_plural = "Народности"

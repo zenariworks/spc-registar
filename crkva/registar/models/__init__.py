@@ -1,6 +1,7 @@
 from .dan import Dan
 from .domacinstvo import Domacinstvo
 from .krstenje import Krstenje
+from .narodnost import Narodnost
 from .mesec import Mesec
 from .osoba import Osoba
 from .slava import Slava
@@ -8,4 +9,5 @@ from .svestenik import Svestenik
 from .ukucanin import Ukucanin
 from .ulica import Ulica
 from .vencanje import Vencanje
+from .veroispovest import Veroispovest
 from .zanimanje import Zanimanje
