@@ -21,7 +21,7 @@ class Slava(models.Model):
     )
 
     def __str__(self):
-        return f"{self.naziv}"
+        return f"{self.dan}. {self.mesec}: {self.naziv}"
 
     class Meta:
         managed = True
