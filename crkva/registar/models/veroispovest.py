@@ -9,7 +9,6 @@ from django.db import models
 class Veroispovest(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    sifra = models.CharField()
     naziv = models.CharField(verbose_name="вероисповест", max_length=255)
 
     def __str__(self):
