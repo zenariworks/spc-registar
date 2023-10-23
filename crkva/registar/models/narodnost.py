@@ -9,9 +9,7 @@ from django.db import models
 class Narodnost(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    sifra = models.CharField(verbose_name="шифра")
-    naziv = models.CharField(verbose_name="назив", max_length=255)
-    zenski_naziv = models.IntegerField(verbose_name="женски назив")
+    naziv = models.CharField(verbose_name="народност", max_length=255)
 
     def __str__(self):
         return f"{self.naziv}"
