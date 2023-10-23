@@ -11,7 +11,7 @@ from .svestenik import Svestenik
 
 class Krstenje(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    
+
     datum_krstenja = models.DateTimeField()
     mesto_krstenja = models.CharField()
     krshram = models.CharField()
@@ -32,13 +32,17 @@ class Krstenje(models.Model):
     detimeg = models.CharField()
     detkoje = models.IntegerField()
     detbrac = models.IntegerField()
-    blizanac = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="близанац")
+    blizanac = models.ForeignKey(
+        Osoba, on_delete=models.CASCADE, related_name="близанац"
+    )
 
     otac = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="отац")
     majka = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="мајка")
 
-    svestenik = models.ForeignKey(Svestenik, on_delete=models.CASCADE, related_name="свештеник_крштени")
-    
+    svestenik = models.ForeignKey(
+        Svestenik, on_delete=models.CASCADE, related_name="свештеник_крштени"
+    )
+
     kum = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="кум")
 
     regmesto = models.TextField()
