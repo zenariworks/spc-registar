@@ -4,7 +4,6 @@ Model class for representing residents in the database.
 import uuid
 
 from django.db import models
-from registar.models import Domacinstvo
 
 
 class Ukucanin(models.Model):
