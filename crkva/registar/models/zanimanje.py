@@ -11,7 +11,7 @@ class Zanimanje(models.Model):
 
     sifra = models.CharField(verbose_name="шифра")
     naziv = models.CharField(verbose_name="назив", max_length=255)
-    zenski_naziv = models.IntegerField(verbose_name="женски назив", null=True)
+    zenski_naziv = models.CharField(verbose_name="женски назив", null=True)
 
     def __str__(self):
         return f"{self.sifra}: {self.naziv}"
