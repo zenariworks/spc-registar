@@ -27,18 +27,18 @@ class Vencanje(models.Model):
     strana = models.IntegerField(verbose_name="страна")
     tekuci_broj = models.IntegerField(verbose_name="текући број")
 
-    mladozenja = models.ForeignKey(
+    zenik = models.ForeignKey(
         Osoba,
-        verbose_name="младожења",
+        verbose_name="женик",
         on_delete=models.CASCADE,
-        related_name="младожења",
+        related_name="женик",
     )
-    z_brak = models.IntegerField(verbose_name="З брак")
+    zenik_rb_brak = models.IntegerField(verbose_name="Рб. брак женика")
 
-    mlada = models.ForeignKey(
-        Osoba, verbose_name="млада", on_delete=models.CASCADE, related_name="млада"
+    nevesta = models.ForeignKey(
+        Osoba, verbose_name="невеста", on_delete=models.CASCADE, related_name="невеста"
     )
-    n_brak = models.IntegerField(verbose_name="Н брак")
+    nevesta_rb_brak = models.IntegerField(verbose_name="Рб. брак невесте")
 
     tast = models.ForeignKey(
         Osoba, verbose_name="таст", on_delete=models.CASCADE, related_name="таст"

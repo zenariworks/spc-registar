@@ -10,8 +10,9 @@ class Command(BaseCommand):
     help = "Populates the Slavas table with slavas for the whole year"
 
     def handle(self, *args, **kwargs):
+        parsed_data = self._parse_data()
         for name, opsti_naziv, day, month in parsed_data:
-            # Retrieving or creating the respective Dan and Mesec instances
+            # Retrieving or creatikrsng the respective Dan and Mesec instances
             dan_instance, _ = Dan.objects.get_or_create(dan=day)
             mesec_instance, _ = Mesec.objects.get_or_create(mesec=month)
 
@@ -42,3 +43,4 @@ class Command(BaseCommand):
 
             day, month = map(int, date_part.split(","))
             parsed_data.append((name, opsti_naziv, day, month))
+        return parsed_data
