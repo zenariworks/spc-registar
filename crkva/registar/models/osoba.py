@@ -15,10 +15,10 @@ class Osoba(models.Model):
 
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")
-    devojacko_prezime = models.CharField(verbose_name="девојачко презиме")
     datum_rodjenja = models.DateTimeField(verbose_name="датум рођења")
     mesto_rodjenja = models.CharField(verbose_name="место рођења")
 
+    devojacko_prezime = models.CharField(verbose_name="девојачко презиме", blank=True)
     pol = models.CharField(
         verbose_name="пол", blank=True, choices=[("М", "мушки"), ("Ж", "женски")]
     )

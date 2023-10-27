@@ -1,0 +1,27 @@
+<!-- templates/krstenja_list.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Списак особа</h1>
+    <form method="get" action="">
+        {{ form.as_p }}
+        <input type="submit" value="Search">
+    </form>
+    <ul>
+        {% for entry in osobe_entries %}
+            <li>
+                {{ entry.datum_rodjenja }}: {{ entry.ime }} {{ entry.prezime }}
+                <!-- Assume `entry.id` is the unique identifier of the entry -->
+                <a href="{% url 'osoba_detail' uid=entry.uid %}">
+                    <button type="button">Приказ</button>
+                </a>  &nbsp;
+                <a href="{% url 'osoba_pdf' uid=entry.uid %}">
+                    <button type="button">Штампа</button>
+                </a>                
+            </li>
+        {% empty %}
+            <li>Нема уноса особа у бази.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
