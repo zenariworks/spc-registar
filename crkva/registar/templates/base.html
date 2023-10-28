@@ -1,14 +1,37 @@
-<!-- templates/base.html -->
+<!-- base.html -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Project Name</title>
+    <title>Храм</title>
 </head>
 <body>
-    {% block content %}
-    {% endblock %}
+    <header>
+        <nav>
+            <ul>
+                <li>Спискови:
+                    <ul>
+                        <li><a href="{% url 'osobe' %}">Крштења</a></li>
+                        <li><a href="{% url 'osobe' %}">Венчања</a></li>
+                    </ul>
+                </li>
+                <li><a href="{% url 'osobe' %}">Особе</a></li>
+                <li><a href="{% url 'osobe' %}">Унос података</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+<!-- Main content will go here -->
+<div class="content">
+    {% block content %}{% endblock %}
+</div>
+
+<!-- Footer -->
+<footer>
+    <!-- You can place your footer content here. -->
+</footer>
+
 </body>
 </html>
