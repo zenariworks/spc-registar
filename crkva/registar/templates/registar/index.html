@@ -1,55 +1,13 @@
-<!-- % extends 'base.html' %} -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>HRAM SVETE PETKE</title>
-</head>
+{% extends "base.html" %}
 
 {% block content %}
 <div class="container">
     <div class="header"><h1>HRAM SVETE PETKE</h1></div>
-    <nav class="menu">
-        <ul>
-            <li><a href="#">UNOS PODATAKA</a></li>
-            <li><a href="#">PREGLEDI</a></li>
-            <li><a href="#">ŠIFARNICI</a>
-                <ul>
-                    <li><a href="#">SVEŠTENICI</a></li>
-                    <li><a href="#">KRSNE SLAVE</a></li>
-                    <li><a href="#">ULICE NA PAROHIJAMA</a></li>
-                </ul>
-            </li>
-            <li><a href="#">SERVIS</a></li>
-        </ul>
-    </nav>
-    
-    <!-- Previous submenu if you still need it -->
-    <div class="submenu">
-        <ul>
-            <li><a href="#">KARTICE PAROHIJANA - SLAVSKA V.</a></li>
-            <li><a href="#">KARTICE PAROHIJANA - USKRŠNJA V.</a></li>
-            <li><a href="#">KARTICE POJEDINIH PAROHIJANA</a></li>
-            <li><a href="#">BROJ DOMAĆINSTAVA - S.V.</a></li>
-            <li><a href="#">BROJ DOMAĆINSTAVA - U.V.</a></li>
-        </ul>
-    </div>
     
     <div class="image-section">
         <!-- <img src="% static 'crkva.png' %}" alt="Church Image"> -->
         <img src="crkva.png" alt="Church Image">
     </div>
-    
-    <!-- <div class="footer">
-        <p>ver. 1.2</p>
-        <div class="date-section">
-            <img src="% static 'path/to/num-icon.png' %}" alt="Num icon">
-            <img src="% static 'path/to/caps-icon.png' %}" alt="Caps icon">
-            <span>petak 16.12.2022</span>
-        </div>
-    </div> -->
 </div>
 
 {% endblock %}
