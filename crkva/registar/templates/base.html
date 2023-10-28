@@ -8,6 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'registar/styles.min.css' %}">
     <link rel="stylesheet" href="{% static 'registar/fusion.min.css' %}">
+    <style>
+        .image-section {
+            background-image: url("{% static 'registar/crkva.png' %}");
+            background-size: cover;  /* This will ensure your image covers the entire element */
+            background-repeat: no-repeat;  /* This will prevent your image from repeating */
+            opacity: 0.2;  /* This will make the entire div (and all its contents) semi-transparent */
+        }
+    </style>
 
     <title>Храм</title>
 </head>
@@ -114,7 +122,7 @@
       </header>
     
 <!-- Main content will go here -->
-<div class="content">
+<div class="content image-section">
     {% block content %}{% endblock %}
 </div>
 
