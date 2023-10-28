@@ -15,7 +15,7 @@ RUN python -m venv /py && \
     apk add --update --no-cache postgresql-client freetype-dev
 
 RUN apk add --update --no-cache --virtual .tmp-deps \
-        build-base postgresql-dev musl-dev linux-headers git && \
+    libffi-dev build-base postgresql-dev musl-dev linux-headers git && \
     /py/bin/pip install -r /requirements.txt && \
     apk del .tmp-deps
 
