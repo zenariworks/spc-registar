@@ -7,7 +7,7 @@ from .views import OsobaView, OsobeListView, OsobaPDF
 
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", views.index, name="pocetna"),
 
     path("osobe/", OsobeListView.as_view(), name="osobe"),
     path("osoba/<uuid:uid>/", OsobaView.as_view(), name="osoba_detail"),

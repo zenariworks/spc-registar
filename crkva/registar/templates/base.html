@@ -1,27 +1,117 @@
 <!-- base.html -->
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'registar/styles.min.css' %}">
+    <link rel="stylesheet" href="{% static 'registar/fusion.min.css' %}">
+
     <title>Храм</title>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li>Спискови:
+    <header class="fusion-header-wrapper fusion-header-shadow">
+        <div class="fusion-secondary-header">
+          <div class="fusion-row">
+            <div class="fusion-alignright">
+              <nav class="fusion-secondary-menu" role="navigation" aria-label="Secondary Menu"></nav>
+              <nav class="fusion-mobile-nav-holder fusion-mobile-menu-text-align-left" aria-label="Secondary Mobile Menu"></nav>
+            </div>
+          </div>
+        </div>
+        <div class="fusion-header-sticky-height" style="height: 126px; overflow: visible;"></div>
+        <div class="fusion-header" style="overflow: visible; height: 126px;">
+          <div class="fusion-row" style="padding-top: 0px; padding-bottom: 0px;">
+            <div class="fusion-logo" data-margin-top="0px" data-margin-bottom="0px" data-margin-left="0px" data-margin-right="0px" style="margin-top: 0px; margin-bottom: 0px;">
+              <a class="fusion-logo-link" href="https://spc.rs/">
+                <!-- standard logo -->
+                <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" srcset="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png 1x, https://spc.rs/wp-content/uploads/2022/03/spc-logo-retina.png 2x" width="336" height="110" style="max-height:110px;height:auto;" alt="Српска Православна Црква Logo" data-retina_logo_url="https://spc.rs/wp-content/uploads/2022/03/spc-logo-retina.png" class="fusion-standard-logo">
+                <!-- mobile logo -->
+                <img src="https://spc.rs/wp-content/uploads/2022/04/spc-logo-mob-1.png" srcset="https://spc.rs/wp-content/uploads/2022/04/spc-logo-mob-1.png 1x, https://spc.rs/wp-content/uploads/2022/04/spc-logo-mob-retina-1.png 2x" width="197" height="70" style="max-height:70px;height:auto;" alt="Српска Православна Црква Logo" data-retina_logo_url="https://spc.rs/wp-content/uploads/2022/04/spc-logo-mob-retina-1.png" class="fusion-mobile-logo">
+                <!-- sticky header logo -->
+                <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" srcset="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png 1x, https://spc.rs/wp-content/uploads/2022/03/spc-logo-retina.png 2x" width="336" height="110" style="max-height: 110px;" alt="Српска Православна Црква Logo" data-retina_logo_url="https://spc.rs/wp-content/uploads/2022/03/spc-logo-retina.png" class="fusion-sticky-logo">
+              </a>
+            </div>
+            <nav class="fusion-main-menu" aria-label="Main Menu" style="">
+              <div class="fusion-overlay-search" style="max-width: 681.641px;">
+                <form role="search" class="searchform fusion-search-form  fusion-search-form-clean" method="get" action="https://spc.rs/">
+                  <div class="fusion-search-form-content">
+                    <div class="fusion-search-field search-field">
+                      <label><span class="screen-reader-text">Search for:</span>
+                      <input type="search" value="" name="s" class="s" placeholder="Search..." required="" aria-required="true" aria-label="Search...">
+                      </label>
+                    </div>
+                    <div class="fusion-search-button search-button">
+                      <input type="submit" class="fusion-search-submit searchsubmit" aria-label="Search" value="">
+                    </div>
+                  </div>
+                </form>
+                <div class="fusion-search-spacer"></div>
+                <a href="#" role="button" aria-label="Close Search" class="fusion-close-search"></a>
+              </div>
+              <ul id="menu-main-navigation" class="fusion-menu">
+                <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-12 current_page_item menu-item-17"><a href="{% url 'pocetna' %}">Почетна</a></li>
+                <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-12 current_page_item menu-item-17">Спискови:
                     <ul>
                         <li><a href="{% url 'osobe' %}">Крштења</a></li>
                         <li><a href="{% url 'osobe' %}">Венчања</a></li>
                     </ul>
                 </li>
-                <li><a href="{% url 'osobe' %}">Особе</a></li>
-                <li><a href="{% url 'osobe' %}">Унос података</a></li>
-            </ul>
-        </nav>
-    </header>
+                <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-12 current_page_item menu-item-17"><a href="{% url 'osobe' %}">Особе</a></li>
+                <li class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-12 current_page_item menu-item-17"><a href="{% url 'osobe' %}">Унос података</a></li>
+                <li id="menu-item-17" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home current-menu-item page_item page-item-12 current_page_item menu-item-17" data-item-id="17" style=""><a href="https://spc.rs/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">ПОЧЕТНА</span></a></li>
+                <li id="menu-item-39" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-39" data-item-id="39" style=""><a href="https://spc.rs/patrijarh/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">ПАТРИЈАРХ</span></a></li>
+                <li id="menu-item-38" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-38" data-item-id="38" style=""><a href="https://spc.rs/sinod/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">СИНОД</span></a></li>
+                <li id="menu-item-37" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-37" data-item-id="37" style=""><a href="https://spc.rs/sabor/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">САБОР</span></a></li>
+                <li id="menu-item-25509" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-25509" data-item-id="25509" style=""><a href="https://spc.rs/linkovi/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">ЛИНКОВИ</span></a></li>
+                <li id="menu-item-36" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-36" data-item-id="36" style=""><a href="https://spc.rs/kontakt/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">КОНТАКТ</span></a></li>
+                <li id="menu-item-164" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-164" data-item-id="164" style=""><a target="_blank" rel="noopener noreferrer" href="http://arhiva.spc.rs/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">АРХИВА</span></a></li>
+                <li id="menu-item-28653" class="mob-lang-link menu-item menu-item-type-custom menu-item-object-custom menu-item-28653" data-classes="mob-lang-link" data-item-id="28653" style=""><a href="https://spc.rs/en/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">English</span></a></li>
+                <li id="menu-item-28654" class="mob-lang-link menu-item menu-item-type-custom menu-item-object-custom menu-item-28654" data-classes="mob-lang-link" data-item-id="28654" style=""><a href="https://spc.rs/ru/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">Русский</span></a></li>
+                <li id="menu-item-28655" class="mob-lang-link menu-item menu-item-type-custom menu-item-object-custom menu-item-28655" data-classes="mob-lang-link" data-item-id="28655" style=""><a href="https://spc.rs/gr/" class="fusion-bar-highlight" style="height: 125px;"><span class="menu-text">Ελληνικά</span></a></li>
+                <li class="fusion-custom-menu-item fusion-main-menu-search fusion-search-overlay" style=""><a class="fusion-main-menu-icon fusion-bar-highlight" href="#" aria-label="Search" data-title="Search" title="Search" role="button" aria-expanded="false" style="height: 125px;"></a></li>
+              </ul>
+            </nav>
+            <div class="fusion-mobile-menu-icons">
+              <a href="#" class="fusion-icon awb-icon-bars" aria-label="Toggle mobile menu" aria-expanded="false" aria-controls="mobile-menu-main-navigation"></a>
+              <a href="#" class="fusion-icon awb-icon-search" aria-label="Toggle mobile search"></a>
+            </div>
+            <nav class="fusion-mobile-nav-holder fusion-mobile-menu-text-align-left" aria-label="Main Menu Mobile">
+              <ul id="mobile-menu-main-navigation" class="fusion-menu">
+                <li id="mobile-menu-item-17" class="fusion-mobile-nav-item fusion-mobile-current-nav-item" data-item-id="17" style=""><a href="https://spc.rs/" class="fusion-bar-highlight"><span class="menu-text">ПОЧЕТНА</span></a></li>
+                <li id="mobile-menu-item-39" class="fusion-mobile-nav-item" data-item-id="39" style=""><a href="https://spc.rs/patrijarh/" class="fusion-bar-highlight"><span class="menu-text">ПАТРИЈАРХ</span></a></li>
+                <li id="mobile-menu-item-38" class="fusion-mobile-nav-item" data-item-id="38" style=""><a href="https://spc.rs/sinod/" class="fusion-bar-highlight"><span class="menu-text">СИНОД</span></a></li>
+                <li id="mobile-menu-item-37" class="fusion-mobile-nav-item" data-item-id="37" style=""><a href="https://spc.rs/sabor/" class="fusion-bar-highlight"><span class="menu-text">САБОР</span></a></li>
+                <li id="mobile-menu-item-25509" class="fusion-mobile-nav-item" data-item-id="25509" style=""><a href="https://spc.rs/linkovi/" class="fusion-bar-highlight"><span class="menu-text">ЛИНКОВИ</span></a></li>
+                <li id="mobile-menu-item-36" class="fusion-mobile-nav-item" data-item-id="36" style=""><a href="https://spc.rs/kontakt/" class="fusion-bar-highlight"><span class="menu-text">КОНТАКТ</span></a></li>
+                <li id="mobile-menu-item-164" class="fusion-mobile-nav-item" data-item-id="164" style=""><a target="_blank" rel="noopener noreferrer" href="http://arhiva.spc.rs/" class="fusion-bar-highlight"><span class="menu-text">АРХИВА</span></a></li>
+                <li id="mobile-menu-item-28653" class="fusion-mobile-nav-item mob-lang-link" data-classes="mob-lang-link" data-item-id="28653" style=""><a href="https://spc.rs/en/" class="fusion-bar-highlight"><span class="menu-text">English</span></a></li>
+                <li id="mobile-menu-item-28654" class="fusion-mobile-nav-item mob-lang-link" data-classes="mob-lang-link" data-item-id="28654" style=""><a href="https://spc.rs/ru/" class="fusion-bar-highlight"><span class="menu-text">Русский</span></a></li>
+                <li id="mobile-menu-item-28655" class="fusion-mobile-nav-item mob-lang-link" data-classes="mob-lang-link" data-item-id="28655" style=""><a href="https://spc.rs/gr/" class="fusion-bar-highlight"><span class="menu-text">Ελληνικά</span></a></li>
+              </ul>
+            </nav>
+            <div class="fusion-clearfix"></div>
+            <div class="fusion-mobile-menu-search">
+              <form role="search" class="searchform fusion-search-form  fusion-search-form-clean" method="get" action="https://spc.rs/">
+                <div class="fusion-search-form-content">
+                  <div class="fusion-search-field search-field">
+                    <label><span class="screen-reader-text">Search for:</span>
+                    <input type="search" value="" name="s" class="s" placeholder="Search..." required="" aria-required="true" aria-label="Search...">
+                    </label>
+                  </div>
+                  <div class="fusion-search-button search-button">
+                    <input type="submit" class="fusion-search-submit searchsubmit" aria-label="Search" value="">
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="fusion-clearfix"></div>
+      </header>
     
 <!-- Main content will go here -->
 <div class="content">
