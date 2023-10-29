@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Detail of Krstenje {{ krstenje.k_rbr }}</title>
+    <title>Подаци о крштењу</title>
 </head>
 <body>
     <!-- Add this part into krstenica.html where you want the button to appear -->
-<a href="{% url 'krstenje_pdf' krstenje.pk %}" target="_blank">
+<a href="{% url 'krstenje_pdf' krstenje.uid %}" target="_blank">
     <button type="button">Print</button>
 </a>
     <h1>{{ krstenje.k_detime }}</h1>

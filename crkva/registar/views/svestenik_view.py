@@ -4,6 +4,7 @@ from django.views.generic import DetailView, ListView
 from easy_pdf.views import PDFTemplateResponseMixin
 
 from registar.models.svestenik import Svestenik
+from registar.forms import SearchForm
 
 
 class SvesteniciList(ListView):
@@ -27,7 +28,11 @@ class SvesteniciList(ListView):
 class SvestenikPDF(PDFTemplateResponseMixin, DetailView):
     model = Svestenik
     template_name = "registar/svestenik_print.html"
+    pk_url_kwarg = "uid"
 
+    def get_object(self):
+        uid = self.kwargs.get(self.pk_url_kwarg)
+        return get_object_or_404(Svestenik, uid=uid)
 
 class SvestenikView(DetailView):
     model = Svestenik

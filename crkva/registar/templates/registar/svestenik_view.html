@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Detail of Svestenik {{ svestenik.sv_rbr }}</title>
+    <title>Подаци о свештенику {{ svestenik.ime }}</title>
 </head>
 <body>
-    <!-- Add this part into krstenica.html where you want the button to appear -->
-<a href="{% url 'svestenik_pdf' svestenik.pk %}" target="_blank">
-    <button type="button">Print</button>
-</a>
-    <h1>{{ svestenik.sv_ime }}</h1>
-    <p>Sifra: {{ svestenik.sv_sifra }}</p>
-    <p>Zvanje: {{ svestenik.sv_zvanje }}</p>
-    <p>Paroh: {{ svestenik.sv_paroh }}</p>
-    <p>Datum Rodjenja: {{ svestenik.sv_datrod }}</p>
-    <p>Akt: {{ svestenik.sv_akt }}</p>
-    <p>Flag: {{ svestenik.sv_flag }}</p>
+    <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank">
+        <button type="button">Штампа</button>
+    </a>
+
+    <h1>{{ svestenik.ime }}</h1>
+    <p>Звање: {{ svestenik.zvanje }}</p>
+    <p>Парохија: {{ svestenik.parohija }}</p>
 </body>
 </html>
