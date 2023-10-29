@@ -39,11 +39,11 @@
 - Учитавање тест података:
 
    ```bash
-   docker compose run --rm app sh -c "python manage.py loaddata import_svestenik"
+   docker compose run --rm app sh -c "python manage.py loaddata registar"
    ```
 
    Након овог корака, у базу је унет пример података о свештенику.
-   Након покретања, могућ је и приказ ових података.
+   Након покретања, могућ је и приказ ових података на [localhost:8000/](localhost:8000/).
 
 ### 3. Креирање суперкорисника и покретање апликације
 
