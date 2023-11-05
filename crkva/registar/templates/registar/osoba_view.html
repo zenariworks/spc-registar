@@ -1,9 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
+{% extends "base.html" %}
+{% block content %}
+
+<h1>
     <title>Детаљи особе {{ osoba.ime }}</title>
-</head>
-<body>
+</h1>
+<div>
     <!-- Add this part into krstenica.html where you want the button to appear -->
 <a href="{% url 'osoba_pdf' uid=osoba.uid %}" target="_blank">
     <button type="button">Print</button>
@@ -12,5 +13,5 @@
     <p>Ime: {{ osoba.ime }} {{ osoba.prezime }}</p>
     <p>Datum: {{ osoba.datum_rodjenja }}</p>
     <p>Mesto: {{ osoba.mesto_rodjenja }}</p>
-</body>
-</html>
+</div>
+{% endblock %}
