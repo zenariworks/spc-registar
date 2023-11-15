@@ -3,20 +3,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Списак особа</h1>
-    <form method="get" action="">
-        {{ form.as_p }}
-        <input type="submit" value="Search">
-    </form>
+    <h1>Списак свештеника</h1>
     <ul>
-        {% for entry in osobe_entries %}
+        {% for entry in svestenici_entries %}
             <li>
-                {{ entry.datum_rodjenja }}: {{ entry.ime }} {{ entry.prezime }}
+                {{ entry.ime }} {{ entry.zvanje }}
                 <!-- Assume `entry.id` is the unique identifier of the entry -->
-                <a href="{% url 'osoba_detail' uid=entry.uid %}">
+                <a href="{% url 'svestenik_detail' uid=entry.uid %}">
                     <button type="button">Приказ</button>
                 </a>  &nbsp;
-                <a href="{% url 'osoba_pdf' uid=entry.uid %}" target="_blank">
+                <a href="{% url 'svestenik_pdf' uid=entry.uid %}" target="_blank">
                     <button type="button">Штампа</button>
                 </a>                
             </li>
