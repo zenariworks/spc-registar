@@ -7,7 +7,7 @@ from registar.models.osoba import Osoba
 from registar.forms import SearchForm
 
 
-class OsobeListView(ListView):
+class OsobeList(ListView):
     template_name = 'registar/osobe.html'
     context_object_name = 'osobe_entries'
     model = Osoba  # or queryset = Krstenje.objects.all()

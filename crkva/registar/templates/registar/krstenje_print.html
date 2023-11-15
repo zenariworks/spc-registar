@@ -5,7 +5,7 @@
 <style type="text/css">
     @font-face {
         font-family: Roboto;
-        src: url(/vol/web/Roboto-Medium.ttf);
+        src: "{% static 'registar/Roboto-Medium.ttf' %}"
     }
     body {
         font-family: Roboto, Arial, 'sans-serif';
@@ -16,8 +16,8 @@
 
 {% block content %}
     <meta charset="UTF-8">
-    <h1>{{ object.sv_ime }}</h1>
-    <p>Шифра: {{ object.sv_sifra }}</p>
-    <p>Звање: {{ object.sv_zvanje }}</p>
+    <h1>{{ object.dete }}</h1>
+    <p>Шифра: {{ object.datum_krstenja }}</p>
+    <p>Звање: {{ object.mesto_krstenja }}</p>
     <!-- ...other fields... -->
 {% endblock %}

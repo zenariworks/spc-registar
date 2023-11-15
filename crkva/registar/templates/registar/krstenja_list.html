@@ -12,8 +12,7 @@
         {% for entry in krstenja_entries %}
             <li>
                 {{ entry.datum }}: {{ entry.dete }}
-                <!-- Assume `entry.id` is the unique identifier of the entry -->
-                <a href="{% url 'krstenje_pdf' uid=entry.uid %}">
+                <a href="{% url 'krstenje_pdf' uid=entry.uid %}" target="_blank">
                     <button type="button">Print</button>
                 </a>                
             </li>

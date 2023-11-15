@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Подаци о свештенику {{ svestenik.ime }}</title>
+</head>
+<body>
+    <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank">
+        <button type="button">Штампа</button>
+    </a>
+
+    <h1>{{ svestenik.ime }}</h1>
+    <p>Звање: {{ svestenik.zvanje }}</p>
+    <p>Парохија: {{ svestenik.parohija }}</p>
+</body>
+</html>

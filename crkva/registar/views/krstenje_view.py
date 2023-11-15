@@ -7,7 +7,7 @@ from registar.models.krstenje import Krstenje
 from registar.forms import SearchForm
 
 
-class KrstenjaListView(ListView):
+class KrstenjaList(ListView):
     template_name = 'registar/krstenja_list.html'
     context_object_name = 'krstenja_entries'
     model = Krstenje  # or queryset = Krstenje.objects.all()
@@ -25,26 +25,14 @@ class KrstenjaListView(ListView):
         return context
 
 
-# def krstenja(request):
-#     # krstenja_entries = Krstenje.objects.all()
-#     # return render(request, 'registar/krstenja_list.html', {'krstenja_entries': krstenja_entries})
-#     form = SearchForm(request.GET)
-#     if form.is_valid():
-#         query = form.cleaned_data['query']
-#         krstenja_entries = Krstenje.objects.filter(dete__name__icontains=query)
-#     else:
-#         krstenja_entries = Krstenje.objects.all()
-#     return render(request, 'registar/krstenja_list.html', {'krstenja_entries': krstenja_entries, 'form': form})
-
-
 class KrstenjePDF(PDFTemplateResponseMixin, DetailView):
     model = Krstenje
-    template_name = "registar/print_krstenje.html"
+    template_name = "registar/krstenje_print.html"
 
 
 class KrstenjeView(DetailView):
     model = Krstenje
-    template_name = "registar/view_krstenje.html"
+    template_name = "registar/krstenje_view.html"
     context_object_name = "krstenje"
     pk_url = "uid"
 
