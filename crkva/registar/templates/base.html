@@ -9,44 +9,20 @@
 
     <link rel="stylesheet" href="{% static 'registar/styles.css' %}">
     <link rel="icon" href="{% static 'registar/favicon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css">
 
     <title>Црквени регистар</title>
 </head>
-<body>
-  <header>
-    <div id="logo-holder">
-        <a href="{% url 'pocetna' %}">
-            <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" alt="Logo">
-        </a>
+    <body>
+
+    {% include 'header.html' %}
+
+    <!-- Main content will go here -->
+    <div class="content image-section">
+        {% block content %}{% endblock %}
     </div>
 
-    <nav id="menu">
-        <ul>
-            <li><a href="{% url 'pocetna' %}">ПОЧЕТНА</a></li>
-            <li><a href="{% url 'krstenja' %}">Крштења</a></li>
-            <li><a href="{% url 'pocetna' %}">Венчања</a></li>
-            <li><a href="{% url 'svestenici' %}">Свештеници</a></li>
-            <li><a href="{% url 'osobe' %}">Особе</a></li>
-            <li><a href="{% url 'pocetna' %}">Унос података</a></li>
-        </ul>
-    </nav>
-  </header>
-    
-<!-- Main content will go here -->
-<div class="content image-section">
-    {% block content %}{% endblock %}
-</div>
+    {% include 'footer.html' %}
 
-<!-- Footer -->
-<footer>
-    <div class="icon-container">
-        <i class="fas fa-info-circle"></i>
-    </div>
-    <div class="content-container">
-        <img src="https://spc.rs/wp-content/uploads/2022/04/SPC-grb_linijski-4.png" alt="logo">
-        <p>Your Footer Content Here</p>
-    </div>
-</footer>
-
-</body>
+    </body>
 </html>

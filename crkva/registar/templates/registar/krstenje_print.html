@@ -16,8 +16,8 @@
 
 {% block content %}
     <meta charset="UTF-8">
-    <h1>{{ object.dete }}</h1>
-    <p>Шифра: {{ object.datum_krstenja }}</p>
+    <h1>{{ object.uid }}</h1>
+    <p>Шифра: {{ object.datum_krstenja|date:"d M Y H:i" }}</p>
     <p>Звање: {{ object.mesto_krstenja }}</p>
     <!-- ...other fields... -->
 {% endblock %}

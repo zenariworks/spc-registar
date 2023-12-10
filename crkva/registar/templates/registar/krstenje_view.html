@@ -1,17 +1,80 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Подаци о крштењу</title>
-</head>
-<body>
-    <!-- Add this part into krstenica.html where you want the button to appear -->
-<a href="{% url 'krstenje_pdf' krstenje.uid %}" target="_blank">
-    <button type="button">Print</button>
-</a>
-    <h1>{{ krstenje.k_detime }}</h1>
-    <p>Hram: {{ krstenje.k_krshram }}</p>
-    <p>Mesto: {{ krstenje.k_krsmest }}</p>
-    <p>Roditelj: {{ krstenje.k_rodime }}</p>
-    <p>God Rodjenja: {{ krstenje.k_rodjgod }}</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style='position: relative;'>
+    <div class="row" style='display: flex; margin-bottom: 10px; align-items: center;'>
+        <h1 style="margin-right: auto;">Крштеница</h1>
+        <a href="{% url 'krstenje_pdf' krstenje.uid %}" target="_blank" style="text-decoration: none;">
+            <button type="button" style="font-size: 20px; line-height: 27px; background: #c72e2d; padding: 10px 20px; color: #fff; box-shadow: 0px 8px 14px -5px rgba(0, 0, 0, 0.25); font-weight: 600; transition: all ease 0.3s;">Штампа</button>
+        </a>
+    </div>
+</div>
+
+
+    <div style='position: relative;'>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>Књига</div>
+            <div class="placeholder" style='flex: 1; '>__.</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>1. Година, месец, дан и време рођења</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.dete.datum_rodjenja }} {{ krstenje.dete.vreme_rodjenja }}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>2. Место и општина рођења</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.dete.mesto_rodjenja }}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>3. Година, месец, дан и време крштења и миропомазања</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.datum_krstenja }}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>4. Место и храм крштења и миропомазања</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.krshram }}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>5. Име и пол детета</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.dete.ime }} {{ krstenje.dete.prezime }} ({{ krstenje.dete.pol }})</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>6. Име, презиме, занимање, место становања, вероисповест и народност родитеља</div>
+            <div class="placeholder" style='flex: 1; '>
+                1. {{krstenje.otac.ime }} {{krstenje.otac.prezime }}, {{krstenje.otac.zanimanje|lower }}, {{ krstenje.otac.veroispovest|lower }} {{ krstenje.otac.narodnost }}</br>
+                2. {{krstenje.majka.ime }} {{krstenje.majka.prezime }}, {{krstenje.majka.zanimanje|lower }}, {{ krstenje.majka.veroispovest|lower }} {{ krstenje.majka.narodnost }}
+            </div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>7. Које је дете по рођењу матери (прво, друго...)</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.detkoje }}. дете</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>8. Је ли дете црквено брачно</div>
+            <div class="placeholder" style='flex: 1; '>{% if krstenje.detbrac %}да{% else %}не{% endif %}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>9. Је ли дете близанац</div>
+            <div class="placeholder" style='flex: 1; '>{% if krstenje.blizanac %}да{% else %}не{% endif %}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>10. Је ли дете рођено са каквим телесним недостатком</div>
+            <div class="placeholder" style='flex: 1; '>{% if krstenje.detmana %}да{% else %}не{% endif %}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>11. Име и презиме свештеника који је дете крстио и миропомазао</div>
+            <div class="placeholder" style='flex: 1; '>{{ krsenje.svestenik.ime }}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>12. Име и презиме, занимање и место становања кума</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.kum.ime }} {{ krstenje.kum.prezime }}, {{krstenje.kum.zanimanje|lower }}, {{ krstenje.kum.veroispovest|lower }} {{ krstenje.kum.narodnost }}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>13. Страна домовника</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.regstr }}</div>
+        </div>
+        <div class="row" style='display: flex; border: 1px solid red; margin-bottom: 10px;'>
+            <div class="text" style='flex: 1;'>14. ПРИМЕДБА</div>
+            <div class="placeholder" style='flex: 1; '>{{ krstenje.primedba|default_if_none:"" }}</div>
+        </div>
+    </div>
+{% endblock %}
