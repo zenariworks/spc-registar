@@ -1,0 +1,18 @@
+<!-- header.html -->
+<header>
+    <div id="logo-holder">
+        <a href="{% url 'pocetna' %}">
+            <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" alt="Logo">
+        </a>
+    </div>
+
+    <nav id="menu">
+        <ul>
+            <li><a href="{% url 'krstenja' %}">Крштења</a></li>
+            <li><a href="{% url 'pocetna' %}">Венчања</a></li>
+            <li><a href="{% url 'svestenici' %}">Свештеници</a></li>
+            <li><a href="{% url 'osobe' %}">Особе</a></li>
+            <li><a href="{% url 'pocetna' %}">Унос података</a></li>
+        </ul>
+    </nav>
+</header>

@@ -10,18 +10,25 @@
     </form>
     <ul>
         {% for entry in osobe_entries %}
-            <li>
-                {{ entry.datum_rodjenja }}: {{ entry.ime }} {{ entry.prezime }}
-                <!-- Assume `entry.id` is the unique identifier of the entry -->
-                <a href="{% url 'osoba_detail' uid=entry.uid %}">
-                    <button type="button">Приказ</button>
-                </a>  &nbsp;
-                <a href="{% url 'osoba_pdf' uid=entry.uid %}" target="_blank">
-                    <button type="button">Штампа</button>
-                </a>                
-            </li>
-        {% empty %}
-            <li>Нема уноса особа у бази.</li>
-        {% endfor %}
+        <li style="list-style-type: none; margin-bottom: 10px;">
+            {{ entry.datum_rodjenja }}: {{ entry.ime }} {{ entry.prezime }}
+
+            <a href="{% url 'osoba_detail' uid=entry.uid %}" style="text-decoration: none;">
+                <button type="button" style="background-color: #007bff; border: none; padding: 10px 15px; border-radius: 5px; transition: all 0.3s ease; cursor: pointer;">
+                    <i class="ti-eye" aria-hidden="true" style="color: white; font-size: 24px;"></i>
+                </button>
+            </a>
+            
+            <a href="{% url 'osoba_pdf' uid=entry.uid %}" target="_blank" style="text-decoration: none;">
+                <button type="button" style="background-color: #28a745; border: none; padding: 10px 15px; border-radius: 5px; transition: all 0.3s ease; cursor: pointer;">
+                    <i class="ti-printer" aria-hidden="true" style="color: white; font-size: 24px;"></i>
+                </button>
+            </a>                        
+            
+        </li>
+    {% empty %}
+        <li>Нема уноса особа у бази.</li>
+    {% endfor %}
+    
     </ul>
 {% endblock %}
