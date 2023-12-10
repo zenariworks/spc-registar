@@ -8,22 +8,22 @@ from registar.forms import SearchForm
 
 
 class OsobeList(ListView):
-    template_name = 'registar/osobe.html'
-    context_object_name = 'osobe_entries'
+    template_name = "registar/osobe.html"
+    context_object_name = "osobe_entries"
     model = Osoba  # or queryset = Krstenje.objects.all()
 
     def get_queryset(self):
         form = SearchForm(self.request.GET)
         if form.is_valid():
-            query = form.cleaned_data['query']
+            query = form.cleaned_data["query"]
             return Osoba.objects.filter(dete__ime__icontains=query)
         return Osoba.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = SearchForm(self.request.GET)
+        context["form"] = SearchForm(self.request.GET)
         return context
-    
+
 
 class OsobaPDF(PDFTemplateResponseMixin, DetailView):
     model = Osoba

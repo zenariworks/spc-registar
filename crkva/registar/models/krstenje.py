@@ -31,7 +31,7 @@ class Krstenje(models.Model):
     detmana = models.BooleanField()
     detimeg = models.CharField()
     detkoje = models.IntegerField()
-    detbrac = models.IntegerField()
+    detbrac = models.BooleanField()
     blizanac = models.ForeignKey(
         Osoba, on_delete=models.CASCADE, related_name="близанац"
     )
@@ -49,6 +49,8 @@ class Krstenje(models.Model):
     regkada = models.TextField()
     regbroj = models.TextField()
     regstr = models.TextField()
+
+    primedba = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.uid}"

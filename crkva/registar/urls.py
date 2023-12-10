@@ -10,7 +10,7 @@ urlpatterns = [
     path("osoba/<uuid:uid>/", views.OsobaView.as_view(), name="osoba_detail"),
     path("osoba/print/<uuid:uid>/", views.OsobaPDF.as_view(), name="osoba_pdf"),
 
-    path('krstenja/', views.KrstenjaList.as_view(), name='krstenja'),
+    path("krstenja/", views.KrstenjaList.as_view(), name="krstenja"),
     path("krstenje/<uuid:uid>/", views.KrstenjeView.as_view(), name="krstenje_detail"),
     path("krstenje/print/<uuid:uid>/", views.KrstenjePDF.as_view(), name="krstenje_pdf"),
 
