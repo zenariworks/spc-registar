@@ -8,20 +8,20 @@ from registar.forms import SearchForm
 
 
 class KrstenjaList(ListView):
-    template_name = 'registar/krstenja_list.html'
-    context_object_name = 'krstenja_entries'
-    model = Krstenje  # or queryset = Krstenje.objects.all()
+    model = Krstenje
+    template_name = "registar/krstenja_list.html"
+    context_object_name = "krstenja"
 
     def get_queryset(self):
         form = SearchForm(self.request.GET)
         if form.is_valid():
-            query = form.cleaned_data['query']
+            query = form.cleaned_data["query"]
             return Krstenje.objects.filter(dete__name__icontains=query)
         return Krstenje.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = SearchForm(self.request.GET)
+        context["form"] = SearchForm(self.request.GET)
         return context
 
 
@@ -30,7 +30,7 @@ class KrstenjePDF(PDFTemplateResponseMixin, DetailView):
     template_name = "registar/krstenje_print.html"
 
     def get_object(self, queryset=None):
-        uid = self.kwargs.get('uid')
+        uid = self.kwargs.get("uid")
         return get_object_or_404(Krstenje, uid=uid)
 
 

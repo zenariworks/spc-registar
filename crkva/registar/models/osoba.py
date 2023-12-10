@@ -15,13 +15,14 @@ class Osoba(models.Model):
 
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")
-    datum_rodjenja = models.DateTimeField(verbose_name="датум рођења")
     mesto_rodjenja = models.CharField(verbose_name="место рођења")
+    datum_rodjenja = models.DateField(verbose_name="датум рођења")
+    vreme_rodjenja = models.TimeField(verbose_name="време рођења", blank=True)
+    pol = models.CharField(
+        verbose_name="пол", choices=[("М", "мушки"), ("Ж", "женски")]
+    )
 
     devojacko_prezime = models.CharField(verbose_name="девојачко презиме", blank=True)
-    pol = models.CharField(
-        verbose_name="пол", blank=True, choices=[("М", "мушки"), ("Ж", "женски")]
-    )
     zanimanje = models.ForeignKey(
         Zanimanje, verbose_name="занимање", on_delete=models.CASCADE, blank=True
     )

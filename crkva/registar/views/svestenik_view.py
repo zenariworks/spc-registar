@@ -8,20 +8,20 @@ from registar.forms import SearchForm
 
 
 class SvesteniciList(ListView):
-    template_name = 'registar/svestenici.html'
-    context_object_name = 'svestenici_entries'
+    template_name = "registar/svestenici.html"
+    context_object_name = "svestenici_entries"
     model = Svestenik  # or queryset = Krstenje.objects.all()
 
     def get_queryset(self):
         form = SearchForm(self.request.GET)
         if form.is_valid():
-            query = form.cleaned_data['query']
+            query = form.cleaned_data["query"]
             return Svestenik.objects.filter(dete__ime__icontains=query)
         return Svestenik.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = SearchForm(self.request.GET)
+        context["form"] = SearchForm(self.request.GET)
         return context
 
 
@@ -33,6 +33,7 @@ class SvestenikPDF(PDFTemplateResponseMixin, DetailView):
     def get_object(self):
         uid = self.kwargs.get(self.pk_url_kwarg)
         return get_object_or_404(Svestenik, uid=uid)
+
 
 class SvestenikView(DetailView):
     model = Svestenik
