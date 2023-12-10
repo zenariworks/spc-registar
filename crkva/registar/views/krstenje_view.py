@@ -29,6 +29,10 @@ class KrstenjePDF(PDFTemplateResponseMixin, DetailView):
     model = Krstenje
     template_name = "registar/krstenje_print.html"
 
+    def get_object(self, queryset=None):
+        uid = self.kwargs.get('uid')
+        return get_object_or_404(Krstenje, uid=uid)
+
 
 class KrstenjeView(DetailView):
     model = Krstenje
