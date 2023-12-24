@@ -3,5 +3,10 @@ from import_export.admin import ImportExportMixin
 
 
 class SvestenikAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ("uid", "parohija", "zvanje")
-    ordering = ("uid",)
+    list_display = ("get_full_name", "zvanje", "parohija")
+    ordering = ("osoba__ime", "osoba__prezime")
+
+    def get_full_name(self, obj):
+        return f"{obj.osoba.ime} {obj.osoba.prezime}"
+    get_full_name.short_description = 'Име и Презиме'
+    get_full_name.admin_order_field = 'osoba__ime'
