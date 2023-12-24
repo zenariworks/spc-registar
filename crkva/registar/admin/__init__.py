@@ -13,6 +13,7 @@ from registar.models.zanimanje import Zanimanje
 from .domacinstvo_admin import DomacinstvoAdmin
 from .svestenik_admin import SvestenikAdmin
 from .krstenje_admin import KrstenjeAdmin
+from .osoba_admin import OsobaAdmin
 from .slava_admin import SlavaAdmin
 from .vencanje_admin import VencanjeAdmin
 from .ukucanin_admin import UkucaninAdmin
@@ -23,7 +24,7 @@ from .zanimanje_admin import ZanimanjeAdmin
 # Register your models here.
 admin.site.register(Domacinstvo, DomacinstvoAdmin)
 admin.site.register(Krstenje, KrstenjeAdmin)
-admin.site.register(Osoba)
+admin.site.register(Osoba, OsobaAdmin)
 admin.site.register(Slava, SlavaAdmin)
 admin.site.register(Svestenik, SvestenikAdmin)
 admin.site.register(Ukucanin, UkucaninAdmin)
