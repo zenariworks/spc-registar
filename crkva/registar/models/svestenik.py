@@ -11,10 +11,9 @@ from .osoba import Osoba
 class Svestenik(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    ime = models.CharField()
     zvanje = models.CharField(verbose_name="звање")
     parohija = models.CharField(verbose_name="парохија")
-    # osoba = models.ForeignKey(Osoba, verbose_name="особа", on_delete=models.CASCADE, related_name="свештеник")
+    osoba = models.ForeignKey(Osoba, verbose_name="особа", on_delete=models.CASCADE, related_name="свештеник")
 
     def __str__(self):
         return f"{self.uid}"
