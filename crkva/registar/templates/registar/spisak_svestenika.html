@@ -1,18 +1,16 @@
-<!-- templates/krstenja_list.html -->
-
 {% extends "base.html" %}
 
 {% block content %}
     <h1>Списак свештеника</h1>
     <ul>
-        {% for entry in svestenici_entries %}
+        {% for svestenik in svestenici %}
             <li>
-                {{ entry.ime }} {{ entry.zvanje }}
+                {{ svestenik.osoba.ime }} {{ svestenik.osoba.prezime }}, {{ svestenik.zvanje }}
                 <!-- Assume `entry.id` is the unique identifier of the entry -->
-                <a href="{% url 'svestenik_detail' uid=entry.uid %}">
+                <a href="{% url 'svestenik_detail' uid=svestenik.uid %}">
                     <button type="button">Приказ</button>
                 </a>  &nbsp;
-                <a href="{% url 'svestenik_pdf' uid=entry.uid %}" target="_blank">
+                <a href="{% url 'svestenik_pdf' uid=svestenik.uid %}" target="_blank">
                     <button type="button">Штампа</button>
                 </a>                
             </li>

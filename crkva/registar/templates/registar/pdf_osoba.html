@@ -35,8 +35,8 @@
     </style>
 </head>
 <body>
-    <div id="text1" class="absolute-text">{{ object.uid }} (50mm, 30mm)</div>
-    <div id="text2" class="absolute-text">This is a text block at (100mm, 100mm)</div>
+    <div id="text1" class="absolute-text">{{ object.ime }} {{ object.prezime }} (50mm, 30mm)</div>
+    <div id="text2" class="absolute-text">{{ object.datum_rodjenja|date:"d M Y" }} at (100mm, 100mm)</div>
     <div id="text3" class="absolute-text">{{ object.mesto_krstenja }} (150mm, from right 30mm)</div>
 </body>
 </html>
