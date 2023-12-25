@@ -1,7 +1,8 @@
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView, ListView
 
-from easy_pdf.views import PDFTemplateResponseMixin
+from weasyprint import HTML
 
 from registar.models.krstenje import Krstenje
 from registar.forms import SearchForm
@@ -25,13 +26,32 @@ class KrstenjaList(ListView):
         return context
 
 
-class KrstenjePDF(PDFTemplateResponseMixin, DetailView):
+class KrstenjePDF(DetailView):
     model = Krstenje
     template_name = "registar/krstenje_print.html"
 
     def get_object(self, queryset=None):
         uid = self.kwargs.get("uid")
         return get_object_or_404(Krstenje, uid=uid)
+
+    def render_to_response(self, context, **response_kwargs):
+        # Render the HTML template with context
+        html_string = render(self.request, self.template_name, context).content.decode()
+
+        # Convert the HTML to PDF using WeasyPrint
+        pdf = HTML(string=html_string, base_url=self.request.build_absolute_uri()).write_pdf()
+
+        # Create and return an HTTP response with the PDF
+        uid = self.kwargs.get("uid")
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f"inline; filename=krstenje-{uid}.pdf"
+        return response
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
 
 
 class KrstenjeView(DetailView):

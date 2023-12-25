@@ -6,7 +6,7 @@ djangorestframework==3.14.0
 django-admin-searchable-dropdown==1.2
 
 # PDF Generation
--e git+https://github.com/zenariworks/django-easy-pdf.git@feature/fix_imports#egg=django-easy-pdf
+WeasyPrint~=60.2
 
 # Database
 psycopg2-binary==2.9.5
