@@ -8,9 +8,9 @@ from registar.models.krstenje import Krstenje
 from registar.forms import SearchForm
 
 
-class KrstenjaList(ListView):
+class KrstenjeSpisak(ListView):
     model = Krstenje
-    template_name = "registar/krstenja_list.html"
+    template_name = "registar/spisak_krstenja.html"
     context_object_name = "krstenja"
 
     def get_queryset(self):
@@ -28,7 +28,7 @@ class KrstenjaList(ListView):
 
 class KrstenjePDF(DetailView):
     model = Krstenje
-    template_name = "registar/krstenje_print.html"
+    template_name = "registar/pdf_krstenje.html"
 
     def get_object(self, queryset=None):
         uid = self.kwargs.get("uid")
@@ -54,14 +54,13 @@ class KrstenjePDF(DetailView):
 
 
 
-class KrstenjeView(DetailView):
+class KrstenjePrikaz(DetailView):
     model = Krstenje
-    template_name = "registar/krstenje_view.html"
+    template_name = "registar/info_krstenje.html"
     context_object_name = "krstenje"
-    pk_url = "uid"
 
     font_name = "DejaVuSans"
 
     def get_object(self):
-        k_rbr = self.kwargs.get(self.pk_url)
+        k_rbr = self.kwargs.get("uid")
         return get_object_or_404(Krstenje, uid=k_rbr)
