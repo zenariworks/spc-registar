@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "registar",
     "import_export",
     "admin_searchable_dropdown",
-    "easy_pdf",
 ]
 
 MIDDLEWARE = [

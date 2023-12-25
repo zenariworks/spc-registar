@@ -1,23 +1,42 @@
-{% extends 'easy_pdf/base.html' %}
-{% load static %}
-
-{% block extra_style %}
-<style type="text/css">
-    @font-face {
-        font-family: Roboto;
-        src: "{% static 'registar/Roboto-Medium.ttf' %}"
-    }
-    body {
-        font-family: Roboto, Arial, 'sans-serif';
-        color: #333333;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-    <meta charset="UTF-8">
-    <h1>{{ object.uid }}</h1>
-    <p>Шифра: {{ object.datum_krstenja|date:"d M Y H:i" }}</p>
-    <p>Звање: {{ object.mesto_krstenja }}</p>
-    <!-- ...other fields... -->
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>A4 Test Page</title>
+    <style>
+        body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .absolute-text {
+            position: fixed;
+            font-size: 12pt;
+        }
+        #text1 {
+            top: 50mm;
+            left: 30mm;
+        }
+        #text2 {
+            top: 100mm;
+            left: 100mm;
+        }
+        #text3 {
+            top: 150mm;
+            right: 30mm;
+        }
+        @page {
+            size: A4;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="text1" class="absolute-text">{{ object.uid }} (50mm, 30mm)</div>
+    <div id="text2" class="absolute-text">This is a text block at (100mm, 100mm)</div>
+    <div id="text3" class="absolute-text">{{ object.mesto_krstenja }} (150mm, from right 30mm)</div>
+</body>
+</html>
