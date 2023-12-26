@@ -5,7 +5,11 @@ from datetime import date, time, timedelta, datetime
 
 from django.utils import timezone
 from django.core.management.base import BaseCommand
-from registar.models import Osoba, Zanimanje, Narodnost, Veroispovest, Svestenik, Krstenje
+from registar.models import (
+    Osoba, Zanimanje, Narodnost,
+    Veroispovest, Svestenik, Krstenje,
+    Adresa, Hram
+    )
 
 
 class Command(BaseCommand):
@@ -95,41 +99,51 @@ class Command(BaseCommand):
         svestenik.save()
         return svestenik
 
+    def create_random_adresa(self):
+        adresa = Adresa(
+            ulica="Улица " + str(random.randint(1, 100)),
+            mesto="Место " + str(random.randint(1, 100)),
+            opstina="Општина " + str(random.randint(1, 100)),
+            postanski_broj=str(random.randint(10000, 99999)),
+            drzava="Србија"
+        )
+        adresa.save()
+        return adresa
+
+    def create_random_hram(self):
+        adresa = self.create_random_adresa()
+        hram = Hram(
+            naziv="Храм " + random.choice(["Светог Саве", "Светог Николе", "Светог Марка", "Свете Петке"]),
+            adresa=adresa
+        )
+        hram.save()
+        return hram
+
     def create_random_krstenje(self, osoba):
         # Create random persons for different roles
         dete = self.get_or_create_random_osoba("М" if random.choice([True, False]) else "Ж")
         otac = self.get_or_create_random_osoba("М", min_age=20)
-        majka = self.get_or_create_random_osoba("М", min_age=20)
+        majka = self.get_or_create_random_osoba("Ж", min_age=20)
         kum = self.get_or_create_random_osoba("М" if random.choice([True, False]) else "Ж", min_age=20)
         svestenik = self.create_random_svestenik()
+        hram = Hram.objects.order_by('?').first()  # Get a random Hram instance
 
         krstenje = Krstenje(
-            datum_krstenja=self.random_datetime(),
-            mesto_krstenja="Random Mesto Krstenja",
-            krshram="Random Krshram",
-            aktgod=random.randint(2000, 2022),
-            datum=date.today(),
-            mesto="Random Mesto",
-            proknj="Random Proknj",
-            protbr=random.randint(1, 1000),
-            protst=random.randint(1, 100),
-            iz="Random Iz",
-            ulica="Random Ulica",
-            broj=random.randint(1, 100),
+            knjiga=random.randint(1, 100),  # Assuming this is a random number
+            strana=random.randint(1, 500),
+            tekuci_broj=random.randint(1, 1000),
+            datum=self.random_datetime().date(),
+            vreme=self.random_datetime().time(),
+            hram=hram,
             dete=dete,
-            detmana=random.choice([True, False]),
-            detimeg="Random Detimeg",
-            detkoje=random.randint(1, 10),
-            detbrac=random.choice([True, False]),
-            blizanac=dete,  # Assuming the same as 'dete' for simplicity
+            dete_majci=random.randint(1, 10),
+            dete_bracno=random.choice([True, False]),
+            mana=random.choice([True, False]),
+            blizanac=self.get_or_create_random_osoba("М" if random.choice([True, False]) else "Ж"),  # Assuming a random Osoba
             otac=otac,
             majka=majka,
             svestenik=svestenik,
             kum=kum,
-            regmesto="Random Regmesto",
-            regkada="Random Regkada",
-            regbroj="Random Regbroj",
-            regstr="Random Regstr",
             primedba="Random Primedba"
         )
         krstenje.save()
@@ -142,12 +156,16 @@ class Command(BaseCommand):
             osobe.append(self.create_random_osoba("М"))
             osobe.append(self.create_random_osoba("Ж"))
 
+        # Create a few Hram instances
+        for _ in range(5):
+            self.create_random_hram()
+
         # Create 2 Svestenik instances
         for _ in range(2):
             self.create_random_svestenik()
 
-        # Create at least 5 Krstenje instances
-        for osoba in osobe[:5]:  # Using the first 5 Osoba instances
+        # Create at least 5 Krstenje instances using the first 5 Osoba instances
+        for osoba in osobe[:5]:
             self.create_random_krstenje(osoba)
 
-        self.stdout.write(self.style.SUCCESS('Successfully populated the database with random Osoba instances'))
+        self.stdout.write(self.style.SUCCESS('Successfully populated the database with random instances'))

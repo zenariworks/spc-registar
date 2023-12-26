@@ -1,6 +1,10 @@
+import uuid
+
 from django.db import models
 
+
 class Adresa(models.Model):
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     ulica = models.CharField(max_length=100, verbose_name="улица")
     mesto = models.CharField(max_length=100, verbose_name="место")
