@@ -5,6 +5,9 @@
 # Docker
 .docker
 
+# Notebooks
+notebooks/*
+
 # Python
 crkva/__pycache__/
 crkva/*/__pycache__/
