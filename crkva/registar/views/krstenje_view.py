@@ -29,6 +29,7 @@ class KrstenjeSpisak(ListView):
 class KrstenjePDF(DetailView):
     model = Krstenje
     template_name = "registar/pdf_krstenje.html"
+    context_object_name = "krstenje"
 
     def get_object(self, queryset=None):
         uid = self.kwargs.get("uid")
