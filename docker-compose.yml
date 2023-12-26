@@ -11,6 +11,9 @@ services:
             python manage.py collectstatic --noinput &&
             # python manage.py unos_dana &&
             # python manage.py unos_meseci &&
+            # python manage.py unos_narodnosti &&
+            # python manage.py unos_veroispovesti &&
+            # python manage.py unos_zanimanja &&
             python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000
