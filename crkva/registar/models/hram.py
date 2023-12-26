@@ -1,10 +1,14 @@
+import uuid
+
 from django.db import models
 
 from .adresa import Adresa
 
 
 class Hram(models.Model):
-    name = models.CharField(max_length=200)
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+
+    naziv = models.CharField(max_length=200)
     adresa = models.ForeignKey(Adresa, on_delete=models.CASCADE)
 
     def __str__(self):

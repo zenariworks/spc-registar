@@ -1,5 +1,7 @@
+from .adresa import Adresa
 from .dan import Dan
 from .domacinstvo import Domacinstvo
+from .hram import Hram
 from .krstenje import Krstenje
 from .narodnost import Narodnost
 from .mesec import Mesec

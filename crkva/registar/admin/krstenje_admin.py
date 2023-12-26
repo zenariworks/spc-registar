@@ -5,18 +5,18 @@ from import_export.admin import ImportExportMixin
 
 class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
-        "get_dete_full_name", "datum", "get_hram_name", "get_svestenik_name"
+        "get_dete_full_name", "datum", "get_hram_naziv", "get_svestenik_name"
     )
     ordering = ("datum",)
-    search_fields = ["dete__ime", "dete__prezime", "hram__name", "svestenik__osoba__ime", "svestenik__osoba__prezime"]
+    search_fields = ["dete__ime", "dete__prezime", "hram__naziv", "svestenik__osoba__ime", "svestenik__osoba__prezime"]
 
     def get_dete_full_name(self, obj):
         return f"{obj.dete.ime} {obj.dete.prezime}"
     get_dete_full_name.short_description = 'Дете'
 
-    def get_hram_name(self, obj):
-        return obj.hram.name
-    get_hram_name.short_description = 'Храм'
+    def get_hram_naziv(self, obj):
+        return obj.hram.naziv
+    get_hram_naziv.short_description = 'Храм'
 
     def get_svestenik_name(self, obj):
         svestenik_osoba = obj.svestenik.osoba
