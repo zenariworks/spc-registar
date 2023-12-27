@@ -12,7 +12,7 @@ class Hram(models.Model):
     adresa = models.ForeignKey(Adresa, on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.name
+        return self.naziv
 
     class Meta:
         managed = True
