@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Крштеница {{ krstenje.uid }}</title>
+    <style>
+        body {
+            width: 210mm;
+            height: 297mm;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            box-sizing: border-box;
+            position: relative;
+            border: 2px solid red;
+            background-image: url('file:///vol/web/static/registar/krstenica-nova.jpg');
+            background-size: cover;
+        }    
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.5); /* Semi-transparent white overlay */
+            z-index: -1;
+        }
+        @page {
+            size: A4;
+            margin: 0;
+        }
+        .orange-frame {
+            border: 2px solid orange; /* Orange border */
+            margin: 2mm; /* Margin around the div */
+            margin-top: 6mm;
+            margin-left: 6mm;
+            width: 200mm;
+            height: 287mm;
+            padding: 0mm;
+        }
+        .green-frame {
+            border: 2px solid green; /* Orange border */
+            margin: 0mm; /* Margin around the div */
+            width: 200mm;
+            height: 40mm;
+            box-sizing: border-box; /* Include border in width and height */
+            display: flex; /* Flexbox layout */
+            justify-content: center; /* Horizontally center children */
+            align-items: center; /* Vertically center children */
+        }
+        /* Styles for screen and PDF viewing */
+        .print-only {
+            display: block; /* Ensure these elements are visible on screen and in PDF */
+        }
+
+        /* Styles for printing */
+        @media print {
+            body::before { display: none; }
+            .print-hide { display: none; }
+            .print-only { display: block; }
+        }
+    </style>
+</head>
+    <body>
+        <div class="orange-frame print-hide">
+            <div class="green-frame print-hide"></div>
+            <div class="green-frame print-hide" style="border: 2px solid blue; height: 32mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 10mm;">
+                <div class="print-hide" style="width: 50%">1. Година, месец, дан и време рођења</div>
+                <div class="print-only">to print: {{ krstenje.datum|date:"Y M d" }}{{ krstenje.vreme|time:"HH:mm"}}</div> 
+                <div class="print-hide">to print: {{ krstenje.datum|date:"Y M d" }}{{ krstenje.vreme|time:"HH:mm"}}</div> 
+                {% comment %} {{ krstenje.datum|date:"Y M d" }}{{ krstenje.vreme|time:"HH:mm"}} {% endcomment %}
+            </div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 10mm;">
+                <div style="width: 50%">2. Место и општина рођења</div>
+                <div class="print-visible">{{ krstenje.uid }}</div>
+            </div>
+            <div class="green-frame" style="border: 2px solid yellow; height: 10mm;">
+                <div style="width: 50%">3. Година, месец, дан и време крштења и миропомазања</div>
+                <div class="print-visible">{{ krstenje.uid }}</div>
+            </div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 10mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 12mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid purple; height: 26mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 11mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 10mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 10mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 10mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 13mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 13mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 11mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid yellow; height: 13mm;"></div>
+            <div class="green-frame print-hide" style="border: 2px solid purple; height: 45mm;"></div>
+            <!-- You can add more content here -->
+        </div>
+    </body>
+</html>
