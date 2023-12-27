@@ -1,42 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>WeasyPrint Example</title>
+    <title>WeasyPrint PDF View</title>
     <style>
-        /* Style for the element visible only in PDF */
-        .visible-pdf {
+        .visible-pdf, .visible-both {
             display: block;
         }
-
-        /* Style for the element visible only when printing */
         .visible-print {
             display: none;
-        }
-
-        /* Style for the element visible in both cases */
-        .visible-both {
-            display: block;
-        }
-
-        /* Media query for print */
-        @media print {
-            /* Hide the element visible only in PDF */
-            .visible-pdf {
-                display: none;
-            }
-
-            /* Show the element visible only when printing */
-            .visible-print {
-                display: block;
-            }
-
-            /* The element visible in both cases remains unaffected */
         }
     </style>
 </head>
 <body>
+    <div class="visible-both">Visible in both PDF and print</div>
     <div class="visible-pdf">Visible in PDF only</div>
     <div class="visible-print">Visible when printing only</div>
-    <div class="visible-both">Visible in both PDF and print</div>
 </body>
 </html>
