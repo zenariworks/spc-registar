@@ -41,6 +41,13 @@
         .row {
             display: flex;
         }
+        .visible-div {
+            display: block; /* or whatever display value you prefer */
+        }
+    
+        div:not(.visible-div) {
+            display: none;
+        }
     </style>
 </head>
     <body>
@@ -53,11 +60,11 @@
                 <!-- Assuming you have a field for birth date and time -->
                 <div style="width: 50%">{{ krstenje.dete.datum_rodjenja|date:"d F Y"|lower }}, {{ krstenje.dete.vreme_rodjenja|time:"H:i" }}</div>
             </div>
-            <div class="row" style="height: 9mm">
+            <div class="row visible-div" style="height: 9mm">
                 <div style="width: 1%"></div>
                 <div style="width: 49%">2. Место и општина рођења</div>
                 <!-- Assuming you have a field for place of birth -->
-                <div style="width: 50%">{{ krstenje.dete.mesto_rodjenja }}</div>
+                <div class="visible-div" style="width: 50%">{{ krstenje.dete.mesto_rodjenja }}</div>
             </div>
             <div class="row" style="height: 9mm">
                 <div style="width: 1%"></div>
