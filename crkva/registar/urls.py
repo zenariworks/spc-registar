@@ -1,8 +1,10 @@
+from django.conf.urls import handler404
 from django.urls import path
 
 from . import views
 
 
+handler404 = 'registar.views.custom_404'
 urlpatterns = [
     path("", views.index, name="pocetna"),
 
