@@ -3,7 +3,23 @@
 
 {% block content %}
 <div class="container">
-    <div class="header"><h1>Храм Свете Петке</h1></div>
+    <h1 style="horizontal-align: center">Храм Свете Петке</h1>
+
+    {% comment %} <form action="{% url 'search_view' %}" method="get">
+        <input type="text" name="query" placeholder="Претрага...">
+        <button type="submit">Search</button>
+    </form> {% endcomment %}
+    <div class="slava-reminders">
+        {% for slava in upcoming_slavas %}
+            <div class="slava-reminder">
+                <!-- Display details of the slava -->
+                {{ slava }}
+            </div>
+        {% empty %}
+            <p>No upcoming Slavas.</p>
+        {% endfor %}
+    </div>
+    
     
     <div class="image-section" style="opacity: 0.2;">
         <img src="{% static 'registar/crkva.png' %}" alt="Church Image">

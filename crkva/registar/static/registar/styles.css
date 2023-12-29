@@ -63,6 +63,20 @@ img {
     box-sizing: border-box;
 }
 
+.slava-reminders {
+    float: right;
+    width: 30%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-right: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.slava-reminder {
+    margin-bottom: 10px;
+}
+
 #menu ul {
     list-style-type: none;
     margin: 0;

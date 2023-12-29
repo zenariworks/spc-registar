@@ -19,4 +19,8 @@ urlpatterns = [
     path("svestenici/", views.SvesteniciSpisak.as_view(), name="svestenici"),
     path("svestenik/<uuid:uid>/", views.SvestenikPrikaz.as_view(), name="svestenik_detail"),
     path("svestenik/print/<uuid:uid>/", views.SvestenikPDF.as_view(), name="svestenik_pdf"),
+
+    path('veroisposvest/dodaj/', views.dodaj_izmeni_veroispovest, name='dodaj-veroisposvest'),
+    path('veroisposvest/izmeni/<uuid:uid>/', views.dodaj_izmeni_veroispovest, name='izmeni-veroisposvest'),
+
 ]
