@@ -12,7 +12,7 @@ class Command(BaseCommand):
             ('unos_narodnosti', {}),
             ('unos_veroispovesti', {}),
             ('unos_zanimanja', {}),
-            # Додајте још команди овде ако је потребно
+            ('unos_slava', {}),
         ]
 
         for command_name, command_kwargs in commands:
