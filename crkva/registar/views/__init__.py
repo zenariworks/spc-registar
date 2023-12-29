@@ -25,11 +25,14 @@ def dodaj_izmeni_veroispovest(request, uid=None):
             form.save()
             return redirect('nekigde')  # Редирект на другу страницу након успешног уноса
 
-    return render(request, 'registar/form_veroispovest.html', {'form': form})
+    return render(request=request, template_name='registar/form_veroispovest.html', context={'form': form})
 
 # In your views.py
-def search_view(request):
+def search_view(request) -> HttpResponse:
     query = request.GET.get('query', '')
-    # Implement your search logic here
-    # ...
-    return render(request, 'registar/search_results.html', context)
+    if query:
+        results = Veroispovest.objects.filter(naziv__icontains=query)
+    else:
+        results = Veroispovest.objects.none()
+
+    return render(request=request, template_name='registar/search_view.html', context={'results': results})

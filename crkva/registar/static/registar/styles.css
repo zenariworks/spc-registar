@@ -80,6 +80,16 @@ img {
     box-sizing: border-box;
 }
 
+.search-container {
+    text-align: center;
+    width: 50%;
+    margin: 0 auto;
+}
+
+.search-container form {
+    display: inline-block;
+}
+
 .slava-reminders {
     float: right;
     width: 30%;

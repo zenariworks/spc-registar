@@ -22,5 +22,5 @@ urlpatterns = [
 
     path('veroisposvest/dodaj/', views.dodaj_izmeni_veroispovest, name='dodaj-veroisposvest'),
     path('veroisposvest/izmeni/<uuid:uid>/', views.dodaj_izmeni_veroispovest, name='izmeni-veroisposvest'),
-
+    path('search/', views.search_view, name='search_view'),
 ]
