@@ -16,7 +16,7 @@ class Svestenik(models.Model):
     osoba = models.ForeignKey(Osoba, verbose_name="особа", on_delete=models.CASCADE, related_name="свештеник")
 
     def __str__(self):
-        return f"{self.uid}"
+        return f"{self.zvanje}, {self.osoba.ime} {self.osoba.prezime}"
 
     class Meta:
         managed = True

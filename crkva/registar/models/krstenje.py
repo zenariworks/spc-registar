@@ -16,7 +16,7 @@ class Krstenje(models.Model):
     knjiga = models.IntegerField(verbose_name="протоколарна књига")
     strana = models.IntegerField(verbose_name="протоколарна страна")
     tekuci_broj = models.IntegerField(verbose_name="текући број")
-    anagraf = models.IntegerField(verbose_name="анаграф")
+    anagraf = models.IntegerField(verbose_name="анаграф", null=True, blank=True)
 
     datum = models.DateField(verbose_name="датум крштења")
     vreme = models.TimeField(verbose_name="време крштења")
