@@ -1,9 +1,8 @@
 from django.core.management.base import BaseCommand
 from registar.models import Mesec
 
-
 class Command(BaseCommand):
-    help = "Populates the Mesec table with months and their names in Serbian Cyrillic"
+    help = "Попуњава табелу Месец са месецима и њиховим називима на српском ћирилицом"
 
     def handle(self, *args, **kwargs):
         meseci = {
@@ -26,6 +25,6 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                "Successfully populated Mesec table with Serbian Cyrillic month names"
+                "Успешно попуњена табела Месец са називима месеци на српском ћирилицом"
             )
         )

@@ -6,15 +6,9 @@ services:
     image: zenfiric/app:latest
     command: >
       sh -c "python manage.py wait_for_db &&
-            # python manage.py makemigrations &&
+            python manage.py makemigrations &&
             python manage.py migrate --database=${DATABASE:-default} &&
             python manage.py collectstatic --noinput &&
-            # python manage.py unos_dana &&
-            # python manage.py unos_meseci &&
-            # python manage.py unos_narodnosti &&
-            # python manage.py unos_veroispovesti &&
-            # python manage.py unos_zanimanja &&
-            # python manage.py unos_slava &&
             python manage.py runserver 0.0.0.0:8000"
     ports:
       - 8000:8000

@@ -1,28 +1,36 @@
 from django.core.management.base import BaseCommand
-
-from registar.models import Dan
-from registar.models import Mesec
-from registar.models import Slava
+from django.db.utils import IntegrityError
+from registar.models import Dan, Mesec, Slava
 
 
-# Populate the Django model
 class Command(BaseCommand):
-    help = "Populates the Slavas table with slavas for the whole year"
+    help = "Попуњава табелу Слава са славама за целу годину"
 
     def handle(self, *args, **kwargs):
         parsed_data = self._parse_data()
-        for name, opsti_naziv, day, month in parsed_data:
-            # Retrieving or creatikrsng the respective Dan and Mesec instances
-            dan_instance, _ = Dan.objects.get_or_create(dan=day)
-            mesec_instance, _ = Mesec.objects.get_or_create(mesec=month)
+        created_count = 0
 
-            # Creating and saving the Slava object
-            Slava.objects.create(
-                naziv=name,
-                opsti_naziv=opsti_naziv if opsti_naziv else "",
-                dan=dan_instance,
-                mesec=mesec_instance,
-            )
+        for name, opsti_naziv, day, month in parsed_data:
+            try:
+                dan_instance, _ = Dan.objects.get_or_create(dan=day)
+                mesec_instance, _ = Mesec.objects.get_or_create(mesec=month)
+                
+                _, created = Slava.objects.get_or_create(
+                    naziv=name,
+                    opsti_naziv=opsti_naziv if opsti_naziv else "",
+                    dan=dan_instance,
+                    mesec=mesec_instance,
+                )
+
+                if created:
+                    created_count += 1
+
+            except IntegrityError as e:
+                self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
+
+        self.stdout.write(
+            self.style.SUCCESS(f"Успешно попуњена табела Слава са {created_count} нових уноса.")
+        )
 
     def _parse_data(self):
         with open("slave.sql", "r", encoding="utf-8") as file:
