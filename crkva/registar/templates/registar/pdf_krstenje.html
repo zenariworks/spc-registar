@@ -28,7 +28,6 @@
             background-image: url('file:///vol/web/static/registar/krstenica-nova.jpg');
         }
         div {
-            border: 2px solid orange;
         }
         .frame {
             margin: 2mm;
@@ -39,20 +38,30 @@
             padding: 0mm;
         }
         .row {
+            border: 2px solid orange;
             display: flex;
         }
-        .visible-div {
+        {% comment %} .visible-div {
             display: block; /* or whatever display value you prefer */
         }
     
         div:not(.visible-div) {
             display: none;
-        }
+        } {% endcomment %}
     </style>
 </head>
     <body>
         <div class="frame">
-            <div class="row" style="height: 39mm"></div>
+            <div class="row" style="height: 39mm">
+                <div style="width: 20%;">
+                    <div class="row" style="height: 10mm"></div>
+                    <div class="row" style="height: 8mm"></div>
+                    <div class="row" style="height: 8mm"></div>
+                    <div class="row" style="height: 8mm"></div>
+                </div>
+                <div style="width: 60%;">sfa</div>
+                <div style="width: 20%;">dsf</div>
+            </div>
             <div class="row" style="height: 31mm"></div>
             <div class="row" style="height: 9mm;">
                 <div style="width: 1%"></div>

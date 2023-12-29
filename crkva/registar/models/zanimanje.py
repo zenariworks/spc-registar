@@ -14,7 +14,7 @@ class Zanimanje(models.Model):
     zenski_naziv = models.CharField(verbose_name="женски назив", null=True)
 
     def __str__(self):
-        return f"{self.sifra}: {self.naziv}"
+        return f"{self.naziv}"
 
     class Meta:
         managed = True
