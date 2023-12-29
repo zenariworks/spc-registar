@@ -36,13 +36,18 @@
    docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
    ```
 
-- Учитавање тест података:
+- Унос основних података у базу:
 
    ```bash
-   docker compose run --rm app sh -c "python manage.py loaddata registar"
+   docker compose run --rm app sh -c "python manage.py unosi"
    ```
+- Унос случајних (демо) података у базу:
 
-   Након овог корака, у базу је унет пример података о свештенику.
+    ```bash
+    docker compose run --rm app sh -c "python manage.py unos_random"
+    ```
+
+   Након овог корака, у базу је унет пример података.
    Након покретања, могућ је и приказ ових података на [localhost:8000/](localhost:8000/).
 
 ### 3. Креирање суперкорисника и покретање апликације
