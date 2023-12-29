@@ -5,10 +5,13 @@
 <div class="container">
     <h1 style="text-align: center;">Црквени регистар</h1>
 
-    {% comment %} <form action="{% url 'search_view' %}" method="get">
-        <input type="text" name="query" placeholder="Претрага...">
-        <button type="submit">Search</button>
-    </form> {% endcomment %}
+    <div class="search-container">
+        <form action="{% url 'search_view' %}" method="get">
+            <input type="text" name="query" placeholder="Претрага...">
+            <button type="submit">Претрага</button>
+        </form>
+    </div>
+
     <div class="slava-reminders">
         {% for slava in upcoming_slavas %}
             <div class="slava-reminder">
