@@ -90,20 +90,6 @@ img {
     display: inline-block;
 }
 
-.slava-reminders {
-    float: right;
-    width: 30%;
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-right: 20px;
-    background-color: #f9f9f9;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.slava-reminder {
-    margin-bottom: 10px;
-}
-
 #menu ul {
     list-style-type: none;
     margin: 0;
@@ -136,4 +122,45 @@ img {
     background-size: cover;
     background-repeat: no-repeat;
     opacity: 0.4;
+}
+
+.slava-reminders {
+    float: right;
+    width: 30%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-right: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slava-reminder {
+    margin-bottom: 10px;
+}
+
+.krstenica {
+    border: 1px solid #ccc;
+    margin: 2mm;
+    margin-top: 6mm;
+    margin-left: 6mm;
+    height: 297mm;
+    width: 210mm;
+    padding: 0mm;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 2px solid red;
+    background-size: cover;
+}
+
+.krstenica-frame {
+    margin: 2mm;
+    margin-top: 6mm;
+    margin-left: 6mm;
+    height: 286mm;
+    width: 200mm;
+    padding: 0mm;
+}
+
+.krstenica-row {
+    border: 2px solid orange;
+    display: flex;
 }
