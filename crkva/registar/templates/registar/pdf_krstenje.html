@@ -27,8 +27,6 @@
             background-size: cover;
             background-image: url('file:///vol/web/static/registar/krstenica-nova.jpg');
         }
-        div {
-        }
         .frame {
             margin: 2mm;
             margin-top: 6mm;
@@ -53,32 +51,40 @@
     <body>
         <div class="frame">
             <div class="row" style="height: 39mm">
-                <div style="width: 20%;">
+                <div style="width: 22%;">
                     <div class="row" style="height: 10mm"></div>
-                    <div class="row" style="height: 8mm"></div>
-                    <div class="row" style="height: 8mm"></div>
-                    <div class="row" style="height: 8mm"></div>
+                    <div class="row" style="height: 8mm">
+                        <div class="row" style="width: 30%">{{ krstenje.knjiga }}</div>
+                    </div>
+                    <div class="row" style="height: 8mm">
+                        <div class="row" style="width: 30%">{{ krstenje.strana }}</div>
+                    </div>
+                    <div class="row" style="height: 8mm">
+                        <div class="row" style="width: 30%">{{ krstenje.tekuci_broj }}</div>
+                    </div>
                 </div>
-                <div style="width: 60%;">sfa</div>
-                <div style="width: 20%;">dsf</div>
+                <div style="width: 50%;"></div>
+                <div style="width: 28%;"></div>
             </div>
-            <div class="row" style="height: 31mm"></div>
+            <div class="row" style="height: 31mm">
+                <div class="row" style="width: 100%; height: 10mm">sdgs</div>
+                <div class="row" style="width: 100%; height: 10mm">sdgs</div>
+            </div>
             <div class="row" style="height: 9mm;">
                 <div style="width: 1%"></div>
                 <div style="width: 49%; vertical-align: middle;">1. Година, месец, дан и време рођења</div>
                 <!-- Assuming you have a field for birth date and time -->
-                <div style="width: 50%">{{ krstenje.dete.datum_rodjenja|date:"d F Y"|lower }}, {{ krstenje.dete.vreme_rodjenja|time:"H:i" }}</div>
+                <div style="width: 50%">{{ krstenje.dete.datum_rodjenja }} {{ krstenje.dete.vreme_rodjenja }}</div>
             </div>
             <div class="row visible-div" style="height: 9mm">
                 <div style="width: 1%"></div>
                 <div style="width: 49%">2. Место и општина рођења</div>
-                <!-- Assuming you have a field for place of birth -->
                 <div class="visible-div" style="width: 50%">{{ krstenje.dete.mesto_rodjenja }}</div>
             </div>
             <div class="row" style="height: 9mm">
                 <div style="width: 1%"></div>
                 <div style="width: 49%">3. Година, месец, дан и време крштења и миропомазања</div>
-                <div style="width: 50%">{{ krstenje.datum|date:"d F Y"|lower }}, {{ krstenje.vreme|time:"H:i" }}</div>
+                <div style="width: 50%">{{ krstenje.datum }} {{ krstenje.vreme }}</div>
             </div>
             <div class="row" style="height: 9mm">
                 <div style="width: 1%"></div>
@@ -93,13 +99,16 @@
             <div class="row" style="height: 25mm">
                 <div style="width: 1%"></div>
                 <div style="width: 49%">6. Име, презиме, занимање, место становања, вероисповест и народност родитеља</div>
-                <!-- Assuming you have fields for these details in the Osoba model -->
-                <div style="width: 50%">{{ krstenje.otac }} и {{ krstenje.majka }}</div>
+                <div style="width: 50%">
+                    1. {{krstenje.otac.ime }} {{krstenje.otac.prezime }}, {{krstenje.otac.zanimanje|lower }}, {{ krstenje.otac.veroispovest|lower }} {{ krstenje.otac.narodnost }}
+                </br>
+                2. {{krstenje.majka.ime }} {{krstenje.majka.prezime }}, {{krstenje.majka.zanimanje|lower }}, {{ krstenje.majka.veroispovest|lower }} {{ krstenje.majka.narodnost }}
+                </div>
             </div>
             <div class="row" style="height: 9mm">
                 <div style="width: 1%"></div>
                 <div style="width: 49%">7. Које је дете по рођењу матери (прво, друго...)</div>
-                <div style="width: 50%">{{ krstenje.dete_majci }}</div>
+                <div style="width: 50%">{{ krstenje.dete_majci }}. дете</div>
             </div>
             <div class="row" style="height: 9mm">
                 <div style="width: 1%"></div>
@@ -129,12 +138,12 @@
             <div class="row" style="height: 9mm">
                 <div style="width: 1%"></div>
                 <div style="width: 49%">13. Страна домовника - анаграфа</div>
-                <div style="width: 50%">{{ krstenje.strana }}</div>
+                <div style="width: 50%">{{ krstenje.anagraf|default_if_none:"" }}</div>
             </div>
             <div class="row" style="height: 13mm">
                 <div style="width: 1%"></div>
                 <div style="width: 49%; vertical-align: middle;">14. ПРИМЕДБА</div>
-                <div style="width: 50%">{{ krstenje.primedba }}</div>
+                <div style="width: 50%">{{ krstenje.primedba|default_if_none:"" }}</div>
             </div>
             <div style="height: 44mm"></div>
         </div>
