@@ -16,8 +16,27 @@
                     <button type="button" style="font-size: 16px; line-height: 20px; background: #28a745; padding: 7px 15px; color: #fff; box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25); font-weight: 600; transition: all ease 0.3s;">Штампа</button>
                 </a>
             </li>
-        {% empty %}
+            {% empty %}
             <li>Нема уноса особа у бази.</li>
         {% endfor %}
     </ul>
+
+    <!-- Pagination Links -->
+    <div class="pagination" style="text-align: center; margin-top: 20px;">
+        <span class="step-links" style="display: inline-block;">
+            {% if page_obj.has_previous %}
+                <a href="?page=1" style="padding: 5px 10px; border: 1px solid #ddd; margin-right: 5px; text-decoration: none; color: #A21514;">&laquo; прва</a>
+                <a href="?page={{ page_obj.previous_page_number }}" style="padding: 5px 10px; border: 1px solid #ddd; margin-right: 5px; text-decoration: none; color: #A21514;">претходна</a>
+            {% endif %}
+
+            <span class="current" style="padding: 5px 10px; border: 1px solid #ddd; background-color: #A21514; color: white;">
+                страна {{ page_obj.number }} од {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" style="padding: 5px 10px; border: 1px solid #ddd; margin-left: 5px; text-decoration: none; color: #A21514;">следеђа</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" style="padding: 5px 10px; border: 1px solid #ddd; margin-left: 5px; text-decoration: none; color: #A21514;">последња &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 {% endblock %}

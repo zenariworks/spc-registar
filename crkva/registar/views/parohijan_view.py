@@ -11,7 +11,8 @@ from registar.forms import SearchForm
 class ParohijanList(ListView):
     template_name = "registar/spisak_parohijana.html"
     context_object_name = "parohijani_entries"
-    model = Parohijan  # or queryset = Krstenje.objects.all()
+    model = Parohijan
+    paginate_by = 10
 
     def get_queryset(self):
         form = SearchForm(self.request.GET)
