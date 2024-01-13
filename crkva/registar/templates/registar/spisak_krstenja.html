@@ -6,20 +6,18 @@
         {{ form.as_p }}
         <input type="submit" value="Претрага">
     </form>
-    <ul>
+    <ul style="padding: 0;">
         {% for krstenje in krstenja %}
-        <li style="list-style-type: none; margin-bottom: 10px;">
-            {{ krstenje.datum }}: {{ krstenje.dete }}
-            <a href="{% url 'krstenje_detail' uid=krstenje.uid %}" style="text-decoration: none;">
-                <button type="button" style="font-size: 16px; line-height: 20px; background: #007bff; padding: 7px 15px; color: #fff; box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25); font-weight: 600; margin-right: 5px; transition: all ease 0.3s;">Приказ</button>
-            </a>
-            <a href="{% url 'krstenje_pdf' uid=krstenje.uid %}" target="_blank" style="text-decoration: none;">
-                <button type="button" style="font-size: 16px; line-height: 20px; background: #28a745; padding: 7px 15px; color: #fff; box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25); font-weight: 600; transition: all ease 0.3s;">Штампа</button>
-            </a>
-        </li>
-    {% empty %}
-        <li>Нема уноса крштења у бази.</li>
-    {% endfor %}
-    
+            <li style="list-style-type: none; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <a href="{% url 'krstenje_detail' uid=krstenje.uid %}" style="text-decoration: none; color: black; display: flex; flex-grow: 1; align-items: center; padding: 10px; cursor: pointer;" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
+                    {{ krstenje.datum }}: {{ krstenje.dete }}
+                </a>
+                <a href="{% url 'krstenje_pdf' uid=krstenje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
+                    <button type="button" style="font-size: 16px; line-height: 20px; background: #28a745; padding: 7px 15px; color: #fff; box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25); font-weight: 600; transition: all ease 0.3s;">Штампа</button>
+                </a>
+            </li>
+        {% empty %}
+            <li>Нема уноса крштења у бази.</li>
+        {% endfor %}
     </ul>
 {% endblock %}
