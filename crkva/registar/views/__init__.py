@@ -4,7 +4,7 @@ from registar.forms import VeroispovestForm
 
 from .krstenje_view import *
 from .svestenik_view import *
-from .osoba_view import *
+from .parohijan_view import *
 from .view_404 import *
 
 from registar.models import Veroispovest

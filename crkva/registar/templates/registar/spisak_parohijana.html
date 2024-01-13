@@ -7,17 +7,17 @@
         <input type="submit" value="Search">
     </form>
     <ul>
-        {% for entry in osobe_entries %}
+        {% for entry in parohijani_entries %}
         <li style="list-style-type: none; margin-bottom: 10px;">
             {{ entry.datum_rodjenja }}: {{ entry.ime }} {{ entry.prezime }}
 
-            <a href="{% url 'osoba_detail' uid=entry.uid %}" style="text-decoration: none;">
+            <a href="{% url 'parohijan_detail' uid=entry.uid %}" style="text-decoration: none;">
                 <button type="button" style="background-color: #007bff; border: none; padding: 10px 15px; border-radius: 5px; transition: all 0.3s ease; cursor: pointer;">
                     <i class="ti-eye" aria-hidden="true" style="color: white; font-size: 24px;"></i>
                 </button>
             </a>
             
-            <a href="{% url 'osoba_pdf' uid=entry.uid %}" target="_blank" style="text-decoration: none;">
+            <a href="{% url 'parohijan_pdf' uid=entry.uid %}" target="_blank" style="text-decoration: none;">
                 <button type="button" style="background-color: #28a745; border: none; padding: 10px 15px; border-radius: 5px; transition: all 0.3s ease; cursor: pointer;">
                     <i class="ti-printer" aria-hidden="true" style="color: white; font-size: 24px;"></i>
                 </button>

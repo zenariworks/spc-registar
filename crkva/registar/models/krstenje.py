@@ -6,7 +6,7 @@ import uuid
 from django.db import models
 
 from .hram import Hram
-from .osoba import Osoba
+from .parohijan import Parohijan
 from .svestenik import Svestenik
 
 
@@ -20,20 +20,20 @@ class Krstenje(models.Model):
 
     datum = models.DateField(verbose_name="датум крштења")
     vreme = models.TimeField(verbose_name="време крштења")
-    hram = models.ForeignKey(Hram, on_delete=models.CASCADE, verbose_name="место крштења")
+    hram = models.ForeignKey(Hram, on_delete=models.SET_NULL, null=True, verbose_name="место крштења")
 
-    dete = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="дете", verbose_name="дете")
+    dete = models.ForeignKey(Parohijan, on_delete=models.SET_NULL, null=True, related_name="дете", verbose_name="дете")
     dete_majci = models.IntegerField(verbose_name="дете по реду (по мајци)")
     dete_bracno = models.BooleanField(verbose_name="брачно дете")
     mana = models.BooleanField(verbose_name="мана")
-    blizanac = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="близанац", verbose_name="близанац")
+    blizanac = models.ForeignKey(Parohijan, on_delete=models.SET_NULL, null=True, related_name="близанац", verbose_name="близанац")
     
     detimeg = models.TextField() # ???
 
-    otac = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="отац", verbose_name="отац")
-    majka = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="мајка", verbose_name="мајка")
-    svestenik = models.ForeignKey(Svestenik, on_delete=models.CASCADE, related_name="свештеник_крститељ", verbose_name="свештеник")
-    kum = models.ForeignKey(Osoba, on_delete=models.CASCADE, related_name="кум", verbose_name="кум")
+    otac = models.ForeignKey(Parohijan, on_delete=models.SET_NULL, null=True, related_name="отац", verbose_name="отац")
+    majka = models.ForeignKey(Parohijan, on_delete=models.SET_NULL, null=True, related_name="мајка", verbose_name="мајка")
+    svestenik = models.ForeignKey(Svestenik, on_delete=models.SET_NULL, null=True, related_name="свештеник_крститељ", verbose_name="свештеник")
+    kum = models.ForeignKey(Parohijan, on_delete=models.SET_NULL, null=True, related_name="кум", verbose_name="кум")
 
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 

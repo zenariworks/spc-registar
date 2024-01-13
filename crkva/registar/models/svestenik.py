@@ -1,25 +1,40 @@
 """
-Model class for representing priests in the database.
+Класа модела која представља свештенике у бази података.
 """
 import uuid
 
 from django.db import models
 
-from .osoba import Osoba
+from .parohija import Parohija
 
+
+zvanja = [
+    ('Патријарх Српски', 'Патријарх Српски'),
+    ('Јереј', 'Јереј'),
+    ('Протојереј', 'Протојереј'),
+    ('Протојереј-ставрофор', 'Протојереј-ставрофор'),
+    ('Протонамесник', 'Протонамесник'),
+    ('Администратор', 'Администратор'),
+    ('Митрополит', 'Митрополит'),
+]
 
 class Svestenik(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    zvanje = models.CharField(verbose_name="звање")
-    parohija = models.CharField(verbose_name="парохија")
-    osoba = models.ForeignKey(Osoba, verbose_name="особа", on_delete=models.CASCADE, related_name="свештеник")
+    ime = models.CharField(verbose_name="име")
+    prezime = models.CharField(verbose_name="презиме")
+    
+    mesto_rodjenja = models.CharField(verbose_name="место рођења")
+    datum_rodjenja = models.DateField(verbose_name="датум рођења")
 
-    def __str__(self):
-        return f"{self.zvanje}, {self.osoba.ime} {self.osoba.prezime}"
+    zvanje = models.CharField(max_length=30, choices=zvanja, verbose_name="звање")
+    parohija = models.ForeignKey(Parohija, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="парохија")
+
+    def __str__(self) -> str:
+        return f"{self.zvanje}, {self.ime} {self.prezime}"
 
     class Meta:
         managed = True
-        db_table = "svestenici"
-        verbose_name = "Свештеник"
-        verbose_name_plural = "Свештеници"
+        db_table: str = "svestenici"
+        verbose_name: str = "Свештеник"
+        verbose_name_plural: str = "Свештеници"

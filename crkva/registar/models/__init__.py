@@ -5,7 +5,8 @@ from .hram import Hram
 from .krstenje import Krstenje
 from .narodnost import Narodnost
 from .mesec import Mesec
-from .osoba import Osoba
+from .parohijan import Parohijan
+from .parohija import Parohija
 from .slava import Slava
 from .svestenik import Svestenik
 from .ukucanin import Ukucanin

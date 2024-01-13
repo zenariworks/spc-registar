@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div>
+    <div style='position: relative;'>
+        <div class="row" style='display: flex; margin-bottom: 10px; align-items: center;'>
+            <h1 style="margin-right: auto;">Парохијан</h1>
+            <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" style="text-decoration: none;">
+                <button type="button" style="font-size: 20px; line-height: 27px; background: #c72e2d; padding: 10px 20px; color: #fff; box-shadow: 0px 8px 14px -5px rgba(0, 0, 0, 0.25); font-weight: 600; transition: all ease 0.3s;">Штампа</button>
+            </a>
+        </div>
+    </div>
+
+    <h2>{{ parohijan.ime }} {{ parohijan.prezime }}</h2>
+    {% if parohijan.devojacko_prezime %}
+        <p>Девојачко презиме: {{ parohijan.devojacko_prezime }}</p>
+    {% endif %}
+    <p>Датум рођења: {{ parohijan.datum_rodjenja }}</p>
+    <p>Место рођења: {{ parohijan.mesto_rodjenja }}</p>
+    <p>Пол: {{ parohijan.pol }}</p>
+    <p>Занимање: {{ parohijan.zanimanje }}</p>
+    <p>Вероисповест: {{ parohijan.veroispovest }}</p>
+    <p>Народност: {{ parohijan.narodnost }}</p>
+    <p>Адреса: {{ parohijan.adresa }}</p>
+</div>
+{% endblock %}
