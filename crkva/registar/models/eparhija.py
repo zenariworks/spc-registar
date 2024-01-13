@@ -1,5 +1,4 @@
 import uuid
-
 from django.db import models
 
 
@@ -8,13 +7,12 @@ class Eparhija(models.Model):
 
     naziv = models.CharField(max_length=100, verbose_name="назив")
     sediste = models.CharField(max_length=100, verbose_name="седиште")
-    episkop = models.CharField(max_length=100, verbose_name="епископ")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.naziv
-    
+
     class Meta:
         managed = True
-        db_table = "eparhije"
-        verbose_name = "Епархија"
-        verbose_name_plural = "Епархије"
+        db_table: str = "eparhije"
+        verbose_name: str = "Епархија"
+        verbose_name_plural: str = "Епархије"

@@ -4,21 +4,21 @@ from django.views.generic import DetailView, ListView
 
 from weasyprint import HTML
 
-from registar.models.osoba import Osoba
+from registar.models.parohijan import Parohijan
 from registar.forms import SearchForm
 
 
-class OsobeList(ListView):
-    template_name = "registar/spisak_osoba.html"
-    context_object_name = "osobe_entries"
-    model = Osoba  # or queryset = Krstenje.objects.all()
+class ParohijanList(ListView):
+    template_name = "registar/spisak_parohijana.html"
+    context_object_name = "parohijani_entries"
+    model = Parohijan  # or queryset = Krstenje.objects.all()
 
     def get_queryset(self):
         form = SearchForm(self.request.GET)
         if form.is_valid():
             query = form.cleaned_data["query"]
-            return Osoba.objects.filter(dete__ime__icontains=query)
-        return Osoba.objects.all()
+            return Parohijan.objects.filter(dete__ime__icontains=query)
+        return Parohijan.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -26,13 +26,13 @@ class OsobeList(ListView):
         return context
 
 
-class OsobaPDF(DetailView):
-    model = Osoba
-    template_name = "registar/pdf_osoba.html"
+class ParohijanPDF(DetailView):
+    model = Parohijan
+    template_name = "registar/pdf_parohijan.html"
 
     def get_object(self):
         uid = self.kwargs.get("uid")
-        return get_object_or_404(Osoba, uid=uid)
+        return get_object_or_404(Parohijan, uid=uid)
 
     def render_to_response(self, context, **response_kwargs):
         # Render the HTML template with context
@@ -52,14 +52,14 @@ class OsobaPDF(DetailView):
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
-class OsobaView(DetailView):
-    model = Osoba
-    template_name = "registar/info_osoba.html"
-    context_object_name = "osoba"
+class ParohijanView(DetailView):
+    model = Parohijan
+    template_name = "registar/info_parohijan.html"
+    context_object_name = "parohijan"
     pk_url_kwarg = "uid"
 
     font_name = "DejaVuSans"
 
     def get_object(self):
         uid = self.kwargs.get(self.pk_url_kwarg)
-        return get_object_or_404(Osoba, uid=uid)
+        return get_object_or_404(Parohijan, uid=uid)

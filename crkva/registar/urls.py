@@ -8,9 +8,9 @@ handler404 = 'registar.views.custom_404'
 urlpatterns = [
     path("", views.index, name="pocetna"),
 
-    path("osobe/", views.OsobeList.as_view(), name="osobe"),
-    path("osoba/<uuid:uid>/", views.OsobaView.as_view(), name="osoba_detail"),
-    path("osoba/print/<uuid:uid>/", views.OsobaPDF.as_view(), name="osoba_pdf"),
+    path("parohijani/", views.ParohijanList.as_view(), name="parohijani"),
+    path("parohijan/<uuid:uid>/", views.ParohijanView.as_view(), name="parohijan_detail"),
+    path("parohijan/print/<uuid:uid>/", views.ParohijanPDF.as_view(), name="parohijan_pdf"),
 
     path("krstenja/", views.KrstenjeSpisak.as_view(), name="krstenja"),
     path("krstenje/<uuid:uid>/", views.KrstenjePrikaz.as_view(), name="krstenje_detail"),
