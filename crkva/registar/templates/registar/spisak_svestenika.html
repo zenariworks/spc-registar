@@ -2,20 +2,18 @@
 
 {% block content %}
     <h1>Списак свештеника</h1>
-    <ul>
+    <ul style="padding: 0;">
         {% for svestenik in svestenici %}
-            <li>
-                {{ svestenik.parohijan.ime }} {{ svestenik.parohijan.prezime }}, {{ svestenik.zvanje }}
-                <!-- Assume `entry.id` is the unique identifier of the entry -->
-                <a href="{% url 'svestenik_detail' uid=svestenik.uid %}">
-                    <button type="button">Приказ</button>
-                </a>  &nbsp;
-                <a href="{% url 'svestenik_pdf' uid=svestenik.uid %}" target="_blank">
-                    <button type="button">Штампа</button>
-                </a>                
+            <li style="list-style-type: none; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <a href="{% url 'svestenik_detail' uid=svestenik.uid %}" style="text-decoration: none; color: black; display: flex; flex-grow: 1; align-items: center; padding: 10px; cursor: pointer;" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
+                    {{ svestenik.ime }} {{ svestenik.prezime }}, {{ svestenik.zvanje }}
+                </a>
+                <a href="{% url 'svestenik_pdf' uid=svestenik.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
+                    <button type="button" style="font-size: 16px; line-height: 20px; background: #28a745; padding: 7px 15px; color: #fff; box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25); font-weight: 600; transition: all ease 0.3s;">Штампа</button>
+                </a>
             </li>
         {% empty %}
-            <li>Нема уноса особа у бази.</li>
+            <li>Нема уноса свештеника у бази.</li>
         {% endfor %}
     </ul>
 {% endblock %}
