@@ -8,10 +8,15 @@
 
     <nav id="menu">
         <ul>
-            <li><a href="{% url 'krstenja' %}">Крштења</a></li>
-            <li><a href="{% url 'pocetna' %}">Венчања</a></li>
-            <li><a href="{% url 'svestenici' %}">Свештеници</a></li>
-            <li><a href="{% url 'parohijani' %}">Парохијани</a></li>
+            <li>
+                <a href="#">Спискови</a>
+                <ul class="dropdown">
+                    <li><a href="{% url 'krstenja' %}">Крштења</a></li>
+                    <li><a href="{% url 'pocetna' %}">Венчања</a></li>
+                    <li><a href="{% url 'svestenici' %}">Свештеници</a></li>
+                    <li><a href="{% url 'parohijani' %}">Парохијани</a></li>
+                </ul>
+            </li>
             <li><a href="{% url 'pocetna' %}">Унос података</a></li>
         </ul>
     </nav>

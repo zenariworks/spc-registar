@@ -10,12 +10,12 @@ from registar.forms import SearchForm
 
 class ParohijanList(ListView):
     template_name = "registar/spisak_parohijana.html"
-    context_object_name = "parohijani_entries"
+    context_object_name = "parohijani"
     model = Parohijan
     paginate_by = 10
 
     def get_queryset(self):
-        form = SearchForm(self.request.GET)
+        form = SearchForm(data=self.request.GET)
         if form.is_valid():
             query = form.cleaned_data["query"]
             return Parohijan.objects.filter(dete__ime__icontains=query)
@@ -23,7 +23,7 @@ class ParohijanList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = SearchForm(self.request.GET)
+        context["form"] = SearchForm(data=self.request.GET)
         return context
 
 
@@ -31,7 +31,7 @@ class ParohijanPDF(DetailView):
     model = Parohijan
     template_name = "registar/pdf_parohijan.html"
 
-    def get_object(self):
+    def get_object(self) -> Parohijan:
         uid = self.kwargs.get("uid")
         return get_object_or_404(Parohijan, uid=uid)
 
@@ -44,12 +44,12 @@ class ParohijanPDF(DetailView):
 
         # Create and return an HTTP response with the PDF
         uid = self.kwargs.get("uid")
-        response = HttpResponse(pdf, content_type='application/pdf')
+        response = HttpResponse(content=pdf, content_type='application/pdf')
         response['Content-Disposition'] = f"inline; filename=krstenje-{uid}.pdf"
         return response
 
     def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.object: Parohijan = self.get_object()
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 
