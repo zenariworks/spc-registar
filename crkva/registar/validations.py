@@ -1,6 +1,5 @@
 """Validation of the input data"""
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 
 
 # field validation

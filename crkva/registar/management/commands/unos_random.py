@@ -1,19 +1,16 @@
 # registar/management/commands/unos_random.py
 
 import random
-from datetime import date, time, timedelta, datetime
+from datetime import date, datetime, time, timedelta
 
-from django.utils import timezone
 from django.core.management.base import BaseCommand
-from registar.models import (
-    Parohijan, Zanimanje, Narodnost,
-    Veroispovest, Svestenik, Krstenje,
-    Adresa, Hram, Parohija
-    )
+from django.utils import timezone
+from registar.models import (Adresa, Hram, Krstenje, Narodnost, Parohija,
+                             Parohijan, Svestenik, Veroispovest, Zanimanje)
 
 
 class Command(BaseCommand):
-    help = 'Populates the database with random parohijan instances'
+    help = "Populates the database with random parohijan instances"
 
     # Serbian names and surnames in Cyrillic
     male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]
@@ -22,7 +19,12 @@ class Command(BaseCommand):
 
     # Sample zvanja and parohija
     zvanja = ["јереј", "протојереј", "архијерејски намесник", "епископ"]
-    parohije = ["Парохија 1", "Парохија 2", "Парохија 3", "Парохија 4"]  # Replace with actual parohija names
+    parohije = [
+        "Парохија 1",
+        "Парохија 2",
+        "Парохија 3",
+        "Парохија 4",
+    ]  # Replace with actual parohija names
 
     # Sample data pools
     sample_occupations = Zanimanje.objects.all()
@@ -35,7 +37,7 @@ class Command(BaseCommand):
         end_date = today - timedelta(days=min_age * 365.25)
         random_days = random.randint(0, (end_date - start_date).days)
         return start_date + timedelta(days=random_days)
-    
+
     def random_datetime(self):
         year = random.randint(2000, 2022)
         month = random.randint(1, 12)
@@ -48,11 +50,17 @@ class Command(BaseCommand):
         naive_datetime = datetime(year, month, day, hour, minute, second)
 
         # Make it timezone-aware
-        aware_datetime = timezone.make_aware(naive_datetime, timezone.get_default_timezone())
+        aware_datetime = timezone.make_aware(
+            naive_datetime, timezone.get_default_timezone()
+        )
         return aware_datetime
 
     def create_random_parohijan(self, gender, min_age=0) -> Parohijan:
-        name = random.choice(self.male_names) if gender == "М" else random.choice(self.female_names)
+        name = (
+            random.choice(self.male_names)
+            if gender == "М"
+            else random.choice(self.female_names)
+        )
         surname = random.choice(self.surnames)
         parohijan = Parohijan(
             ime=name,
@@ -65,7 +73,7 @@ class Command(BaseCommand):
             zanimanje=random.choice(self.sample_occupations),
             veroispovest=random.choice(self.sample_religions),
             narodnost=random.choice(self.sample_nationalities),
-            adresa="Насумична адреса"
+            adresa="Насумична адреса",
         )
         parohijan.save()
         return parohijan
@@ -74,24 +82,24 @@ class Command(BaseCommand):
         # Check if there are enough parohijan instances to choose from
         eligible_parohijan = Parohijan.objects.filter(
             pol=gender,
-            datum_rodjenja__lte=date.today() - timedelta(days=min_age * 365.25)
+            datum_rodjenja__lte=date.today() - timedelta(days=min_age * 365.25),
         )
         if eligible_parohijan.exists():
             return random.choice(eligible_parohijan)
         else:
             return self.create_random_parohijan(gender, min_age)
 
-
     def get_or_create_parohija(self, naziv):
         parohija, created = Parohija.objects.get_or_create(naziv=naziv)
         return parohija
-    
+
     def create_random_svestenik(self) -> Svestenik:
         parohije = [
             self.get_or_create_parohija("Парохија 1"),
-            self.get_or_create_parohija("Парохија 2"), 
+            self.get_or_create_parohija("Парохија 2"),
             self.get_or_create_parohija("Парохија 3"),
-            self.get_or_create_parohija("Парохија 4")]
+            self.get_or_create_parohija("Парохија 4"),
+        ]
 
         svestenik = Svestenik(
             zvanje=random.choice(self.zvanja),
@@ -110,7 +118,7 @@ class Command(BaseCommand):
             mesto="Место " + str(random.randint(1, 100)),
             opstina="Општина " + str(random.randint(1, 100)),
             postanski_broj=str(random.randint(10000, 99999)),
-            drzava="Србија"
+            drzava="Србија",
         )
         adresa.save()
         return adresa
@@ -118,20 +126,27 @@ class Command(BaseCommand):
     def create_random_hram(self):
         adresa = self.create_random_adresa()
         hram = Hram(
-            naziv="Храм " + random.choice(["Светог Саве", "Светог Николе", "Светог Марка", "Свете Петке"]),
-            adresa=adresa
+            naziv="Храм "
+            + random.choice(
+                ["Светог Саве", "Светог Николе", "Светог Марка", "Свете Петке"]
+            ),
+            adresa=adresa,
         )
         hram.save()
         return hram
 
     def create_random_krstenje(self, parohijan):
         # Create random persons for different roles
-        dete = self.get_or_create_random_parohijan("М" if random.choice([True, False]) else "Ж")
+        dete = self.get_or_create_random_parohijan(
+            "М" if random.choice([True, False]) else "Ж"
+        )
         otac = self.get_or_create_random_parohijan("М", min_age=20)
         majka = self.get_or_create_random_parohijan("Ж", min_age=20)
-        kum = self.get_or_create_random_parohijan("М" if random.choice([True, False]) else "Ж", min_age=20)
+        kum = self.get_or_create_random_parohijan(
+            "М" if random.choice([True, False]) else "Ж", min_age=20
+        )
         svestenik = self.create_random_svestenik()
-        hram = Hram.objects.order_by('?').first()  # Get a random Hram instance
+        hram = Hram.objects.order_by("?").first()  # Get a random Hram instance
 
         krstenje = Krstenje(
             knjiga=random.randint(1, 100),  # Assuming this is a random number
@@ -144,15 +159,16 @@ class Command(BaseCommand):
             dete_majci=random.randint(1, 10),
             dete_bracno=random.choice([True, False]),
             mana=random.choice([True, False]),
-            blizanac=self.get_or_create_random_parohijan("М" if random.choice([True, False]) else "Ж"),  # Assuming a random parohijan
+            blizanac=self.get_or_create_random_parohijan(
+                "М" if random.choice([True, False]) else "Ж"
+            ),  # Assuming a random parohijan
             otac=otac,
             majka=majka,
             svestenik=svestenik,
             kum=kum,
-            primedba="Random Primedba"
+            primedba="Random Primedba",
         )
         krstenje.save()
-
 
     def handle(self, *args, **kwargs):
         parohijani = []
@@ -172,4 +188,8 @@ class Command(BaseCommand):
         for parohijan in parohijani[:5]:
             self.create_random_krstenje(parohijan)
 
-        self.stdout.write(self.style.SUCCESS('Successfully populated the database with random instances'))
+        self.stdout.write(
+            self.style.SUCCESS(
+                "Successfully populated the database with random instances"
+            )
+        )

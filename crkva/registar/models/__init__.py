@@ -3,10 +3,10 @@ from .dan import Dan
 from .domacinstvo import Domacinstvo
 from .hram import Hram
 from .krstenje import Krstenje
-from .narodnost import Narodnost
 from .mesec import Mesec
-from .parohijan import Parohijan
+from .narodnost import Narodnost
 from .parohija import Parohija
+from .parohijan import Parohijan
 from .slava import Slava
 from .svestenik import Svestenik
 from .ukucanin import Ukucanin

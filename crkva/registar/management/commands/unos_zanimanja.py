@@ -16,9 +16,15 @@ class Command(BaseCommand):
                 if created:
                     created_count += 1
             except IntegrityError as e:
-                self.stdout.write(self.style.ERROR(f"Грешка при креирању занимања: {e}"))
+                self.stdout.write(
+                    self.style.ERROR(f"Грешка при креирању занимања: {e}")
+                )
 
-        self.stdout.write(self.style.SUCCESS(f"Успешно додата занимања у базу података: {created_count} нових уноса."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Успешно додата занимања у базу података: {created_count} нових уноса."
+            )
+        )
 
     def _parse_data(self):
         try:

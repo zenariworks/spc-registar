@@ -1,11 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView, ListView
-
-from weasyprint import HTML
-
-from registar.models.svestenik import Svestenik
 from registar.forms import SearchForm
+from registar.models.svestenik import Svestenik
+from weasyprint import HTML
 
 
 class SvesteniciSpisak(ListView):
@@ -36,15 +34,17 @@ class SvestenikPDF(DetailView):
 
     def render_to_response(self, context, **response_kwargs):
         # Render the HTML template with context
-        html_string = render(self.request, self.template_name, context).content.decode()
+        html = render(self.request, self.template_name, context).content.decode()
 
         # Convert the HTML to PDF using WeasyPrint
-        pdf = HTML(string=html_string, base_url=self.request.build_absolute_uri()).write_pdf()
+        pdf = HTML(
+            string=html, base_url=self.request.build_absolute_uri()
+        ).write_pdf()
 
         # Create and return an HTTP response with the PDF
         uid = self.kwargs.get("uid")
-        response = HttpResponse(pdf, content_type='application/pdf')
-        response['Content-Disposition'] = f"inline; filename=krstenje-{uid}.pdf"
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = f"inline; filename=krstenje-{uid}.pdf"
         return response
 
     def get(self, request, *args, **kwargs):

@@ -14,7 +14,7 @@ class Command(BaseCommand):
             try:
                 dan_instance, _ = Dan.objects.get_or_create(dan=day)
                 mesec_instance, _ = Mesec.objects.get_or_create(mesec=month)
-                
+
                 _, created = Slava.objects.get_or_create(
                     naziv=name,
                     opsti_naziv=opsti_naziv if opsti_naziv else "",
@@ -29,7 +29,9 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
 
         self.stdout.write(
-            self.style.SUCCESS(f"Успешно попуњена табела Слава са {created_count} нових уноса.")
+            self.style.SUCCESS(
+                f"Успешно попуњена табела Слава са {created_count} нових уноса."
+            )
         )
 
     def _parse_data(self):

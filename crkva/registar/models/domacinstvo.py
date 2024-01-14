@@ -15,7 +15,9 @@ class Domacinstvo(models.Model):
     ime = models.CharField()
     ukuc = models.CharField()
 
-    ulica = models.ForeignKey(Ulica, verbose_name="улица", on_delete=models.SET_NULL, null=True)
+    ulica = models.ForeignKey(
+        Ulica, verbose_name="улица", on_delete=models.SET_NULL, null=True
+    )
 
     ulbroj = models.IntegerField()
     broj = models.IntegerField()
