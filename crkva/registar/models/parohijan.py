@@ -5,9 +5,9 @@ import uuid
 
 from django.db import models
 
-from .zanimanje import Zanimanje
 from .narodnost import Narodnost
 from .veroispovest import Veroispovest
+from .zanimanje import Zanimanje
 
 
 class Parohijan(models.Model):
@@ -18,12 +18,32 @@ class Parohijan(models.Model):
     mesto_rodjenja = models.CharField(verbose_name="место рођења")
     datum_rodjenja = models.DateField(verbose_name="датум рођења")
     vreme_rodjenja = models.TimeField(verbose_name="време рођења", blank=True)
-    pol = models.CharField(verbose_name="пол", choices=[("М", "мушки"), ("Ж", "женски")])
+    pol = models.CharField(
+        verbose_name="пол", choices=[("М", "мушки"), ("Ж", "женски")]
+    )
 
     devojacko_prezime = models.CharField(verbose_name="девојачко презиме", blank=True)
-    zanimanje = models.ForeignKey(Zanimanje, verbose_name="занимање", on_delete=models.SET_NULL, blank=True, null=True)
-    veroispovest = models.ForeignKey(Veroispovest, verbose_name="вероисповест", on_delete=models.SET_NULL, null=True, blank=True)
-    narodnost = models.ForeignKey(Narodnost, verbose_name="народност", on_delete=models.SET_NULL, null=True, blank=True)
+    zanimanje = models.ForeignKey(
+        Zanimanje,
+        verbose_name="занимање",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    veroispovest = models.ForeignKey(
+        Veroispovest,
+        verbose_name="вероисповест",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
+    narodnost = models.ForeignKey(
+        Narodnost,
+        verbose_name="народност",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     adresa = models.CharField(verbose_name="адреса", blank=True)
 
     def __str__(self):

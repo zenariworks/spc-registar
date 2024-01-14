@@ -15,8 +15,16 @@ class Slava(models.Model):
     naziv = models.CharField(verbose_name="назив")
     opsti_naziv = models.CharField(verbose_name="општи назив")
 
-    dan = models.ForeignKey(Dan, verbose_name="дан", on_delete=models.SET_NULL, null=True)
-    mesec = models.ForeignKey(Mesec, verbose_name="месец", on_delete=models.SET_NULL, null=True, to_field="mesec")
+    dan = models.ForeignKey(
+        Dan, verbose_name="дан", on_delete=models.SET_NULL, null=True
+    )
+    mesec = models.ForeignKey(
+        Mesec,
+        verbose_name="месец",
+        on_delete=models.SET_NULL,
+        null=True,
+        to_field="mesec",
+    )
 
     def __str__(self):
         return f"{self.dan}. {self.mesec}: {self.naziv}"

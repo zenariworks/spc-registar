@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from registar.models import Dan
 
+
 class Command(BaseCommand):
     help = "Попуњава табелу Дан са данима у месецу"
 

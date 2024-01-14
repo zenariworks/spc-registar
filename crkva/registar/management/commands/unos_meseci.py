@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from registar.models import Mesec
 
+
 class Command(BaseCommand):
     help = "Попуњава табелу Месец са месецима и њиховим називима на српском ћирилицом"
 

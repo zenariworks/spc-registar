@@ -1,6 +1,6 @@
-from django.test import TestCase
-
 import uuid
+
+from django.test import TestCase
 
 from .models import Parohijan
 

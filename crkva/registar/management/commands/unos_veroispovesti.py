@@ -18,7 +18,11 @@ class Command(BaseCommand):
             except IntegrityError as e:
                 self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
 
-        self.stdout.write(self.style.SUCCESS(f"Успешно додате вероисповести у базу података: {created_count} нових уноса."))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Успешно додате вероисповести у базу података: {created_count} нових уноса."
+            )
+        )
 
     def _parse_data(self):
         try:

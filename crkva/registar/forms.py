@@ -12,4 +12,4 @@ class SearchForm(forms.Form):
 class VeroispovestForm(ModelForm):
     class Meta:
         model = Veroispovest
-        fields = ['naziv']
+        fields = ["naziv"]

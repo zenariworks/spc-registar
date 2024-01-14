@@ -1,14 +1,12 @@
 from datetime import datetime, timedelta
 
-from .models import Dan
-from .models import Mesec
-from .models import Slava
+from .models import Dan, Mesec, Slava
 
 
 def upcoming_slavas_processor(request):
     today = datetime.now()
     upcoming_dates = [today + timedelta(days=i) for i in range(7)]
-    
+
     upcoming_slavas = []
 
     for date in upcoming_dates:
@@ -17,4 +15,4 @@ def upcoming_slavas_processor(request):
         slavas_on_date = Slava.objects.filter(dan=day, mesec=month)
         upcoming_slavas.extend(slavas_on_date)
 
-    return {'upcoming_slavas': upcoming_slavas}
+    return {"upcoming_slavas": upcoming_slavas}
