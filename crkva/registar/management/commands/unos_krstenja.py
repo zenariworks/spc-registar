@@ -78,7 +78,7 @@ class Command(BaseCommand):
         parohijan.save()
         return parohijan
 
-    def get_or_create_random_parohijan(self, gender, min_age=0):
+    def random_parohijan(self, gender, min_age=0):
         # Check if there are enough parohijan instances to choose from
         eligible_parohijan = Parohijan.objects.filter(
             pol=gender,
@@ -136,20 +136,19 @@ class Command(BaseCommand):
         return hram
 
     def create_random_krstenje(self, parohijan):
-        # Create random persons for different roles
-        dete = self.get_or_create_random_parohijan(
+        dete = self.random_parohijan(
             "М" if random.choice([True, False]) else "Ж"
         )
-        otac = self.get_or_create_random_parohijan("М", min_age=20)
-        majka = self.get_or_create_random_parohijan("Ж", min_age=20)
-        kum = self.get_or_create_random_parohijan(
+        otac = self.random_parohijan("М", min_age=20)
+        majka = self.random_parohijan("Ж", min_age=20)
+        kum = self.random_parohijan(
             "М" if random.choice([True, False]) else "Ж", min_age=20
         )
         svestenik = self.create_random_svestenik()
-        hram = Hram.objects.order_by("?").first()  # Get a random Hram instance
+        hram = Hram.objects.order_by("?").first()
 
         krstenje = Krstenje(
-            knjiga=random.randint(1, 100),  # Assuming this is a random number
+            knjiga=random.randint(1, 100),
             strana=random.randint(1, 500),
             tekuci_broj=random.randint(1, 1000),
             datum=self.random_datetime().date(),
@@ -159,14 +158,14 @@ class Command(BaseCommand):
             dete_majci=random.randint(1, 10),
             dete_bracno=random.choice([True, False]),
             mana=random.choice([True, False]),
-            blizanac=self.get_or_create_random_parohijan(
+            blizanac=self.random_parohijan(
                 "М" if random.choice([True, False]) else "Ж"
-            ),  # Assuming a random parohijan
+            ),
             otac=otac,
             majka=majka,
             svestenik=svestenik,
             kum=kum,
-            primedba="Random Primedba",
+            primedba="Примедба...",
         )
         krstenje.save()
 
