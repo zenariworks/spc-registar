@@ -42,8 +42,6 @@ class Krstenje(models.Model):
         verbose_name="близанац",
     )
 
-    detimeg = models.TextField()  # ???
-
     otac = models.ForeignKey(
         Parohijan,
         on_delete=models.SET_NULL,
