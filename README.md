@@ -41,6 +41,7 @@
    ```bash
    docker compose run --rm app sh -c "python manage.py unosi"
    ```
+
 - Унос случајних (демо) података у базу:
 
     ```bash
