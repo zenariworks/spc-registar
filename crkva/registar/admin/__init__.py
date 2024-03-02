@@ -1,5 +1,6 @@
 from django.contrib import admin
 from registar.models.domacinstvo import Domacinstvo
+from registar.models.eparhija import Eparhija
 from registar.models.hram import Hram
 from registar.models.krstenje import Krstenje
 from registar.models.parohijan import Parohijan
@@ -11,6 +12,7 @@ from registar.models.vencanje import Vencanje
 from registar.models.zanimanje import Zanimanje
 
 from .domacinstvo_admin import DomacinstvoAdmin
+from .eparhija_admin import EparhijaAdmin
 from .hram_admin import HramAdmin
 from .krstenje_admin import KrstenjeAdmin
 from .parohijan_admin import parohijanAdmin
@@ -22,6 +24,7 @@ from .vencanje_admin import VencanjeAdmin
 from .zanimanje_admin import ZanimanjeAdmin
 
 admin.site.register(Domacinstvo, DomacinstvoAdmin)
+admin.site.register(Eparhija, EparhijaAdmin)
 admin.site.register(Hram, HramAdmin)
 admin.site.register(Krstenje, KrstenjeAdmin)
 admin.site.register(Parohijan, parohijanAdmin)
