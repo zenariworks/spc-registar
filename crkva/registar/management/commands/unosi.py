@@ -14,6 +14,7 @@ class Command(BaseCommand):
             ("unos_veroispovesti", {}),
             ("unos_zanimanja", {}),
             ("unos_slava", {}),
+            ("unos_eparhija", {}),
         ]
 
         for command_name, command_kwargs in commands:

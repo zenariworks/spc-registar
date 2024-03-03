@@ -45,7 +45,7 @@
 - Унос случајних (демо) података у базу:
 
     ```bash
-    docker compose run --rm app sh -c "python manage.py unos_random"
+    docker compose run --rm app sh -c "python manage.py unos_krstenja"
     ```
 
    Након овог корака, у базу је унет пример података.

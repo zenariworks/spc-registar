@@ -18,14 +18,22 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "svestenik__parohijan__prezime",
     ]
     fieldsets = (
-        (None, {
-            'fields': ('uid', ('knjiga', 'strana', 'tekuci_broj'), 'anagraf')
-        }),
-        ('Детаљи крштења', {
-            'fields': (('datum', 'vreme', 'hram'), 'dete', ('otac', 'majka'), 'svestenik', 'kum', 'primedba')
-        }),
+        (None, {"fields": ("uid", ("knjiga", "strana", "tekuci_broj"), "anagraf")}),
+        (
+            "Детаљи крштења",
+            {
+                "fields": (
+                    ("datum", "vreme", "hram"),
+                    "dete",
+                    ("otac", "majka"),
+                    "svestenik",
+                    "kum",
+                    "napomena",
+                )
+            },
+        ),
     )
-    readonly_fields = ('uid',)
+    readonly_fields = ("uid",)
 
     def get_dete_full_name(self, obj):
         return f"{obj.dete.ime} {obj.dete.prezime}"
