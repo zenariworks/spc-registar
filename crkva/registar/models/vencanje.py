@@ -5,8 +5,7 @@ import uuid
 
 from django.db import models
 
-from .dan import Dan
-from .mesec import Mesec
+from .hram import Hram
 from .parohijan import Parohijan
 from .svestenik import Svestenik
 
@@ -14,18 +13,11 @@ from .svestenik import Svestenik
 class Vencanje(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    datum = models.DateField(verbose_name="датум")
-    godina = models.IntegerField(verbose_name="година")
-    mesec = models.ForeignKey(
-        Mesec, verbose_name="месец", on_delete=models.SET_NULL, null=True
-    )
-    dan = models.ForeignKey(
-        Dan, verbose_name="дан", on_delete=models.SET_NULL, null=True
-    )
-
     knjiga = models.IntegerField(verbose_name="књига")
     strana = models.IntegerField(verbose_name="страна")
     tekuci_broj = models.IntegerField(verbose_name="текући број")
+
+    datum = models.DateField(verbose_name="датум венчања")
 
     zenik = models.ForeignKey(
         Parohijan,
@@ -74,13 +66,11 @@ class Vencanje(models.Model):
         null=True,
         related_name="свекрва",
     )
+    datum_ispita = models.DateField(verbose_name="датум испита")
 
-    ispitgod = models.IntegerField(verbose_name="испит година")
-    ispitmes = models.IntegerField(verbose_name="испит место")
-    ispitdan = models.IntegerField(verbose_name="испит књига")
-
-    hram_ime = models.CharField(verbose_name="назив храма")
-    hram_mesto = models.CharField(verbose_name="место храма")
+    hram = models.ForeignKey(
+        Hram, on_delete=models.SET_NULL, null=True, verbose_name="место венчања"
+    )
     svestenik = models.ForeignKey(
         Svestenik,
         verbose_name="свештеник",
@@ -88,7 +78,7 @@ class Vencanje(models.Model):
         null=True,
         related_name="свештеник_венчани",
     )
-    svestenik_par = models.CharField(verbose_name="свешт. парохија")
+    parohija = models.CharField(verbose_name="свешт. парохија")
 
     kum = models.ForeignKey(
         Parohijan,
@@ -105,7 +95,6 @@ class Vencanje(models.Model):
         related_name="венчана_кума",
     )
 
-    srazrdn = models.BooleanField(verbose_name="нешто нешто")
     napomena = models.TextField(verbose_name="напомена")
 
     def __str__(self):

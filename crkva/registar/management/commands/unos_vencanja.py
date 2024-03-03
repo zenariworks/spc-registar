@@ -1,3 +1,5 @@
+# registar/management/commands/unos_random.py
+
 import random
 from datetime import date, datetime, time, timedelta
 
@@ -6,7 +8,7 @@ from django.utils import timezone
 from registar.models import (
     Adresa,
     Hram,
-    Krstenje,
+    Vencanje,
     Narodnost,
     Parohija,
     Parohijan,
@@ -142,55 +144,34 @@ class Command(BaseCommand):
         hram.save()
         return hram
 
-    def create_random_krstenje(self, parohijan):
-        dete = self.random_parohijan("М" if random.choice([True, False]) else "Ж")
-        otac = self.random_parohijan("М", min_age=20)
-        majka = self.random_parohijan("Ж", min_age=20)
-        kum = self.random_parohijan(
-            "М" if random.choice([True, False]) else "Ж", min_age=20
-        )
-        svestenik = self.create_random_svestenik()
-        hram = Hram.objects.order_by("?").first()
+    def create_random_vencanje(self):
+        # Ensure there are male and female parohijani available or create them
+        zenik = self.random_parohijan("М", 18)
+        nevesta = self.random_parohijan("Ж", 18)
 
-        krstenje = Krstenje(
+        # Create or get a random hram and svestenik
+        hram = self.create_random_hram()
+        svestenik = self.create_random_svestenik()
+
+        vencanje = Vencanje(
             knjiga=random.randint(1, 100),
             strana=random.randint(1, 500),
             tekuci_broj=random.randint(1, 1000),
             datum=self.random_datetime().date(),
-            vreme=self.random_datetime().time(),
+            zenik=zenik,
+            zenik_rb_brak=random.randint(1, 3),
+            nevesta=nevesta,
+            nevesta_rb_brak=random.randint(1, 3),
             hram=hram,
-            dete=dete,
-            dete_majci=random.randint(1, 10),
-            dete_bracno=random.choice([True, False]),
-            mana=random.choice([True, False]),
-            blizanac=self.random_parohijan(
-                "М" if random.choice([True, False]) else "Ж"
-            ),
-            otac=otac,
-            majka=majka,
             svestenik=svestenik,
-            kum=kum,
-            napomena="Напомена...",
+            datum_ispita=self.random_datetime().date(),
+            napomena="Насумична напомена...",
         )
-        krstenje.save()
+        vencanje.save()
 
     def handle(self, *args, **kwargs):
-        parohijani = []
-        for _ in range(10):
-            parohijani.append(self.create_random_parohijan("М"))
-            parohijani.append(self.create_random_parohijan("Ж"))
-
-        # Create a few Hram instances
-        for _ in range(5):
-            self.create_random_hram()
-
-        # Create 2 Svestenik instances
-        for _ in range(2):
-            self.create_random_svestenik()
-
-        # Create at least 5 Krstenje instances using the first 5 parohijan instances
-        for parohijan in parohijani[:5]:
-            self.create_random_krstenje(parohijan)
+        for i in range(10):
+            self.create_random_vencanje()
 
         self.stdout.write(
             self.style.SUCCESS(
