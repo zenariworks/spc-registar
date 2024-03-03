@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 style="margin: 0;">Венчања</h1>
+        <form method="get" action="" style="margin: 0;">
+            <div style="display: flex; align-items: center;">
+                {% for field in form.visible_fields %}
+                    <!-- Render each field manually -->
+                    {{ field }}
+                {% endfor %}
+                <!-- Hidden submit button -->
+                <input type="submit" style="display: none;">
+            </div>
+        </form>
+    </div>
+    <ul style="padding: 0;">
+        {% for vencanje in vencanja %}
+            <li style="list-style-type: none; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+                <a href="{% url 'vencanje_detail' uid=vencanje.uid %}" style="text-decoration: none; color: black; display: flex; flex-grow: 1; align-items: center; padding: 10px; cursor: pointer;" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
+                    {{ vencanje.datum }}: {{ vencanje.zenik }} и {{ vencanje.nevesta }}
+                </a>
+                <a href="{% url 'vencanje_pdf' uid=vencanje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
+                    <button type="button" style="font-size: 16px; line-height: 20px; background: #A21514; padding: 7px 15px; color: #fff; box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25); font-weight: 600; transition: all ease 0.3s;">Штампа</button>
+                </a>
+            </li>
+        {% empty %}
+            <li>Нема уноса венчања у бази.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
