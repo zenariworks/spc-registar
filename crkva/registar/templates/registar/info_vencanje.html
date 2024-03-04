@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style='position: relative;'>
+    <div class="row" style='display: flex; margin-bottom: 10px; align-items: center;'>
+        <h1 style="margin-right: auto;">Венчаница</h1>
+        <a href="{% url 'vencanje_pdf' vencanje.uid %}" target="_blank" style="text-decoration: none;">
+            <button type="button" style="font-size: 20px; line-height: 27px; background: #c72e2d; padding: 10px 20px; color: #fff; box-shadow: 0px 8px 14px -5px rgba(0, 0, 0, 0.25); font-weight: 600; transition: all ease 0.3s;">Штампа</button>
+        </a>
+    </div>
+</div>
+
+<div class="vencanica">
+    <div class="vencanica-frame">
+        <div class="vencanica-row" style="height: 39mm">
+            <div style="width: 22%;">
+                <div class="row" style="height: 10mm"></div>
+                <div class="row" style="height: 8mm">
+                    <div class="row" style="width: 30%">{{ vencanje.knjiga }}</div>
+                </div>
+                <div class="row" style="height: 8mm">
+                    <div class="row" style="width: 30%">{{ vencanje.strana }}</div>
+                </div>
+                <div class="row" style="height: 8mm">
+                    <div class="row" style="width: 30%">{{ vencanje.tekuci_broj }}</div>
+                </div>
+            </div>
+            <div style="width: 50%;"></div>
+            <div style="width: 28%;"></div>
+        </div>
+        <div class="vencanica-row" style="height: 31mm">
+            <div class="row" style="width: 100%; height: 10mm">sdgs</div>
+            <div class="row" style="width: 100%; height: 10mm">sdgs</div>
+        </div>
+        <div class="vencanica-row" style="height: 9mm;">
+            <div style="width: 1%"></div>
+            <div style="width: 49%; vertical-align: middle;">1. Година, месец, дан и време рођења</div>
+            <!-- Assuming you have a field for birth date and time -->
+            <div style="width: 50%">{{ vencanje.dete.datum_rodjenja }} {{ vencanje.dete.vreme_rodjenja }}</div>
+        </div>
+        <div class="vencanica-row visible-div" style="height: 9mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">2. Место и општина рођења</div>
+            <div class="visible-div" style="width: 50%">{{ vencanje.dete.mesto_rodjenja }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 9mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">3. Година, месец, дан и време крштења и миропомазања</div>
+            <div style="width: 50%">{{ vencanje.datum }} {{ vencanje.vreme }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 9mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">4. Место и храм крштења и миропомазања</div>
+            <div style="width: 50%">{{ vencanje.hram }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 11mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">5. Име и пол детета</div>
+            <div style="width: 50%">{{ vencanje.dete }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 25mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">6. Име, презиме, занимање, место становања, вероисповест и народност родитеља</div>
+            <div style="width: 50%">
+                1. {{vencanje.otac.ime }} {{vencanje.otac.prezime }}, {{vencanje.otac.zanimanje|lower }}, {{ vencanje.otac.veroispovest|lower }} {{ vencanje.otac.narodnost }}
+            </br>
+            2. {{vencanje.majka.ime }} {{vencanje.majka.prezime }}, {{vencanje.majka.zanimanje|lower }}, {{ vencanje.majka.veroispovest|lower }} {{ vencanje.majka.narodnost }}
+            </div>
+        </div>
+        <div class="vencanica-row" style="height: 9mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">7. Које је дете по рођењу матери (прво, друго...)</div>
+            <div style="width: 50%">{{ vencanje.dete_majci }}. дете</div>
+        </div>
+        <div class="vencanica-row" style="height: 9mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">8. Је ли дете црквено брачно</div>
+            <div style="width: 50%">{{ vencanje.dete_bracno|yesno:"Да,Не" }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 9mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">9. Је ли дете близанац</div>
+            <div style="width: 50%">{{ vencanje.blizanac|yesno:"Да,Не"  }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 9mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">10. Је ли дете рођено са каквим телесним недостатком</div>
+            <div style="width: 50%">{{ vencanje.mana|yesno:"Да,Не" }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 11mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">11. Име и презиме свештеника који је дете крстио и миропомазао</div>
+            <div style="width: 50%">{{ vencanje.svestenik }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 14mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">12. Име и презиме, занимање и место становања кума</div>
+            <div style="width: 50%">{{ vencanje.kum }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 9mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%">13. Страна домовника - анаграфа</div>
+            <div style="width: 50%">{{ vencanje.anagraf|default_if_none:"" }}</div>
+        </div>
+        <div class="vencanica-row" style="height: 13mm">
+            <div style="width: 1%"></div>
+            <div style="width: 49%; vertical-align: middle;">14. ПРИМЕДБА</div>
+            <div style="width: 50%">{{ vencanje.primedba|default_if_none:"" }}</div>
+        </div>
+        <div style="height: 44mm"></div>
+    </div>
+</div>
+
+{% endblock %}

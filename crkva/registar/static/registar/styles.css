@@ -94,16 +94,20 @@ img {
     list-style-type: none;
     margin: 0;
     padding: 0;
+    position: relative;
 }
 
 #menu li {
     position: relative;
     display: inline-block;
+    margin-right: 20px;
 }
 
 #menu a {
     color: white;
     text-decoration: none;
+    display: block;
+    padding: 8px;
 }
 
 .content-container {
@@ -138,6 +142,7 @@ img {
     margin-bottom: 10px;
 }
 
+/* Крштеница */
 .krstenica {
     border: 1px solid #ccc;
     margin: 2mm;
@@ -165,30 +170,35 @@ img {
     display: flex;
 }
 
-/* Existing styles... */
-
-#menu ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    position: relative;
+/* Венчаница */
+.vencanica {
+    border: 1px solid #ccc;
+    margin: 2mm;
+    margin-top: 6mm;
+    margin-left: 6mm;
+    height: 297mm;
+    width: 210mm;
+    padding: 0mm;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border: 2px solid red;
+    background-size: cover;
 }
 
-#menu li {
-    display: inline-block;
-    margin-right: 20px;
-    position: relative; /* For dropdown positioning */
+.vencanica-frame {
+    margin: 2mm;
+    margin-top: 6mm;
+    margin-left: 6mm;
+    height: 286mm;
+    width: 200mm;
+    padding: 0mm;
 }
 
-#menu a {
-    color: white;
-    display: block;
-    text-decoration: none;
-    padding: 8px;
-    /* background-color: #f2f2f2; */
+.vencanica-row {
+    border: 2px solid orange;
+    display: flex;
 }
 
-/* Styles for Dropdown Menu */
+/* Падајући мени */
 #menu .dropdown {
     display: none;
     position: absolute;
