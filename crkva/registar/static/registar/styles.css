@@ -97,8 +97,8 @@ img {
 }
 
 #menu li {
+    position: relative;
     display: inline-block;
-    margin-right: 20px;
 }
 
 #menu a {
@@ -182,42 +182,33 @@ img {
 
 #menu a {
     color: white;
+    display: block;
     text-decoration: none;
+    padding: 8px;
+    /* background-color: #f2f2f2; */
 }
 
 /* Styles for Dropdown Menu */
-.dropdown {
+#menu .dropdown {
     display: none;
     position: absolute;
     background: linear-gradient(90deg, #A21514 53.58%, #C92F2E 100%);
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
-    left: 0; /* Align dropdown to the left edge of the parent li */
-    top: 100%; /* Position dropdown right below the parent li */
 }
 
-.dropdown li {
+#menu .dropdown a {
     color: white;
     padding: 12px 16px;
     text-decoration: none;
     display: block;
-    text-align: left;
-}
-
-.dropdown li:hover {
-    background-color: #b3302a; /* Slightly darker shade for hover */
 }
 
 #menu li:hover .dropdown {
-    display: block; /* Show dropdown on hover */
+    display: block;
 }
 
-.dropdown a {
-    color: white;
-    text-decoration: none;
-}
-
-.dropdown a:hover {
-    background-color: #b3302a; /* Slightly darker shade for hover */
+#menu .dropdown a:hover {
+    background-color: linear-gradient(90deg, #9c1818 53.58%, #e13f3f 100%);
 }
