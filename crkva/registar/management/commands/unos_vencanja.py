@@ -82,7 +82,7 @@ class Command(BaseCommand):
             zanimanje=random.choice(self.sample_occupations),
             veroispovest=random.choice(self.sample_religions),
             narodnost=random.choice(self.sample_nationalities),
-            adresa="Насумична адреса",
+            adresa=self.create_random_adresa(),
         )
         parohijan.save()
         return parohijan

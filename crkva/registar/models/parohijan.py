@@ -5,6 +5,7 @@ import uuid
 
 from django.db import models
 
+from .adresa import Adresa
 from .narodnost import Narodnost
 from .veroispovest import Veroispovest
 from .zanimanje import Zanimanje
@@ -44,7 +45,7 @@ class Parohijan(models.Model):
         null=True,
         blank=True,
     )
-    adresa = models.CharField(verbose_name="адреса", blank=True)
+    adresa = models.ForeignKey(Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса")
 
     def __str__(self):
         return f"{self.ime} {self.prezime}"

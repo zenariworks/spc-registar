@@ -18,7 +18,7 @@ class Parohija(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{self.naziv}, {self.crkvena_opstina.naziv}"
+        return f"{self.naziv}, {self.crkvena_opstina}"
 
     class Meta:
         managed = True
