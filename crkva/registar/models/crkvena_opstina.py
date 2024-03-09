@@ -14,7 +14,7 @@ class CrkvenaOpstina(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{self.naziv}, {self.eparhija.naziv}"
+        return f"{self.naziv}, {self.eparhija}"
 
     class Meta:
         managed = True
