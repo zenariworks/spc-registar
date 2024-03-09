@@ -8,7 +8,7 @@ class ZanimanjeFilter(AutocompleteFilter):
     field_name = "zanimanje"
 
 
-class parohijanAdmin(ImportExportMixin, admin.ModelAdmin):
+class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = ("get_full_name", "datum_rodjenja", "get_zanimanje_naziv")
     ordering = ("datum_rodjenja",)
     autocomplete_fields = ["zanimanje"]

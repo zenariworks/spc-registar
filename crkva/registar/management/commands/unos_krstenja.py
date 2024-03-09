@@ -11,6 +11,7 @@ from registar.models import (
     Parohija,
     Parohijan,
     Svestenik,
+    Ulica,
     Veroispovest,
     Zanimanje,
 )
@@ -80,7 +81,7 @@ class Command(BaseCommand):
             zanimanje=random.choice(self.sample_occupations),
             veroispovest=random.choice(self.sample_religions),
             narodnost=random.choice(self.sample_nationalities),
-            adresa="Насумична адреса",
+            adresa=self.create_random_adresa(),
         )
         parohijan.save()
         return parohijan
@@ -118,10 +119,22 @@ class Command(BaseCommand):
         )
         svestenik.save()
         return svestenik
+    
+    def create_random_ulica(self) -> Ulica:
+        svestenik = Svestenik.objects.order_by('?').first()
+        if not svestenik:
+            svestenik = self.create_random_svestenik()
+
+        ulica = Ulica(
+            naziv="Улица " + str(random.randint(1, 100)),
+            svestenik=10
+        )
+        ulica.save()
+        return ulica
 
     def create_random_adresa(self) -> Adresa:
         adresa = Adresa(
-            ulica="Улица " + str(random.randint(1, 100)),
+            ulica=self.create_random_ulica(),
             mesto="Место " + str(random.randint(1, 100)),
             opstina="Општина " + str(random.randint(1, 100)),
             postanski_broj=str(random.randint(10000, 99999)),

@@ -1,12 +1,13 @@
 import uuid
 
 from django.db import models
+from .ulica import Ulica
 
 
 class Adresa(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    ulica = models.CharField(max_length=100, verbose_name="улица")
+    ulica = models.ForeignKey(Ulica, on_delete=models.CASCADE, verbose_name="улица")
     mesto = models.CharField(max_length=100, verbose_name="место")
     opstina = models.CharField(max_length=100, verbose_name="општина")
     postanski_broj = models.CharField(max_length=10, verbose_name="поштански број")

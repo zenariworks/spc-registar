@@ -1,5 +1,5 @@
 """
-Model class for representing streets in the database.
+Класа модела за представљање народности у бази података.
 """
 import uuid
 
