@@ -1,5 +1,4 @@
 from django.contrib import admin
-
 from registar.models.adresa import Adresa
 from registar.models.crkvena_opstina import CrkvenaOpstina
 from registar.models.domacinstvo import Domacinstvo

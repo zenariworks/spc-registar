@@ -10,6 +10,4 @@ class ParohijaAdmin(admin.ModelAdmin):
         "naziv",
         "crkvena_opstina__naziv",
     )
-    list_filter = (
-        "crkvena_opstina",
-    )
+    list_filter = ("crkvena_opstina",)

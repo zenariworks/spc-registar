@@ -1,5 +1,6 @@
 import random
-from .models import Ulica
+
+from registar.models import Ulica
 
 
 def dodaj_ili_dobavi_ulicu(svestenik_id):
