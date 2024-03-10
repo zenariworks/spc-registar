@@ -1,15 +1,19 @@
 import uuid
+
 from django.db import models
+
 
 class Eparhija(models.Model):
     NIVO = [
-        ('Епархија', 'Епархија'),
-        ('Архиепископија', 'Архиепископија'),
-        ('Митрополија', 'Митрополија'),
+        ("Епархија", "Епархија"),
+        ("Архиепископија", "Архиепископија"),
+        ("Митрополија", "Митрополија"),
     ]
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    nivo = models.CharField(max_length=15, choices=NIVO, default='Епархија', verbose_name="ниво")
+    nivo = models.CharField(
+        max_length=15, choices=NIVO, default="Епархија", verbose_name="ниво"
+    )
     naziv = models.CharField(max_length=100, verbose_name="назив")
     sediste = models.CharField(max_length=100, verbose_name="седиште")
 

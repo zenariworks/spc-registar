@@ -8,11 +8,11 @@ from django.utils import timezone
 from registar.models import (
     Adresa,
     Hram,
-    Vencanje,
     Narodnost,
     Parohija,
     Parohijan,
     Svestenik,
+    Vencanje,
     Veroispovest,
     Zanimanje,
 )

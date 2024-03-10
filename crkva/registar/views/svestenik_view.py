@@ -37,9 +37,7 @@ class SvestenikPDF(DetailView):
         html = render(self.request, self.template_name, context).content.decode()
 
         # Convert the HTML to PDF using WeasyPrint
-        pdf = HTML(
-            string=html, base_url=self.request.build_absolute_uri()
-        ).write_pdf()
+        pdf = HTML(string=html, base_url=self.request.build_absolute_uri()).write_pdf()
 
         # Create and return an HTTP response with the PDF
         uid = self.kwargs.get("uid")

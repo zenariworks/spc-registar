@@ -1,5 +1,4 @@
 from django.contrib import admin
-from import_export.admin import ImportExportMixin
 
 
 class VencanjeAdmin(admin.ModelAdmin):
@@ -24,15 +23,22 @@ class VencanjeAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "datum",
-                    ("zenik",
-                    "zenik_rb_brak",),
-                    ("nevesta",
-                    "nevesta_rb_brak",),
+                    (
+                        "zenik",
+                        "zenik_rb_brak",
+                    ),
+                    (
+                        "nevesta",
+                        "nevesta_rb_brak",
+                    ),
                     "datum_ispita",
                 )
             },
         ),
-        ("Породичне информације", {"fields": (("tast", "tasta"), ("svekar", "svekrva"))}),
+        (
+            "Породичне информације",
+            {"fields": (("tast", "tasta"), ("svekar", "svekrva"))},
+        ),
         (
             "Детаљи церемоније",
             {

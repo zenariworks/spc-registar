@@ -45,7 +45,9 @@ class Parohijan(models.Model):
         null=True,
         blank=True,
     )
-    adresa = models.ForeignKey(Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса")
+    adresa = models.ForeignKey(
+        Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
+    )
 
     def __str__(self):
         return f"{self.ime} {self.prezime}"

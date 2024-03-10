@@ -1,9 +1,11 @@
 # registar/management/commands/random_utils.py
 
 import random
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, timedelta
+
 from django.utils import timezone
-from registar.models import Adresa, Hram, Parohija, Parohijan, Svestenik, Ulica, Narodnost, Veroispovest, Zanimanje
+from registar.models import Narodnost, Veroispovest, Zanimanje
+
 
 class RandomUtils:
     male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]

@@ -119,16 +119,13 @@ class Command(BaseCommand):
         )
         svestenik.save()
         return svestenik
-    
+
     def create_random_ulica(self) -> Ulica:
-        svestenik = Svestenik.objects.order_by('?').first()
+        svestenik = Svestenik.objects.order_by("?").first()
         if not svestenik:
             svestenik = self.create_random_svestenik()
 
-        ulica = Ulica(
-            naziv="Улица " + str(random.randint(1, 100)),
-            svestenik=10
-        )
+        ulica = Ulica(naziv="Улица " + str(random.randint(1, 100)), svestenik=10)
         ulica.save()
         return ulica
 

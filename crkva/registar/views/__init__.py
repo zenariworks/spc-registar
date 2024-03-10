@@ -1,12 +1,7 @@
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from registar.forms import VeroispovestForm
 from registar.models import Veroispovest
-
-from .krstenje_view import *
-from .vencanje_view import *
-from .parohijan_view import *
-from .svestenik_view import *
-from .view_404 import *
 
 
 def index(request):
