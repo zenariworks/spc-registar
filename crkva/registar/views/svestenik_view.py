@@ -6,7 +6,7 @@ from registar.models.svestenik import Svestenik
 from weasyprint import HTML
 
 
-class SvesteniciSpisak(ListView):
+class SpisakSvestenika(ListView):
     model = Svestenik
     template_name = "registar/spisak_svestenika.html"
     context_object_name = "svestenici"
@@ -51,7 +51,7 @@ class SvestenikPDF(DetailView):
         return self.render_to_response(context)
 
 
-class SvestenikPrikaz(DetailView):
+class PrikazSvestenika(DetailView):
     model = Svestenik
     template_name = "registar/info_svestenik.html"
     context_object_name = "svestenik"

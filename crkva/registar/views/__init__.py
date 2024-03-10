@@ -3,8 +3,14 @@ from django.shortcuts import redirect, render
 from registar.forms import VeroispovestForm
 from registar.models import Veroispovest
 
+from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja
+from .parohijan_view import ParohijanPDF, PrikazParohijana, SpisakParohijana
+from .svestenik_view import PrikazSvestenika, SpisakSvestenika, SvestenikPDF
+from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF
+from .view_404 import custom_404
 
-def index(request):
+
+def index(request) -> HttpResponse:
     return render(request, "registar/index.html")
 
 
@@ -18,9 +24,7 @@ def dodaj_izmeni_veroispovest(request, uid=None):
     if request.method == "POST":
         if form.is_valid():
             form.save()
-            return redirect(
-                "nekigde"
-            )  # Редирект на другу страницу након успешног уноса
+            return redirect("nekigde")
 
     return render(
         request=request,
@@ -42,3 +46,23 @@ def search_view(request) -> HttpResponse:
         template_name="registar/search_view.html",
         context={"results": results},
     )
+
+
+__all__ = [
+    "index",
+    "dodaj_izmeni_veroispovest",
+    "search_view",
+    "custom_404",
+    "SpisakParohijana",
+    "PrikazParohijana",
+    "SpisakKrstenja",
+    "PrikazKrstenja",
+    "SpisakVencanja",
+    "PrikazVencanja",
+    "SpisakSvestenika",
+    "PrikazSvestenika",
+    "VencanjePDF",
+    "ParohijanPDF",
+    "KrstenjePDF",
+    "SvestenikPDF",
+]

@@ -6,7 +6,7 @@ from registar.models.parohijan import Parohijan
 from weasyprint import HTML
 
 
-class ParohijanList(ListView):
+class SpisakParohijana(ListView):
     template_name = "registar/spisak_parohijana.html"
     context_object_name = "parohijani"
     model = Parohijan
@@ -54,7 +54,7 @@ class ParohijanPDF(DetailView):
         return self.render_to_response(context)
 
 
-class ParohijanView(DetailView):
+class PrikazParohijana(DetailView):
     model = Parohijan
     template_name = "registar/info_parohijan.html"
     context_object_name = "parohijan"
