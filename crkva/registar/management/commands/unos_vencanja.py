@@ -1,5 +1,3 @@
-# registar/management/commands/unos_random.py
-
 import random
 from datetime import date, datetime, time, timedelta
 

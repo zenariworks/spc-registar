@@ -6,7 +6,7 @@ from registar.models.krstenje import Krstenje
 from weasyprint import HTML
 
 
-class KrstenjeSpisak(ListView):
+class SpisakKrstenja(ListView):
     model = Krstenje
     template_name = "registar/spisak_krstenja.html"
     context_object_name = "krstenja"
@@ -54,7 +54,7 @@ class KrstenjePDF(DetailView):
         return self.render_to_response(context)
 
 
-class KrstenjePrikaz(DetailView):
+class PrikazKrstenja(DetailView):
     model = Krstenje
     template_name = "registar/info_krstenje.html"
     context_object_name = "krstenje"
