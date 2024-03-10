@@ -52,4 +52,5 @@ urlpatterns = [
         name="izmeni-veroisposvest",
     ),
     path("search/", views.search_view, name="search_view"),
+    path("parohijan/create/", views.create_parohijan, name="create_parohijan"),
 ]
