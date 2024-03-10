@@ -1,9 +1,20 @@
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
-from registar.forms import SearchForm
+from registar.forms import ParohijanForm, SearchForm
 from registar.models.parohijan import Parohijan
 from weasyprint import HTML
+
+
+def create_parohijan(request):
+    if request.method == "POST":
+        form = ParohijanForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("parohijani")
+    else:
+        form = ParohijanForm()
+    return render(request, "registar/create_parohijan.html", {"form": form})
 
 
 class SpisakParohijana(ListView):

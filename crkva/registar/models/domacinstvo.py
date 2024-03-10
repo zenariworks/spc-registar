@@ -21,16 +21,17 @@ class Domacinstvo(models.Model):
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
     )
-
-    oznaka = models.CharField()
     tel_fiksni = models.CharField(blank=True, null=True, verbose_name="тел. фиксни")
     tel_mobilni = models.CharField(blank=True, null=True, verbose_name="тел. мобилни")
+    ukucani = models.ManyToManyField(
+        Parohijan, related_name="domacinstvo_kao_ukucan", verbose_name="укучани"
+    )
 
     slava = models.ForeignKey(
         Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава"
     )
 
-    napomena = models.TextField(null=True, verbose_name="напомена")
+    napomena = models.TextField(blank=True, null=True, verbose_name="напомена")
 
     def __str__(self) -> str:
         return f"{self.uid}"

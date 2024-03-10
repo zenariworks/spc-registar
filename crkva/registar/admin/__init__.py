@@ -13,6 +13,7 @@ from registar.models.svestenik import Svestenik
 from registar.models.ukucanin import Ukucanin
 from registar.models.ulica import Ulica
 from registar.models.vencanje import Vencanje
+from registar.models.veroispovest import Veroispovest
 from registar.models.zanimanje import Zanimanje
 
 from .adresa_admin import AdresaAdmin
@@ -29,6 +30,7 @@ from .svestenik_admin import SvestenikAdmin
 from .ukucanin_admin import UkucaninAdmin
 from .ulica_admin import UlicaAdmin
 from .vencanje_admin import VencanjeAdmin
+from .veroispovest_admin import VeroispovestAdmin
 from .zanimanje_admin import ZanimanjeAdmin
 
 admin.site.register(Adresa, AdresaAdmin)
@@ -46,3 +48,4 @@ admin.site.register(Ukucanin, UkucaninAdmin)
 admin.site.register(Ulica, UlicaAdmin)
 admin.site.register(Vencanje, VencanjeAdmin)
 admin.site.register(Zanimanje, ZanimanjeAdmin)
+admin.site.register(Veroispovest, VeroispovestAdmin)

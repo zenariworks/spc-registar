@@ -4,7 +4,12 @@ from registar.forms import VeroispovestForm
 from registar.models import Veroispovest
 
 from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja
-from .parohijan_view import ParohijanPDF, PrikazParohijana, SpisakParohijana
+from .parohijan_view import (
+    ParohijanPDF,
+    PrikazParohijana,
+    SpisakParohijana,
+    create_parohijan,
+)
 from .svestenik_view import PrikazSvestenika, SpisakSvestenika, SvestenikPDF
 from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF
 from .view_404 import custom_404
@@ -53,6 +58,7 @@ __all__ = [
     "dodaj_izmeni_veroispovest",
     "search_view",
     "custom_404",
+    "create_parohijan",
     "SpisakParohijana",
     "PrikazParohijana",
     "SpisakKrstenja",
