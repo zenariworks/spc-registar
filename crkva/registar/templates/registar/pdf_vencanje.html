@@ -1,6 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="{% static 'registar/styles.css' %}">
+
     <title>Венчаница {{ vencanje.knjiga }}.{{ vencanje.strana }}.{{ vencanje.tekuci_broj }}</title>
     <style>
         @page {
@@ -18,7 +21,7 @@
             z-index: -1;
         }
         body {
-            font-family: 'Times New Roman', Times, serif;
+            font-family: 'Miroslav', 'Times New Roman', Times, serif;
             font-size: 8pt;
             margin: 0;
             width: 210mm;
