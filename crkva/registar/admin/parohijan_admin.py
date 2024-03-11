@@ -31,7 +31,8 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
     list_filter = [ZanimanjeFilter]
 
     def get_full_name(self, obj):
-        return f"{obj.ime} {obj.prezime}"
+        devojacko = f", ({obj.devojacko_prezime})" if obj.devojacko_prezime else ""
+        return f"{obj.ime} {obj.prezime}{devojacko}"
 
     get_full_name.short_description = "Име и Презиме"
 
@@ -41,14 +42,23 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
     get_zanimanje_naziv.short_description = "Занимање"
 
     fieldsets = (
-        (None, {"fields": ("ime", "prezime", "pol")}),
+        (
+            None,
+            {
+                "fields": (
+                    "pol",
+                    "ime",
+                    "prezime",
+                    "devojacko_prezime",
+                )
+            },
+        ),
         (
             "Рођење и место",
             {
                 "fields": (
                     "mesto_rodjenja",
-                    "datum_rodjenja",
-                    "vreme_rodjenja",
+                    ("datum_rodjenja", "vreme_rodjenja"),
                 )
             },
         ),
@@ -56,7 +66,6 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
             "Додатне информације",
             {
                 "fields": (
-                    "devojacko_prezime",
                     "zanimanje",
                     "veroispovest",
                     "narodnost",
