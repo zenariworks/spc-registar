@@ -1,30 +1,27 @@
 <!-- base.html -->
 {% load static %}
 {% comment %} {% load django_select2 %} {% endcomment %}
-
 <!DOCTYPE html>
 <html lang="{{ settings.LANGUAGE_CODE }}">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="{% static 'registar/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'registar/stilovi.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <link rel="icon" href="{% static 'registar/favicon.png' %}" type="image/x-icon">
-    
     {% comment %} {% django_select2_media %} {% endcomment %}
     <title>Црквени регистар</title>
-</head>
-    <body>
-        {% include 'header.html' %}
+  </head>
 
-        <!-- Главни садржај странице биће додат овде -->
-        <main>
-            {% block content %}{% endblock %}
-        </main>
+  <body>
+    {% include 'header.html' %}
+    <!-- Главни садржај странице биће додат овде -->
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+    {% include 'footer.html' %}
+  </body>
 
-        {% include 'footer.html' %}
-    </body>
 </html>

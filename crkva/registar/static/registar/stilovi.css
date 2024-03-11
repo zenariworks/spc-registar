@@ -37,7 +37,7 @@ body>main::before {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url("hrist_pantokrator.jpg");
+    background-image: url("slike/hrist_pantokrator.jpg");
     opacity: 0.1;
     z-index: -1;
 }
@@ -166,7 +166,7 @@ img {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 2px solid red;
     background-size: cover;
-    background-image: url("krstenica-nova.jpg");
+    background-image: url("slike/krstenica-nova.jpg");
 }
 
 .krstenica-frame {
@@ -195,7 +195,7 @@ img {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 2px solid red;
     background-size: cover;
-    background-image: url("vencanica-nova.jpg");
+    background-image: url("slike/vencanica-nova.jpg");
 }
 
 .vencanica-frame {
