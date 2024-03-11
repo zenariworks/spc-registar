@@ -1,20 +1,24 @@
 """
 Model class for representing residents in the database.
 """
-import uuid
 
 from django.db import models
 
+from .domacinstvo import Domacinstvo
+from .parohijan import Parohijan
+
 
 class Ukucanin(models.Model):
-    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    parohijan = models.ForeignKey(
+        Parohijan, on_delete=models.CASCADE, verbose_name="парохијан"
+    )
+    domacinstvo = models.ForeignKey(
+        Domacinstvo, on_delete=models.CASCADE, null=True, verbose_name="домаћинство"
+    )
+    uloga = models.CharField(max_length=255, verbose_name="улога", blank=True)
 
-    rbrdom = models.IntegerField()
-
-    ime = models.CharField()
-
-    def __str__(self):
-        return f"{self.uid}"
+    def __str__(self) -> str:
+        return f"{self.parohijan} - {self.uloga} у {self.domacinstvo}"
 
     class Meta:
         managed = True
