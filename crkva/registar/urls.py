@@ -1,10 +1,11 @@
-from django.urls import path
+from django.urls import include, path
 
 from . import views
 
 handler404 = "registar.views.custom_404"
 urlpatterns = [
     path("", views.index, name="pocetna"),
+    path("select2/", include("django_select2.urls")),
     path("parohijani/", views.SpisakParohijana.as_view(), name="parohijani"),
     path(
         "parohijan/<uuid:uid>/",

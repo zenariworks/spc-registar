@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "registar",
     "import_export",
+    "django_select2",
     "admin_searchable_dropdown",
-    # "django_phonenumber_field",
+    # "phonenumber_field",
 ]
 
 MIDDLEWARE = [

@@ -1,12 +1,13 @@
 /* Стилови основних елементата */
-html, body {
+html,
+body {
     margin: 0;
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-body > header {
+body>header {
     background: linear-gradient(90deg, #A21514 53.58%, #C92F2E 100%);
     color: white;
     padding: 10px 0;
@@ -15,12 +16,12 @@ body > header {
     align-items: center;
 }
 
-body > main {
+body>main {
     flex: 1;
     position: relative;
 }
 
-body > main::before {
+body>main::before {
     content: "";
     position: absolute;
     top: 0;
@@ -34,7 +35,7 @@ body > main::before {
     z-index: -1;
 }
 
-body > footer {
+body>footer {
     background-color: #333;
     color: white;
     padding: 10px;
@@ -151,7 +152,7 @@ img {
     height: 297mm;
     width: 210mm;
     padding: 0mm;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 2px solid red;
     background-size: cover;
 }
@@ -179,7 +180,7 @@ img {
     height: 297mm;
     width: 210mm;
     padding: 0mm;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 2px solid red;
     background-size: cover;
 }
@@ -204,7 +205,7 @@ img {
     position: absolute;
     background: linear-gradient(90deg, #A21514 53.58%, #C92F2E 100%);
     min-width: 160px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
 }
 
@@ -221,4 +222,65 @@ img {
 
 #menu .dropdown a:hover {
     background-color: linear-gradient(90deg, #9c1818 53.58%, #e13f3f 100%);
+}
+
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+}
+
+input:checked+.slider {
+    background-color: #2196F3;
+}
+
+input:focus+.slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked+.slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
 }

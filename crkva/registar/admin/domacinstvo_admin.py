@@ -9,6 +9,8 @@ class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
         "tel_fiksni",
         "tel_mobilni",
         "slava",
+        "slavska_vodica",
+        "uskrsnja_vodica",
         "napomena",
     )
     ordering = ("domacin",)

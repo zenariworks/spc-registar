@@ -14,23 +14,26 @@ from .slava import Slava
 
 class Domacinstvo(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-
     domacin = models.ForeignKey(
         Parohijan, on_delete=models.SET_NULL, null=True, verbose_name="домаћин"
     )
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
     )
-    tel_fiksni = models.CharField(blank=True, null=True, verbose_name="тел. фиксни")
-    tel_mobilni = models.CharField(blank=True, null=True, verbose_name="тел. мобилни")
+    tel_fiksni = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="тел. фиксни"
+    )
+    tel_mobilni = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="тел. мобилни"
+    )
     ukucani = models.ManyToManyField(
         Parohijan, related_name="domacinstvo_kao_ukucan", verbose_name="укучани"
     )
-
     slava = models.ForeignKey(
         Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава"
     )
-
+    slavska_vodica = models.BooleanField(default=False, verbose_name="славска водица")
+    uskrsnja_vodica = models.BooleanField(default=False, verbose_name="ускршња водица")
     napomena = models.TextField(blank=True, null=True, verbose_name="напомена")
 
     def __str__(self) -> str:

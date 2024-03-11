@@ -5,6 +5,7 @@ django-import-export~=3.0.1
 djangorestframework~=3.14.0
 django-admin-searchable-dropdown~=1.2
 django-phonenumber-field~=7.3.0
+django-select2~=8.1.2
 
 # PDF Generation
 WeasyPrint~=60.2
