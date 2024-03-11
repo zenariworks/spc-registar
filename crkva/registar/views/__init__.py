@@ -1,7 +1,8 @@
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from registar.forms import VeroispovestForm
-from registar.models import Veroispovest
+from registar.models import Domacinstvo, Parohijan, Veroispovest
 
 from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja
 from .parohijan_view import (
@@ -38,19 +39,25 @@ def dodaj_izmeni_veroispovest(request, uid=None):
     )
 
 
-# In your views.py
 def search_view(request) -> HttpResponse:
     query = request.GET.get("query", "")
-    if query:
-        results = Veroispovest.objects.filter(naziv__icontains=query)
-    else:
-        results = Veroispovest.objects.none()
+    context = {
+        "query": query,
+        "veroisposvest_results": Veroispovest.objects.filter(naziv__icontains=query)
+        if query
+        else Veroispovest.objects.none(),
+        "parohijan_results": Parohijan.objects.filter(
+            Q(ime__icontains=query) | Q(prezime__icontains=query)
+        )
+        if query
+        else Parohijan.objects.none(),
+        # Pretpostavljamo da želite pretraživati po napomenama domaćinstva
+        "domacinstvo_results": Domacinstvo.objects.filter(napomena__icontains=query)
+        if query
+        else Domacinstvo.objects.none(),
+    }
 
-    return render(
-        request=request,
-        template_name="registar/search_view.html",
-        context={"results": results},
-    )
+    return render(request, "registar/search_view.html", context)
 
 
 __all__ = [
