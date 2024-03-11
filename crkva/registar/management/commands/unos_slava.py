@@ -35,7 +35,7 @@ class Command(BaseCommand):
         )
 
     def _parse_data(self):
-        with open("slave.sql", "r", encoding="utf-8") as file:
+        with open("fixtures/slave.sql", "r", encoding="utf-8") as file:
             raw_data = [line.strip() for line in file]
 
         parsed_data = []
@@ -46,9 +46,8 @@ class Command(BaseCommand):
                 name, opsti_naziv, date_part = parts
             elif len(parts) == 2:
                 name, date_part = parts
-                opsti_naziv = None  # or some default value
+                opsti_naziv = None
             else:
-                # Handle other cases or raise an error
                 continue
 
             day, month = map(int, date_part.split(","))

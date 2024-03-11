@@ -16,7 +16,7 @@ class Command(BaseCommand):
         )
 
     def _parse_data(self):
-        with open("narodnosti.csv", "r", encoding="utf-8") as file:
+        with open("fixtures/narodnosti.csv", "r", encoding="utf-8") as file:
             raw_data = [line.strip() for line in file]
 
         parsed_data = raw_data
