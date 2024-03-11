@@ -14,3 +14,21 @@ class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
         "napomena",
     )
     ordering = ("domacin",)
+
+    fieldsets = (
+        ("Основне информације", {"fields": ("domacin", "adresa")}),
+        (
+            "Контакт",
+            {
+                "fields": ("tel_fiksni", "tel_mobilni"),
+                "description": "Контакт телефони домаћинства",
+            },
+        ),
+        (
+            "Додатни детаљи",
+            {
+                "fields": ("slava", ("slavska_vodica", "uskrsnja_vodica"), "napomena"),
+                "description": "Информације везане за верске објекате",
+            },
+        ),
+    )

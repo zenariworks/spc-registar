@@ -18,7 +18,7 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "svestenik__parohijan__prezime",
     ]
     fieldsets = (
-        (None, {"fields": ("uid", ("knjiga", "strana", "tekuci_broj"), "anagraf")}),
+        (None, {"fields": (("knjiga", "strana", "tekuci_broj"), "anagraf")}),
         (
             "Детаљи крштења",
             {
