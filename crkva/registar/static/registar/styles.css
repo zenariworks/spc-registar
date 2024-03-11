@@ -1,10 +1,16 @@
 /* Стилови основних елементата */
+@font-face {
+    font-family: 'Miroslav';
+    src: url("fontovi/_MIROSLB.TTF") format('truetype');
+}
+
 html,
 body {
     margin: 0;
     height: 100%;
     display: flex;
     flex-direction: column;
+    font-family: 'Miroslav', 'Times New Roman', Times, serif;
 }
 
 body>header {
@@ -31,6 +37,7 @@ body>main::before {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-image: url("hrist_pantokrator.jpg");
     opacity: 0.1;
     z-index: -1;
 }
@@ -111,6 +118,17 @@ img {
     padding: 8px;
 }
 
+.red-button {
+    font-size: 16px;
+    line-height: 20px;
+    background: #A21514;
+    padding: 7px 15px;
+    color: #fff;
+    box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25);
+    font-weight: 600;
+    transition: all ease 0.3s;
+}
+
 .content-container {
     display: flex;
     align-items: center;
@@ -120,13 +138,6 @@ img {
 .icon-container {
     font-size: 24px;
     margin-left: 20px;
-}
-
-.image-section {
-    background-image: url("{% static 'registar/crkva.png' %}");
-    background-size: cover;
-    background-repeat: no-repeat;
-    opacity: 0.4;
 }
 
 .slava-reminders {
@@ -155,6 +166,7 @@ img {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 2px solid red;
     background-size: cover;
+    background-image: url("krstenica-nova.jpg");
 }
 
 .krstenica-frame {
@@ -183,6 +195,7 @@ img {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border: 2px solid red;
     background-size: cover;
+    background-image: url("vencanica-nova.jpg");
 }
 
 .vencanica-frame {

@@ -10,22 +10,11 @@
 
     <link rel="stylesheet" href="{% static 'registar/styles.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css">
-    <link rel="icon" href="{% static 'registar/favicon.png' %}" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <link rel="icon" href="{% static 'registar/favicon.png' %}" type="image/x-icon">
     
     {% comment %} {% django_select2_media %} {% endcomment %}
-    <style>
-        body > main::before {
-            background-image: url("{% static 'registar/hrist_pantokrator.jpg' %}");
-        }
-        .krstenica {
-            background-image: url("{% static 'registar/krstenica-nova.jpg' %}");
-        }
-        .vencanica {
-            background-image: url("{% static 'registar/vencanica-nova.jpg' %}");
-        }
-    </style>
     <title>Црквени регистар</title>
 </head>
     <body>
