@@ -1,18 +1,19 @@
 from datetime import datetime, timedelta
+from typing import Any
 
 from .models import Dan, Mesec, Slava
 
 
-def upcoming_slavas_processor(request):
-    today = datetime.now()
-    upcoming_dates = [today + timedelta(days=i) for i in range(7)]
+def processor_narednih_slava(request) -> dict[str, list[Any]]:
+    danas = datetime.now()
+    naredni_dani = [danas + timedelta(days=i) for i in range(7)]
 
-    upcoming_slavas = []
+    naredne_slave = []
 
-    for date in upcoming_dates:
-        day = Dan.objects.get(dan=date.day)
-        month = Mesec.objects.get(mesec=date.month)
-        slavas_on_date = Slava.objects.filter(dan=day, mesec=month)
-        upcoming_slavas.extend(slavas_on_date)
+    for datum in naredni_dani:
+        dan = Dan.objects.get(dan=datum.day)
+        mesec = Mesec.objects.get(mesec=datum.month)
+        slava = Slava.objects.filter(dan=dan, mesec=mesec)
+        naredne_slave.extend(slava)
 
-    return {"upcoming_slavas": upcoming_slavas}
+    return {"naredne_slave": naredne_slave}
