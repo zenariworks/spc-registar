@@ -26,7 +26,7 @@ class Command(BaseCommand):
 
     def _parse_data(self):
         try:
-            with open("veroispovesti.csv", "r", encoding="utf-8") as file:
+            with open(r"fixtures/veroispovesti.csv", "r", encoding="utf-8") as file:
                 raw_data = [line.strip() for line in file]
             return raw_data
         except IOError as e:
