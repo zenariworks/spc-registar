@@ -62,5 +62,5 @@ class PrikazKrstenja(DetailView):
     font_name = "DejaVuSans"
 
     def get_object(self) -> Krstenje:
-        k_rbr = self.kwargs.get("uid")
-        return get_object_or_404(Krstenje, uid=k_rbr)
+        uid = self.kwargs.get("uid")
+        return get_object_or_404(Krstenje, uid=uid)

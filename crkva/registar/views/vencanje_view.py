@@ -62,5 +62,5 @@ class PrikazVencanja(DetailView):
     font_name = "DejaVuSans"
 
     def get_object(self) -> Vencanje:
-        k_rbr = self.kwargs.get("uid")
-        return get_object_or_404(Vencanje, uid=k_rbr)
+        uid = self.kwargs.get("uid")
+        return get_object_or_404(Vencanje, uid=uid)

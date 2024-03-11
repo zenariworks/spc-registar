@@ -15,7 +15,7 @@ from .slava import Slava
 class Domacinstvo(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     domacin = models.ForeignKey(
-        Parohijan, on_delete=models.SET_NULL, null=True, verbose_name="домаћин"
+        Parohijan, on_delete=models.CASCADE, null=False, verbose_name="домаћин"
     )
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
@@ -26,9 +26,6 @@ class Domacinstvo(models.Model):
     tel_mobilni = models.CharField(
         max_length=255, blank=True, null=True, verbose_name="тел. мобилни"
     )
-    ukucani = models.ManyToManyField(
-        Parohijan, related_name="domacinstvo_kao_ukucan", verbose_name="укучани"
-    )
     slava = models.ForeignKey(
         Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава"
     )
@@ -37,7 +34,7 @@ class Domacinstvo(models.Model):
     napomena = models.TextField(blank=True, null=True, verbose_name="напомена")
 
     def __str__(self) -> str:
-        return f"{self.uid}"
+        return f"{self.domacin.prezime}"
 
     class Meta:
         managed = True
