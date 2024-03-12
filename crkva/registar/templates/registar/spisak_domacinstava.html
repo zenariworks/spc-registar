@@ -2,21 +2,21 @@
 {% load static %}
 {% block content %}
 <div class="container">
-  <h2>Domaćinstva koja slave izabranu slavu</h2>
+  <h2>Домаћинства која славе изабрану славу</h2>
   <div class="domacinstva-list">
     {% if domacinstva %}
       <ul>
         {% for domacinstvo in domacinstva %}
           <li>
-            <strong>Domaćin:</strong> {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}<br>
-            <strong>Adresa:</strong> {{ domacinstvo.adresa }}<br>
-            <strong>Telefon:</strong> {{ domacinstvo.tel_fiksni }} / {{ domacinstvo.tel_mobilni }}<br>
-            <strong>Napomena:</strong> {{ domacinstvo.napomena }}
+            <strong>Домаћин:</strong> {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}<br>
+            <strong>Адреса:</strong> {{ domacinstvo.adresa }}<br>
+            <strong>Телефон:</strong> {{ domacinstvo.tel_fiksni }} / {{ domacinstvo.tel_mobilni }}<br>
+            <strong>Напомена:</strong> {{ domacinstvo.napomena }}
           </li>
         {% endfor %}
       </ul>
     {% else %}
-      <p>Nema domaćinstava koja slave ovu slavu.</p>
+      <p>Нема домаћинства које слави ову славу.</p>
     {% endif %}
   </div>
 </div>
