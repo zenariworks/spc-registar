@@ -154,6 +154,16 @@ img {
     margin-bottom: 10px;
 }
 
+.slava-reminder a {
+    color: #d9534f;
+    text-decoration: none;
+}
+
+.slava-reminder a:hover {
+    color: #c9302c;
+    text-decoration: underline;
+}
+
 /* Крштеница */
 .krstenica {
     border: 1px solid #ccc;
