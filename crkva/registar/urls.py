@@ -4,6 +4,7 @@ from . import views
 
 handler404 = "registar.views.custom_404"
 urlpatterns = [
+    path("slava/<uuid:uid>/", views.prikazi_domacinstva, name="prikazi_domacinstva"),
     path("", views.index, name="pocetna"),
     path("select2/", include("django_select2.urls")),
     path("parohijani/", views.SpisakParohijana.as_view(), name="parohijani"),

@@ -16,6 +16,13 @@ from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF
 from .view_404 import custom_404
 
 
+def prikazi_domacinstva(request, uid):
+    domacinstva = Domacinstvo.objects.filter(slava__uid=uid)
+    return render(
+        request, "registar/spisak_domacinstava.html", {"domacinstva": domacinstva}
+    )
+
+
 def index(request) -> HttpResponse:
     return render(request, "registar/index.html")
 
@@ -43,18 +50,24 @@ def search_view(request) -> HttpResponse:
     query = request.GET.get("query", "")
     context = {
         "query": query,
-        "veroisposvest_results": Veroispovest.objects.filter(naziv__icontains=query)
-        if query
-        else Veroispovest.objects.none(),
-        "parohijan_results": Parohijan.objects.filter(
-            Q(ime__icontains=query) | Q(prezime__icontains=query)
-        )
-        if query
-        else Parohijan.objects.none(),
+        "veroisposvest_results": (
+            Veroispovest.objects.filter(naziv__icontains=query)
+            if query
+            else Veroispovest.objects.none()
+        ),
+        "parohijan_results": (
+            Parohijan.objects.filter(
+                Q(ime__icontains=query) | Q(prezime__icontains=query)
+            )
+            if query
+            else Parohijan.objects.none()
+        ),
         # Pretpostavljamo da želite pretraživati po napomenama domaćinstva
-        "domacinstvo_results": Domacinstvo.objects.filter(napomena__icontains=query)
-        if query
-        else Domacinstvo.objects.none(),
+        "domacinstvo_results": (
+            Domacinstvo.objects.filter(napomena__icontains=query)
+            if query
+            else Domacinstvo.objects.none()
+        ),
     }
 
     return render(request, "registar/search_view.html", context)
