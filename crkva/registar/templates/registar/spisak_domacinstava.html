@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+  <h2>Domaćinstva koja slave izabranu slavu</h2>
+  <div class="domacinstva-list">
+    {% if domacinstva %}
+      <ul>
+        {% for domacinstvo in domacinstva %}
+          <li>
+            <strong>Domaćin:</strong> {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}<br>
+            <strong>Adresa:</strong> {{ domacinstvo.adresa }}<br>
+            <strong>Telefon:</strong> {{ domacinstvo.tel_fiksni }} / {{ domacinstvo.tel_mobilni }}<br>
+            <strong>Napomena:</strong> {{ domacinstvo.napomena }}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Nema domaćinstava koja slave ovu slavu.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -6,8 +6,8 @@
   <div class="slava-reminders">
     {% for slava in naredne_slave %}
     <div class="slava-reminder">
-      <!-- Display details of the slava -->
-      {{ slava }}
+      <!-- Dodajte link ka view-u koji prikazuje domaćinstva za određenu slavu -->
+      <a href="{% url 'prikazi_domacinstva' slava.uid %}">{{ slava }}</a>
     </div>
     {% empty %}
     <p>Нема наступајућих слава.</p>
