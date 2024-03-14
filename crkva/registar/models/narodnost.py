@@ -1,6 +1,7 @@
 """
 Класа модела за представљање народности у бази података.
 """
+
 import uuid
 
 from django.db import models

@@ -1,6 +1,7 @@
 """
-Model class for representing streets in the database.
+Класа модела за представљање занимања у бази података.
 """
+
 import uuid
 
 from django.db import models

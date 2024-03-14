@@ -1,6 +1,7 @@
 """
 Класа модела за представљање домаћинстава у бази података.
 """
+
 import uuid
 
 from django.db import models

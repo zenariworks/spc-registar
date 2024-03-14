@@ -1,6 +1,7 @@
 """
-Model class for representing slavas in the database.
+Класа модела за представљање дана у бази података.
 """
+
 from django.db import models
 
 

@@ -1,6 +1,7 @@
 """
-Model class for representing baptisms in the database.
+Класа модела за представљање крштења у бази података.
 """
+
 import uuid
 
 from django.db import models

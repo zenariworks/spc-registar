@@ -1,6 +1,7 @@
 """
-Django command to wait for the database to be available.
+Ђанго команда за чекање постојеће базе података.
 """
+
 import time
 
 from django.core.management.base import BaseCommand
@@ -9,18 +10,18 @@ from psycopg2 import OperationalError as Psycopg2OpError
 
 
 class Command(BaseCommand):
-    """Django command to wait for database."""
+    """Ђанго команда за чекање постојеће базе података."""
 
     def handle(self, *args, **options):
-        """Entrypoint for command."""
-        self.stdout.write("Waiting for database...")
+        """Почетна тачка команде."""
+        self.stdout.write("Чекање на базу података...")
         db_up = False
         while db_up is False:
             try:
                 self.check(databases=["default"])
                 db_up = True
             except (Psycopg2OpError, OperationalError):
-                self.stdout.write("Database unavailable, waiting 1 second...")
+                self.stdout.write("База података недоступна, чекам 1 секунд...")
                 time.sleep(1)
 
-        self.stdout.write(self.style.SUCCESS("Database available!"))
+        self.stdout.write(self.style.SUCCESS("База података је доступна!"))
