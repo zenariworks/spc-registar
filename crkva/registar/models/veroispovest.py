@@ -1,6 +1,7 @@
 """
-Model class for representing streets in the database.
+Класа модела за представљање вероисповести у бази података.
 """
+
 import uuid
 
 from django.db import models
@@ -16,6 +17,6 @@ class Veroispovest(models.Model):
 
     class Meta:
         managed = True
-        db_table = "veroispovests"
+        db_table = "veroispovesti"
         verbose_name = "Вероисповест"
         verbose_name_plural = "Вероисповести"

@@ -1,6 +1,7 @@
 """
-Model class for representing weddings in the database.
+Класа модела за представљање венчања у бази података.
 """
+
 import uuid
 
 from django.db import models

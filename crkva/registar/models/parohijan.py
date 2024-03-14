@@ -1,6 +1,7 @@
 """
-Model class for representing sets in the database.
+Класа модела за представљање парохијана у бази података.
 """
+
 import uuid
 
 from django.db import models

@@ -1,6 +1,7 @@
 """
-Model class for representing slavas in the database.
+Класа модела за представљање славе у бази података.
 """
+
 import uuid
 
 from django.db import models
