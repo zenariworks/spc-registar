@@ -5,9 +5,12 @@ from django.core.management.base import BaseCommand
 from django.utils import timezone
 from registar.models import (
     Adresa,
+    Drzava,
     Hram,
     Krstenje,
+    Mesto,
     Narodnost,
+    Opstina,
     Parohija,
     Parohijan,
     Svestenik,
@@ -101,6 +104,13 @@ class Command(BaseCommand):
         parohija, created = Parohija.objects.get_or_create(naziv=naziv)
         return parohija
 
+    def get_or_create_drzava(self, naziv_drzave: str, postkod_regex: str) -> Drzava:
+        drzava, created = Drzava.objects.get_or_create(
+            naziv=naziv_drzave,
+            defaults={"postkod_regex": postkod_regex},
+        )
+        return drzava
+
     def create_random_svestenik(self) -> Svestenik:
         parohije = [
             self.get_or_create_parohija("Парохија 1"),
@@ -120,24 +130,39 @@ class Command(BaseCommand):
         svestenik.save()
         return svestenik
 
-    def create_random_ulica(self) -> Ulica:
-        svestenik = Svestenik.objects.order_by("?").first()
-        if not svestenik:
-            svestenik = self.create_random_svestenik()
+    def create_random_mesto(self) -> Mesto:
+        # Asumiramo da već postoji ili kreiramo novu Državu i Opštinu
+        drzava = self.get_or_create_drzava("Србија", r"^\d{5}$")  # Primer za Srbiju
+        opstina, created = Opstina.objects.get_or_create(
+            naziv="Општина " + str(random.randint(1, 100)), defaults={"drzava": drzava}
+        )
 
-        ulica = Ulica(naziv="Улица " + str(random.randint(1, 100)), svestenik=10)
-        ulica.save()
+        mesto = Mesto.objects.create(
+            naziv="Место " + str(random.randint(1, 100)), opstina=opstina
+        )
+        return mesto
+
+    def create_random_ulica(self) -> Ulica:
+        mesto = self.create_random_mesto()
+
+        # # Proveravamo da li postoji sveštenik, ako ne, kreiramo novog.
+        # svestenik = Svestenik.objects.order_by("?").first()
+        # if not svestenik:
+        #     svestenik = self.create_random_svestenik()
+
+        ulica = Ulica.objects.create(
+            naziv="Улица " + str(random.randint(1, 100)), mesto=mesto, svestenik=1
+        )
         return ulica
 
     def create_random_adresa(self) -> Adresa:
-        adresa = Adresa(
-            ulica=self.create_random_ulica(),
-            mesto="Место " + str(random.randint(1, 100)),
-            opstina="Општина " + str(random.randint(1, 100)),
-            postanski_broj=str(random.randint(10000, 99999)),
-            drzava="Србија",
+        ulica = self.create_random_ulica()
+        adresa = Adresa.objects.create(
+            ulica=ulica,
+            broj=str(random.randint(1, 100)),
+            dodatak=random.choice(["А", "Б", None]),
+            napomena="Насумична напомена " + str(random.randint(1, 100)),
         )
-        adresa.save()
         return adresa
 
     def create_random_hram(self):

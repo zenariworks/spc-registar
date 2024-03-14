@@ -7,7 +7,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         # Списак команди које треба извршити
-        commands = [
+        komande = [
             ("unos_dana", {}),
             ("unos_meseci", {}),
             ("unos_narodnosti", {}),
@@ -17,13 +17,13 @@ class Command(BaseCommand):
             ("unos_eparhija", {}),
         ]
 
-        for command_name, command_kwargs in commands:
+        for kommanda, command_kwargs in komande:
             try:
-                self.stdout.write(f"Извршење команде: {command_name}")
-                call_command(command_name, **command_kwargs)
+                self.stdout.write(f"Извршење команде: {kommanda}")
+                call_command(kommanda, **command_kwargs)
             except Exception as e:
                 self.stdout.write(
-                    self.style.ERROR(f"Грешка при извршењу {command_name}: {e}")
+                    self.style.ERROR(f"Грешка при извршењу {kommanda}: {e}")
                 )
 
         self.stdout.write(self.style.SUCCESS("Успешно извршене све команде у групи."))
