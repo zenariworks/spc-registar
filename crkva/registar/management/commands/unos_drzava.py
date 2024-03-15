@@ -21,8 +21,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         for naziv in drzave_i_regexi.keys():
-            _, created = unesi_drzavu(naziv)
-            if created:
-                self.stdout.write(self.style.SUCCESS(f"Додата држава `{naziv}`"))
+            drzava, uneta = unesi_drzavu(naziv)
+            if uneta:
+                info = f"Додата држава `{drzava}`"
+                self.stdout.write(self.style.SUCCESS(info))
             else:
-                self.stdout.write(f"Држава `{naziv}` већ постоји.")
+                info = f"Држава `{drzava}` већ постоји."
+                self.stdout.write(self.style.WARNING(info))

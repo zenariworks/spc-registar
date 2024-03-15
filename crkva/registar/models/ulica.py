@@ -16,7 +16,7 @@ class Ulica(models.Model):
     svestenik = models.IntegerField(verbose_name="свештеник")
 
     def __str__(self):
-        return f"{self.naziv}, {self.mesto.naziv}"
+        return f"{self.naziv}, {self.mesto}"
 
     class Meta:
         managed = True
