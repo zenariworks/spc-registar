@@ -65,8 +65,7 @@
    docker compose up
    ```
 
-   Админ панелу сада можете приступити на [localhost:8000/admin](localhost:8000/admin).
-   Ако желите да видите учитан тест податак из корака 2, приступите [localhost:8000/svestenik/1](localhost:8000/svestenik/1).
+   Сада можете приступити регистру на [localhost:8000](localhost:8000), а админ панелу на [localhost:8000/admin](localhost:8000/admin).
 
 ## Производно окружење
 
