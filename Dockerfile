@@ -1,5 +1,5 @@
-# Користи Python 3.9 на Alpine 3.13
-FROM python:3.9-alpine3.13
+# Користи Python 3.10 на Alpine 3.13
+FROM python:3.10-alpine3.13
 LABEL maintainer="zenari.io"
 
 # Подешавање променљивих окружења

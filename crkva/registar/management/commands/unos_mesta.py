@@ -16,7 +16,7 @@ mesta = [
 def unesi_mesto(naziv: str | Mesto | None) -> tuple[Mesto, bool]:
     if isinstance(naziv, Mesto):
         return naziv, False
-    naziv = naziv if naziv else random.choice(mesta)
+    naziv = naziv or random.choice(mesta)
     opstina, uneto = Mesto.objects.get_or_create(naziv=naziv)
     return opstina, uneto
 
