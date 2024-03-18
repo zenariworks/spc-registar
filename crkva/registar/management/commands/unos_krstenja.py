@@ -19,6 +19,8 @@ from registar.models import (
     Zanimanje,
 )
 
+from .unos_adresa import unesi_adresu
+
 
 class Command(BaseCommand):
     help = "Populates the database with random parohijan instances"
@@ -156,12 +158,27 @@ class Command(BaseCommand):
         return ulica
 
     def create_random_adresa(self) -> Adresa:
-        ulica = self.create_random_ulica()
-        adresa = Adresa.objects.create(
-            ulica=ulica,
-            broj=str(random.randint(1, 100)),
-            dodatak=random.choice(["А", "Б", None]),
-            napomena="Насумична напомена " + str(random.randint(1, 100)),
+        # Primer nasumičnih vrednosti, u praksi koristite realne podatke
+        naziv_ulice = "Улица " + str(random.randint(1, 100))
+        broj = str(random.randint(1, 100))
+        dodatak = random.choice(["А", "Б", None])
+        postkod = "11000"
+        napomena = "Насумична напомена"
+        naziv_mesta = "Место " + str(random.randint(1, 100))
+        naziv_opstine = "Општина " + str(random.randint(1, 100))
+        naziv_drzave = "Србија"
+        svestenik_id = 1
+
+        adresa, _ = unesi_adresu(
+            naziv_ulice,
+            broj,
+            dodatak,
+            postkod,
+            napomena,
+            naziv_mesta,
+            naziv_opstine,
+            naziv_drzave,
+            svestenik_id,
         )
         return adresa
 

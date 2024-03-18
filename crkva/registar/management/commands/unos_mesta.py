@@ -1,28 +1,33 @@
+import random
+
 from django.core.management.base import BaseCommand
 from registar.models import Mesto
 
-from .unos_opstina import unesi_opstinu
-
-mesta_opstine_drzave = [
-    ("Место 1", "Општина 1", "Србија"),
-    ("Место 2", "Општина 2", "Босна и Херцеговина"),
-    ("Место 3", "Општина 1", "Србија"),
+mesta = [
+    "Место 1",
+    "Место 2",
+    "Место 3",
+    "Место 4",
+    "Место 5",
     # ...
 ]
 
 
-def unesi_mesto(naziv, naziv_opstine, naziv_drzave) -> tuple[Mesto, bool]:
-    opstina, _ = unesi_opstinu(naziv_opstine, naziv_drzave)
-    return Mesto.objects.get_or_create(naziv=naziv, defaults={"opstina": opstina})
+def unesi_mesto(naziv: str | Mesto | None) -> tuple[Mesto, bool]:
+    if isinstance(naziv, Mesto):
+        return naziv, False
+    naziv = naziv if naziv else random.choice(mesta)
+    opstina, uneto = Mesto.objects.get_or_create(naziv=naziv)
+    return opstina, uneto
 
 
 class Command(BaseCommand):
-    help = "Унос места и повезивање са општинама"
+    help = "Унос места без повезивања са општинама"
 
     def handle(self, *args, **kwargs):
-        for naziv, opstina_naziv, drzava_naziv in mesta_opstine_drzave:
-            mesto, uneta = unesi_mesto(naziv, opstina_naziv, drzava_naziv)
-            if uneta:
+        for naziv in mesta:
+            mesto, uneto = unesi_mesto(naziv)
+            if uneto:
                 info = f"Додато место `{mesto}`"
                 self.stdout.write(self.style.SUCCESS(info))
             else:

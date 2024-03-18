@@ -1,27 +1,33 @@
+import random
+
 from django.core.management.base import BaseCommand
 from registar.models import Opstina
 
-from .unos_drzava import unesi_drzavu
-
-opstine_i_drzave = [
-    ("Општина 1", "Србија"),
-    ("Општина 2", "Босна и Херцеговина"),
+opstine = [
+    "Општина 1",
+    "Општина 2",
+    "Општина 3",
+    "Општина 4",
+    "Општина 5",
     # ...
 ]
 
 
-def unesi_opstinu(naziv, naziv_drzave) -> tuple[Opstina, bool]:
-    drzava, _ = unesi_drzavu(naziv_drzave)
-    return Opstina.objects.get_or_create(naziv=naziv, defaults={"drzava": drzava})
+def unesi_opstinu(naziv: str | Opstina | None) -> tuple[Opstina, bool]:
+    if isinstance(naziv, Opstina):
+        return naziv, False
+    naziv = naziv if naziv else random.choice(opstine)
+    opstina, uneto = Opstina.objects.get_or_create(naziv=naziv)
+    return opstina, uneto
 
 
 class Command(BaseCommand):
     help = "Унос општина и повезивање са државама"
 
     def handle(self, *args, **kwargs):
-        for naziv, drzava_naziv in opstine_i_drzave:
-            opstina, uneta = unesi_opstinu(naziv, drzava_naziv)
-            if uneta:
+        for naziv in opstine:
+            opstina, uneto = unesi_opstinu(naziv)
+            if uneto:
                 info = f"Додата општина `{opstina}`"
                 self.stdout.write(self.style.SUCCESS(info))
             else:

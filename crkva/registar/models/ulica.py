@@ -6,17 +6,31 @@ import uuid
 
 from django.db import models
 
+from .drzava import Drzava
 from .mesto import Mesto
+from .opstina import Opstina
+from .svestenik import Svestenik
 
 
 class Ulica(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     naziv = models.CharField(max_length=255, verbose_name="назив")
     mesto = models.ForeignKey(Mesto, on_delete=models.CASCADE, verbose_name="место")
-    svestenik = models.IntegerField(verbose_name="свештеник")
+    opstina = models.ForeignKey(
+        Opstina, on_delete=models.CASCADE, verbose_name="општина"
+    )
+    drzava = models.ForeignKey(Drzava, on_delete=models.CASCADE, verbose_name="држава")
+
+    svestenik = models.ForeignKey(
+        Svestenik,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="свештеник",
+    )
 
     def __str__(self):
-        return f"{self.naziv}, {self.mesto}"
+        return f"{self.naziv}, {self.mesto}, {self.opstina}, {self.drzava}"
 
     class Meta:
         managed = True
