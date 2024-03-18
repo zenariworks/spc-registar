@@ -2,11 +2,9 @@
 Класа модела за представљање адресе у бази података.
 """
 
-import re
 import uuid
 
 from django.db import models
-from django.forms import ValidationError
 
 from .ulica import Ulica
 
@@ -24,19 +22,18 @@ class Adresa(models.Model):
     napomena = models.TextField(blank=True, null=True, verbose_name="напомена")
 
     def clean(self):
-        """Валидација постанског броја."""
-        if self.postkod and self.ulica.mesto.opstina.drzava:
-            regex = self.ulica.mesto.opstina.drzava.postkod_regex
-            if not re.match(regex, self.postkod):
-                raise ValidationError("Поштански број не одговара формату државе.")
+        """Валидација поштанског броја."""
+        if self.postkod and self.ulica and self.ulica.drzava:
+            self.ulica.drzava.provera_postkoda(self.postkod)
 
     def __str__(self):
         detalji = f"{self.ulica.naziv} {self.broj}"
-        if self.dodatak:
-            detalji += f"/{self.dodatak}"
-        detalji += f", {self.ulica.mesto}"
-        if self.napomena:
-            detalji += f" (Напомена: {self.napomena})"
+        detalji += f"/{self.dodatak}" if self.dodatak else ""
+        detalji += f", {self.postkod}" if self.postkod else ""
+        detalji += f", {self.ulica.mesto}" if self.ulica.mesto else ""
+        detalji += f", {self.ulica.opstina}" if self.ulica.opstina else ""
+        detalji += f", {self.ulica.drzava}" if self.ulica.drzava else ""
+        detalji += f" (Напомена: {self.napomena})" if self.napomena else ""
         return detalji
 
     class Meta:
