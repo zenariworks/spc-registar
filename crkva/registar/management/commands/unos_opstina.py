@@ -16,7 +16,7 @@ opstine = [
 def unesi_opstinu(naziv: str | Opstina | None) -> tuple[Opstina, bool]:
     if isinstance(naziv, Opstina):
         return naziv, False
-    naziv = naziv if naziv else random.choice(opstine)
+    naziv = naziv or random.choice(opstine)
     opstina, uneto = Opstina.objects.get_or_create(naziv=naziv)
     return opstina, uneto
 
