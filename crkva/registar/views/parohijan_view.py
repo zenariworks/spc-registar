@@ -18,9 +18,9 @@ def create_parohijan(request):
 
 
 class SpisakParohijana(ListView):
+    model = Parohijan
     template_name = "registar/spisak_parohijana.html"
     context_object_name = "parohijani"
-    model = Parohijan
     paginate_by = 10
 
     def get_queryset(self):

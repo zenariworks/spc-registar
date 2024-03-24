@@ -118,7 +118,7 @@ img {
     padding: 8px;
 }
 
-.red-button {
+.dugme-crveno {
     font-size: 16px;
     line-height: 20px;
     background: #A21514;
@@ -472,29 +472,24 @@ input[type="text"] {
     color: white;
 }
 
-/* Reusing header and form container styles */
-.header-container, .form-container, .hidden-submit {
-    /* The styles for these classes remain the same */
+/* Pagination Styles */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
 }
 
-.vencanje-list {
-    padding: 0;
+.step-links, .current {
+    display: inline-block;
 }
 
-.vencanje-item {
-    list-style-type: none;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.vencanje-link {
+.step-links a, .current {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
     text-decoration: none;
-    color: black;
-    display: flex;
-    flex-grow: 1;
-    align-items: center;
-    padding: 10px;
-    cursor: pointer;
+    color: #A21514;
+}
+
+.current {
+    background-color: #A21514;
+    color: white;
 }
