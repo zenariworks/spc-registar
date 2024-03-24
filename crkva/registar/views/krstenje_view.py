@@ -1,9 +1,21 @@
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from registar.forms import SearchForm
+from registar.forms.krstenje_form import KrstenjeForm
 from registar.models.krstenje import Krstenje
 from weasyprint import HTML
+
+
+def unos_krstenja(request):
+    if request.method == "POST":
+        form = KrstenjeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("krstenja")
+    else:
+        form = KrstenjeForm()
+    return render(request, "registar/unos_krstenja.html", {"form": form})
 
 
 class SpisakKrstenja(ListView):

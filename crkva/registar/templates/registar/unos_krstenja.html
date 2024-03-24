@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Унос крштења</h2>
+  <form method="post" class="form">
+    {% csrf_token %}
+    <div class="form-row">
+      {{ form.pol.label_tag }} {{ form.pol }}
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        {{ form.ime.label_tag }} {{ form.prezime.label_tag }}
+      </div>
+      <div class="form-group col-md-6">
+        {{ form.ime }} {{ form.prezime }}
+      </br>{{ form.devojacko_prezime.label_tag }} {{ form.devojacko_prezime }}
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        {{ form.datum_rodjenja.label_tag }} {{ form.vreme_rodjenja.label_tag }}
+      </div>
+      <div class="form-group col-md-6">
+        {{ form.datum_rodjenja }} {{ form.vreme_rodjenja }}
+      </div>
+    </div>
+
+    <!-- Renderujte ostala polja -->
+    <div class="form-row">
+    {{ form.zanimanje.label_tag }} {{ form.zanimanje }}
+    </div>
+    <div class="form-row">
+    {{ form.veroispovest.label_tag }} {{ form.veroispovest }}
+    </div>
+    <div class="form-row">
+    {{ form.narodnost.label_tag }} {{ form.narodnost }}
+    {{ form.adresa.label_tag }} {{ form.adresa }}
+    </div>
+    <button class="dugme-crveno" type="submit">Сачувај</button>
+  </form>
+{% endblock %}
