@@ -54,5 +54,6 @@ urlpatterns = [
         name="izmeni-veroisposvest",
     ),
     path("search/", views.search_view, name="search_view"),
-    path("parohijan/create/", views.create_parohijan, name="create_parohijan"),
+    path("unos/parohijan/", views.unos_parohijana, name="unos_parohijana"),
+    path("unos/krstenje/", views.unos_krstenja, name="unos_krstenja"),
 ]

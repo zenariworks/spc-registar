@@ -6,7 +6,7 @@ from registar.models.parohijan import Parohijan
 from weasyprint import HTML
 
 
-def create_parohijan(request):
+def unos_parohijana(request):
     if request.method == "POST":
         form = ParohijanForm(request.POST)
         if form.is_valid():
@@ -14,7 +14,7 @@ def create_parohijan(request):
             return redirect("parohijani")
     else:
         form = ParohijanForm()
-    return render(request, "registar/create_parohijan.html", {"form": form})
+    return render(request, "registar/unos_parohijana.html", {"form": form})
 
 
 class SpisakParohijana(ListView):

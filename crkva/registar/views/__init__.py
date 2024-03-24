@@ -4,12 +4,12 @@ from django.shortcuts import redirect, render
 from registar.forms import VeroispovestForm
 from registar.models import Domacinstvo, Parohijan, Veroispovest
 
-from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja
+from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja, unos_krstenja
 from .parohijan_view import (
     ParohijanPDF,
     PrikazParohijana,
     SpisakParohijana,
-    create_parohijan,
+    unos_parohijana,
 )
 from .svestenik_view import PrikazSvestenika, SpisakSvestenika, SvestenikPDF
 from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF
@@ -78,7 +78,8 @@ __all__ = [
     "dodaj_izmeni_veroispovest",
     "search_view",
     "custom_404",
-    "create_parohijan",
+    "unos_krstenja",
+    "unos_parohijana",
     "SpisakParohijana",
     "PrikazParohijana",
     "SpisakKrstenja",
