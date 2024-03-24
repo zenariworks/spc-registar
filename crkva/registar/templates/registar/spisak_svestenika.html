@@ -1,23 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="header-container">
         <h1 style="margin: 0;">Свештеници</h1>
-        <form method="get" action="" style="margin: 0;">
-            <div style="display: flex; align-items: center;">
+        <form method="get" action="" class="form-container">
+            <div>
                 {% for field in form.visible_fields %}
-                    <!-- Render each field manually -->
                     {{ field }}
                 {% endfor %}
-                <!-- Hidden submit button -->
-                <input type="submit" style="display: none;">
+                <input type="submit" class="hidden-submit">
             </div>
         </form>
     </div>
-    <ul style="padding: 0;">
+    <ul class="spisak">
         {% for svestenik in svestenici %}
-            <li style="list-style-type: none; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                <a href="{% url 'svestenik_detail' uid=svestenik.uid %}" style="text-decoration: none; color: black; display: flex; flex-grow: 1; align-items: center; padding: 10px; cursor: pointer;" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
+            <li class="stavka">
+                <a href="{% url 'svestenik_detail' uid=svestenik.uid %}" class="stavka-veza" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
                     {{ svestenik.ime }} {{ svestenik.prezime }}, {{ svestenik.zvanje }}
                 </a>
                 <a href="{% url 'svestenik_pdf' uid=svestenik.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">

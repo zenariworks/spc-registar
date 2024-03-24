@@ -1,23 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="header-container">
         <h1 style="margin: 0;">Венчања</h1>
-        <form method="get" action="" style="margin: 0;">
-            <div style="display: flex; align-items: center;">
+        <form method="get" action="" class="form-container">
+            <div>
                 {% for field in form.visible_fields %}
-                    <!-- Render each field manually -->
                     {{ field }}
                 {% endfor %}
-                <!-- Hidden submit button -->
-                <input type="submit" style="display: none;">
+                <input type="submit" class="hidden-submit">
             </div>
         </form>
     </div>
-    <ul style="padding: 0;">
+    <ul class="spisak">
         {% for vencanje in vencanja %}
-            <li style="list-style-type: none; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                <a href="{% url 'vencanje_detail' uid=vencanje.uid %}" style="text-decoration: none; color: black; display: flex; flex-grow: 1; align-items: center; padding: 10px; cursor: pointer;" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
+            <li class="stavka">
+                <a href="{% url 'vencanje_detail' uid=vencanje.uid %}" class="stavka-veza" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
                     {{ vencanje.datum }}: {{ vencanje.zenik }} и {{ vencanje.nevesta }}
                 </a>
                 <a href="{% url 'vencanje_pdf' uid=vencanje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
@@ -25,7 +23,7 @@
                 </a>
             </li>
         {% empty %}
-            <li>Нема уноса венчања у бази.</li>
+            <li>Нема уноса свештеника у бази.</li>
         {% endfor %}
     </ul>
 {% endblock %}
