@@ -13,7 +13,7 @@ opstine = [
 ]
 
 
-def unesi_opstinu(naziv: str | Opstina | None) -> tuple[Opstina, bool]:
+def unesi_opstinu(naziv: str | Opstina | None = None) -> tuple[Opstina, bool]:
     if isinstance(naziv, Opstina):
         return naziv, False
     naziv = naziv or random.choice(opstine)

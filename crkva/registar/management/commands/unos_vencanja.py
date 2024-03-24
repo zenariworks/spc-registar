@@ -10,11 +10,12 @@ from registar.models import (
     Parohija,
     Parohijan,
     Svestenik,
-    Ulica,
     Vencanje,
     Veroispovest,
     Zanimanje,
 )
+
+from .unos_adresa import unesi_adresu
 
 
 class Command(BaseCommand):
@@ -120,24 +121,25 @@ class Command(BaseCommand):
         svestenik.save()
         return svestenik
 
-    def create_random_ulica(self) -> Ulica:
-        svestenik = Svestenik.objects.order_by("?").first()
-        if not svestenik:
-            svestenik = self.create_random_svestenik()
-
-        ulica = Ulica(naziv="Улица " + str(random.randint(1, 100)), svestenik=10)
-        ulica.save()
-        return ulica
-
     def create_random_adresa(self) -> Adresa:
-        adresa = Adresa(
-            ulica=self.create_random_ulica(),
-            mesto="Место " + str(random.randint(1, 100)),
-            opstina="Општина " + str(random.randint(1, 100)),
-            postanski_broj=str(random.randint(10000, 99999)),
-            drzava="Србија",
+        # Primer nasumičnih vrednosti, u praksi koristite realne podatke
+        naziv_ulice = "Улица " + str(random.randint(1, 100))
+        broj = str(random.randint(1, 100))
+        dodatak = random.choice(["А", "Б", None])
+        postkod = "11000"
+        napomena = "Насумична напомена"
+        naziv_mesta = "Место " + str(random.randint(1, 100))
+        naziv_opstine = "Општина " + str(random.randint(1, 100))
+
+        adresa, _ = unesi_adresu(
+            naziv_ulice,
+            broj,
+            dodatak,
+            postkod,
+            napomena,
+            naziv_mesta,
+            naziv_opstine,
         )
-        adresa.save()
         return adresa
 
     def create_random_hram(self):

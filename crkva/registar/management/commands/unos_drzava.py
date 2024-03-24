@@ -25,7 +25,7 @@ drzave = {
 }
 
 
-def unesi_drzavu(naziv: str | Drzava | None) -> tuple[Drzava, bool]:
+def unesi_drzavu(naziv: str | Drzava | None = None) -> tuple[Drzava, bool]:
     if isinstance(naziv, Drzava):
         return naziv, False
 

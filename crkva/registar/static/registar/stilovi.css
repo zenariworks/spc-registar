@@ -154,12 +154,15 @@ img {
     margin-bottom: 10px;
 }
 
-.slava-reminder a {
+.slava-link {
+    display: block;
     color: #d9534f;
     text-decoration: none;
+    padding: 10px;
 }
 
-.slava-reminder a:hover {
+.slava-link:hover {
+    background-color: #f0f0f0;
     color: #c9302c;
     text-decoration: underline;
 }
