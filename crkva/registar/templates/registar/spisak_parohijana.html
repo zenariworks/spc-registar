@@ -1,52 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <!-- Updated header with search field on the same line -->
-    <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div class="header-container">
         <h1 style="margin: 0;">Парохијани</h1>
-        <form method="get" action="" style="margin: 0;">
-            <div style="display: flex; align-items: center;">
+        <form method="get" action="" class="form-container">
+            <div>
                 {% for field in form.visible_fields %}
-                    <!-- Render each field manually -->
                     {{ field }}
                 {% endfor %}
-                <!-- Hidden submit button -->
-                <input type="submit" style="display: none;">
+                <input type="submit" class="hidden-submit">
             </div>
         </form>
     </div>
 
-    <!-- Rest of the content -->
-    <ul style="padding: 0;">
+    <ul class="spisak">
         {% for parohijan in parohijani %}
-            <li style="list-style-type: none; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-                <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" style="text-decoration: none; color: black; display: flex; flex-grow: 1; align-items: center; padding: 10px; cursor: pointer;" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
+            <li class="stavka">
+                <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
                     {{ parohijan.ime }} {{ parohijan.prezime }} ({{ parohijan.datum_rodjenja|date:"Y" }})
                 </a>
                 <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
                     <button class="red-button" type="button">Штампа</button>
                 </a>
             </li>
-            {% empty %}
+        {% empty %}
             <li>Нема уписаних парохијана у бази.</li>
         {% endfor %}
     </ul>
 
-    <!-- Pagination Links -->
-    <div class="pagination" style="text-align: center; margin-top: 20px;">
-        <span class="step-links" style="display: inline-block;">
+    <div class="pagination">
+        <span class="step-links">
             {% if page_obj.has_previous %}
-                <a href="?page=1" style="padding: 5px 10px; border: 1px solid #ddd; margin-right: 5px; text-decoration: none; color: #A21514;">&laquo; прва</a>
-                <a href="?page={{ page_obj.previous_page_number }}" style="padding: 5px 10px; border: 1px solid #ddd; margin-right: 5px; text-decoration: none; color: #A21514;">претходна</a>
+                <a href="?page=1" class="page-link">&laquo; прва</a>
+                <a href="?page={{ page_obj.previous_page_number }}" class="page-link">претходна</a>
             {% endif %}
 
-            <span class="current" style="padding: 5px 10px; border: 1px solid #ddd; background-color: #A21514; color: white;">
+            <span class="current">
                 страна {{ page_obj.number }} од {{ page_obj.paginator.num_pages }}.
             </span>
 
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" style="padding: 5px 10px; border: 1px solid #ddd; margin-left: 5px; text-decoration: none; color: #A21514;">следеђа</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}" style="padding: 5px 10px; border: 1px solid #ddd; margin-left: 5px; text-decoration: none; color: #A21514;">последња &raquo;</a>
+                <a href="?page={{ page_obj.next_page_number }}" class="page-link">следеђа</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">последња &raquo;</a>
             {% endif %}
         </span>
     </div>
