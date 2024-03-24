@@ -10,6 +10,7 @@ class SpisakSvestenika(ListView):
     model = Svestenik
     template_name = "registar/spisak_svestenika.html"
     context_object_name = "svestenici"
+    paginate_by = 10
 
     def get_queryset(self):
         form = SearchForm(self.request.GET)

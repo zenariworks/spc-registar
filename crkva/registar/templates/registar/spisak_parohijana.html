@@ -20,7 +20,7 @@
                     {{ parohijan.ime }} {{ parohijan.prezime }} ({{ parohijan.datum_rodjenja|date:"Y" }})
                 </a>
                 <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
-                    <button class="red-button" type="button">Штампа</button>
+                    <button class="dugme-crveno" type="button">Штампа</button>
                 </a>
             </li>
         {% empty %}
