@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
-from registar.models import Adresa
-from registar.models.svestenik import Svestenik
+from registar.models import Adresa, Svestenik
 
 from .unos_ulica import unesi_ulicu
 

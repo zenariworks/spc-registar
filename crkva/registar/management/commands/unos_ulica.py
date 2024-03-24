@@ -21,7 +21,7 @@ ulice = [
 
 
 def unesi_ulicu(
-    naziv: str | None,
+    naziv: str | None = None,
     mesto_naziv: str | Mesto | None = None,
     opstina_naziv: str | Opstina | None = None,
     drzava_naziv: str | Drzava | None = None,

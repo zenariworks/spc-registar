@@ -13,7 +13,7 @@ mesta = [
 ]
 
 
-def unesi_mesto(naziv: str | Mesto | None) -> tuple[Mesto, bool]:
+def unesi_mesto(naziv: str | Mesto | None = None) -> tuple[Mesto, bool]:
     if isinstance(naziv, Mesto):
         return naziv, False
     naziv = naziv or random.choice(mesta)
