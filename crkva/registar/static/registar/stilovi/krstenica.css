@@ -1,0 +1,28 @@
+/* Крштеница */
+.krstenica {
+    border: 1px solid #ccc;
+    margin: 2mm;
+    margin-top: 6mm;
+    margin-left: 6mm;
+    height: 297mm;
+    width: 210mm;
+    padding: 0mm;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 2px solid red;
+    background-size: cover;
+    background-image: url("../slike/krstenica-nova.jpg");
+}
+
+.krstenica-frame {
+    margin: 2mm;
+    margin-top: 6mm;
+    margin-left: 6mm;
+    height: 286mm;
+    width: 200mm;
+    padding: 0mm;
+}
+
+.krstenica-row {
+    border: 2px solid orange;
+    display: flex;
+}

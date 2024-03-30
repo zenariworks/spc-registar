@@ -1,0 +1,124 @@
+/* Стилови класа */
+.logo-holder {
+    position: relative;
+    float: left;
+}
+
+.logo-holder:before {
+    content: "";
+    background: linear-gradient(90deg, #F9F9F9 0%, #DFE0E0 97.97%);
+    display: block;
+    height: 131px;
+    width: 100%;
+    position: absolute;
+    transform: skewX(-29deg);
+    top: 0;
+    left: 0;
+    z-index: -1;
+    border-right: 5px solid #fff;
+}
+
+.logo-holder:after {
+    clear: both;
+    display: table;
+    content: " ";
+}
+
+#logo-holder img {
+    max-width: 100%;
+    padding-top: 20px;
+    display: block;
+    box-sizing: border-box;
+}
+
+#menu {
+    display: flex;
+}
+
+#menu ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+#menu li {
+    position: relative;
+    display: inline-block;
+    margin-right: 20px;
+}
+
+#menu a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 8px;
+}
+
+/* Падајући мени */
+#menu .dropdown {
+    display: none;
+    position: absolute;
+    background: linear-gradient(90deg, #A21514 53.58%, #C92F2E 100%);
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+#menu .dropdown a {
+    color: white;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+#menu li:hover .dropdown {
+    display: block;
+}
+
+#menu .dropdown a:hover {
+    background-color: linear-gradient(90deg, #9c1818 53.58%, #e13f3f 100%);
+}
+
+.dugme-crveno {
+    font-size: 16px;
+    line-height: 20px;
+    background: #A21514;
+    padding: 7px 15px;
+    color: #fff;
+    box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25);
+    font-weight: 600;
+    transition: all ease 0.3s;
+}
+
+.icon-container {
+    font-size: 24px;
+    margin-left: 20px;
+}
+
+.slava-reminders {
+    float: right;
+    width: 30%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-right: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slava-reminder {
+    margin-bottom: 10px;
+}
+
+.slava-link {
+    display: block;
+    color: #d9534f;
+    text-decoration: none;
+    padding: 10px;
+}
+
+.slava-link:hover {
+    background-color: #f0f0f0;
+    color: #c9302c;
+    text-decoration: underline;
+}
