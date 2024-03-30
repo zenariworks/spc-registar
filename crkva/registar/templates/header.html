@@ -44,12 +44,14 @@
     <script>
       document.getElementById('search-trigger').addEventListener('click', function(event) {
         event.preventDefault();
-        document.getElementById('search-overlay').style.display = 'block';
+        document.getElementById("menu").style.display = "none";
+        document.getElementById('search-overlay').style.display = 'flex';
       });
 
       document.getElementById('close-search').addEventListener('click', function(event) {
         event.preventDefault();
         document.getElementById('search-overlay').style.display = 'none';
+        document.getElementById("menu").style.display = "flex";
       });
     </script>
   </header>

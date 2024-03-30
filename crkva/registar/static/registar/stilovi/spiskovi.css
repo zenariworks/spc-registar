@@ -1,0 +1,71 @@
+.spisak {
+    padding: 0;
+}
+
+.stavka {
+    list-style-type: none;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stavka:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+.stavka-veza:hover {
+    color: #555;
+}
+
+.stavka-veza {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Спискови */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.form-container {
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.hidden-submit {
+    display: none;
+}
+
+/* Pagination Styles */
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.step-links,
+.current {
+    display: inline-block;
+}
+
+.step-links a,
+.current {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    text-decoration: none;
+    color: #A21514;
+}
+
+.current {
+    background-color: #A21514;
+    color: white;
+}
