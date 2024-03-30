@@ -5,41 +5,43 @@
       <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" alt="Logo">
       </a>
     </div>
-    <nav id="menu">
-      <ul>
-        <li>
-          <a href="#">Спискови</a>
-          <ul class="dropdown">
-            <li><a href="{% url 'krstenja' %}">Крштења</a></li>
-            <li><a href="{% url 'vencanja' %}">Венчања</a></li>
-            <li><a href="{% url 'svestenici' %}">Свештеници</a></li>
-            <li><a href="{% url 'parohijani' %}">Парохијани</a></li>
-          </ul>
-        </li>
-        <li>
-          <a href="#">Уноси</a>
-          <ul class="dropdown">
-            <li><a href="{% url 'unos_krstenja' %}">Крштења</a></li>
-            <li><a href="{% url 'pocetna' %}">Венчања</a></li>
-            <li><a href="{% url 'pocetna' %}">Свештеници</a></li>
-            <li><a href="{% url 'unos_parohijana' %}">Парохијан</a></li>
-          </ul>
-        </li>
-        <li class="search-icon">
-          <a href="#" id="search-trigger" class="fusion-main-menu-icon">
-            <i class="ti-search"></i> <!-- Pretpostavka da koristite Themify ikone -->
-          </a>
-        </li>
-      </ul>
-    </nav>
-    <div id="search-overlay" style="display: none;">
-      <form method="get" action="{% url 'search_view' %}" class="search-form">
-        <div class="search-box">
-          <button type="submit" class="search-icon-button"><i class="ti-search"></i></button>
-          <input type="text" name="query" placeholder="Претрага..." autofocus>
-          <a href="#" id="close-search" class="close-search"><i class="ti-close"></i></a>
-        </div>
-      </form>
+    <div class="menu-search-wrapper">
+      <nav id="menu">
+        <ul>
+          <li>
+            <a href="#">Спискови</a>
+            <ul class="dropdown">
+              <li><a href="{% url 'krstenja' %}">Крштења</a></li>
+              <li><a href="{% url 'vencanja' %}">Венчања</a></li>
+              <li><a href="{% url 'svestenici' %}">Свештеници</a></li>
+              <li><a href="{% url 'parohijani' %}">Парохијани</a></li>
+            </ul>
+          </li>
+          <li>
+            <a href="#">Уноси</a>
+            <ul class="dropdown">
+              <li><a href="{% url 'unos_krstenja' %}">Крштења</a></li>
+              <li><a href="{% url 'pocetna' %}">Венчања</a></li>
+              <li><a href="{% url 'pocetna' %}">Свештеници</a></li>
+              <li><a href="{% url 'unos_parohijana' %}">Парохијан</a></li>
+            </ul>
+          </li>
+          <li class="search-icon">
+            <a href="#" id="search-trigger" class="fusion-main-menu-icon">
+              <i class="ti-search"></i> <!-- Pretpostavka da koristite Themify ikone -->
+            </a>
+          </li>
+        </ul>
+      </nav>
+      <div id="search-overlay" style="display: none;">
+        <form method="get" action="{% url 'search_view' %}" class="search-form">
+          <div class="search-box">
+            <button type="submit" class="search-icon-button"><i class="ti-search"></i></button>
+            <input type="text" name="query" placeholder="Претрага..." autofocus>
+            <a href="#" id="close-search" class="close-search"><i class="ti-close"></i></a>
+          </div>
+        </form>
+      </div>
     </div>
     <script>
       document.getElementById('search-trigger').addEventListener('click', function(event) {

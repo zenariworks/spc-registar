@@ -31,6 +31,14 @@
     box-sizing: border-box;
 }
 
+.menu-search-wrapper {
+    position: relative; /* Da bi apsolutno pozicioniranje unutar roditelja radilo */
+    display: flex;
+    justify-content: flex-end; /* Poravnava sadržaj na desnoj strani */
+    width: 100%; /* Uzima punu širinu roditeljskog elementa */
+    max-width: 600px; /* Maksimalna širina, prilagodite po potrebi */
+}
+
 #menu {
     display: flex;
 }
