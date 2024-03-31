@@ -33,12 +33,13 @@
 
 /* Падајући мени */
 .menu-search-wrapper {
-    position: relative; /* Da bi apsolutno pozicioniranje unutar roditelja radilo */
+    position: relative;
     display: flex;
-    justify-content: flex-end; /* Poravnava sadržaj na desnoj strani */
-    width: 100%; /* Uzima punu širinu roditeljskog elementa */
-    max-width: 600px; /* Maksimalna širina, prilagodite po potrebi */
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 600px;
 }
+
 #menu {
     display: flex;
 }
@@ -84,9 +85,10 @@
 }
 
 #menu .dropdown a:hover {
-    background-color: linear-gradient(90deg, #9c1818 53.58%, #e13f3f 100%);
+    background-color: #9c1818;
 }
 
+/* Responsive menu styles */
 .hamburger-menu {
     display: none;
     color: white;
@@ -106,10 +108,11 @@
     }
 
     #menu.open {
-        display: block;
+        display: flex;
     }
 }
-/* Поље за претрагу */
+
+/* Search box styles */
 #search-overlay {
     display: none;
     position: absolute;
