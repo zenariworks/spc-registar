@@ -25,7 +25,11 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
                 "fields": (
                     ("datum", "vreme", "hram"),
                     "dete",
-                    ("otac", "majka"),
+                    (
+                        "otac",
+                        "majka",
+                    ),
+                    ("blizanac", "dete_majci", "dete_bracno", "mana"),
                     "svestenik",
                     "kum",
                     "napomena",
