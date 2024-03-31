@@ -1,11 +1,14 @@
 <!-- header.html -->
 <header>
-    <div id="logo-holder">
+    <div id="logo">
       <a href="{% url 'pocetna' %}">
       <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" alt="Logo">
       </a>
     </div>
     <div class="menu-search-wrapper">
+      <button class="hamburger-menu" onclick="toggleMenu()">
+        <i class="ti-menu"></i>
+      </button>
       <nav id="menu">
         <ul>
           <li>
@@ -28,7 +31,7 @@
           </li>
           <li class="search-icon">
             <a href="#" id="search-trigger" class="fusion-main-menu-icon">
-              <i class="ti-search"></i> <!-- Pretpostavka da koristite Themify ikone -->
+              <i class="ti-search"></i>
             </a>
           </li>
         </ul>
@@ -55,5 +58,13 @@
         document.getElementById('search-overlay').style.display = 'none';
         document.getElementById("menu").style.display = "flex";
       });
+      function toggleMenu() {
+        var menu = document.getElementById("menu");
+        if (menu.classList.contains("open")) {
+            menu.classList.remove("open");
+        } else {
+            menu.classList.add("open");
+        }
+      }
     </script>
   </header>
