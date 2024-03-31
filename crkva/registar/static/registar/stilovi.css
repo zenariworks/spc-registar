@@ -1,5 +1,6 @@
 /* Uvoz osnovnih stilova */
 @import url('stilovi/osnovno.css');
+@import url('stilovi/header.css');
 
 /* Uvoz komponenti */
 @import url('stilovi/komponente.css');
