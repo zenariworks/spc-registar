@@ -8,9 +8,9 @@ from registar.models import Narodnost, Veroispovest, Zanimanje
 
 
 class RandomUtils:
-    male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]
+    male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан", "Дамјан"]
     female_names = ["Марија", "Ана", "Јована", "Ивана", "Софија"]
-    surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић"]
+    surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић", "Новаковић"]
     zvanja = ["јереј", "протојереј", "архијерејски намесник", "епископ"]
     sample_occupations = Zanimanje.objects.all()
     sample_nationalities = Narodnost.objects.all()

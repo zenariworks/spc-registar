@@ -22,9 +22,9 @@ class Command(BaseCommand):
     help = "Populates the database with random parohijan instances"
 
     # Serbian names and surnames in Cyrillic
-    male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]
+    male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан", "Дамјан"]
     female_names = ["Марија", "Ана", "Јована", "Ивана", "Софија"]
-    surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић"]
+    surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић", "Новаковић"]
 
     # Sample zvanja and parohija
     zvanja = ["јереј", "протојереј", "архијерејски намесник", "епископ"]
