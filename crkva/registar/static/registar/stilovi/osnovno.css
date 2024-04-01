@@ -12,18 +12,9 @@ body {
     font-family: 'Miroslav', 'Times New Roman', Times, serif;
 }
 
-img {
+/* img {
     margin-right: 10px;
-}
-
-body > header {
-    background: linear-gradient(90deg, #A21514 53.58%, #C92F2E 100%);
-    color: white;
-    padding: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+} */
 
 body > main {
     flex: 1;
