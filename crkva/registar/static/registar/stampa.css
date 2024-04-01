@@ -1,7 +1,7 @@
 /* Стилови за штампање */
 @font-face {
     font-family: 'Miroslav';
-    src: url("fontovi/_MIROSLB.TTF") format('truetype');
+    src: url("fontovi/Miroslavljeva-Cirilica.ttf") format('truetype');
 }
 
 @page {
