@@ -10,8 +10,9 @@
 }
 
 body {
-    font-family: 'Miroslav';
+    font-family: 'Miroslav', 'Times New Roman', Times, serif;
     font-size: 12pt;
+    letter-spacing: 2.5px;
     color: red;
     margin: 0;
     width: 210mm;
@@ -19,6 +20,7 @@ body {
     border: 2px solid red;
     background-size: cover;
     background-image: url("slike/krstenica-nova-popunjena.jpg");
+
 }
 
 .frame {
@@ -31,6 +33,6 @@ body {
 }
 
 .row {
-    border: 2px solid transparent;
+    border: 2px solid orange;
     display: flex;
 }
