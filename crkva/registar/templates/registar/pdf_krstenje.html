@@ -9,15 +9,15 @@
     <div class="frame">
       <div class="row" style="height: 35mm">
         <div style="width: 23%;">
-          <div class="row" style="height: 12mm"></div> 
+          <div class="row" style="height: 12mm"></div>
           <div class="row" style="height: 7mm">
-            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 5.5%; height: 7mm">4</div>
+            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 5.5%; height: 7mm">{{ krstenje.knjiga }}</div>
           </div>
           <div class="row" style="height: 7mm">
-            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 6%; height: 7mm">16</div>
+            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 6%; height: 7mm">{{ krstenje.strana }}</div>
           </div>
           <div class="row" style="height: 8mm">
-            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 5.5%; height: 7mm">120</div>
+            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 5.5%; height: 7mm">{{ krstenje.tekuci_broj }}</div>
           </div>
         </div>
         <div style="width: 50%;"></div>
@@ -29,9 +29,9 @@
         <div class="row" style="width: 100%; height: 7mm; justify-content: flex-start; padding-left: 14.2%">БЕОГРАДСКО - КАРЛОВАЧКЕ</div>
       </div>
       <div class="row" style="height: 10mm">
-        <div class="row" style="width: 50%; justify-content: flex-start; padding-left: 14%; padding-bottom: 1%; height: 9mm">СВЕТЕ ПЕТКЕ</div>
-        <div class="row" style="width: 39.5%; justify-content: flex-start; padding-left: 7.7%; letter-spacing: 1px; padding-bottom: 1%; height: 9mm">БЕОГРАДУ</div>
-        <div class="row" style="width: 10.5%; padding-bottom: 1%; height: 9mm; justify-content: flex-start;">18</div>
+        <div class="row" style="width: 50%; justify-content: flex-start; padding-left: 14%; padding-bottom: 1%; height: 9mm">{{ krstenje.hram }}</div>
+        <div class="row" style="width: 39.5%; justify-content: flex-start; padding-left: 7.7%; letter-spacing: 1px; padding-bottom: 1%; height: 9mm">{{ krstenje.hram.adresa.ulica.mesto }}</div>
+        <div class="row" style="width: 10.5%; padding-bottom: 1%; height: 9mm; justify-content: flex-start;">{{ krstenje.datum|date:"y" }}</div>
       </div>
       <div class="row" style="height: 8mm;">
         <div style="width: 1%"></div>
@@ -43,7 +43,7 @@
         <div style="width: 1%"></div>
         <!-- 2. Место и општина рођења -->
         <div style="width: 46%"></div>
-        <div class="visible-div" style="width: 53%">Малме-Шведска</div>
+        <div class="visible-div" style="width: 53%">{{ krstenje.hram.adresa.ulica.mesto }}</div>
       </div>
       <div class="row" style="height: 10mm">
         <div style="width: 1%"></div>
@@ -61,54 +61,54 @@
         <div style="width: 1%"></div>
         <!-- 5. Име и пол детета -->
         <div style="width: 46%"></div>
-        <div style="width: 53%">Дамјан, мушки</div>
+        <div style="width: 53%">{{ krstenje.dete.ime }}, {{ krstenje.dete.get_pol_display }}</div>
       </div>
       <div class="row" style="height: 25mm">
         <div style="width: 1%"></div>
           <!-- 6. Име, презиме, занимање, место становања, вероисповест и народност родитеља -->
         <div style="width: 46%"></div>
-        <div style="width: 53%; font-size: 10pt; letter-spacing: 0.2px;"> 
-          Душан Новаковић, инж.информатике и 
+        <div style="width: 53%; font-size: 10pt; letter-spacing: 0.2px;">
+          {{ krstenje.otac }}, {{ krstenje.otac.zanimanje|lower }}
           <br>
-          Маја р.Ђачић, инж.електротехнике
+          {{krstenje.otac.veroispovest|lower }} {{ krstenje.otac.narodnost }}
           <br>
-          Малме,
+          и
           <br>
-          Православни, Срби
-          <!-- 1. {{krstenje.otac.ime }} {{krstenje.otac.prezime }}, {{krstenje.otac.zanimanje|lower }}, {{ krstenje.otac.veroispovest|lower }} {{ krstenje.otac.narodnost }}
-          </br>
-          2. {{krstenje.majka.ime }} {{krstenje.majka.prezime }}, {{krstenje.majka.zanimanje|lower }}, {{ krstenje.majka.veroispovest|lower }} {{ krstenje.majka.narodnost }} -->
+          {{ krstenje.majka }}, {{ krstenje.majka.zanimanje|lower }}
+          <br>
+          {{krstenje.majka.veroispovest|lower }} {{ krstenje.majka.narodnost }}
         </div>
       </div>
       <div class="row" style="height: 9mm">
         <div style="width: 1%"></div>
         <!-- 7. Које је дете по рођењу матери (прво, друго...) -->
         <div style="width: 55.5%"></div>
-        <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">треће</div>
+        <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">{{ krstenje.dete_majci }}</div>
       </div>
       <div class="row" style="height: 10mm">
         <div style="width: 1%"></div>
         <!-- 8. Је ли дете црквено брачно -->
         <div style="width: 55.5%"></div>
-        <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">Није</div>
+        <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">{{ krstenje.dete_bracno|yesno:"јесте,није,непознато" }}
+        </div>
       </div>
       <div class="row" style="height: 9mm">
         <div style="width: 1%"></div>
         <!-- 9. Је ли дете близанац -->
         <div style="width: 55.5%"></div>
-        <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">Није</div>
+        <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">{{ krstenje.blizanac|yesno:"јесте,није,непознато" }}</div>
       </div>
       <div class="row" style="height: 9mm">
         <div style="width: 1%"></div>
         <!-- 10. Је ли дете рођено са каквим телесним недостатком -->
         <div style="width: 55.5%"></div>
-        <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">Није</div>
+        <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">{{ krstenje.mana|yesno:"јесте,није,непознато" }}</div>
       </div>
       <div class="row" style="height: 11mm">
         <div style="width: 1%"></div>
         <!-- 11. Име и презиме свештеника који је дете крстио и миропомазао -->
         <div style="width: 46%"></div>
-        <div style="width: 53%; font-size: 14pt; letter-spacing: 1px;">јереј Саша Крстић</div>
+        <div style="width: 53%; font-size: 14pt; letter-spacing: 1px;">{{ krstenje.svestenik }}</div>
       </div>
       <div class="row" style="height: 13mm">
         <div style="width: 1%"></div>
@@ -135,10 +135,10 @@
       </div>
       <div class="row" style="width: 100%; height: 15mm"></div>
       <div class="row" style="height: 5mm">
-        <div class="row" style="width: 17%; justify-content: center; padding-left: 3%; letter-spacing: 1px; height: 5mm ">2.9.</div>
-        <div class="row" style="width: 11%; justify-content: flex-start; height: 5mm">18</div>
+        <div class="row" style="width: 17%; justify-content: center; padding-left: 3%; letter-spacing: 1px; height: 5mm ">{% now "j. F" %}</div>
+        <div class="row" style="width: 11%; justify-content: flex-start; height: 5mm">{% now "y" %}</div>
         <div class="row" style="width: 36%; justify-content: flex-end; font-size: 10pt; letter-spacing: 1px; padding-right: 3%; height: 5mm">4</div>
-        <div class="row" style="width: 36%; justify-content: flex-end; font-size: 10pt; letter-spacing: 1px; padding-right: 10%; height: 5mm">При храму Свете Петке</div>
+        <div class="row" style="width: 36%; justify-content: flex-end; font-size: 10pt; letter-spacing: 1px; padding-right: 10%; height: 5mm">при {{ krstenje.hram }}</div>
       </div>
       <div class="row" style="height: 7mm; width: 25%; letter-spacing: 1px;">Београду</div>
       </div>
