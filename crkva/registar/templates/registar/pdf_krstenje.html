@@ -53,7 +53,7 @@
         <!-- 1. Година, месец, дан и време рођења -->
         <div style="width: 46%; vertical-align: middle;"></div>
         <div style="width: 53%; letter-spacing: 1px;">
-          2017, март, 22/9 02.00 часова
+          {{ krstenje.dete.datum_rodjenja|julian_date }}, {{ krstenje.dete.vreme_rodjenja }} часова
         </div>
       </div>
       <div class="row visible-div" style="height: 9mm">
@@ -69,7 +69,7 @@
         <!-- 3. Година, месец, дан и време крштења и миропомазања -->
         <div style="width: 46%"></div>
         <div style="width: 53%; letter-spacing: 1px;">
-          2018, септембар, 2 / Август, 20
+          {{ krstenje.datum|julian_date }}
         </div>
       </div>
       <div class="row" style="height: 10mm">
@@ -93,14 +93,10 @@
         <!-- 6. Име, презиме, занимање, место становања, вероисповест и народност родитеља -->
         <div style="width: 46%"></div>
         <div style="width: 53%; font-size: 10pt; letter-spacing: 0.2px;">
-          {{ krstenje.otac }}, {{ krstenje.otac.zanimanje|lower }}
-          <br>
-          {{krstenje.otac.veroispovest|lower }} {{ krstenje.otac.narodnost }}
-          <br>
-          и
-          <br>
-          {{ krstenje.majka }}, {{ krstenje.majka.zanimanje|lower }}
-          <br>
+          {{ krstenje.otac }}, {{ krstenje.otac.zanimanje|lower }}<br>
+          {{krstenje.otac.veroispovest|lower }} {{ krstenje.otac.narodnost }}<br>
+          и <br>
+          {{ krstenje.majka }}, {{ krstenje.majka.zanimanje|lower }}<br>
           {{krstenje.majka.veroispovest|lower }} {{ krstenje.majka.narodnost }}
         </div>
       </div>

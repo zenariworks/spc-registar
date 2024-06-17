@@ -16,7 +16,7 @@ GREGORIAN_MONTHS = {
     8: "август",
     9: "септембар",
     10: "октобар",
-    11: "ноембар",
+    11: "новембар",
     12: "децембар",
 }
 
@@ -32,7 +32,11 @@ def to_julian_date(value):
         gregorian_month = GREGORIAN_MONTHS[value.month]
         julian_date = gregorian_to_julian(value)
         julian_month = GREGORIAN_MONTHS[julian_date.month]
-        return f"{value.year}, {gregorian_month}, {value.day} / {julian_month}, {julian_date.day}"
+
+        if gregorian_month == julian_month:
+            return f"{value.year}, {gregorian_month} {value.day}. ({julian_date.day}.)"
+        else:
+            return f"{value.year}, {gregorian_month} {value.day}. ({julian_month} {julian_date.day}.)"
     return ""
 
 
