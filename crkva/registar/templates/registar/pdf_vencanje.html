@@ -1,27 +1,39 @@
 {% load static %}
+{% load julian_dates %}
 <!DOCTYPE html>
 <html>
   <head>
     <link rel="stylesheet" href="{% static 'registar/stampa.css' %}">
-    <title>Венчаница {{ vencanje.knjiga }}.{{ vencanje.strana }}.{{ vencanje.tekuci_broj }}</title>
-    </head>
-    <body style="background-image: url('{% static 'registar/slike/vencanica-nova.jpg' %}');">
+    <title>
+      Венчаница {{ vencanje.knjiga }}.{{ vencanje.strana }}.{{ vencanje.tekuci_broj }}
+    </title>
+  </head>
+  <body style="background-image: url('{% static 'registar/slike/vencanica-nova.jpg' %}');">
     <div class="frame" style="width: 185mm; margin-left: 14mm;">
       <div class="row" style="height: 38mm;">
         <div style="width: 25%; padding-bottom: 3mm;">
-            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 7%; height: 7mm">{{ vencanje.knjiga }}</div>
-            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 7%; height: 7mm">{{ vencanje.strana }}</div>
-            <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 7%; height: 7mm">{{ vencanje.tekuci_broj }}</div>
+          <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 7%; height: 7mm">
+            {{ vencanje.knjiga }}
+          </div>
+          <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 7%; height: 7mm">
+            {{ vencanje.strana }}
+          </div>
+          <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 7%; height: 7mm">
+            {{ vencanje.tekuci_broj }}
+          </div>
         </div>
         <div style="width: 50%;"></div>
         <div style="width: 28%;"></div>
       </div>
       <div class="row" style="height: 7mm; justify-content: flex-end; padding-right: 20%; padding-top: 1.2mm;">епархије</div>
-
       <div class="row" style="height: 5mm;">
-        <div style="width: 45%; padding-left: 10%;">БЕОГРАДСКО - КАРЛОВАЧКЕ</div>
+        <div style="width: 45%; padding-left: 10%;">
+          БЕОГРАДСКО - КАРЛОВАЧКЕ
+        </div>
         <div style="width: 21%;"></div>
-        <div style="width: 36%; justify-content: flex-end;">{{ vencanje.hram }}</div>
+        <div style="width: 36%; justify-content: flex-end;">
+          {{ vencanje.hram }}
+        </div>
       </div>
       <div class="row" style="height: 9.5mm">
         <div style="width: 55%; justify-content: center; padding-left: 20%; padding-bottom: 2.5mm">{{ vencanje.hram.adresa.ulica.mesto }}</div>
@@ -62,17 +74,17 @@
         </div>
       </div>
       <div class="row" style="height: 9mm;">
-        <!-- 3. Godina, mesecm dan i mesto rodjenja vencanih a) zenina-->
+        <!-- 3. Godina, mesecm dan i mesto rodjenja vencanih a) zenika-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          1982, април, 7 / Март, 25 Постојна
+          {{ vencanje.zenik.datum_rodjenja|julian_date }}, {{ vencanje.zenik.mesto_rodjenja }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 3. Godina, mesecm dan i mesto rodjenja vencanih b) neveste-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          1982, април, 7 / Март, 25 Постојна
+          {{ vencanje.nevesta.datum_rodjenja|julian_date }}, {{ vencanje.nevesta.mesto_rodjenja }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
@@ -92,66 +104,88 @@
       <div class="row" style="height: 9mm;">
         <!-- 5. Koga su dana ispitani i oglaseni-->
         <div style="width: 42%;"></div>
-        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">2011, Мај, 15 / 2</div>
+        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
+          {{ vencanje.datum_ispita|julian_date }}
+        </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 6. Godina, mesec i dan vencanja-->
         <div style="width: 42%;"></div>
-        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">2011, Мај, 15 / 2</div>
+        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
+          {{ vencanje.datum|julian_date }}
+        </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 7. Mesto i hram gde je vencanje izvrseno-->
         <div style="width: 42%;"></div>
-        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">Београд, Храм Свете Петке</div>
+        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
+          {{ vencanje.hram }}, {{ vencanje.hram.adresa.ulica.mesto }}
+        </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 8. Ime i prezime svestenika koji je vencanje izvrsio-->
         <div style="width: 42%;"></div>
-        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">јереј Саша Крстић</div>
+        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
+          {{ vencanje.svestenik }}
+        </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 9. Ime, prezime, zanimanje, veroispovest i mesto stanovanja svedoka (kuma i starog svata)-->
         <div style="width: 42%;"></div>
-        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">Никола Пантелић, електромеханичар, Београд, Данијела Ничић, студент, Београд</div>
+        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
+          Никола Пантелић, електромеханичар, Београд, Данијела Ничић, студент, Београд
+        </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 10. Da li su ovi bracnici imali potrebu razresenja od oglasenja ili druge smetnje i jesu li razreseni-->
         <div style="width: 42%;"></div>
-        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">нису</div>
+        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
+          нису
+        </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 11. Primedba-->
         <div style="width: 42%;"></div>
-        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;"></div>
+        <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
+          {{ vencanje.primedba|default_if_none:"" }}
+        </div>
       </div>
-
-
       <div class="row" style="height: 8mm;">
         <div style="width: 62%;"></div>
-        <div style="width: 30%; letter-spacing: 1px; justify-content: center;">Београдске</div>
+        <div style="width: 30%; letter-spacing: 1px; justify-content: center;">
+          Београдске
+        </div>
       </div>
-
       <div class="row" style="height: 5mm;">
         <div style="width: 70%;"></div>
-        <div style="width: 30%; letter-spacing: 1px; justify-content: center;">СВЕТЕ ПЕТКЕ</div>
+        <div style="width: 30%; letter-spacing: 1px; justify-content: center;">
+          СВЕТЕ ПЕТКЕ
+        </div>
       </div>
-
       <div class="row" style="height: 19mm;"></div>
-
       <div class="row" style="height: 5mm; align-items: flex-end;">
-        <div class="row" style="width: 15%;">4.6</div>
-        <div class="row" style="width: 5%;">11</div>
+        <div class="row" style="width: 15%;">
+          {% now "j. F" %}
+        </div>
+        <div class="row" style="width: 5%;">
+          {% now "y" %}
+        </div>
         <div style="width: 33%;"></div>
-        <div class="row" style="width: 5%;">II</div>
+        <div class="row" style="width: 5%;">
+          II
+        </div>
         <div style="width: 12%;"></div>
-        <div style="width: 30%; letter-spacing: 1px;font-size: 9pt;">При храму Свете Петке</div>
+        <div style="width: 30%; letter-spacing: 1px;font-size: 9pt;">
+          при {{ vencanje.hram }}
+        </div>
       </div>
-
       <div class="row" style="height: 7mm;">
-        <div class="row" style="width: 30%; justify-content: center;">Београду</div>
+        <div class="row" style="width: 30%; justify-content: center;">
+          Београду
+        </div>
         <div style="width: 70%;"></div>
       </div>
-      </div>
+    </div>
     </div>
   </body>
 </html>
