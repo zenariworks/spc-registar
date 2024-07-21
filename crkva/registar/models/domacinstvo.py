@@ -32,7 +32,7 @@ class Domacinstvo(models.Model):
     )
     slavska_vodica = models.BooleanField(default=False, verbose_name="славска водица")
     uskrsnja_vodica = models.BooleanField(default=False, verbose_name="ускршња водица")
-    napomena = models.TextField(blank=True, null=True, verbose_name="напомена")
+    primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
     def __str__(self) -> str:
         return f"{self.domacin.prezime}"

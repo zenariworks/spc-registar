@@ -72,7 +72,7 @@ class Krstenje(models.Model):
         verbose_name="кум",
     )
 
-    napomena = models.TextField(blank=True, null=True, verbose_name="напомена")
+    primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
     def __str__(self):
         return f"{self.uid}"

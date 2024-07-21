@@ -22,7 +22,7 @@ class KrstenjeForm(forms.ModelForm):
             "majka",
             "svestenik",
             "kum",
-            "napomena",
+            "primedba",
         ]
         labels = {
             "knjiga": "Протоколарна књига",
@@ -41,7 +41,7 @@ class KrstenjeForm(forms.ModelForm):
             "majka": "Мајка",
             "svestenik": "Свештеник",
             "kum": "Кум",
-            "napomena": "Напомена",
+            "primedba": "Примедба",
         }
         widgets = {
             "datum": forms.DateInput(attrs={"type": "date"}),
