@@ -9,6 +9,10 @@ class ZanimanjeFilter(AutocompleteFilter):
 
 
 class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
+    """
+    Административни интерфејс за модел парохијан са функционалношћу за увоз и извоз.
+    """
+
     list_display = (
         "get_full_name",
         "mesto_rodjenja",

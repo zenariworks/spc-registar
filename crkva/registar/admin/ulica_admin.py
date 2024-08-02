@@ -45,6 +45,10 @@ class MestoFilter(admin.SimpleListFilter):
 
 
 class UlicaAdmin(admin.ModelAdmin):
+    """
+    Административни интерфејс за модел улица са функционалношћу за увоз и извоз.
+    """
+
     list_display = ["naziv", "get_mesto", "get_opstina", "get_drzava"]
     list_filter = [DrzavaFilter, OpstinaFilter, MestoFilter]
     search_fields = [

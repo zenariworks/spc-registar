@@ -2,6 +2,10 @@ from django.contrib import admin
 
 
 class VencanjeAdmin(admin.ModelAdmin):
+    """
+    Административни интерфејс за модел венчања са функционалношћу за увоз и извоз.
+    """
+
     list_display = (
         "knjiga_strana_broj",
         "zenik",
