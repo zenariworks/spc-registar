@@ -19,7 +19,7 @@ class Adresa(models.Model):
     postkod = models.CharField(
         max_length=10, verbose_name="поштански број", null=True, blank=True
     )
-    napomena = models.TextField(blank=True, null=True, verbose_name="напомена")
+    primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
     def clean(self):
         """Валидација поштанског броја."""
@@ -33,7 +33,7 @@ class Adresa(models.Model):
         detalji += f", {self.ulica.mesto}" if self.ulica.mesto else ""
         detalji += f", {self.ulica.opstina}" if self.ulica.opstina else ""
         detalji += f", {self.ulica.drzava}" if self.ulica.drzava else ""
-        detalji += f" (Напомена: {self.napomena})" if self.napomena else ""
+        detalji += f" (Примедба: {self.primedba})" if self.primedba else ""
         return detalji
 
     class Meta:

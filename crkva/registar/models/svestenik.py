@@ -38,7 +38,7 @@ class Svestenik(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{self.zvanje}, {self.ime} {self.prezime}"
+        return f"{self.zvanje} {self.ime} {self.prezime}"
 
     class Meta:
         managed = True

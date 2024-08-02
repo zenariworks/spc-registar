@@ -96,7 +96,7 @@ class Vencanje(models.Model):
         related_name="венчана_кума",
     )
 
-    napomena = models.TextField(verbose_name="напомена")
+    primedba = models.TextField(verbose_name="примедба", blank=True)
 
     def __str__(self):
         return f"{self.uid}"

@@ -46,6 +46,7 @@
 
     ```bash
     docker compose run --rm app sh -c "python manage.py unos_krstenja"
+    docker compose run --rm app sh -c "python manage.py unos_vencanja"
     ```
 
    Након овог корака, у базу је унет пример података.
