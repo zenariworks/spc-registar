@@ -44,6 +44,7 @@ class Command(BaseCommand):
     sample_religions = Veroispovest.objects.all()
 
     def random_date_of_birth(self, min_age=0, max_age=100):
+        """Генерише насумичан датум рођења."""
         today = date.today()
         start_date = today - timedelta(days=max_age * 365.25)
         end_date = today - timedelta(days=min_age * 365.25)
@@ -51,6 +52,7 @@ class Command(BaseCommand):
         return start_date + timedelta(days=random_days)
 
     def random_datetime(self):
+        """Генерише насумичан датум и време."""
         year = random.randint(2000, 2022)
         month = random.randint(1, 12)
         day = random.randint(1, 28)  # To avoid month-end complexities
@@ -68,6 +70,7 @@ class Command(BaseCommand):
         return aware_datetime
 
     def create_random_parohijan(self, gender, min_age=0) -> Parohijan:
+        """Креира насумичан објекат Parohijan."""
         name = (
             random.choice(self.male_names)
             if gender == "М"
@@ -91,7 +94,7 @@ class Command(BaseCommand):
         return parohijan
 
     def random_parohijan(self, gender, min_age=0):
-        # Check if there are enough parohijan instances to choose from
+        """Проверава да ли постоји довољно објеката Parohijan да се изаберу, у супротном креира нови."""
         eligible_parohijan = Parohijan.objects.filter(
             pol=gender,
             datum_rodjenja__lte=date.today() - timedelta(days=min_age * 365.25),
@@ -102,17 +105,20 @@ class Command(BaseCommand):
             return self.create_random_parohijan(gender, min_age)
 
     def get_or_create_parohija(self, naziv):
-        parohija, created = Parohija.objects.get_or_create(naziv=naziv)
+        """Враћа или креира нови објекат Parohija."""
+        parohija, _ = Parohija.objects.get_or_create(naziv=naziv)
         return parohija
 
     def get_or_create_drzava(self, naziv_drzave: str, postkod_regex: str) -> Drzava:
-        drzava, created = Drzava.objects.get_or_create(
+        """Враћа или креира нови објекат Drzava."""
+        drzava, _ = Drzava.objects.get_or_create(
             naziv=naziv_drzave,
             defaults={"postkod_regex": postkod_regex},
         )
         return drzava
 
     def create_random_svestenik(self) -> Svestenik:
+        """Креира насумичан објекат Svestenik."""
         parohije = [
             self.get_or_create_parohija("Парохија 1"),
             self.get_or_create_parohija("Парохија 2"),
@@ -124,7 +130,7 @@ class Command(BaseCommand):
             zvanje=random.choice(self.zvanja),
             parohija=random.choice(parohije),  # Use an actual Parohija instance
             ime=random.choice(self.male_names),
-            prezime=random.choice(seq=self.surnames),
+            prezime=random.choice(self.surnames),
             mesto_rodjenja="Насумично место",
             datum_rodjenja=self.random_date_of_birth(25),
         )
@@ -132,9 +138,9 @@ class Command(BaseCommand):
         return svestenik
 
     def create_random_mesto(self) -> Mesto:
-        # Asumiramo da već postoji ili kreiramo novu Državu i Opštinu
-        drzava = self.get_or_create_drzava("Србија", r"^\d{5}$")  # Primer za Srbiju
-        opstina, created = Opstina.objects.get_or_create(
+        """Креира насумичан објекат Mesto."""
+        drzava = self.get_or_create_drzava("Србија", r"^\d{5}$")  # Пример за Србију
+        opstina, _ = Opstina.objects.get_or_create(
             naziv="Општина " + str(random.randint(1, 100)), defaults={"drzava": drzava}
         )
 
@@ -144,7 +150,7 @@ class Command(BaseCommand):
         return mesto
 
     def create_random_adresa(self) -> Adresa:
-        # Primer nasumičnih vrednosti, u praksi koristite realne podatke
+        """Креира насумичан објекат Adresa."""
         naziv_ulice = "Улица " + str(random.randint(1, 100))
         broj = str(random.randint(1, 100))
         dodatak = random.choice(["А", "Б", None])
@@ -165,6 +171,7 @@ class Command(BaseCommand):
         return adresa
 
     def create_random_hram(self):
+        """Креира насумичан објекат Hram."""
         adresa = self.create_random_adresa()
         hram = Hram(
             naziv="Храм "
@@ -177,6 +184,7 @@ class Command(BaseCommand):
         return hram
 
     def create_random_krstenje(self, parohijan):
+        """Креира насумичан објекат Krstenje."""
         dete = self.random_parohijan("М" if random.choice([True, False]) else "Ж")
         otac = self.random_parohijan("М", min_age=20)
         majka = self.random_parohijan("Ж", min_age=20)
@@ -209,6 +217,7 @@ class Command(BaseCommand):
         krstenje.save()
 
     def handle(self, *args, **kwargs):
+        """Рукује креирањем насумичних података."""
         parohijani = []
         for _ in range(10):
             parohijani.append(self.create_random_parohijan("М"))
