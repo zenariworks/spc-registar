@@ -3,8 +3,10 @@ from import_export.admin import ImportExportMixin
 
 
 class SlavaAdmin(ImportExportMixin, admin.ModelAdmin):
-    #     search_fields = ('naziv', 'sediste')
-    # list_filter = ('sediste',)
+    """
+    Административни интерфејс за модел слава са функционалношћу за увоз и извоз.
+    """
+
     search_fields = (
         "opsti_naziv",
         "naziv",

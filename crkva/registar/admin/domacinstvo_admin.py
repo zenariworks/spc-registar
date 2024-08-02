@@ -3,6 +3,10 @@ from import_export.admin import ImportExportMixin
 
 
 class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
+    """
+    Административни интерфејс за модел домаћинства са функционалношћу за увоз и извоз.
+    """
+
     list_display = (
         "domacin",
         "adresa",
@@ -28,7 +32,7 @@ class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
             "Додатни детаљи",
             {
                 "fields": ("slava", ("slavska_vodica", "uskrsnja_vodica"), "primedba"),
-                "description": "Информације везане за верске објекате",
+                "description": "Информације везане за верске објекте",
             },
         ),
     )

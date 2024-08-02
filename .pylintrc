@@ -2,5 +2,9 @@
 fail-under=9
 output-format = colorized
 
+[DESIGN]
+# Maximum number of parents for a class (R0901)
+max-parents=9
+
 [MESSAGES CONTROL]
 disable = R0903,C0114,C0115
