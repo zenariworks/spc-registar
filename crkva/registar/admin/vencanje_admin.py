@@ -48,7 +48,7 @@ class VencanjeAdmin(admin.ModelAdmin):
                     "parohija",
                     "kum",
                     "kuma",
-                    "napomena",
+                    "primedba",
                 )
             },
         ),

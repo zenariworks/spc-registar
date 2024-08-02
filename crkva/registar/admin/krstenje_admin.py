@@ -32,7 +32,7 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
                     ("blizanac", "dete_majci", "dete_bracno", "mana"),
                     "svestenik",
                     "kum",
-                    "napomena",
+                    "primedba",
                 )
             },
         ),

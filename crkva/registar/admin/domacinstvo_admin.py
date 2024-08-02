@@ -11,7 +11,7 @@ class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
         "slava",
         "slavska_vodica",
         "uskrsnja_vodica",
-        "napomena",
+        "primedba",
     )
     ordering = ("domacin",)
 
@@ -27,7 +27,7 @@ class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
         (
             "Додатни детаљи",
             {
-                "fields": ("slava", ("slavska_vodica", "uskrsnja_vodica"), "napomena"),
+                "fields": ("slava", ("slavska_vodica", "uskrsnja_vodica"), "primedba"),
                 "description": "Информације везане за верске објекате",
             },
         ),

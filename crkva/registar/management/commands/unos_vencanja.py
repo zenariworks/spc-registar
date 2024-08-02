@@ -127,7 +127,7 @@ class Command(BaseCommand):
         broj = str(random.randint(1, 100))
         dodatak = random.choice(["А", "Б", None])
         postkod = "11000"
-        napomena = "Насумична напомена"
+        primedba = "Насумична примедба"
         naziv_mesta = "Место " + str(random.randint(1, 100))
         naziv_opstine = "Општина " + str(random.randint(1, 100))
 
@@ -136,7 +136,7 @@ class Command(BaseCommand):
             broj,
             dodatak,
             postkod,
-            napomena,
+            primedba,
             naziv_mesta,
             naziv_opstine,
         )
@@ -175,7 +175,7 @@ class Command(BaseCommand):
             hram=hram,
             svestenik=svestenik,
             datum_ispita=self.random_datetime().date(),
-            napomena="Насумична напомена...",
+            primedba="Насумична примедба...",
         )
         vencanje.save()
 

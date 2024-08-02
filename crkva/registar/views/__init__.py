@@ -62,9 +62,9 @@ def search_view(request) -> HttpResponse:
             if query
             else Parohijan.objects.none()
         ),
-        # Pretpostavljamo da želite pretraživati po napomenama domaćinstva
+        # Pretpostavljamo da želite pretraživati po primedbama domaćinstva
         "domacinstvo_results": (
-            Domacinstvo.objects.filter(napomena__icontains=query)
+            Domacinstvo.objects.filter(primedba__icontains=query)
             if query
             else Domacinstvo.objects.none()
         ),
