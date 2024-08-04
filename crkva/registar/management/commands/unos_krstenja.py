@@ -3,17 +3,7 @@ from datetime import date, time, timedelta
 
 from django.core.management.base import BaseCommand
 from registar.management.commands.random_utils import RandomUtils
-from registar.models import (
-    Adresa,
-    Drzava,
-    Hram,
-    Krstenje,
-    Mesto,
-    Opstina,
-    Parohija,
-    Parohijan,
-    Svestenik,
-)
+from registar.models import Drzava, Hram, Krstenje, Parohija, Parohijan, Svestenik
 
 from .unos_adresa import unesi_adresu
 
@@ -21,11 +11,11 @@ from .unos_adresa import unesi_adresu
 class Command(BaseCommand):
     help = "Populates the database with random parohijan instances"
 
-    male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]
-    female_names = ["Марија", "Ана", "Јована", "Ивана", "Софија"]
-    surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић"]
-    zvanja = ["јереј", "протојереј", "архијерејски намесник", "епископ"]
-    parohije = ["Парохија 1", "Парохија 2", "Парохија 3", "Парохија 4"]
+    male_names = RandomUtils.male_names
+    female_names = RandomUtils.female_names
+    surnames = RandomUtils.surnames
+    zvanja = RandomUtils.zvanja
+    parohije = RandomUtils.parohije
 
     sample_occupations = RandomUtils.sample_occupations()
     sample_nationalities = RandomUtils.sample_nationalities()
@@ -55,13 +45,12 @@ class Command(BaseCommand):
             zanimanje=random.choice(self.sample_occupations),
             veroispovest=random.choice(self.sample_religions),
             narodnost=random.choice(self.sample_nationalities),
-            adresa=self.create_random_adresa(),
+            adresa=RandomUtils.create_random_adresa(unesi_adresu),
         )
         parohijan.save()
         return parohijan
 
     def random_parohijan(self, gender, min_age=0):
-        """Проверава да ли постоји довољно објеката Parohijan да се изаберу, у супротном креира нови."""
         eligible_parohijan = Parohijan.objects.filter(
             pol=gender,
             datum_rodjenja__lte=date.today() - timedelta(days=min_age * 365.25),
@@ -72,12 +61,10 @@ class Command(BaseCommand):
             return self.create_random_parohijan(gender, min_age)
 
     def get_or_create_parohija(self, naziv):
-        """Враћа или креира нови објекат Parohija."""
         parohija, _ = Parohija.objects.get_or_create(naziv=naziv)
         return parohija
 
     def get_or_create_drzava(self, naziv_drzave: str, postkod_regex: str) -> Drzava:
-        """Враћа или креира нови објекат Drzava."""
         drzava, _ = Drzava.objects.get_or_create(
             naziv=naziv_drzave,
             defaults={"postkod_regex": postkod_regex},
@@ -85,7 +72,6 @@ class Command(BaseCommand):
         return drzava
 
     def create_random_svestenik(self) -> Svestenik:
-        """Креира насумичан објекат Svestenik."""
         parohije = [
             self.get_or_create_parohija("Парохија 1"),
             self.get_or_create_parohija("Парохија 2"),
@@ -95,7 +81,7 @@ class Command(BaseCommand):
 
         svestenik = Svestenik(
             zvanje=random.choice(self.zvanja),
-            parohija=random.choice(parohije),  # Use an actual Parohija instance
+            parohija=random.choice(parohije),
             ime=random.choice(self.male_names),
             prezime=random.choice(self.surnames),
             mesto_rodjenja="Насумично место",
@@ -104,54 +90,7 @@ class Command(BaseCommand):
         svestenik.save()
         return svestenik
 
-    def create_random_mesto(self) -> Mesto:
-        """Креира насумичан објекат Mesto."""
-        drzava = self.get_or_create_drzava("Србија", r"^\d{5}$")  # Пример за Србију
-        opstina, _ = Opstina.objects.get_or_create(
-            naziv="Општина " + str(random.randint(1, 100)), defaults={"drzava": drzava}
-        )
-
-        mesto = Mesto.objects.create(
-            naziv="Место " + str(random.randint(1, 100)), opstina=opstina
-        )
-        return mesto
-
-    def create_random_adresa(self) -> Adresa:
-        """Креира насумичан објекат Adresa."""
-        naziv_ulice = "Улица " + str(random.randint(1, 100))
-        broj = str(random.randint(1, 100))
-        dodatak = random.choice(["А", "Б", None])
-        postkod = "11000"
-        primedba = "Насумична примедба"
-        naziv_mesta = "Место " + str(random.randint(1, 100))
-        naziv_opstine = "Општина " + str(random.randint(1, 100))
-
-        adresa, _ = unesi_adresu(
-            naziv_ulice,
-            broj,
-            dodatak,
-            postkod,
-            primedba,
-            naziv_mesta,
-            naziv_opstine,
-        )
-        return adresa
-
-    def create_random_hram(self):
-        """Креира насумичан објекат Hram."""
-        adresa = self.create_random_adresa()
-        hram = Hram(
-            naziv="Храм "
-            + random.choice(
-                ["Светог Саве", "Светог Николе", "Светог Марка", "Свете Петке"]
-            ),
-            adresa=adresa,
-        )
-        hram.save()
-        return hram
-
     def create_random_krstenje(self, parohijan):
-        """Креира насумичан објекат Krstenje."""
         dete = self.random_parohijan("М" if random.choice([True, False]) else "Ж")
         otac = self.random_parohijan("М", min_age=20)
         majka = self.random_parohijan("Ж", min_age=20)
@@ -184,24 +123,22 @@ class Command(BaseCommand):
         krstenje.save()
 
     def handle(self, *args, **kwargs):
-        """Рукује креирањем насумичних података."""
         parohijani = []
         for _ in range(10):
             parohijani.append(self.create_random_parohijan("М"))
             parohijani.append(self.create_random_parohijan("Ж"))
 
-        # Create a few Hram instances
         for _ in range(5):
-            self.create_random_hram()
+            RandomUtils.create_random_hram(unesi_adresu)
 
-        # Create 2 Svestenik instances
         for _ in range(2):
             self.create_random_svestenik()
 
-        # Create at least 5 Krstenje instances using the first 5 parohijan instances
         for parohijan in parohijani[:5]:
             self.create_random_krstenje(parohijan)
 
         self.stdout.write(
-            self.style.SUCCESS("Успешно попуњена база података са насумичним подацима")
+            self.style.SUCCESS(
+                "Successfully populated the database with random instances"
+            )
         )

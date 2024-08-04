@@ -3,7 +3,7 @@ from datetime import date, time, timedelta
 
 from django.core.management.base import BaseCommand
 from registar.management.commands.random_utils import RandomUtils
-from registar.models import Adresa, Hram, Parohija, Parohijan, Svestenik, Vencanje
+from registar.models import Parohija, Parohijan, Svestenik, Vencanje
 
 from .unos_adresa import unesi_adresu
 
@@ -11,11 +11,11 @@ from .unos_adresa import unesi_adresu
 class Command(BaseCommand):
     help = "Попуњава базу података насумичним парохијанима"
 
-    male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]
-    female_names = ["Марија", "Ана", "Јована", "Ивана", "Софија"]
-    surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић"]
-    zvanja = ["јереј", "протојереј", "архијерејски намесник", "епископ"]
-    parohije = ["Парохија 1", "Парохија 2", "Парохија 3", "Парохија 4"]
+    male_names = RandomUtils.male_names
+    female_names = RandomUtils.female_names
+    surnames = RandomUtils.surnames
+    zvanja = RandomUtils.zvanja
+    parohije = RandomUtils.parohije
 
     sample_occupations = RandomUtils.sample_occupations()
     sample_nationalities = RandomUtils.sample_nationalities()
@@ -45,13 +45,12 @@ class Command(BaseCommand):
             zanimanje=random.choice(self.sample_occupations),
             veroispovest=random.choice(self.sample_religions),
             narodnost=random.choice(self.sample_nationalities),
-            adresa=self.create_random_adresa(),
+            adresa=RandomUtils.create_random_adresa(unesi_adresu),
         )
         parohijan.save()
         return parohijan
 
     def random_parohijan(self, gender, min_age=0):
-        """Проверава да ли постоји довољно парохијана за избор, иначе креира новог."""
         eligible_parohijan = Parohijan.objects.filter(
             pol=gender,
             datum_rodjenja__lte=date.today() - timedelta(days=min_age * 365.25),
@@ -62,12 +61,10 @@ class Command(BaseCommand):
             return self.create_random_parohijan(gender, min_age)
 
     def get_or_create_parohija(self, naziv):
-        """Враћа или креира нову парохију."""
         parohija, _ = Parohija.objects.get_or_create(naziv=naziv)
         return parohija
 
     def create_random_svestenik(self) -> Svestenik:
-        """Креира насумичног свештеника."""
         parohije = [
             self.get_or_create_parohija("Парохија 1"),
             self.get_or_create_parohija("Парохија 2"),
@@ -81,71 +78,29 @@ class Command(BaseCommand):
             ime=random.choice(self.male_names),
             prezime=random.choice(self.surnames),
             mesto_rodjenja="Насумично место",
-            datum_rodjenja=self.random_date_of_birth(25),
+            datum_rodjenja=(self.random_date_of_birth(25)),
         )
         svestenik.save()
         return svestenik
 
-    def create_random_adresa(self) -> Adresa:
-        """Креира насумичну адресу."""
-        naziv_ulice = "Улица " + str(random.randint(1, 100))
-        broj = str(random.randint(1, 100))
-        dodatak = random.choice(["А", "Б", None])
-        postkod = "11000"
-        primedba = "Насумична примедба"
-        naziv_mesta = "Место " + str(random.randint(1, 100))
-        naziv_opstine = "Општина " + str(random.randint(1, 100))
-
-        adresa, _ = unesi_adresu(
-            naziv_ulice,
-            broj,
-            dodatak,
-            postkod,
-            primedba,
-            naziv_mesta,
-            naziv_opstine,
-        )
-        return adresa
-
-    def create_random_hram(self):
-        """Креира насумичан храм."""
-        adresa = self.create_random_adresa()
-        hram = Hram(
-            naziv="Храм "
-            + random.choice(
-                ["Светог Саве", "Светог Николе", "Светог Марка", "Свете Петке"]
-            ),
-            adresa=adresa,
-        )
-        hram.save()
-        return hram
-
     def create_random_vencanje(self):
-        """Креира насумично венчање."""
-        zenik = self.random_parohijan("М", 18)
-        nevesta = self.random_parohijan("Ж", 18)
-
-        hram = self.create_random_hram()
-        svestenik = self.create_random_svestenik()
-
         vencanje = Vencanje(
             knjiga=random.randint(1, 100),
             strana=random.randint(1, 500),
             tekuci_broj=random.randint(1, 1000),
             datum=self.random_datetime().date(),
-            zenik=zenik,
+            zenik=self.random_parohijan("М", 18),
             zenik_rb_brak=random.randint(1, 3),
-            nevesta=nevesta,
+            nevesta=self.random_parohijan("Ж", 18),
             nevesta_rb_brak=random.randint(1, 3),
-            hram=hram,
-            svestenik=svestenik,
+            hram=RandomUtils.create_random_hram(unesi_adresu),
+            svestenik=self.create_random_svestenik(),
             datum_ispita=self.random_datetime().date(),
             primedba="Насумична примедба...",
         )
         vencanje.save()
 
     def handle(self, *args, **kwargs):
-        """Рукује креирањем насумичних података."""
         for _ in range(10):
             self.create_random_vencanje()
 

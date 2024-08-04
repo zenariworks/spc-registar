@@ -3,10 +3,28 @@ import random
 from datetime import date, datetime, timedelta
 
 from django.utils import timezone
-from registar.models import Narodnost, Veroispovest, Zanimanje
+from registar.models import Hram, Narodnost, Veroispovest, Zanimanje
 
 
 class RandomUtils:
+    male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]
+    female_names = ["Марија", "Ана", "Јована", "Ивана", "Софија"]
+    surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић"]
+    zvanja = ["јереј", "протојереј", "архијерејски намесник", "епископ"]
+    parohije = ["Парохија 1", "Парохија 2", "Парохија 3", "Парохија 4"]
+
+    @staticmethod
+    def sample_occupations():
+        return Zanimanje.objects.all()
+
+    @staticmethod
+    def sample_nationalities():
+        return Narodnost.objects.all()
+
+    @staticmethod
+    def sample_religions():
+        return Veroispovest.objects.all()
+
     @staticmethod
     def random_date_of_birth(min_age=0, max_age=100):
         """Генерише насумичан датум рођења."""
@@ -18,7 +36,7 @@ class RandomUtils:
 
     @staticmethod
     def random_datetime():
-        """Генерише насумично датум и време."""
+        """Генерише насумичан датум и време."""
         year = random.randint(2000, 2022)
         month = random.randint(1, 12)
         day = random.randint(1, 28)  # Да избегнемо крај месеца
@@ -36,16 +54,37 @@ class RandomUtils:
         return aware_datetime
 
     @staticmethod
-    def sample_occupations():
-        """Генерише насумично занимање."""
-        return Zanimanje.objects.all()
+    def create_random_adresa(unesi_adresu):
+        """Креира насумичну адресу."""
+        naziv_ulice = "Улица " + str(random.randint(1, 100))
+        broj = str(random.randint(1, 100))
+        dodatak = random.choice(["А", "Б", None])
+        postkod = "11000"
+        primedba = "Насумична примедба"
+        naziv_mesta = "Место " + str(random.randint(1, 100))
+        naziv_opstine = "Општина " + str(random.randint(1, 100))
+
+        adresa, _ = unesi_adresu(
+            naziv_ulice,
+            broj,
+            dodatak,
+            postkod,
+            primedba,
+            naziv_mesta,
+            naziv_opstine,
+        )
+        return adresa
 
     @staticmethod
-    def sample_nationalities():
-        """Генерише насумично националност."""
-        return Narodnost.objects.all()
-
-    @staticmethod
-    def sample_religions():
-        """Генерише насумично вероисповест."""
-        return Veroispovest.objects.all()
+    def create_random_hram(unesi_adresu):
+        """Креира насумичан објекат Hram."""
+        adresa = RandomUtils.create_random_adresa(unesi_adresu)
+        hram = Hram(
+            naziv="Храм "
+            + random.choice(
+                ["Светог Саве", "Светог Николе", "Светог Марка", "Свете Петке"]
+            ),
+            adresa=adresa,
+        )
+        hram.save()
+        return hram
