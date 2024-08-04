@@ -17,6 +17,9 @@ from .view_404 import custom_404
 
 
 def prikazi_domacinstva(request, uid):
+    """
+    Приказ домаћинстава са одређеном славом.
+    """
     domacinstva = Domacinstvo.objects.filter(slava__uid=uid)
     return render(
         request, "registar/spisak_domacinstava.html", {"domacinstva": domacinstva}
@@ -24,10 +27,16 @@ def prikazi_domacinstva(request, uid):
 
 
 def index(request) -> HttpResponse:
+    """
+    Приказ почетне странице.
+    """
     return render(request, "registar/index.html")
 
 
 def dodaj_izmeni_veroispovest(request, uid=None):
+    """
+    Додавање или измена вероисповести.
+    """
     if uid:
         veroispovest = Veroispovest.objects.get(uid=uid)
         form = VeroispovestForm(request.POST or None, instance=veroispovest)
@@ -47,6 +56,9 @@ def dodaj_izmeni_veroispovest(request, uid=None):
 
 
 def search_view(request) -> HttpResponse:
+    """
+    Претрага вероисповести, парохијана и домаћинстава.
+    """
     query = request.GET.get("query", "")
     context = {
         "query": query,
@@ -62,7 +74,6 @@ def search_view(request) -> HttpResponse:
             if query
             else Parohijan.objects.none()
         ),
-        # Pretpostavljamo da želite pretraživati po primedbama domaćinstva
         "domacinstvo_results": (
             Domacinstvo.objects.filter(primedba__icontains=query)
             if query
