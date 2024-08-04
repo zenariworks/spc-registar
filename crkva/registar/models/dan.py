@@ -1,11 +1,11 @@
-"""
-Класа модела за представљање дана у бази података.
-"""
+"""Модул модела дана у бази података."""
 
 from django.db import models
 
 
 class Dan(models.Model):
+    """Класа која представља дане."""
+
     dan = models.IntegerField(verbose_name="дан", primary_key=True, unique=True)
 
     def __str__(self):

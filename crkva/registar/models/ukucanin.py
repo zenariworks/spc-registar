@@ -1,6 +1,4 @@
-"""
-Model class for representing residents in the database.
-"""
+"""Модул модела укућана у бази података."""
 
 from django.db import models
 
@@ -9,6 +7,8 @@ from .parohijan import Parohijan
 
 
 class Ukucanin(models.Model):
+    """Класа која представља укућана."""
+
     parohijan = models.ForeignKey(
         Parohijan, on_delete=models.CASCADE, verbose_name="парохијан"
     )

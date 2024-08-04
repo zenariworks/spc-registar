@@ -1,3 +1,5 @@
+"""Модул модела парохије у бази података."""
+
 import uuid
 
 from django.db import models
@@ -6,6 +8,8 @@ from .crkvena_opstina import CrkvenaOpstina
 
 
 class Parohija(models.Model):
+    """Класа која представља парохија."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     naziv = models.CharField(max_length=200, verbose_name="назив")

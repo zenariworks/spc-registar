@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање парохијана у бази података.
-"""
+"""Модул модела парохијана у бази података."""
 
 import uuid
 
@@ -13,6 +11,8 @@ from .zanimanje import Zanimanje
 
 
 class Parohijan(models.Model):
+    """Класа која представља парохијана."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     ime = models.CharField(verbose_name="име")

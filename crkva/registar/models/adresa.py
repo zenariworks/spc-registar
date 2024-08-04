@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање адресе у бази података.
-"""
+"""Модул модела адресе у бази података."""
 
 import uuid
 
@@ -10,6 +8,8 @@ from .ulica import Ulica
 
 
 class Adresa(models.Model):
+    """Класа која представља адресе."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     ulica = models.ForeignKey(Ulica, on_delete=models.CASCADE, verbose_name="улица")
     broj = models.CharField(max_length=10, verbose_name="број")

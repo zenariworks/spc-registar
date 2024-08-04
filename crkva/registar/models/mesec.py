@@ -1,11 +1,11 @@
-"""
-Класа модела за представљање месеца у бази података.
-"""
+"""Модул модела месеца у бази података."""
 
 from django.db import models
 
 
 class Mesec(models.Model):
+    """Класа која представља месеце."""
+
     mesec = models.IntegerField(verbose_name="месец", primary_key=True, unique=True)
     naziv = models.CharField(verbose_name="назив", max_length=10)
 

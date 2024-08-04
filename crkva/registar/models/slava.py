@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање славе у бази података.
-"""
+"""Модул модела славе у бази података."""
 
 import uuid
 
@@ -11,6 +9,8 @@ from .mesec import Mesec
 
 
 class Slava(models.Model):
+    """Класа која представља слава."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     naziv = models.CharField(verbose_name="назив")
