@@ -1,3 +1,5 @@
+"""Модул админ интерфејса модела Парохијан са опцијама увоз и извоз."""
+
 from admin_searchable_dropdown.filters import AutocompleteFilter
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
@@ -9,9 +11,7 @@ class ZanimanjeFilter(AutocompleteFilter):
 
 
 class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
-    """
-    Административни интерфејс за модел парохијан са функционалношћу за увоз и извоз.
-    """
+    """Класа админ интерфејса модела Парохија."""
 
     list_display = (
         "get_full_name",

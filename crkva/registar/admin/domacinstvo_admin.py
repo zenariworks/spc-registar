@@ -1,11 +1,11 @@
+"""Модул админ интерфејса модела Домаћинство са опцијама увоз и извоз."""
+
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
 
 
 class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
-    """
-    Административни интерфејс за модел домаћинства са функционалношћу за увоз и извоз.
-    """
+    """Класа админ интерфејса модела Домаћинство."""
 
     list_display = (
         "domacin",

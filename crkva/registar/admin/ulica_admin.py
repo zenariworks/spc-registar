@@ -1,6 +1,4 @@
-"""
-Модул за административни интерфејс модела Улица са додатним филтерима за државу, општину и место.
-"""
+"""Модул админ интерфејса модела Улица са опцијама увоз и извоз."""
 
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
@@ -55,10 +53,7 @@ class MestoFilter(admin.SimpleListFilter):
 
 
 class UlicaAdmin(admin.ModelAdmin):
-    """
-    Административни интерфејс за модел Улица са додатним филтерима и
-    функционалношћу за увоз и извоз.
-    """
+    """Класа админ интерфејса модела Улица."""
 
     list_display = ["naziv", "get_mesto", "get_opstina", "get_drzava"]
     list_filter = [DrzavaFilter, OpstinaFilter, MestoFilter]

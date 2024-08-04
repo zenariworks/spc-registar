@@ -1,11 +1,11 @@
+"""Модул админ интерфејса модела Крштење са опцијама увоз и извоз."""
+
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
 
 
 class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
-    """
-    Административни интерфејс за модел крштења са функционалношћу за увоз и извоз.
-    """
+    """Класа админ интерфејса модела Крштење."""
 
     list_display = (
         "get_dete_full_name",
