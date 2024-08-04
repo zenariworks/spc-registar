@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање општине у бази података.
-"""
+"""Модул модела општине у бази података."""
 
 import uuid
 
@@ -8,6 +6,8 @@ from django.db import models
 
 
 class Opstina(models.Model):
+    """Класа која представља општина."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     naziv = models.CharField(max_length=100, verbose_name="назив")
 

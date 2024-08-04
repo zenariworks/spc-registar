@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање крштења у бази података.
-"""
+"""Модул модела крштења у бази података."""
 
 import uuid
 
@@ -12,6 +10,8 @@ from .svestenik import Svestenik
 
 
 class Krstenje(models.Model):
+    """Класа која представља крштења."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     knjiga = models.IntegerField(verbose_name="протоколарна књига")

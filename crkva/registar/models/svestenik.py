@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање свштеника у бази података.
-"""
+"""Модул модела свештеника у бази података."""
 
 import uuid
 
@@ -20,6 +18,8 @@ zvanja = [
 
 
 class Svestenik(models.Model):
+    """Класа која представља свештеника."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     ime = models.CharField(verbose_name="име")

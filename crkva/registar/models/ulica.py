@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање улица у бази података.
-"""
+"""Модул модела улице у бази података."""
 
 import uuid
 
@@ -13,6 +11,8 @@ from .svestenik import Svestenik
 
 
 class Ulica(models.Model):
+    """Класа која представља улица."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     naziv = models.CharField(max_length=255, verbose_name="назив")
     mesto = models.ForeignKey(Mesto, on_delete=models.CASCADE, verbose_name="место")

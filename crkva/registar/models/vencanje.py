@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање венчања у бази података.
-"""
+"""Модул модела венчања у бази података."""
 
 import uuid
 
@@ -12,6 +10,8 @@ from .svestenik import Svestenik
 
 
 class Vencanje(models.Model):
+    """Класа која представља венчања."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     knjiga = models.IntegerField(verbose_name="књига")

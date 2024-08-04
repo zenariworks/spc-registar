@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање домаћинстава у бази података.
-"""
+"""Модул модела домаћинства у бази података."""
 
 import uuid
 
@@ -14,6 +12,8 @@ from .slava import Slava
 
 
 class Domacinstvo(models.Model):
+    """Класа која представља домаћинства."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     domacin = models.ForeignKey(
         Parohijan, on_delete=models.CASCADE, null=False, verbose_name="домаћин"

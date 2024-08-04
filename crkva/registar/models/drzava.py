@@ -1,6 +1,4 @@
-"""
-Класа модела за представљање државе у бази података.
-"""
+"""Модул модела државе у бази података."""
 
 import re
 import uuid
@@ -10,6 +8,8 @@ from django.db import models
 
 
 class Drzava(models.Model):
+    """Класа која представља државе."""
+
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     naziv = models.CharField(
         max_length=100, unique=True, blank=False, null=False, verbose_name="назив"
