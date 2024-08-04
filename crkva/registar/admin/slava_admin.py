@@ -1,11 +1,11 @@
+"""Модул админ интерфејса модела Слава са опцијама увоз и извоз."""
+
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
 
 
 class SlavaAdmin(ImportExportMixin, admin.ModelAdmin):
-    """
-    Административни интерфејс за модел слава са функционалношћу за увоз и извоз.
-    """
+    """Класа админ интерфејса модела Слава."""
 
     search_fields = (
         "opsti_naziv",

@@ -1,11 +1,11 @@
+"""Модул админ интерфејса модела Свештеник са опцијама увоз и извоз."""
+
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
 
 
 class SvestenikAdmin(ImportExportMixin, admin.ModelAdmin):
-    """
-    Административни интерфејс за модел свештеник са функционалношћу за увоз и извоз.
-    """
+    """Класа админ интерфејса модела Свештеник."""
 
     list_display = ("get_full_name", "zvanje", "get_parohija")
     ordering = ("prezime", "ime")

@@ -1,7 +1,11 @@
+"""Модул админ интерфејса модела Адреса са опцијама за увоз и извоз."""
+
 from django.contrib import admin
 
 
 class AdresaAdmin(admin.ModelAdmin):
+    """Класа админ интерфејса модела Адреса."""
+
     list_display = (
         "ulica",
         "broj",

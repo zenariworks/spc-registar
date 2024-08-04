@@ -1,15 +1,11 @@
-"""
-Модул админ интерфејса модела Занимање са функционалношћу за увоз и извоз.
-"""
+"""Модул админ интерфејса модела Занимање са опцијама увоз и извоз."""
 
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
 
 
 class ZanimanjeAdmin(ImportExportMixin, admin.ModelAdmin):
-    """
-    Административни интерфејс за модел занимање са функционалношћу за увоз и извоз.
-    """
+    """Класа админ интерфејса модела Занимање."""
 
     list_display = ("sifra", "naziv", "zenski_naziv")
     ordering = ("sifra",)

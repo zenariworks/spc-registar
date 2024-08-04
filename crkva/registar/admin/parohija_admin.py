@@ -1,7 +1,11 @@
+"""Модул админ интерфејса модела Парохија са опцијама увоз и извоз."""
+
 from django.contrib import admin
 
 
 class ParohijaAdmin(admin.ModelAdmin):
+    """Класа админ интерфејса модела Парохија."""
+
     list_display = (
         "naziv",
         "crkvena_opstina",
