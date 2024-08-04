@@ -2,9 +2,21 @@
 fail-under=9
 output-format = colorized
 
+[MASTER]
+load-plugins=pylint_django
+
 [DESIGN]
-# Maximum number of parents for a class (R0901)
 max-parents=9
 
 [MESSAGES CONTROL]
-disable = R0903,C0114,C0115
+disable =
+    too-few-public-methods,
+    ; missing-module-docstring,
+    ; missing-class-docstring,
+    ; missing-function-docstring,
+    ; no-member,
+    ; arguments-differ,
+    ; attribute-defined-outside-init
+
+; [DJANGO]
+; settings-module = crkva.settings
