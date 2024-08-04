@@ -1,19 +1,9 @@
 import random
-from datetime import date, datetime, time, timedelta
+from datetime import date, time, timedelta
 
 from django.core.management.base import BaseCommand
-from django.utils import timezone
-from registar.models import (
-    Adresa,
-    Hram,
-    Narodnost,
-    Parohija,
-    Parohijan,
-    Svestenik,
-    Vencanje,
-    Veroispovest,
-    Zanimanje,
-)
+from registar.management.commands.random_utils import RandomUtils
+from registar.models import Adresa, Hram, Parohija, Parohijan, Svestenik, Vencanje
 
 from .unos_adresa import unesi_adresu
 
@@ -21,53 +11,23 @@ from .unos_adresa import unesi_adresu
 class Command(BaseCommand):
     help = "Попуњава базу података насумичним парохијанима"
 
-    # Serbian names and surnames in Cyrillic
     male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]
     female_names = ["Марија", "Ана", "Јована", "Ивана", "Софија"]
     surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић"]
-
-    # Sample zvanja and parohija
     zvanja = ["јереј", "протојереј", "архијерејски намесник", "епископ"]
-    parohije = [
-        "Парохија 1",
-        "Парохија 2",
-        "Парохија 3",
-        "Парохија 4",
-    ]  # Replace with actual parohija names
+    parohije = ["Парохија 1", "Парохија 2", "Парохија 3", "Парохија 4"]
 
-    # Sample data pools
-    sample_occupations = Zanimanje.objects.all()
-    sample_nationalities = Narodnost.objects.all()
-    sample_religions = Veroispovest.objects.all()
+    sample_occupations = RandomUtils.sample_occupations()
+    sample_nationalities = RandomUtils.sample_nationalities()
+    sample_religions = RandomUtils.sample_religions()
 
     def random_date_of_birth(self, min_age=0, max_age=100):
-        """Генерише насумичан датум рођења."""
-        today = date.today()
-        start_date = today - timedelta(days=max_age * 365.25)
-        end_date = today - timedelta(days=min_age * 365.25)
-        random_days = random.randint(0, (end_date - start_date).days)
-        return start_date + timedelta(days=random_days)
+        return RandomUtils.random_date_of_birth(min_age, max_age)
 
     def random_datetime(self):
-        """Генерише насумичан датум и време."""
-        year = random.randint(2000, 2022)
-        month = random.randint(1, 12)
-        day = random.randint(1, 28)  # Да избегнемо крај месеца
-        hour = random.randint(0, 23)
-        minute = random.randint(0, 59)
-        second = random.randint(0, 59)
-
-        # Create a naive datetime object
-        naive_datetime = datetime(year, month, day, hour, minute, second)
-
-        # Make it timezone-aware
-        aware_datetime = timezone.make_aware(
-            naive_datetime, timezone.get_default_timezone()
-        )
-        return aware_datetime
+        return RandomUtils.random_datetime()
 
     def create_random_parohijan(self, gender, min_age=0) -> Parohijan:
-        """Креира насумичног парохијана."""
         name = (
             random.choice(self.male_names)
             if gender == "М"
