@@ -1,8 +1,16 @@
+"""
+Модул команде за попуњавање табеле Епархија са примерима епархија.
+"""
+
 from django.core.management.base import BaseCommand
 from registar.models import Eparhija
 
 
 class Command(BaseCommand):
+    """
+    Класа Ђанго команде за попуњавање табеле Епархија са примерима епархија.
+    """
+
     help = "Попуњава табелу Епархија са примерима епархија"
 
     def handle(self, *args, **kwargs):
@@ -60,7 +68,7 @@ class Command(BaseCommand):
             {"nivo": "Епархија", "naziv": "западноевропска", "sediste": "Париз"},
             {
                 "nivo": "Епархија",
-                "naziv": "захумско-херцеговачка",
+                "nazив": "захумско-херцеговачка",
                 "sediste": "Требиње",
             },
             {"nivo": "Епархија", "naziv": "зворничко-тузланска", "sediste": "Бијељина"},

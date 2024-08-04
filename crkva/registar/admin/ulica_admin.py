@@ -1,9 +1,15 @@
+"""
+Модул за административни интерфејс модела Улица са додатним филтерима за државу, општину и место.
+"""
+
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from registar.models import Mesto
 
 
 class DrzavaFilter(admin.SimpleListFilter):
+    """Класа за филтрирање држава"""
+
     title = _("држава")
     parameter_name = "drzava"
 
@@ -18,6 +24,8 @@ class DrzavaFilter(admin.SimpleListFilter):
 
 
 class OpstinaFilter(admin.SimpleListFilter):
+    """Класа за филтрирање општина"""
+
     title = _("општина")
     parameter_name = "opstina"
 
@@ -32,6 +40,8 @@ class OpstinaFilter(admin.SimpleListFilter):
 
 
 class MestoFilter(admin.SimpleListFilter):
+    """Класа за филтрирање места"""
+
     title = _("место")
     parameter_name = "mesto"
 
@@ -46,7 +56,8 @@ class MestoFilter(admin.SimpleListFilter):
 
 class UlicaAdmin(admin.ModelAdmin):
     """
-    Административни интерфејс за модел улица са функционалношћу за увоз и извоз.
+    Административни интерфејс за модел Улица са додатним филтерима и
+    функционалношћу за увоз и извоз.
     """
 
     list_display = ["naziv", "get_mesto", "get_opstina", "get_drzava"]
@@ -59,18 +70,21 @@ class UlicaAdmin(admin.ModelAdmin):
     ]
 
     def get_mesto(self, obj):
+        """Добави назив места"""
         return obj.mesto.naziv
 
     get_mesto.admin_order_field = "mesto"
     get_mesto.short_description = "Место"
 
     def get_opstina(self, obj):
+        """Добави назив општине"""
         return obj.mesto.opstina.naziv
 
     get_opstina.admin_order_field = "mesto__opstina"
     get_opstina.short_description = "Општина"
 
     def get_drzava(self, obj):
+        """Добави назив државе"""
         return obj.mesto.opstina.drzava.naziv
 
     get_drzava.admin_order_field = "mesto__opstina__drzava"

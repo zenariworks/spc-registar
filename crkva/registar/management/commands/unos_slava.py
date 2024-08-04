@@ -1,9 +1,17 @@
+"""
+Модул команде за попуњавање табеле Слава са славама за целу годину.
+"""
+
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Dan, Mesec, Slava
 
 
 class Command(BaseCommand):
+    """
+    Класа Ђанго команде за попуњавање табеле Слава са славама за целу годину.
+    """
+
     help = "Попуњава табелу Слава са славама за целу годину"
 
     def handle(self, *args, **kwargs):
@@ -35,6 +43,11 @@ class Command(BaseCommand):
         )
 
     def _parse_data(self):
+        """
+        Парсира податке из SQL фајла са славама.
+
+        :return: Листа парсираних података (назив, општи назив, дан, месец)
+        """
         with open("fixtures/slave.sql", "r", encoding="utf-8") as file:
             raw_data = [line.strip() for line in file]
 

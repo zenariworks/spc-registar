@@ -1,3 +1,7 @@
+"""
+Модул команде за унос улица и повезивање са местом.
+"""
+
 import random
 
 from django.core.management.base import BaseCommand
@@ -27,6 +31,16 @@ def unesi_ulicu(
     drzava_naziv: str | Drzava | None = None,
     svestenik: Svestenik | None = None,
 ) -> tuple[Ulica, bool]:
+    """
+    Уноси нову улицу у базу података или враћа постојећу.
+
+    :param naziv: Назив улице
+    :param mesto_naziv: Назив места или објекат места
+    :param opstina_naziv: Назив општине или објекат општине
+    :param drzava_naziv: Назив државе или објекат државе
+    :param svestenik: Свештеник повезан са улицом
+    :return: Креирана или постојећа улица и флаг да ли је креирана нова
+    """
     naziv = naziv or random.choice(ulice)
     svestenik = svestenik or Svestenik.objects.order_by("?").first()
     ulica, uneto = Ulica.objects.get_or_create(
@@ -42,6 +56,10 @@ def unesi_ulicu(
 
 
 class Command(BaseCommand):
+    """
+    Класа Ђанго команде за унос улица и повезивање са местом.
+    """
+
     help = "Унос улица и повезивање са местом"
 
     def handle(self, *args, **kwargs):

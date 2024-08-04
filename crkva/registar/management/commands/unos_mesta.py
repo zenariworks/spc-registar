@@ -1,3 +1,7 @@
+"""
+Модул команде за унос места без повезивања са општинама.
+"""
+
 import random
 
 from django.core.management.base import BaseCommand
@@ -14,14 +18,24 @@ mesta = [
 
 
 def unesi_mesto(naziv: str | Mesto | None = None) -> tuple[Mesto, bool]:
+    """
+    Уноси ново место у базу података или враћа постојеће.
+
+    :param naziv: Назив места или објекат места
+    :return: Креирано или постојеће место и флаг да ли је креирано ново
+    """
     if isinstance(naziv, Mesto):
         return naziv, False
     naziv = naziv or random.choice(mesta)
-    opstina, uneto = Mesto.objects.get_or_create(naziv=naziv)
-    return opstina, uneto
+    mesto, uneto = Mesto.objects.get_or_create(naziv=naziv)
+    return mesto, uneto
 
 
 class Command(BaseCommand):
+    """
+    Класа Ђанго команде за унос места без повезивања са општинама.
+    """
+
     help = "Унос места без повезивања са општинама"
 
     def handle(self, *args, **kwargs):
