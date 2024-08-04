@@ -1,3 +1,7 @@
+"""
+Модул команде за унос општина и повезивање са државама.
+"""
+
 import random
 
 from django.core.management.base import BaseCommand
@@ -14,6 +18,12 @@ opstine = [
 
 
 def unesi_opstinu(naziv: str | Opstina | None = None) -> tuple[Opstina, bool]:
+    """
+    Уноси нову општину у базу података или враћа постојећу.
+
+    :param naziv: Назив општине или објекат општине
+    :return: Креирана или постојећа општина и флаг да ли је креирана нова
+    """
     if isinstance(naziv, Opstina):
         return naziv, False
     naziv = naziv or random.choice(opstine)
@@ -22,6 +32,10 @@ def unesi_opstinu(naziv: str | Opstina | None = None) -> tuple[Opstina, bool]:
 
 
 class Command(BaseCommand):
+    """
+    Класа Ђанго команде за унос општина и повезивање са државама.
+    """
+
     help = "Унос општина и повезивање са државама"
 
     def handle(self, *args, **kwargs):

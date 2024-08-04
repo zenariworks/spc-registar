@@ -1,9 +1,17 @@
+"""
+Модул команде за попуњавање табеле Месец са месецима и њиховим називима на српском ћирилицом.
+"""
+
 from django.core.management.base import BaseCommand
 from registar.models import Mesec
 from registar.utils import GREGORIAN_MONTHS
 
 
 class Command(BaseCommand):
+    """
+    Класа Ђанго команде за попуњавање табеле Месец са месецима и њиховим називима на српском ћирилицом.
+    """
+
     help = "Попуњава табелу Месец са месецима и њиховим називима на српском ћирилицом"
 
     def handle(self, *args, **kwargs):

@@ -1,12 +1,19 @@
-# registar/management/commands/random_utils.py
+"""
+Модул са помоћним функцијама за генерисање насумичних података.
+"""
+
 import random
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, time, timedelta
 
 from django.utils import timezone
-from registar.models import Hram, Narodnost, Veroispovest, Zanimanje
+from registar.models import Hram, Narodnost, Parohijan, Veroispovest, Zanimanje
 
 
 class RandomUtils:
+    """
+    Класа која садржи статичке методе за генерисање насумичних података за различите моделе.
+    """
+
     male_names = ["Никола", "Марко", "Лука", "Стефан", "Душан"]
     female_names = ["Марија", "Ана", "Јована", "Ивана", "Софија"]
     surnames = ["Јовић", "Петровић", "Николић", "Марковић", "Ђорђевић"]
@@ -15,14 +22,17 @@ class RandomUtils:
 
     @staticmethod
     def sample_occupations():
+        """Враћа све доступне занимања."""
         return Zanimanje.objects.all()
 
     @staticmethod
     def sample_nationalities():
+        """Враћа све доступне народности."""
         return Narodnost.objects.all()
 
     @staticmethod
     def sample_religions():
+        """Враћа све доступне вероисповести."""
         return Veroispovest.objects.all()
 
     @staticmethod
@@ -44,10 +54,10 @@ class RandomUtils:
         minute = random.randint(0, 59)
         second = random.randint(0, 59)
 
-        # Create a naive datetime object
+        # Креирање наивног објекта datetime
         naive_datetime = datetime(year, month, day, hour, minute, second)
 
-        # Make it timezone-aware
+        # Претварање у објекат свестан временске зоне
         aware_datetime = timezone.make_aware(
             naive_datetime, timezone.get_default_timezone()
         )
@@ -88,3 +98,30 @@ class RandomUtils:
         )
         hram.save()
         return hram
+
+    @staticmethod
+    def create_random_parohijan(unesi_adresu, gender, min_age=0) -> Parohijan:
+        """Креира насумичног парохијана."""
+        name = (
+            random.choice(RandomUtils.male_names)
+            if gender == "М"
+            else random.choice(RandomUtils.female_names)
+        )
+        surname = random.choice(RandomUtils.surnames)
+        parohijan = Parohijan(
+            ime=name,
+            prezime=surname,
+            mesto_rodjenja="Насумично место",
+            datum_rodjenja=RandomUtils.random_date_of_birth(min_age),
+            vreme_rodjenja=time(random.randint(0, 23), random.randint(0, 59)),
+            pol=gender,
+            devojacko_prezime=(
+                "" if gender == "М" else random.choice(RandomUtils.surnames)
+            ),
+            zanimanje=random.choice(RandomUtils.sample_occupations()),
+            veroispovest=random.choice(RandomUtils.sample_religions()),
+            narodnost=random.choice(RandomUtils.sample_nationalities()),
+            adresa=RandomUtils.create_random_adresa(unesi_adresu),
+        )
+        parohijan.save()
+        return parohijan

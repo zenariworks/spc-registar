@@ -1,3 +1,7 @@
+"""
+Модул админ интерфејса модела Занимање са функционалношћу за увоз и извоз.
+"""
+
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
 

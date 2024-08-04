@@ -1,3 +1,7 @@
+"""
+Модул за унос држава и њихово повезивање са базом података.
+"""
+
 import random
 
 from django.core.management.base import BaseCommand
@@ -26,6 +30,12 @@ drzave = {
 
 
 def unesi_drzavu(naziv: str | Drzava | None = None) -> tuple[Drzava, bool]:
+    """
+    Уноси државу у базу података или враћа постојећу.
+
+    :param naziv: Назив државе или објекат државе
+    :return: Креирана или постојећа држава и флаг да ли је креирана нова
+    """
     if isinstance(naziv, Drzava):
         return naziv, False
 
@@ -49,6 +59,10 @@ def unesi_drzavu(naziv: str | Drzava | None = None) -> tuple[Drzava, bool]:
 
 
 class Command(BaseCommand):
+    """
+    Класа Ђанго команде за унос држава, ако већ нису у бази података.
+    """
+
     help = "Унос држава, ако већ нису у бази података"
 
     def handle(self, *args, **kwargs):

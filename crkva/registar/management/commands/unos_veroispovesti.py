@@ -1,9 +1,17 @@
+"""
+Модул команде за додавање вероисповести у базу према Републичком регистру.
+"""
+
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Veroispovest
 
 
 class Command(BaseCommand):
+    """
+    Класа Ђанго команде за додавање вероисповести у базу према Републичком регистру.
+    """
+
     help = "Додавање вероисповести у базу према Републичком регистру"
 
     def handle(self, *args, **kwargs):
@@ -25,6 +33,11 @@ class Command(BaseCommand):
         )
 
     def _parse_data(self):
+        """
+        Парсира податке из CSV фајла са вероисповестима.
+
+        :return: Листа назива вероисповести
+        """
         try:
             with open(r"fixtures/veroispovesti.csv", "r", encoding="utf-8") as file:
                 raw_data = [line.strip() for line in file]
