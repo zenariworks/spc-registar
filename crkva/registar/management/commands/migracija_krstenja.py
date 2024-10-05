@@ -42,31 +42,6 @@ class Command(BaseCommand):
         else:
             return RandomUtils.create_random_parohijan(unesi_adresu, gender, min_age)
 
-    def get_or_create_parohija(self, naziv):
-        """Креира насумично парохију."""
-        parohija, _ = Parohija.objects.get_or_create(naziv=naziv)
-        return parohija
-
-    def create_random_svestenik(self) -> Svestenik:
-        """Креира насумично свештеника."""
-        parohije = [
-            self.get_or_create_parohija("Парохија 1"),
-            self.get_or_create_parohija("Парохија 2"),
-            self.get_or_create_parohija("Парохија 3"),
-            self.get_or_create_parohija("Парохија 4"),
-        ]
-
-        svestenik = Svestenik(
-            zvanje=random.choice(RandomUtils.zvanja),
-            parohija=random.choice(parohije),
-            ime=random.choice(RandomUtils.male_names),
-            prezime=random.choice(RandomUtils.surnames),
-            mesto_rodjenja="Насумично место",
-            datum_rodjenja=RandomUtils.random_date_of_birth(25),
-        )
-        svestenik.save()
-        return svestenik
-
     def create_random_krstenje(self, parohijan):
         """Креира насумично крштење."""
         dete = self.random_parohijan("М" if random.choice([True, False]) else "Ж")
