@@ -30,6 +30,10 @@ class Command(BaseCommand):
                 broj_parohije = self._convert_roman_to_integer(parohija)
                 parohija_instance, _ = Parohija.objects.get_or_create(naziv=broj_parohije)
 
+                # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
+                # i unesi kao ime i prezime
+                ime_prezime = ime_prezime.split(" ")
+
                 # ako datum rodjenja nije poznat, postavi na danasnji datum
                 if datum_rodjenja == None:
                     datum_rodjenja = date.today()
@@ -37,8 +41,8 @@ class Command(BaseCommand):
                 #print(datum_rodjenja)
 
                 svestenik = Svestenik(
-                    ime=ime_prezime,
-                    prezime=ime_prezime,
+                    ime=ime_prezime[0],
+                    prezime=ime_prezime[1],
                     mesto_rodjenja="",
                     datum_rodjenja=datum_rodjenja,
                     zvanje=zvanje,
@@ -57,7 +61,7 @@ class Command(BaseCommand):
             )
         )
 
-    def _convert_roman_to_integer(self, roman_numeral):
+    def _convert_roman_to_integer(self, parohija):
         # Define a mapping from Roman numerals to integers
         roman_to_int = {
             'I': '1',
@@ -68,11 +72,16 @@ class Command(BaseCommand):
             '3': '3'
         }
 
+        # remove spaces from the end of the string
+        parohija = parohija.rstrip()
+        #print("roman_numeral: " + parohija)
+
         # Convert each Roman numeral to its integer value
         #converted_value = roman_to_int.get(roman_numeral, None)
         
         # vrati '0' za broj parohije ako svesteniku nije dodeljena parohija koja ima redni broj [1,2,3]
-        converted_value = roman_to_int.get(roman_numeral, '0')
+        converted_value = roman_to_int.get(parohija, '0')
+        #print("broj_parohije: " + converted_value)
         return converted_value
 
     def _parse_data(self):
