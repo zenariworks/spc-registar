@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Parohija, Svestenik
 from registar.management.commands.random_utils import RandomUtils
+from registar.management.commands.convert_utils import ConvertUtils
 from registar.models.svestenik import zvanja
 import random
 from datetime import date, datetime, time, timedelta
@@ -34,18 +35,13 @@ class Command(BaseCommand):
                 # i unesi kao ime i prezime
                 ime_prezime = ime_prezime.split(" ")
 
-                # ako datum rodjenja nije poznat, postavi na danasnji datum
-                if datum_rodjenja == None:
-                    datum_rodjenja = date.today()
-                    #datum_rodjenja = RandomUtils.random_date_of_birth(25)
-                #print(datum_rodjenja)
-
                 svestenik = Svestenik(
-                    ime=ime_prezime[0],
-                    prezime=ime_prezime[1],
+                    svestenik_id=svestenik_id,
+                    ime= ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
+                    prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
                     mesto_rodjenja="",
                     datum_rodjenja=datum_rodjenja,
-                    zvanje=zvanje,
+                    zvanje=ConvertUtils.latin_to_cyrillic(zvanje),
                     parohija=parohija_instance,
                 )
                 svestenik.save()
