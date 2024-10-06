@@ -206,11 +206,11 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Svestenik',
             fields=[
-                ('uid', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('svestenik_id', models.IntegerField(primary_key=True, serialize=False, unique=True, verbose_name='свестеник ид')),
                 ('ime', models.CharField(verbose_name='име')),
                 ('prezime', models.CharField(verbose_name='презиме')),
                 ('mesto_rodjenja', models.CharField(verbose_name='место рођења')),
-                ('datum_rodjenja', models.DateField(verbose_name='датум рођења')),
+                ('datum_rodjenja', models.DateField(blank=True, null=True, verbose_name='датум рођења')),
                 ('zvanje', models.CharField(choices=[('Патријарх Српски', 'Патријарх Српски'), ('Јереј', 'Јереј'), ('Протојереј', 'Протојереј'), ('Протојереј-ставрофор', 'Протојереј-ставрофор'), ('Протонамесник', 'Протонамесник'), ('Администратор', 'Администратор'), ('Митрополит', 'Митрополит')], max_length=30, verbose_name='звање')),
                 ('parohija', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='registar.parohija', verbose_name='парохија')),
             ],
