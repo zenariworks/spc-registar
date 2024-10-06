@@ -25,7 +25,7 @@ class Command(BaseCommand):
         parsed_data = self._parse_data()
         created_count = 0
 
-        for ime_prezime, zvanje, parohija, datum_rodjenja in parsed_data:
+        for svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja in parsed_data:
             try:
                 broj_parohije = self._convert_roman_to_integer(parohija)
                 parohija_instance, _ = Parohija.objects.get_or_create(naziv=broj_parohije)
@@ -80,7 +80,7 @@ class Command(BaseCommand):
         #converted_value = roman_to_int.get(roman_numeral, None)
         
         # vrati '0' za broj parohije ako svesteniku nije dodeljena parohija koja ima redni broj [1,2,3]
-        converted_value = roman_to_int.get(parohija, '0')
+        converted_value = roman_to_int.get(parohija, '')
         #print("broj_parohije: " + converted_value)
         return converted_value
 
@@ -92,12 +92,12 @@ class Command(BaseCommand):
         parsed_data = []
         with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT sv_ime, sv_zvanje, sv_paroh, sv_datrod FROM HSPSVEST")
+            cursor.execute("SELECT sv_sifra, sv_ime, sv_zvanje, sv_paroh, sv_datrod FROM HSPSVEST")
             rows = cursor.fetchall()
 
             for row in rows:
-                ime_prezime, zvanje, parohija, datum_rodjenja = row
-                parsed_data.append((ime_prezime, zvanje, parohija, datum_rodjenja))
+                svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja = row
+                parsed_data.append((svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja))
 
         return parsed_data
 
