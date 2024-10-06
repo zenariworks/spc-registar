@@ -20,13 +20,14 @@ zvanja = [
 class Svestenik(models.Model):
     """Класа која представља свештеника."""
 
-    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    #uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    svestenik_id = models.IntegerField(verbose_name="свестеник ид", primary_key=True, unique=True)
 
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")
 
     mesto_rodjenja = models.CharField(verbose_name="место рођења")
-    datum_rodjenja = models.DateField(verbose_name="датум рођења")
+    datum_rodjenja = models.DateField(blank=True, null=True, verbose_name="датум рођења")
 
     zvanje = models.CharField(max_length=30, choices=zvanja, verbose_name="звање")
     parohija = models.ForeignKey(
