@@ -20,8 +20,7 @@ zvanja = [
 class Svestenik(models.Model):
     """Класа која представља свештеника."""
 
-    #uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    svestenik_id = models.IntegerField(verbose_name="свестеник ид", primary_key=True, unique=True)
+    uid = models.IntegerField(verbose_name="свестеник ид", primary_key=True, unique=True, editable=False)
 
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")

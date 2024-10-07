@@ -47,9 +47,10 @@ class Command(BaseCommand):
         parsed_data_streets = self._parse_data()
         created_count = 0
 
-        for sifra_ulice, naziv_ulice, svestenik_id in parsed_data_streets:
+        for ulice_id, naziv_ulice, svestenik_id in parsed_data_streets:
             try:
                 ulica = Ulica(
+                    uid=ulice_id,
                     naziv=ConvertUtils.latin_to_cyrillic(naziv_ulice),
                     drzava_id=drzava_instance.uid,
                     mesto_id=mesto_instance.uid,
@@ -72,7 +73,7 @@ class Command(BaseCommand):
     def _parse_data(self):
         """
         Migracija tabele 'HSPULICE.sqlite' u tabele 'opstine', 'mesta', 'ulice'
-        :return: Листа парсираних података (sifra_ulice, naziv_ulice, svestenik_id)
+        :return: Листа парсираних података (ulice_id, naziv_ulice, svestenik_id)
         """
         parsed_data = []
         with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
@@ -81,8 +82,8 @@ class Command(BaseCommand):
             rows = cursor.fetchall()
 
             for row in rows:
-                sifra_ulice, naziv_ulice, svestenik_id = row
-                parsed_data.append((sifra_ulice, naziv_ulice, svestenik_id))
+                ulice_id, naziv_ulice, svestenik_id = row
+                parsed_data.append((ulice_id, naziv_ulice, svestenik_id))
 
         return parsed_data
 

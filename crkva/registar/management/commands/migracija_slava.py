@@ -4,8 +4,9 @@ Migracija tabele 'hspslave.sqlite' u tabelu 'slave' (са славама за ц
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Dan, Mesec, Slava
+from registar.management.commands.convert_utils import ConvertUtils
 import sqlite3
-import uuid
+
 
 class Command(BaseCommand):
     """
@@ -21,14 +22,14 @@ class Command(BaseCommand):
         parsed_data = self._parse_data()
         created_count = 0
 
-        for naziv, dan, mesec in parsed_data:
+        for uid, naziv, dan, mesec in parsed_data:
             try:
                 dan_instance, _ = Dan.objects.get_or_create(dan=dan)
                 mesec_instance, _ = Mesec.objects.get_or_create(mesec=mesec)
 
                 _, created = Slava.objects.get_or_create(
-                    uid=uuid.uuid4(),
-                    naziv=naziv,
+                    uid=uid,
+                    naziv=ConvertUtils.latin_to_cyrillic(naziv),
                     opsti_naziv="",
                     dan=dan_instance,
                     mesec=mesec_instance,
@@ -49,17 +50,17 @@ class Command(BaseCommand):
     def _parse_data(self):
         """
         Migrira tabelu hspslave.sqlite
-        :return: Листа парсираних података (назив, дан, месец)
+        :return: Листа парсираних података (uid, назив, дан, месец)
         """
         parsed_data = []
         with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT sl_naziv, sl_dan, sl_mesec FROM hspslave")
+            cursor.execute("SELECT sl_sifra, sl_naziv, sl_dan, sl_mesec FROM hspslave")
             rows = cursor.fetchall()
 
             for row in rows:
-                naziv, dan, mesec = row
-                parsed_data.append((naziv, dan, mesec))
+                uid, naziv, dan, mesec = row
+                parsed_data.append((uid, naziv, dan, mesec))
 
         return parsed_data
 
