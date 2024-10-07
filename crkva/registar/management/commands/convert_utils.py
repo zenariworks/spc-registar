@@ -2,13 +2,6 @@
 Kod migracije podataka iz stare baza, svaki string koji je unet latinicom, konvertuje u cirilicu
 """
 
-import random
-from datetime import date, datetime, time, timedelta
-
-from django.utils import timezone
-from registar.models import Hram, Narodnost, Parohijan, Veroispovest, Zanimanje
-
-
 class ConvertUtils:
 
     @staticmethod
@@ -49,8 +42,7 @@ class ConvertUtils:
             '^': 'Ч', '~': 'ч',
             ']': 'Ћ', '}': 'ћ',
             '@': 'Ž', '`': 'Ž',
-            'X': 'Џ', 'x': 'џ',
-            
+            'X': 'Џ', 'x': 'џ'
         }
     
         # Convert each character using the mapping
