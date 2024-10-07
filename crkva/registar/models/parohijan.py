@@ -13,18 +13,25 @@ from .zanimanje import Zanimanje
 class Parohijan(models.Model):
     """Класа која представља парохијана."""
 
-    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    uid = models.IntegerField(primary_key=True, unique=True, editable=False)
 
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")
     mesto_rodjenja = models.CharField(verbose_name="место рођења")
-    datum_rodjenja = models.DateField(verbose_name="датум рођења")
-    vreme_rodjenja = models.TimeField(verbose_name="време рођења", blank=True)
+    # blank=True, null=True, - field is optional
+    datum_rodjenja = models.DateField(verbose_name="датум рођења", blank=True, null=True)
+    vreme_rodjenja = models.TimeField(verbose_name="време рођења", blank=True, null=True)
     pol = models.CharField(
         verbose_name="пол", choices=[("М", "мушки"), ("Ж", "женски")]
     )
 
     devojacko_prezime = models.CharField(verbose_name="девојачко презиме", blank=True)
+    
+    # replace the following foreign keys with a custom char field
+    #zanimanje = models.CharField(verbose_name="занимање", blank=True, null=True)
+    #veroispovest = models.CharField(verbose_name="вероисповест", blank=True, null=True)
+    #narodnost = models.CharField(verbose_name="народност", blank=True, null=True)
+    
     zanimanje = models.ForeignKey(
         Zanimanje,
         verbose_name="занимање",

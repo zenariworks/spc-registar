@@ -22,14 +22,21 @@ usage() {
 
 function recreate_database(){
     
+    # stop and remove db container and image
+    docker stop crkva-db-1
+    docker rm crkva-db-1
+    docker rmi postgres:13-alpine
+    docker images
+    
     # create database image: postgres:13-alpine
     docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
     
-    # import test data (comment the following 3 lines in final migration script)
-    # docker compose run --rm app sh -c "python manage.py unosi"
+    # import test data (comment the following 2 lines in final migration script)
     # docker compose run --rm app sh -c "python manage.py unos_krstenja"
     # docker compose run --rm app sh -c "python manage.py unos_vencanja"
 
+    docker compose run --rm app sh -c "python manage.py unosi"
+    docker compose run --rm app sh -c "python manage.py unos_meseci"
     docker compose run --rm app sh -c "python manage.py migracija_slava"
     docker compose run --rm app sh -c "python manage.py migracija_svestenika"
     docker compose run --rm app sh -c "python manage.py unos_drzava"
