@@ -36,7 +36,7 @@ class Command(BaseCommand):
                 ime_prezime = ime_prezime.split(" ")
 
                 svestenik = Svestenik(
-                    svestenik_id=svestenik_id,
+                    uid=svestenik_id,
                     ime= ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
                     prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
                     mesto_rodjenja="",
