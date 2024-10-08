@@ -17,42 +17,43 @@ class Parohijan(models.Model):
 
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")
-    mesto_rodjenja = models.CharField(verbose_name="место рођења")
+
     # blank=True, null=True, - field is optional
+    mesto_rodjenja = models.CharField(verbose_name="место рођења", blank=True, null=True)
     datum_rodjenja = models.DateField(verbose_name="датум рођења", blank=True, null=True)
     vreme_rodjenja = models.TimeField(verbose_name="време рођења", blank=True, null=True)
     pol = models.CharField(
-        verbose_name="пол", choices=[("М", "мушки"), ("Ж", "женски")]
+        verbose_name="пол", choices=[("М", "мушки"), ("Ж", "женски")], blank=True, null=True
     )
 
-    devojacko_prezime = models.CharField(verbose_name="девојачко презиме", blank=True)
+    devojacko_prezime = models.CharField(verbose_name="девојачко презиме", blank=True, null=True)
     
     # replace the following foreign keys with a custom char field
-    #zanimanje = models.CharField(verbose_name="занимање", blank=True, null=True)
-    #veroispovest = models.CharField(verbose_name="вероисповест", blank=True, null=True)
-    #narodnost = models.CharField(verbose_name="народност", blank=True, null=True)
+    zanimanje = models.CharField(verbose_name="занимање", blank=True, null=True)
+    veroispovest = models.CharField(verbose_name="вероисповест", blank=True, null=True)
+    narodnost = models.CharField(verbose_name="народност", blank=True, null=True)
     
-    zanimanje = models.ForeignKey(
-        Zanimanje,
-        verbose_name="занимање",
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-    )
-    veroispovest = models.ForeignKey(
-        Veroispovest,
-        verbose_name="вероисповест",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
-    narodnost = models.ForeignKey(
-        Narodnost,
-        verbose_name="народност",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-    )
+    # zanimanje = models.ForeignKey(
+    #     Zanimanje,
+    #     verbose_name="занимање",
+    #     on_delete=models.SET_NULL,
+    #     blank=True,
+    #     null=True,
+    # )
+    # veroispovest = models.ForeignKey(
+    #     Veroispovest,
+    #     verbose_name="вероисповест",
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    # )
+    # narodnost = models.ForeignKey(
+    #     Narodnost,
+    #     verbose_name="народност",
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    # )
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
     )

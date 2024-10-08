@@ -2,13 +2,9 @@
 Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
 """
 import sqlite3
-import uuid
-import random
-from datetime import date, timedelta
-
 from django.core.management.base import BaseCommand
-from registar.management.commands.random_utils import RandomUtils
-from registar.models import Hram, Krstenje, Parohija, Parohijan, Svestenik
+from registar.models import Hram, Krstenje, Parohija, Ulica, Parohijan, Adresa
+from registar.management.commands.convert_utils import ConvertUtils
 from django.db.utils import IntegrityError
 
 from .unos_adresa import unesi_adresu
@@ -51,17 +47,38 @@ class Command(BaseCommand):
         parsed_data = self._parse_data()
         created_count = 0
 
-        for parohijan_uid, ime_prezime, ulica_uid, broj_ulice, oznaka_ulice, broj_stana, telefon_fiksni, telefon_mobilni, slava_uid, slavska_vodica, uskrsnja_vodica, napomena in parsed_data:
+        for parohijan_uid, ime_prezime, ulica_uid, broj_ulice, \
+            oznaka_ulice, broj_stana, telefon_fiksni, telefon_mobilni, \
+            slava_uid, slavska_vodica, uskrsnja_vodica, napomena in parsed_data:
             try:
-                # ulica = Ulica(
-                #     uid=ulice_id,
-                #     naziv=ConvertUtils.latin_to_cyrillic(naziv_ulice),
-                #     drzava_id=drzava_instance.uid,
-                #     mesto_id=mesto_instance.uid,
-                #     opstina_id=opstina_instance.uid,
-                #     svestenik_id=svestenik_id
-                # )
-                # ulica.save()
+                adresa_instance = Adresa(
+                    broj=broj_ulice,
+                    dodatak=ConvertUtils.latin_to_cyrillic(oznaka_ulice),
+                    postkod="",
+                    primedba="",
+                    ulica_id=Ulica.objects.get(uid=ulica_uid).uid
+                )
+                adresa_instance.save()
+
+                # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
+                # i unesi kao ime i prezime
+                ime_prezime = ime_prezime.split(" ")
+
+                parohijan = Parohijan(
+                    uid=parohijan_uid,
+                    ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
+                    prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
+                    mesto_rodjenja="",
+                    datum_rodjenja=None,
+                    vreme_rodjenja=None,
+                    pol="",
+                    devojacko_prezime="",
+                    zanimanje="",
+                    veroispovest="",
+                    narodnost="",
+                    adresa=adresa_instance,
+                )
+                parohijan.save()
 
                 created_count += 1
 
