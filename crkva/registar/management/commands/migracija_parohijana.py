@@ -49,19 +49,19 @@ class Command(BaseCommand):
                 adresa_instance.save()
 
                 # tabela 'domacinstva' 
-                domacinstvo_instance = Domacinstvo(
-                    uid=parohijan_uid,
-                    tel_fiksni=telefon_fiksni,
-                    tel_mobilni=telefon_mobilni,
-                    slava=Slava.objects.get(uid=slava_uid),
-                    # convert strings 'slavska_vodica' and 'uskrsnja_vodica'
-                    # with values "D" or "N" to boolean true or false
-                    slavska_vodica="ДА" if slavska_vodica.rstrip() == "D" else "НЕ",
-                    uskrsnja_vodica="ДА" if uskrsnja_vodica.rstrip() == "D" else "НЕ",
-                    napomena=ConvertUtils.latin_to_cyrillic(napomena),
-                    adresa = adresa_instance 
-                )
-                domacinstvo_instance.save()
+                # domacinstvo_instance = Domacinstvo(
+                #     uid=parohijan_uid,
+                #     tel_fiksni=telefon_fiksni,
+                #     tel_mobilni=telefon_mobilni,
+                #     slava=Slava.objects.get(uid=slava_uid),
+                #     # convert strings 'slavska_vodica' and 'uskrsnja_vodica'
+                #     # with values "D" or "N" to boolean true or false
+                #     slavska_vodica="ДА" if slavska_vodica.rstrip() == "D" else "НЕ",
+                #     uskrsnja_vodica="ДА" if uskrsnja_vodica.rstrip() == "D" else "НЕ",
+                #     primedba=ConvertUtils.latin_to_cyrillic(napomena),
+                #     adresa = adresa_instance 
+                # )
+                # domacinstvo_instance.save()
 
 
                 # tabela 'parohijani'

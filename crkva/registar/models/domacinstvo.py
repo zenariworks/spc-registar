@@ -30,8 +30,8 @@ class Domacinstvo(models.Model):
     slava = models.ForeignKey(
         Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава"
     )
-    slavska_vodica = models.BooleanField(default=False, verbose_name="славска водица")
-    uskrsnja_vodica = models.BooleanField(default=False, verbose_name="ускршња водица")
+    slavska_vodica = models.CharField(default=False, verbose_name="славска водица")
+    uskrsnja_vodica = models.CharField(default=False, verbose_name="ускршња водица")
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
     def __str__(self) -> str:
