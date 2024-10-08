@@ -18,9 +18,9 @@ class Command(BaseCommand):
         komande = [
             ("unos_dana", {}),
             #("unos_meseci", {}),
-            ("unos_narodnosti", {}),
-            ("unos_veroispovesti", {}),
-            ("unos_zanimanja", {}),
+            # ("unos_narodnosti", {}),
+            # ("unos_veroispovesti", {}),
+            # ("unos_zanimanja", {}),
             #("unos_slava", {}),
             ("unos_eparhija", {}),
         ]

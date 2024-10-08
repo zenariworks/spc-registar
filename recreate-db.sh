@@ -25,8 +25,8 @@ function recreate_database(){
     # stop and remove db container and image
     docker stop crkva-db-1
     docker rm crkva-db-1
-    docker rmi postgres:13-alpine
-    docker images
+    #docker rmi postgres:13-alpine
+    #docker images
     
     # create database image: postgres:13-alpine
     docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
@@ -41,6 +41,7 @@ function recreate_database(){
     docker compose run --rm app sh -c "python manage.py migracija_svestenika"
     docker compose run --rm app sh -c "python manage.py unos_drzava"
     docker compose run --rm app sh -c "python manage.py migracija_ulica"
+    docker compose run --rm app sh -c "python manage.py migracija_krstenja"
 
     # create super user, default uid/pwd: app/svpetka
     # NOTE: for email just press Enter...
