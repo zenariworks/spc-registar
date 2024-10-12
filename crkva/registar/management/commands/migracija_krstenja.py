@@ -3,9 +3,10 @@ Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
 """
 import sqlite3
 from django.core.management.base import BaseCommand
+from django.db.utils import IntegrityError
 from registar.models import Hram, Krstenje, Parohija, Ulica, Parohijan, Adresa
 from registar.management.commands.convert_utils import ConvertUtils
-from django.db.utils import IntegrityError
+
 
 from .unos_adresa import unesi_adresu
 
