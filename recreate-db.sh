@@ -17,10 +17,13 @@ usage() {
  exit
 }
 
-#set -x
+set -x
 
 
 function recreate_database(){
+
+     # remove migration files
+     rm crkva/registar/migrations/0*
     
     # stop and remove db container and image
     docker stop crkva-db-1

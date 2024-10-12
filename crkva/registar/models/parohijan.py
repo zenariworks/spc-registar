@@ -8,6 +8,7 @@ from .adresa import Adresa
 from .narodnost import Narodnost
 from .veroispovest import Veroispovest
 from .zanimanje import Zanimanje
+from .slava import Slava
 
 
 class Parohijan(models.Model):
@@ -18,7 +19,19 @@ class Parohijan(models.Model):
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")
 
+    adresa = models.ForeignKey(
+        Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
+    )
+
+    #slava = models.ForeignKey(Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава")
+    slava = models.ForeignKey(Slava, on_delete=models.CASCADE, null=True, verbose_name="слава")
+
     # blank=True, null=True, - field is optional
+    tel_fiksni = models.CharField(verbose_name="фиксни телефон", blank=True, null=True)
+    tel_mobilni = models.CharField(verbose_name="мобилни телефон", blank=True, null=True)
+    slavska_vodica = models.BooleanField(default=False, verbose_name="славска водица")
+    uskrsnja_vodica = models.BooleanField(default=False, verbose_name="ускршња водица")
+
     mesto_rodjenja = models.CharField(verbose_name="место рођења", blank=True, null=True)
     datum_rodjenja = models.DateField(verbose_name="датум рођења", blank=True, null=True)
     vreme_rodjenja = models.TimeField(verbose_name="време рођења", blank=True, null=True)
@@ -54,12 +67,12 @@ class Parohijan(models.Model):
     #     null=True,
     #     blank=True,
     # )
-    adresa = models.ForeignKey(
-        Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
-    )
-
+    
     def __str__(self):
-        return f"{self.ime} {self.prezime}"
+        detalji = f"{self.ime} {self.prezime}"
+        detalji += f"/{self.tel_fiksni}" if self.sprat else ""
+        detalji += f"/{self.tel_mobilni}" if self.broj_stana else ""
+        return detalji
 
     class Meta:
         managed = True

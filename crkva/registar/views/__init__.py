@@ -2,7 +2,8 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from registar.forms import VeroispovestForm
-from registar.models import Domacinstvo, Parohijan, Veroispovest
+#from registar.models import Domacinstvo, Parohijan, Veroispovest
+from registar.models import Parohijan, Veroispovest
 
 from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja, unos_krstenja
 from .parohijan_view import (
@@ -16,14 +17,14 @@ from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF
 from .view_404 import custom_404
 
 
-def prikazi_domacinstva(request, uid):
-    """
-    Приказ домаћинстава са одређеном славом.
-    """
-    domacinstva = Domacinstvo.objects.filter(slava__uid=uid)
-    return render(
-        request, "registar/spisak_domacinstava.html", {"domacinstva": domacinstva}
-    )
+# def prikazi_domacinstva(request, uid):
+#     """
+#     Приказ домаћинстава са одређеном славом.
+#     """
+#     domacinstva = Domacinstvo.objects.filter(slava__uid=uid)
+#     return render(
+#         request, "registar/spisak_domacinstava.html", {"domacinstva": domacinstva}
+#     )
 
 
 def index(request) -> HttpResponse:
@@ -74,11 +75,11 @@ def search_view(request) -> HttpResponse:
             if query
             else Parohijan.objects.none()
         ),
-        "domacinstvo_results": (
-            Domacinstvo.objects.filter(primedba__icontains=query)
-            if query
-            else Domacinstvo.objects.none()
-        ),
+        # "domacinstvo_results": (
+        #     Domacinstvo.objects.filter(primedba__icontains=query)
+        #     if query
+        #     else Domacinstvo.objects.none()
+        # ),
     }
 
     return render(request, "registar/search_view.html", context)
