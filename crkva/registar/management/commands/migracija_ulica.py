@@ -2,21 +2,16 @@
 Migracija tabele 'HSPDOMACINI.sqlite' u tabele 'opstine', 'mesta', 'ulice', 'adrese'
 """
 
+import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from registar.models import Parohija, Svestenik, Ulica
+from registar.models import Ulica
 from registar.models.opstina import Opstina
 from registar.models import Mesto
-from registar.models.svestenik import zvanja
+#from registar.models.svestenik import zvanja
 from registar.management.commands.convert_utils import ConvertUtils
-
 from .unos_drzava import unesi_drzavu
-from .unos_mesta import unesi_mesto
-from .unos_opstina import unesi_opstinu
 
-import random
-from datetime import date, datetime, time, timedelta
-import sqlite3
 
 class Command(BaseCommand):
     """
@@ -26,7 +21,7 @@ class Command(BaseCommand):
     docker compose run --rm app sh -c "python manage.py migracija_ulica"
     """
 
-    help = "'HSPULICE.sqlite' u tabele 'opstine', 'mesta', 'ulice'"
+    help = "'HSPULICE.sqlite' u tabele 'opstine', 'mesta', 'drzave', 'ulice'"
 
     def handle(self, *args, **kwargs):
 

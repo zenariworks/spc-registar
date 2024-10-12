@@ -1,11 +1,12 @@
 """
 Migracija tabele 'hspslave.sqlite' u tabelu 'slave' (са славама за целу годину)
 """
+
+import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Dan, Mesec, Slava
 from registar.management.commands.convert_utils import ConvertUtils
-import sqlite3
 
 
 class Command(BaseCommand):
@@ -43,7 +44,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Успешно попуњена табела Слава са {created_count} нових уноса."
+                f"Успешно попуњена табела 'славе': {created_count} нових уноса."
             )
         )
 

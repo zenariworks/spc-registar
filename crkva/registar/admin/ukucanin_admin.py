@@ -8,5 +8,5 @@ class UkucaninAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Укућанин."""
 
     #list_display = ("parohijan", "domacinstvo", "uloga")
-    list_display = ("parohijan", "uloga")
+    list_display = ("parohijan", "ime_ukucana")
     ordering = ["parohijan"]

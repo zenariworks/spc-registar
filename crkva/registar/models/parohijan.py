@@ -23,8 +23,7 @@ class Parohijan(models.Model):
         Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
     )
 
-    #slava = models.ForeignKey(Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава")
-    slava = models.ForeignKey(Slava, on_delete=models.CASCADE, null=True, verbose_name="слава")
+    slava = models.ForeignKey(Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава")
 
     # blank=True, null=True, - field is optional
     tel_fiksni = models.CharField(verbose_name="фиксни телефон", blank=True, null=True)
@@ -67,13 +66,16 @@ class Parohijan(models.Model):
     #     null=True,
     #     blank=True,
     # )
-    
-    def __str__(self):
-        detalji = f"{self.ime} {self.prezime}"
-        detalji += f"/{self.tel_fiksni}" if self.sprat else ""
-        detalji += f"/{self.tel_mobilni}" if self.broj_stana else ""
-        return detalji
 
+    def __str__(self):
+        return f"{self.ime} {self.prezime}"
+
+    # def __str__(self):
+    #     detalji = f"{self.ime} {self.prezime}"
+    #     detalji += f"/{self.tel_fiksni}" if self.tel_fiksni else ""
+    #     detalji += f"/{self.tel_mobilni}" if self.tel_mobilni else ""
+    #     return detalji
+    
     class Meta:
         managed = True
         db_table = "parohijani"

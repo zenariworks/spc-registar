@@ -2,15 +2,12 @@
 Migracija tabele 'HSPSVEST.sqlite' u tabelu 'svestenici' (tabela svestenika)
 """
 
+import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Parohija, Svestenik
-from registar.management.commands.random_utils import RandomUtils
 from registar.management.commands.convert_utils import ConvertUtils
-from registar.models.svestenik import zvanja
-import random
-from datetime import date, datetime, time, timedelta
-import sqlite3
+#from registar.models.svestenik import zvanja
 
 class Command(BaseCommand):
     """
