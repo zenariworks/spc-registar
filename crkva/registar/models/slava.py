@@ -27,8 +27,10 @@ class Slava(models.Model):
         to_field="mesec",
     )
 
+    # def __str__(self):
+    #     return f"{self.dan}. {self.mesec}: {self.naziv}"
     def __str__(self):
-        return f"{self.dan}. {self.mesec}: {self.naziv}"
+        return f"{self.naziv}"
 
     class Meta:
         managed = True

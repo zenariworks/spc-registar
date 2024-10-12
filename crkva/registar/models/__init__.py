@@ -1,7 +1,7 @@
 from .adresa import Adresa
 from .crkvena_opstina import CrkvenaOpstina
 from .dan import Dan
-from .domacinstvo import Domacinstvo
+#from .domacinstvo import Domacinstvo
 from .drzava import Drzava
 from .eparhija import Eparhija
 from .hram import Hram
@@ -27,7 +27,7 @@ __all__ = [
     "Drzava",
     "CrkvenaOpstina",
     "Dan",
-    "Domacinstvo",
+    #"Domacinstvo",
     "Eparhija",
     "Hram",
     "Krstenje",
