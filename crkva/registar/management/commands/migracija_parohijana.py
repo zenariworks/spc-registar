@@ -1,13 +1,11 @@
 """
-Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
+Migracija tabele `HSPDOMACINI.sqlite` (tabele domacina) u tabele: 'adresa', 'parohijani'
 """
 import sqlite3
 from django.core.management.base import BaseCommand
-from registar.models import Hram, Krstenje, Parohija, Ulica, Parohijan, Adresa, Slava
-from registar.management.commands.convert_utils import ConvertUtils
 from django.db.utils import IntegrityError
-
-from .unos_adresa import unesi_adresu
+from registar.models import Ulica, Parohijan, Adresa, Slava
+from registar.management.commands.convert_utils import ConvertUtils
 
 class Command(BaseCommand):
     """
@@ -81,7 +79,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Успешно попуњена табела 'parohijani': {created_count} нових уноса."
+                f"Успешно попуњена табеле 'адресе' и 'parohijani': {created_count} нових уноса."
             )
         )
 
@@ -101,7 +99,7 @@ class Command(BaseCommand):
             dom_uskvod      - uskrsnja vodica (true/false - da li svestenik dolazi da sveti vodicu uoci Uskrsa)
             dom_napom       - napomena (opciono)
 
-        :return: Листа парсираних података ( ... )
+        :return: Листа парсираних података ( parohijan_uid, ime_prezime, ulica_uid, broj_ulice, oznaka_ulice, broj_stana, telefon_fiksni, telefon_mobilni, slava_uid, slavska_vodica, uskrsnja_vodica, napomena)
         """
         parsed_data = []
         with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
