@@ -3,7 +3,7 @@ Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
 """
 import sqlite3
 from django.core.management.base import BaseCommand
-from registar.models import Hram, Krstenje, Parohija, Ulica, Parohijan, Adresa, Slava, Domacinstvo
+from registar.models import Hram, Krstenje, Parohija, Ulica, Parohijan, Adresa, Slava
 from registar.management.commands.convert_utils import ConvertUtils
 from django.db.utils import IntegrityError
 
@@ -42,47 +42,37 @@ class Command(BaseCommand):
                     sprat=None,
                     broj_stana=broj_stana,
                     dodatak=ConvertUtils.latin_to_cyrillic(oznaka_ulice),
-                    postkod="",
-                    primedba="",
+                    postkod=None,
+                    primedba=ConvertUtils.latin_to_cyrillic(napomena),
                     ulica=Ulica.objects.get(uid=ulica_uid)
                 )
                 adresa_instance.save()
 
-                # tabela 'domacinstva' 
-                # domacinstvo_instance = Domacinstvo(
-                #     uid=parohijan_uid,
-                #     tel_fiksni=telefon_fiksni,
-                #     tel_mobilni=telefon_mobilni,
-                #     slava=Slava.objects.get(uid=slava_uid),
-                #     # convert strings 'slavska_vodica' and 'uskrsnja_vodica'
-                #     # with values "D" or "N" to boolean true or false
-                #     slavska_vodica="ДА" if slavska_vodica.rstrip() == "D" else "НЕ",
-                #     uskrsnja_vodica="ДА" if uskrsnja_vodica.rstrip() == "D" else "НЕ",
-                #     primedba=ConvertUtils.latin_to_cyrillic(napomena),
-                #     adresa = adresa_instance 
-                # )
-                # domacinstvo_instance.save()
-
-
                 # tabela 'parohijani'
                 # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
                 # i unesi kao ime i prezime
-                # ime_prezime = ime_prezime.split(" ")
-                # parohijan = Parohijan(
-                #     uid=parohijan_uid,
-                #     ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
-                #     prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
-                #     mesto_rodjenja="",
-                #     datum_rodjenja=None,
-                #     vreme_rodjenja=None,
-                #     pol="",
-                #     devojacko_prezime="",
-                #     domacinstvo=domacinstvo_instance,
-                #     zanimanje="",
-                #     veroispovest="",
-                #     narodnost=""
-                # )
-                # parohijan.save()
+                ime_prezime = ime_prezime.split(" ")
+
+                parohijan = Parohijan(
+                    uid=parohijan_uid,
+                    ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
+                    prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
+                    adresa=adresa_instance,
+                    slava=Slava.objects.get(uid=slava_uid),
+                    tel_fiksni=telefon_fiksni,
+                    tel_mobilni=telefon_mobilni,
+                    slavska_vodica=True if slavska_vodica.rstrip() == "D" else False,
+                    uskrsnja_vodica=True if uskrsnja_vodica.rstrip() == "D" else False,
+                    mesto_rodjenja=None,
+                    datum_rodjenja=None,
+                    vreme_rodjenja=None,
+                    pol=None,
+                    devojacko_prezime=None,
+                    zanimanje=None,
+                    veroispovest=None,
+                    narodnost=None
+                )
+                parohijan.save()
 
                 created_count += 1
 
