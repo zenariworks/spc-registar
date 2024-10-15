@@ -15,9 +15,9 @@ class Domacinstvo(models.Model):
     """Класа која представља домаћинства."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    domacin = models.ForeignKey(
-        Parohijan, on_delete=models.CASCADE, null=False, verbose_name="домаћин"
-    )
+    #domacin = models.ForeignKey(
+    #    Parohijan, on_delete=models.CASCADE, null=False, verbose_name="домаћин"
+    #)
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
     )
@@ -30,8 +30,8 @@ class Domacinstvo(models.Model):
     slava = models.ForeignKey(
         Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава"
     )
-    slavska_vodica = models.BooleanField(default=False, verbose_name="славска водица")
-    uskrsnja_vodica = models.BooleanField(default=False, verbose_name="ускршња водица")
+    slavska_vodica = models.CharField(default=False, verbose_name="славска водица")
+    uskrsnja_vodica = models.CharField(default=False, verbose_name="ускршња водица")
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
     def __str__(self) -> str:

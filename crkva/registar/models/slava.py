@@ -11,7 +11,7 @@ from .mesec import Mesec
 class Slava(models.Model):
     """Класа која представља слава."""
 
-    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    uid = models.IntegerField(primary_key=True, unique=True, editable=False)
 
     naziv = models.CharField(verbose_name="назив")
     opsti_naziv = models.CharField(verbose_name="општи назив")
@@ -27,8 +27,10 @@ class Slava(models.Model):
         to_field="mesec",
     )
 
+    # def __str__(self):
+    #     return f"{self.dan}. {self.mesec}: {self.naziv}"
     def __str__(self):
-        return f"{self.dan}. {self.mesec}: {self.naziv}"
+        return f"{self.naziv}"
 
     class Meta:
         managed = True
