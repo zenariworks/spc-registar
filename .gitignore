@@ -120,3 +120,4 @@ target/
 # backup files
 *.bkp
 *.dtmp
+.python-version
