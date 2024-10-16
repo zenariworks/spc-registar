@@ -4,11 +4,9 @@ Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
 import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from registar.models import Hram, Krstenje, Parohija, Ulica, Parohijan, Adresa
+from registar.models import Hram, Svestenik, Krstenje, Parohija, Ulica, Parohijan, Adresa
 from registar.management.commands.convert_utils import ConvertUtils
-
-
-from .unos_adresa import unesi_adresu
+from datetime import date, time
 
 class Command(BaseCommand):
     """
@@ -31,14 +29,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        # tabela 'opstine': Cukarica, Srbija
-        #opstina_instance, _ = Opstina.objects.get_or_create(naziv="Чукарица")
-
-        # tabela 'mesta': Cukarica
-        #mesto_instance, _ =  Mesto.objects.get_or_create(naziv="Чукарица")
-
-        # drzava_id 
-        #drzava_instance, _ = unesi_drzavu("Србија")
+        # tabela 'hramovi': Cukarica, Srbija
+        adresa_instance, _ = Adresa.objects.get_or_create(broj=35, sprat=None, broj_stana=None, dodatak=None, 
+                                                          postkod=None, primedba=None, ulica=Ulica.objects.get(uid=21))
+        hram_instance, _ = Hram.objects.get_or_create(naziv="Храм Свете Петке", adresa=adresa_instance)
 
         # Output the uids
         #print("opstina UID:", opstina_instance.uid)
@@ -48,40 +42,46 @@ class Command(BaseCommand):
         parsed_data = self._parse_data()
         created_count = 0
 
-        for parohijan_uid, ime_prezime, ulica_uid, broj_ulice, \
-            oznaka_ulice, broj_stana, telefon_fiksni, telefon_mobilni, \
-            slava_uid, slavska_vodica, uskrsnja_vodica, napomena in parsed_data:
+        for redni_broj_krstenja_tekuca_godina, godina_krstenja, datum_krstenja, \
+                knjiga_krstenja, broj_krstenja, strana_krstenja, \
+                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, \
+                godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
+                godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram_krstenja, \
+                ime_deteta, gradjansko_ime_deteta, pol_deteta, \
+                ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
+                ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
+                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac, dete_sa_telesnom_manom, \
+                svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
+                ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
+                mesto_registracije, datum_registracije, maticni_broj, strana_registracije in parsed_data:
             try:
-                adresa_instance = Adresa(
-                    broj=broj_ulice,
-                    dodatak=ConvertUtils.latin_to_cyrillic(oznaka_ulice),
-                    postkod="",
-                    primedba="",
-                    ulica_id=Ulica.objects.get(uid=ulica_uid).uid
-                )
-                adresa_instance.save()
+                datum_krstenja = date(godina_krstenja.rstrip(), mesec_krstenja.rstrip(), dan_krstenja.rstrip())
+                HH = (vreme_krstenja.rstrip()).split(".")[0]
+                MM = (vreme_krstenja.rstrip()).split(".")[1]
+                vreme_krstenja = time(HH, MM, 0) # Time in format HH:MM:SS
 
-                # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
-                # i unesi kao ime i prezime
-                ime_prezime = ime_prezime.split(" ")
+                svestenik_instance, _ =  Svestenik.objects.get_or_create(uid=svestenik_id)
 
-                parohijan = Parohijan(
-                    uid=parohijan_uid,
-                    ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
-                    prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
-                    mesto_rodjenja="",
-                    datum_rodjenja=None,
-                    vreme_rodjenja=None,
-                    pol="",
-                    devojacko_prezime="",
-                    zanimanje="",
-                    veroispovest="",
-                    narodnost="",
-                    adresa=adresa_instance,
-                )
-                parohijan.save()
 
-                created_count += 1
+                # # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
+                # # i unesi kao ime i prezime
+                # ime_prezime = ime_prezime.split(" ")
+
+                #krstenje = Krstenje(
+                    # ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
+                    # prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
+                    # mesto_rodjenja="",
+                    # datum_rodjenja=None,
+                    # vreme_rodjenja=None,
+                    # pol="",
+                    # devojacko_prezime="",
+                    # zanimanje="",
+                    # veroispovest="",
+                    # narodnost="",
+                    # adresa=adresa_instance,
+                #)
+                #krstenje.save()
+                #created_count += 1
 
             except IntegrityError as e:
                 self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
@@ -94,79 +94,134 @@ class Command(BaseCommand):
 
     def _parse_data(self):
         """
-        Migracija tabele 'HSPDOMACINI.sqlite' 
-            dom_sifra       - parohijan_uid, 
-            dom_ime         - ime i prezime
-            dom_rbrul       - ulica_id  (npr. Radnicka je 22)
-            dom_broj        - broj ulice (npr. 42)
-            dom_oznaka      - oznaka ulice (npr. A, B, C)
-            dom_stan        - broj stana (npr. 12)
-            dom_teldir      - telefon fiksni
-            dom_telmob      - telefon mobilni
-            dom_rbrsl       - slava_id (npr. Sveti Jovan Krstitelj je 20)
-            dom_slavod      - slavska vodica (true/false - da li svestenik dolazi da sveti slavsku vodicu)
-            dom_uskvod      - uskrsnja vodica (true/false - da li svestenik dolazi da sveti vodicu uoci Uskrsa)
-            dom_napom       - napomena (opciono)
+        Migracija tabele 'HSPKRST.sqlite' 
+            k_sifra         - redni_broj_krstenja_tekuca_godina
+            k_aktgod        - godina krstenja
+            k_datum         - datum krstenja
+            
+            // registar(protokol) krstenih
+            k_proknj        - knjiga krstenja
+            k_probr         - broj krstenja
+            k_protst        - strana krstenja
+
+            // podaci o detetu (adresa, mesto rodjenja)
+            k_iz            - adresa deteta - grad
+            k_ulica         - adresa detata - ulica
+            k_broj          - adresa deteta - broj
+            k_rodjgod       - godina rodjenja
+            k_rodmese       - mesec rodjenja
+            k_rodjdan       - dan rodjenja
+            k_rodjvre       - vreme rodjenja
+            k_rodjmest      - mesto rodjenja
+
+            // podaci o krstenju
+            k_krsgode       - godina krstenja
+            k_krsmese       - mesec krstenja
+            k_krsdan        - dan krstenja
+            k_krsvre        - vreme krstenja
+            k_krsmest       - mesto krstenja
+            k_krshram       - hram krstenja
+
+            // podaci o detetu
+            k_detime        - ime deteta
+            k_detimeg       - gradjansko ime deteta
+            k_detpol        - pol deteta
+
+            // podaci o roditeljima
+            // otac
+            k_rodime        - ime oca
+            k_rodprez       - prezime oca
+            k_rodzanim      - zanimanje oca
+            k_rodmest       - adresa oca - mesto
+            k_rodvera       - veroispovest roditelja - tu pise 'Pravoslavni, Srbi', to popunjava polje 'Veroispovest'
+            k_rodnarod      - narodnost roditelja - ovo polje je prazno
+
+            // majka
+            k_rod2ime       - ime majke
+            k_rod2prez      - prezime majke
+            k_rod2zan       - zanimanje majke
+            k_rod2mest      - adresa majke - mesto
+            k_rod2vera      - veroispovest majke - tu pise 'Pravoslavni, Srbi', to popunjava polje 'Veroispovest'
+
+            // ostali podaci o detetu
+            k_detzivo       - da li je dete rodjeno zivo - stoji '1'
+            k_detkoje       - koje je dete po redu (po majci)
+            k_detbrac       - da li je dete vanbracno
+            k_detbliz       - da li je dete blizanac
+            k_detbliz2      - ako je blizanac, ko je drugo dete
+            k_detmana       - da li dete sa telesnom manom
+
+            // podaci o svesteniku
+            k_rbrsve        - svestenik_id
+            k_sveime        - ime i prezime svestenika
+            k_svezvan       - zvanje svestenika
+            k_svepar        - parohija_id svestenika (tu stoje i rimski brojevi, treba ih konvertovati u arapske)
+
+            // podaci o kumovima
+            k_kumime       - ime kuma
+            k_kumprez      - prezime kuma
+            k_kumzanim     - zanimanje kuma
+            k_kummest      - adresa kuma - mesto
+
+            // maticna knjiga
+            k_regmesto     - mesto registracije (vrv opstinskog vencanja)
+            k_regkada      - datum registracije
+            k_regbroj      - maticni broj
+            k_regstr       - strana registracije
 
         :return: Листа парсираних података ( ... )
         """
         parsed_data = []
         with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT dom_sifra, dom_ime, dom_rbrul, dom_broj, dom_oznaka, dom_stan, \
-                           dom_teldir, dom_telmob, dom_rbrsl, dom_slavod, dom_uskvod, dom_napom   FROM HSPDOMACINI")
+            cursor.execute("""
+                SELECT 
+                    k_sifra, k_aktgod, k_datum, 
+                    k_proknj, k_protbr, k_protst, 
+                    k_iz, k_ulica, k_broj, k_rodjgod, k_rodjmese, k_rodjdan, k_rodjvre, k_rodjmest, 
+                    k_krsgod, k_krsmese, k_krsdan, k_krsvre, k_krsmest, k_krshram, 
+                    k_detime, k_detimeg, k_detpol, 
+                    k_rodime, k_rodprez, k_rodzanim, k_rodmest, k_rodvera, k_rodnarod, 
+                    k_rod2ime, k_rod2prez, k_rod2zan, k_rod2mest, k_rod2vera, 
+                    k_detzivo, k_detkoje, k_detbrac, k_detbliz, k_detbliz2, k_detmana, 
+                    k_rbrsve, k_sveime, k_svezva, k_svepar, 
+                    k_kumime, k_kumprez, k_kumzanim, k_kummest, 
+                    k_regmesto, k_regkada, k_regbroj, k_regstr 
+                FROM HSPKRST
+            """)
             rows = cursor.fetchall()
 
-            for row in rows:
-                parohijan_uid, ime_prezime, ulica_uid, broj_ulice, oznaka_ulice, broj_stana, telefon_fiksni, telefon_mobilni, slava_uid, slavska_vodica, uskrsnja_vodica, napomena = row
-                parsed_data.append((parohijan_uid, ime_prezime, ulica_uid, broj_ulice, oznaka_ulice, broj_stana, telefon_fiksni, telefon_mobilni, slava_uid, slavska_vodica, uskrsnja_vodica, napomena))
-
-        return parsed_data
+            for row in rows: redni_broj_krstenja_tekuca_godina, godina_krstenja, datum_krstenja, \
+                knjiga_krstenja, broj_krstenja, strana_krstenja, \
+                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, \
+                godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
+                godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram_krstenja, \
+                ime_deteta, gradjansko_ime_deteta, pol_deteta, \
+                ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
+                ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
+                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac, dete_sa_telesnom_manom, \
+                svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
+                ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
+                mesto_registracije, datum_registracije, maticni_broj, strana_registracije = row
+            
+            parsed_data.append((redni_broj_krstenja_tekuca_godina, godina_krstenja, datum_krstenja, \
+                knjiga_krstenja, broj_krstenja, strana_krstenja, \
+                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, \
+                godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
+                godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram_krstenja, \
+                ime_deteta, gradjansko_ime_deteta, pol_deteta, \
+                ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
+                ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
+                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac, dete_sa_telesnom_manom, \
+                svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
+                ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
+                mesto_registracije, datum_registracije, maticni_broj, strana_registracije))
+            
+            return parsed_data
 
 
 #
 # class Command(BaseCommand):
-#     """
-#     Класа Ђанго команде за попуњавање базе података насумичним парохијанима.
-#     """
-
-#     help = "Попуњава базу података насумичним парохијанима"
-
-#     def random_parohijan(self, gender, min_age=0):
-#         """Креира насумично парохијана."""
-#         eligible_parohijan = Parohijan.objects.filter(
-#             pol=gender,
-#             datum_rodjenja__lte=date.today() - timedelta(days=min_age * 365.25),
-#         )
-#         if eligible_parohijan.exists():
-#             return random.choice(eligible_parohijan)
-#         else:
-#             return RandomUtils.create_random_parohijan(unesi_adresu, gender, min_age)
-
-#     def get_or_create_parohija(self, naziv):
-#         """Креира насумично парохију."""
-#         parohija, _ = Parohija.objects.get_or_create(naziv=naziv)
-#         return parohija
-
-#     def create_random_svestenik(self) -> Svestenik:
-#         """Креира насумично свештеника."""
-#         parohije = [
-#             self.get_or_create_parohija("Парохија 1"),
-#             self.get_or_create_parohija("Парохија 2"),
-#             self.get_or_create_parohija("Парохија 3"),
-#             self.get_or_create_parohija("Парохија 4"),
-#         ]
-
-#         svestenik = Svestenik(
-#             zvanje=random.choice(RandomUtils.zvanja),
-#             parohija=random.choice(parohije),
-#             ime=random.choice(RandomUtils.male_names),
-#             prezime=random.choice(RandomUtils.surnames),
-#             mesto_rodjenja="Насумично место",
-#             datum_rodjenja=RandomUtils.random_date_of_birth(25),
-#         )
-#         svestenik.save()
-#         return svestenik
 
 #     def create_random_krstenje(self, parohijan):
 #         """Креира насумично крштење."""

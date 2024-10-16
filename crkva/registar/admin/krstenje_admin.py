@@ -9,11 +9,11 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
 
     list_display = (
         "get_dete_full_name",
-        "datum",
+        "datum_krstenja",
         "get_hram_naziv",
         "get_svestenik_name",
     )
-    ordering = ("datum",)
+    ordering = ("datum_krstenja",)
     search_fields = [
         "dete__ime",
         "dete__prezime",
@@ -22,12 +22,12 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "svestenik__parohijan__prezime",
     ]
     fieldsets = (
-        (None, {"fields": (("knjiga", "strana", "tekuci_broj"), "anagraf")}),
+        (None, {"fields": ("knjiga_krstenja", "broj_krstenja" "strana_krstenja")}),
         (
             "Детаљи крштења",
             {
                 "fields": (
-                    ("datum", "vreme", "hram"),
+                    ("datum_krstenja", "vreme_krstenja", "hram"),
                     "dete",
                     (
                         "otac",

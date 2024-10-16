@@ -6,12 +6,12 @@ class KrstenjeForm(forms.ModelForm):
     class Meta:
         model = Krstenje
         fields = [
-            "knjiga",
-            "strana",
-            "tekuci_broj",
-            "anagraf",
-            "datum",
-            "vreme",
+            "knjiga_krstenja",
+            "broj_krstenja",
+            "strana_krstenja",
+            "datum_krstenja",
+            "vreme_krstenja",
+
             "hram",
             "dete",
             "dete_majci",
@@ -25,12 +25,12 @@ class KrstenjeForm(forms.ModelForm):
             "primedba",
         ]
         labels = {
-            "knjiga": "Протоколарна књига",
-            "strana": "Протоколарна страна",
-            "tekuci_broj": "Текући број",
-            "anagraf": "Анаграф",
-            "datum": "Датум крштења",
-            "vreme": "Време крштења",
+            "knjiga_krstenja": "Протоколарна књига",
+            "broj_krstenja": "Текући број",
+            "strana_krstenja": "Протоколарна страна",
+            "datum_krstenja": "Датум крштења",
+            "vreme_krstenja": "Време крштења",
+            
             "hram": "Место крштења",
             "dete": "Дете",
             "dete_majci": "Дете по реду (по мајци)",
