@@ -5,7 +5,7 @@ import uuid
 from django.db import models
 
 from .adresa import Adresa
-from .parohija import Parohija
+#from .parohija import Parohija
 
 
 class Hram(models.Model):
@@ -15,7 +15,7 @@ class Hram(models.Model):
 
     naziv = models.CharField(max_length=200, verbose_name="назив")
     adresa = models.ForeignKey(Adresa, on_delete=models.SET_NULL, null=True)
-    parohija = models.ManyToManyField(Parohija, verbose_name="парохије")
+    #parohija = models.ManyToManyField(Parohija, verbose_name="парохије")
 
     def __str__(self):
         return self.naziv
