@@ -29,59 +29,101 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
-        # tabela 'hramovi': Cukarica, Srbija
-        adresa_instance, _ = Adresa.objects.get_or_create(broj=35, sprat=None, broj_stana=None, dodatak=None, 
-                                                          postkod=None, primedba=None, ulica=Ulica.objects.get(uid=21))
-        hram_instance, _ = Hram.objects.get_or_create(naziv="Храм Свете Петке", adresa=adresa_instance)
-
-        # Output the uids
-        #print("opstina UID:", opstina_instance.uid)
-        #print("mesto UID:", mesto_instance.uid)
-        #print("drzava UID:", drzava_instance.uid)
-       
         parsed_data = self._parse_data()
+        #print(f"parsed_data: {len(parsed_data)}")
+
         created_count = 0
 
-        for redni_broj_krstenja_tekuca_godina, godina_krstenja, datum_krstenja, \
+        for redni_broj_krstenja_tekuca_godina, \
                 knjiga_krstenja, broj_krstenja, strana_krstenja, \
-                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, \
-                godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
-                godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram_krstenja, \
+                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja_deteta, mesec_rodjenja_deteta, dan_rodjenja_deteta, vreme_rodjenja_deteta, mesto_rodjenja_deteta, \
+                krstenje_godina, krstenje_mesec, krstenje_dan, krstenje_vreme, krstenje_mesto, hram, \
                 ime_deteta, gradjansko_ime_deteta, pol_deteta, \
                 ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
                 ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
-                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac, dete_sa_telesnom_manom, \
+                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, \
                 svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
                 ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
-                mesto_registracije, datum_registracije, maticni_broj, strana_registracije in parsed_data:
+                mesto_registracije, datum_registracije, maticni_broj, strana_registracije  in parsed_data:
             try:
-                datum_krstenja = date(godina_krstenja.rstrip(), mesec_krstenja.rstrip(), dan_krstenja.rstrip())
-                HH = (vreme_krstenja.rstrip()).split(".")[0]
-                MM = (vreme_krstenja.rstrip()).split(".")[1]
-                vreme_krstenja = time(HH, MM, 0) # Time in format HH:MM:SS
+                datum_krstenja = date(krstenje_godina, krstenje_mesec, krstenje_dan)
+                vreme_krstenja = self._process_time_values(krstenje_vreme)
 
+                datum_rodjenja_deteta = date(godina_rodjenja_deteta, mesec_rodjenja_deteta, dan_rodjenja_deteta) 
+                vreme_rodjenja_deteta = self._process_time_values(vreme_rodjenja_deteta)
+
+                # # tabela 'hramovi'
+                hram_instance, _ = Hram.objects.get_or_create(naziv=ConvertUtils.latin_to_cyrillic(hram))
                 svestenik_instance, _ =  Svestenik.objects.get_or_create(uid=svestenik_id)
 
-
-                # # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
-                # # i unesi kao ime i prezime
-                # ime_prezime = ime_prezime.split(" ")
-
-                #krstenje = Krstenje(
-                    # ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
-                    # prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
-                    # mesto_rodjenja="",
-                    # datum_rodjenja=None,
-                    # vreme_rodjenja=None,
-                    # pol="",
-                    # devojacko_prezime="",
-                    # zanimanje="",
-                    # veroispovest="",
-                    # narodnost="",
-                    # adresa=adresa_instance,
-                #)
-                #krstenje.save()
-                #created_count += 1
+                # krstenje = Krstenje(
+                #     redni_broj_krstenja_tekuca_godina = redni_broj_krstenja_tekuca_godina,
+                #     krstenje_tekuca_godina = krstenje_godina,
+                #     # podaci za registar(protokol) krstenih
+                #     knjiga_krstenja = knjiga_krstenja,
+                #     broj_krstenja = broj_krstenja,
+                #     strana_krstenja = strana_krstenja,
+                #     # podaci o detetu
+                #     adresa_deteta_grad = adresa_deteta_grad,
+                #     adresa_deteta_ulica = adresa_deteta_ulica,
+                #     adresa_deteta_broj = adresa_deteta_broj,
+                #     datum_rodenja_deteta = datum_rodjenja_deteta,
+                #     vreme_rodjenja_deteta = vreme_rodjenja_deteta,
+                #     mesto_rodjenja = mesto_rodjenja_deteta,
+                #     ime_deteta = ime_deteta,
+                #     gradjansko_ime_deteta = gradjansko_ime_deteta,
+                #     pol_deteta = pol_deteta,
+                #     # podaci o krstenju
+                #     datum_krstenja = datum_krstenja,
+                #     vreme_krstenja = vreme_krstenja,
+                #     mesto_krstenja = krstenje_mesto,
+                #     hram = hram_instance,
+                #     # podaci o roditeljima
+                #     ime_oca = ime_oca,
+                #     prezime_oca = prezime_oca,
+                #     zanimanje_oca = zanimanje_oca,
+                #     adresa_oca_mesto = adresa_oca_mesto,
+                #     veroispovest_oca = veroispovest_oca,
+                #     narodnost_oca = narodnost_oca,
+                #     ime_majke = ime_majke,
+                #     prezime_majke = prezime_majke,
+                #     zanimanje_majke = zanimanje_majke,
+                #     adresa_majke_mesto = adresa_majke_mesto,
+                #     veroispovest_majke = veroispovest_majke,
+                #     # ostali podaci o detetu
+                #     dete_rodjeno_zivo = dete_rodjeno_zivo,
+                #     dete_po_redu_po_majci = dete_po_redu_po_majci,
+                #     dete_vanbracno = dete_vanbracno,
+                #     dete_blizanac = dete_blizanac,
+                #     drugo_dete_blizanac_ime = drugo_dete_blizanac_ime,
+                #     dete_sa_telesnom_manom = dete_sa_telesnom_manom,
+                #     # podaci o svesteniku
+                #     svestenik = svestenik_instance,
+                #     # podaci o kumu
+                #     ime_kuma = ime_kuma,
+                #     prezime_kuma = prezime_kuma,
+                #     zanimanje_kuma = zanimanje_kuma,
+                #     adresa_kuma_mesto = adresa_kuma_mesto,
+                #     # podaci iz matične knjige
+                #     mesto_registracije = mesto_registracije,
+                #     datum_registracije = datum_registracije,
+                #     maticni_broj = maticni_broj,
+                #     strana_registracije = strana_registracije
+                    
+                #     # ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
+                #     # prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
+                #     # mesto_rodjenja="",
+                #     # datum_rodjenja=None,
+                #     # vreme_rodjenja=None,
+                #     # pol="",
+                #     # devojacko_prezime="",
+                #     # zanimanje="",
+                #     # veroispovest="",
+                #     # narodnost="",
+                #     # adresa=adresa_instance,
+                # )
+                # krstenje.save()
+                created_count += 1
 
             except IntegrityError as e:
                 self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
@@ -91,6 +133,59 @@ class Command(BaseCommand):
                 f"Успешно попуњена табела 'ulice': {created_count} нових уноса."
             )
         )
+
+    def _process_time_values(self, time_value_str):
+        """
+        process `time_value_str` string to return a time object.
+        
+        Args:
+            time_value (str): The time in either 'HH.MM' or 'HH' format.
+            
+        Returns:
+            time: A time object representing the processed time in format HH:MM:SS, or None if invalid.
+        """
+        # Initialize time_obj as None
+        time_obj = None
+        
+        # Strip whitespace and check if the string is not empty
+        if time_value_str.rstrip() not in ["", " ", None]:
+            time_value_str = time_value_str.rstrip()
+            #print("time_value_str: ", time_value_str)
+
+            # Check if it contains a period `.`
+            if '.' in time_value_str:
+                HH = time_value_str.split(".")[0]
+                MM = time_value_str.split(".")[1]
+                HH = ConvertUtils.safe_convert_to_int(HH, 12)
+                MM = ConvertUtils.safe_convert_to_int(MM, 0)
+            # Check if it contains a comma `,`
+            elif ',' in time_value_str:
+                HH = time_value_str.split(",")[0]
+                MM = time_value_str.split(",")[1]
+                HH = ConvertUtils.safe_convert_to_int(HH, 12)
+                MM = ConvertUtils.safe_convert_to_int(MM, 0)
+            else:
+                HH = time_value_str
+                HH = ConvertUtils.safe_convert_to_int(HH, 12)
+                MM = 0  # Set MM to 0 if no minutes are provided
+            
+            
+            # Validate HH and MM
+            if 0 <= HH < 24 and 0 <= MM <= 60:
+                time_obj = time(HH, MM, 0)
+            elif not (0 <= HH < 24):
+                print("Invalid time: HH must be in [0, 24), HH: ", HH)
+                if HH == 24:
+                    HH = 0
+                else:
+                    HH = 12 # Default HH to 12 if invalid
+                time_obj = time(HH, MM, 0)
+            elif not (0 <= MM < 60): 
+                print("Invalid time: MM must be in [0, 60), MM: ", MM)
+                MM = 0  # Default MM to 0 if invalid
+                time_obj = time(HH, MM, 0)
+
+        return time_obj
 
     def _parse_data(self):
         """
@@ -176,7 +271,7 @@ class Command(BaseCommand):
             cursor = conn.cursor()
             cursor.execute("""
                 SELECT 
-                    k_sifra, k_aktgod, k_datum, 
+                    k_sifra, 
                     k_proknj, k_protbr, k_protst, 
                     k_iz, k_ulica, k_broj, k_rodjgod, k_rodjmese, k_rodjdan, k_rodjvre, k_rodjmest, 
                     k_krsgod, k_krsmese, k_krsdan, k_krsvre, k_krsmest, k_krshram, 
@@ -190,87 +285,32 @@ class Command(BaseCommand):
                 FROM HSPKRST
             """)
             rows = cursor.fetchall()
+            #print(f"Number of rows fetched: {len(rows)}")
 
-            for row in rows: redni_broj_krstenja_tekuca_godina, godina_krstenja, datum_krstenja, \
+            for row in rows: 
+                redni_broj_krstenja_tekuca_godina, \
                 knjiga_krstenja, broj_krstenja, strana_krstenja, \
-                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, \
-                godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
-                godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram_krstenja, \
+                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja_deteta, mesec_rodjenja_deteta, dan_rodjenja_deteta, vreme_rodjenja_deteta, mesto_rodjenja_deteta, \
+                krstenje_godina, krstenje_mesec, krstenje_dan, krstenje_vreme, krstenje_mesto, hram, \
                 ime_deteta, gradjansko_ime_deteta, pol_deteta, \
                 ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
                 ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
-                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac, dete_sa_telesnom_manom, \
+                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, \
                 svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
                 ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
                 mesto_registracije, datum_registracije, maticni_broj, strana_registracije = row
             
-            parsed_data.append((redni_broj_krstenja_tekuca_godina, godina_krstenja, datum_krstenja, \
-                knjiga_krstenja, broj_krstenja, strana_krstenja, \
-                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, \
-                godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
-                godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram_krstenja, \
-                ime_deteta, gradjansko_ime_deteta, pol_deteta, \
-                ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
-                ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
-                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac, dete_sa_telesnom_manom, \
-                svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
-                ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
-                mesto_registracije, datum_registracije, maticni_broj, strana_registracije))
+                parsed_data.append((redni_broj_krstenja_tekuca_godina, 
+                    knjiga_krstenja, broj_krstenja, strana_krstenja, 
+                    adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja_deteta, mesec_rodjenja_deteta, dan_rodjenja_deteta, vreme_rodjenja_deteta, mesto_rodjenja_deteta, 
+                    krstenje_godina, krstenje_mesec, krstenje_dan, krstenje_vreme, krstenje_mesto, hram, 
+                    ime_deteta, gradjansko_ime_deteta, pol_deteta, 
+                    ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, 
+                    ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, 
+                    dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, 
+                    svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, 
+                    ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, 
+                    mesto_registracije, datum_registracije, maticni_broj, strana_registracije ))
             
-            return parsed_data
+        return parsed_data
 
-
-#
-# class Command(BaseCommand):
-
-#     def create_random_krstenje(self, parohijan):
-#         """Креира насумично крштење."""
-#         dete = self.random_parohijan("М" if random.choice([True, False]) else "Ж")
-#         otac = self.random_parohijan("М", min_age=20)
-#         majka = self.random_parohijan("Ж", min_age=20)
-#         kum = self.random_parohijan(
-#             "М" if random.choice([True, False]) else "Ж", min_age=20
-#         )
-#         svestenik = self.create_random_svestenik()
-#         hram = Hram.objects.order_by("?").first()
-
-#         krstenje = Krstenje(
-#             knjiga=random.randint(1, 100),
-#             strana=random.randint(1, 500),
-#             tekuci_broj=random.randint(1, 1000),
-#             datum=RandomUtils.random_datetime().date(),
-#             vreme=RandomUtils.random_datetime().time(),
-#             hram=hram,
-#             dete=dete,
-#             dete_majci=random.randint(1, 10),
-#             dete_bracno=random.choice([True, False]),
-#             mana=random.choice([True, False]),
-#             blizanac=self.random_parohijan(
-#                 "М" if random.choice([True, False]) else "Ж"
-#             ),
-#             otac=otac,
-#             majka=majka,
-#             svestenik=svestenik,
-#             kum=kum,
-#             primedba="Примедба...",
-#         )
-#         krstenje.save()
-
-#     def handle(self, *args, **kwargs):
-#         parohijani = []
-#         for _ in range(10):
-#             parohijani.append(RandomUtils.create_random_parohijan(unesi_adresu, "М"))
-#             parohijani.append(RandomUtils.create_random_parohijan(unesi_adresu, "Ж"))
-
-#         for _ in range(5):
-#             RandomUtils.create_random_hram(unesi_adresu)
-
-#         for _ in range(2):
-#             self.create_random_svestenik()
-
-#         for parohijan in parohijani[:5]:
-#             self.create_random_krstenje(parohijan)
-
-#         self.stdout.write(
-#             self.style.SUCCESS("Успешно попуњена база података са насумичним уносима.")
-#         )
