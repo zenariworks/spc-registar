@@ -5,6 +5,23 @@ Kod migracije podataka iz stare baza, svaki string koji je unet latinicom, konve
 class ConvertUtils:
 
     @staticmethod
+    def safe_convert_to_int(value, default_value=0):
+        """
+        Safely converts a string to an integer.
+
+        Args:
+            value (str): The string to convert.
+
+        Returns:
+            int or None: The converted integer, or None if conversion fails.
+        """
+        try:
+            return int(value)  # Attempt to convert the value to an integer
+        except ValueError:
+            print(f"Warning: '{value}' cannot be converted to an integer.")
+            return default_value  # Return the default value if conversion fails
+
+    @staticmethod
     def latin_to_cyrillic(text):
         # define a mapping from Serbian Latin to Cyrillic
         latin_to_cyrillic_map = {
