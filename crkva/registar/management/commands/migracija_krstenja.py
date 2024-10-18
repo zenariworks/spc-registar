@@ -56,73 +56,61 @@ class Command(BaseCommand):
                 hram_instance, _ = Hram.objects.get_or_create(naziv=ConvertUtils.latin_to_cyrillic(hram))
                 svestenik_instance, _ =  Svestenik.objects.get_or_create(uid=svestenik_id)
 
-                # krstenje = Krstenje(
-                #     redni_broj_krstenja_tekuca_godina = redni_broj_krstenja_tekuca_godina,
-                #     krstenje_tekuca_godina = krstenje_godina,
-                #     # podaci za registar(protokol) krstenih
-                #     knjiga_krstenja = knjiga_krstenja,
-                #     broj_krstenja = broj_krstenja,
-                #     strana_krstenja = strana_krstenja,
-                #     # podaci o detetu
-                #     adresa_deteta_grad = adresa_deteta_grad,
-                #     adresa_deteta_ulica = adresa_deteta_ulica,
-                #     adresa_deteta_broj = adresa_deteta_broj,
-                #     datum_rodenja_deteta = datum_rodjenja_deteta,
-                #     vreme_rodjenja_deteta = vreme_rodjenja_deteta,
-                #     mesto_rodjenja = mesto_rodjenja_deteta,
-                #     ime_deteta = ime_deteta,
-                #     gradjansko_ime_deteta = gradjansko_ime_deteta,
-                #     pol_deteta = pol_deteta,
-                #     # podaci o krstenju
-                #     datum_krstenja = datum_krstenja,
-                #     vreme_krstenja = vreme_krstenja,
-                #     mesto_krstenja = krstenje_mesto,
-                #     hram = hram_instance,
-                #     # podaci o roditeljima
-                #     ime_oca = ime_oca,
-                #     prezime_oca = prezime_oca,
-                #     zanimanje_oca = zanimanje_oca,
-                #     adresa_oca_mesto = adresa_oca_mesto,
-                #     veroispovest_oca = veroispovest_oca,
-                #     narodnost_oca = narodnost_oca,
-                #     ime_majke = ime_majke,
-                #     prezime_majke = prezime_majke,
-                #     zanimanje_majke = zanimanje_majke,
-                #     adresa_majke_mesto = adresa_majke_mesto,
-                #     veroispovest_majke = veroispovest_majke,
-                #     # ostali podaci o detetu
-                #     dete_rodjeno_zivo = dete_rodjeno_zivo,
-                #     dete_po_redu_po_majci = dete_po_redu_po_majci,
-                #     dete_vanbracno = dete_vanbracno,
-                #     dete_blizanac = dete_blizanac,
-                #     drugo_dete_blizanac_ime = drugo_dete_blizanac_ime,
-                #     dete_sa_telesnom_manom = dete_sa_telesnom_manom,
-                #     # podaci o svesteniku
-                #     svestenik = svestenik_instance,
-                #     # podaci o kumu
-                #     ime_kuma = ime_kuma,
-                #     prezime_kuma = prezime_kuma,
-                #     zanimanje_kuma = zanimanje_kuma,
-                #     adresa_kuma_mesto = adresa_kuma_mesto,
-                #     # podaci iz matične knjige
-                #     mesto_registracije = mesto_registracije,
-                #     datum_registracije = datum_registracije,
-                #     maticni_broj = maticni_broj,
-                #     strana_registracije = strana_registracije
-                    
-                #     # ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
-                #     # prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
-                #     # mesto_rodjenja="",
-                #     # datum_rodjenja=None,
-                #     # vreme_rodjenja=None,
-                #     # pol="",
-                #     # devojacko_prezime="",
-                #     # zanimanje="",
-                #     # veroispovest="",
-                #     # narodnost="",
-                #     # adresa=adresa_instance,
-                # )
-                # krstenje.save()
+                krstenje = Krstenje(
+                    redni_broj_krstenja_tekuca_godina = redni_broj_krstenja_tekuca_godina,
+                    krstenje_tekuca_godina = krstenje_godina,
+                    # podaci za registar(protokol) krstenih
+                    knjiga_krstenja = ConvertUtils.safe_convert_to_int(knjiga_krstenja.rstrip(), 0),
+                    broj_krstenja = ConvertUtils.safe_convert_to_int(broj_krstenja.rstrip(), 0),
+                    strana_krstenja = ConvertUtils.safe_convert_to_int(strana_krstenja, 0),
+                    # podaci o detetu
+                    adresa_deteta_grad = ConvertUtils.latin_to_cyrillic(adresa_deteta_grad),
+                    adresa_deteta_ulica = ConvertUtils.latin_to_cyrillic(adresa_deteta_ulica),
+                    adresa_deteta_broj = ConvertUtils.latin_to_cyrillic(adresa_deteta_broj),
+                    datum_rodenja_deteta = datum_rodjenja_deteta,
+                    vreme_rodjenja_deteta = vreme_rodjenja_deteta,
+                    mesto_rodjenja = ConvertUtils.latin_to_cyrillic(mesto_rodjenja_deteta),
+                    ime_deteta = ConvertUtils.latin_to_cyrillic(ime_deteta),
+                    gradjansko_ime_deteta = ConvertUtils.latin_to_cyrillic(gradjansko_ime_deteta),
+                    pol_deteta = ConvertUtils.latin_to_cyrillic(pol_deteta.rstrip()),
+                    # podaci o krstenju
+                    datum_krstenja = datum_krstenja,
+                    vreme_krstenja = vreme_krstenja,
+                    mesto_krstenja = ConvertUtils.latin_to_cyrillic(krstenje_mesto),
+                    hram = hram_instance,
+                    # podaci o roditeljima
+                    ime_oca = ConvertUtils.latin_to_cyrillic(ime_oca),
+                    prezime_oca = ConvertUtils.latin_to_cyrillic(prezime_oca),
+                    zanimanje_oca = ConvertUtils.latin_to_cyrillic(zanimanje_oca),
+                    adresa_oca_mesto = ConvertUtils.latin_to_cyrillic(adresa_oca_mesto),
+                    veroispovest_oca = ConvertUtils.latin_to_cyrillic(veroispovest_oca),
+                    narodnost_oca = ConvertUtils.latin_to_cyrillic(narodnost_oca),
+                    ime_majke = ConvertUtils.latin_to_cyrillic(ime_majke),
+                    prezime_majke = ConvertUtils.latin_to_cyrillic(prezime_majke),
+                    zanimanje_majke = ConvertUtils.latin_to_cyrillic(zanimanje_majke),
+                    adresa_majke_mesto = ConvertUtils.latin_to_cyrillic(adresa_majke_mesto),
+                    veroispovest_majke = ConvertUtils.latin_to_cyrillic(veroispovest_majke),
+                    # ostali podaci o detetu
+                    dete_rodjeno_zivo = True if dete_rodjeno_zivo.rstrip() == "1" else False,
+                    dete_po_redu_po_majci = ConvertUtils.safe_convert_to_int(dete_po_redu_po_majci, 1),
+                    dete_vanbracno = True if dete_vanbracno.rstrip() == "1" else False,
+                    dete_blizanac = True if  dete_blizanac.rstrip() == "1" else False,
+                    drugo_dete_blizanac_ime = ConvertUtils.latin_to_cyrillic(drugo_dete_blizanac_ime),
+                    dete_sa_telesnom_manom = True if dete_sa_telesnom_manom.rstrip() == "1" else False,
+                    # podaci o svesteniku
+                    svestenik = svestenik_instance,
+                    # podaci o kumu
+                    ime_kuma = ConvertUtils.latin_to_cyrillic(ime_kuma),
+                    prezime_kuma = ConvertUtils.latin_to_cyrillic(prezime_kuma),
+                    zanimanje_kuma = ConvertUtils.latin_to_cyrillic(zanimanje_kuma),
+                    adresa_kuma_mesto = ConvertUtils.latin_to_cyrillic(adresa_kuma_mesto),
+                    # podaci iz matične knjige
+                    mesto_registracije = ConvertUtils.latin_to_cyrillic(mesto_registracije),
+                    datum_registracije = datum_registracije,
+                    maticni_broj = maticni_broj,
+                    strana_registracije = strana_registracije
+                )
+                krstenje.save()
                 created_count += 1
 
             except IntegrityError as e:
