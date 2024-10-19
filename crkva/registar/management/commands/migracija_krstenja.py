@@ -4,7 +4,7 @@ Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
 import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from registar.models import Hram, Svestenik, Krstenje, Parohija, Ulica, Parohijan, Adresa
+from registar.models import Hram, Svestenik, Krstenje
 from registar.management.commands.convert_utils import ConvertUtils
 from datetime import date, time
 
@@ -35,9 +35,9 @@ class Command(BaseCommand):
         created_count = 0
 
         for redni_broj_krstenja_tekuca_godina, \
-                knjiga_krstenja, broj_krstenja, strana_krstenja, \
-                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja_deteta, mesec_rodjenja_deteta, dan_rodjenja_deteta, vreme_rodjenja_deteta, mesto_rodjenja_deteta, \
-                krstenje_godina, krstenje_mesec, krstenje_dan, krstenje_vreme, krstenje_mesto, hram, \
+                knjiga, broj, strana, \
+                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
+                godina, mesec, dan, vreme, mesto, hram, \
                 ime_deteta, gradjansko_ime_deteta, pol_deteta, \
                 ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
                 ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
@@ -46,11 +46,11 @@ class Command(BaseCommand):
                 ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
                 mesto_registracije, datum_registracije, maticni_broj, strana_registracije  in parsed_data:
             try:
-                datum_krstenja = date(krstenje_godina, krstenje_mesec, krstenje_dan)
-                vreme_krstenja = self._process_time_values(krstenje_vreme)
+                datum = date(godina, mesec, dan)
+                vreme = self._process_time_values(vreme)
 
-                datum_rodjenja_deteta = date(godina_rodjenja_deteta, mesec_rodjenja_deteta, dan_rodjenja_deteta) 
-                vreme_rodjenja_deteta = self._process_time_values(vreme_rodjenja_deteta)
+                datum_rodjenja = date(godina_rodjenja, mesec_rodjenja, dan_rodjenja) 
+                vreme_rodjenja = self._process_time_values(vreme_rodjenja)
 
                 # # tabela 'hramovi'
                 hram_instance, _ = Hram.objects.get_or_create(naziv=ConvertUtils.latin_to_cyrillic(hram))
@@ -58,26 +58,26 @@ class Command(BaseCommand):
 
                 krstenje = Krstenje(
                     redni_broj_krstenja_tekuca_godina = redni_broj_krstenja_tekuca_godina,
-                    krstenje_tekuca_godina = krstenje_godina,
+                    krstenje_tekuca_godina = godina,
                     # podaci za registar(protokol) krstenih
-                    knjiga_krstenja = ConvertUtils.safe_convert_to_int(knjiga_krstenja.rstrip(), 0),
-                    broj_krstenja = ConvertUtils.safe_convert_to_int(broj_krstenja.rstrip(), 0),
-                    strana_krstenja = ConvertUtils.safe_convert_to_int(strana_krstenja, 0),
+                    knjiga = ConvertUtils.safe_convert_to_int(knjiga.rstrip(), 0),
+                    broj = ConvertUtils.safe_convert_to_int(broj.rstrip(), 0),
+                    strana = ConvertUtils.safe_convert_to_int(strana, 0),
+                    # podaci o krstenju
+                    datum = datum,
+                    vreme = vreme,
+                    mesto = ConvertUtils.latin_to_cyrillic(mesto),
+                    hram = hram_instance,
                     # podaci o detetu
                     adresa_deteta_grad = ConvertUtils.latin_to_cyrillic(adresa_deteta_grad),
                     adresa_deteta_ulica = ConvertUtils.latin_to_cyrillic(adresa_deteta_ulica),
                     adresa_deteta_broj = ConvertUtils.latin_to_cyrillic(adresa_deteta_broj),
-                    datum_rodenja_deteta = datum_rodjenja_deteta,
-                    vreme_rodjenja_deteta = vreme_rodjenja_deteta,
-                    mesto_rodjenja = ConvertUtils.latin_to_cyrillic(mesto_rodjenja_deteta),
+                    datum_rodjenja = datum_rodjenja,
+                    vreme_rodjenja = vreme_rodjenja,
+                    mesto_rodjenja = ConvertUtils.latin_to_cyrillic(mesto_rodjenja),
                     ime_deteta = ConvertUtils.latin_to_cyrillic(ime_deteta),
                     gradjansko_ime_deteta = ConvertUtils.latin_to_cyrillic(gradjansko_ime_deteta),
                     pol_deteta = ConvertUtils.latin_to_cyrillic(pol_deteta.rstrip()),
-                    # podaci o krstenju
-                    datum_krstenja = datum_krstenja,
-                    vreme_krstenja = vreme_krstenja,
-                    mesto_krstenja = ConvertUtils.latin_to_cyrillic(krstenje_mesto),
-                    hram = hram_instance,
                     # podaci o roditeljima
                     ime_oca = ConvertUtils.latin_to_cyrillic(ime_oca),
                     prezime_oca = ConvertUtils.latin_to_cyrillic(prezime_oca),
@@ -272,26 +272,26 @@ class Command(BaseCommand):
                     k_regmesto, k_regkada, k_regbroj, k_regstr 
                 FROM HSPKRST
             """)
-            rows = cursor.fetchall()
+            krstenja = cursor.fetchall()
             #print(f"Number of rows fetched: {len(rows)}")
 
-            for row in rows: 
+            for krstenje in krstenja: 
                 redni_broj_krstenja_tekuca_godina, \
-                knjiga_krstenja, broj_krstenja, strana_krstenja, \
-                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja_deteta, mesec_rodjenja_deteta, dan_rodjenja_deteta, vreme_rodjenja_deteta, mesto_rodjenja_deteta, \
-                krstenje_godina, krstenje_mesec, krstenje_dan, krstenje_vreme, krstenje_mesto, hram, \
+                knjiga, broj, strana, \
+                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
+                godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram, \
                 ime_deteta, gradjansko_ime_deteta, pol_deteta, \
                 ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
                 ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
                 dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, \
                 svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
                 ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
-                mesto_registracije, datum_registracije, maticni_broj, strana_registracije = row
+                mesto_registracije, datum_registracije, maticni_broj, strana_registracije = krstenje
             
                 parsed_data.append((redni_broj_krstenja_tekuca_godina, 
-                    knjiga_krstenja, broj_krstenja, strana_krstenja, 
-                    adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja_deteta, mesec_rodjenja_deteta, dan_rodjenja_deteta, vreme_rodjenja_deteta, mesto_rodjenja_deteta, 
-                    krstenje_godina, krstenje_mesec, krstenje_dan, krstenje_vreme, krstenje_mesto, hram, 
+                    knjiga, broj, strana, 
+                    adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, 
+                    godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram, 
                     ime_deteta, gradjansko_ime_deteta, pol_deteta, 
                     ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, 
                     ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, 
