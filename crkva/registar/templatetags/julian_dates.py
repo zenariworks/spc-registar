@@ -34,14 +34,14 @@ def to_julian_date(datum):
     :rtype: str
     """
     if isinstance(datum, datetime.date):
-        gregorian_month = GREGORIAN_MONTHS[datum.month]
-        julian_date = gregorian_to_julian(datum)
-        julian_month = GREGORIAN_MONTHS[julian_date.month]
+        gregorijanski_mesec = GREGORIAN_MONTHS[datum.month]
+        julijanski_datum = gregorian_to_julian(datum)
+        julianski_mesec = GREGORIAN_MONTHS[julijanski_datum.month]
 
-        if gregorian_month == julian_month:
-            return f"{datum.year}, {gregorian_month} {datum.day}. ({julian_date.day}.)"
+        if gregorijanski_mesec == julianski_mesec:
+            return f"{datum.year}, {gregorijanski_mesec} {datum.day}. ({julijanski_datum.day}.)"
         else:
-            return f"{datum.year}, {gregorian_month} {datum.day}. ({julian_month} {julian_date.day}.)"
+            return f"{datum.year}, {gregorijanski_mesec} {datum.day}. ({julianski_mesec} {julijanski_datum.day}.)"
     return ""
 
 

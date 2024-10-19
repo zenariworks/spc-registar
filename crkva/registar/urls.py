@@ -1,10 +1,10 @@
+"""Овај модул дефинише URL обрасце за апликацију регистар."""
 from django.urls import include, path
 
 from . import views
 
 handler404 = "registar.views.custom_404"
 urlpatterns = [
-    # path("slava/<uuid:uid>/", views.prikazi_domacinstva, name="prikazi_domacinstva"),
     path("", views.index, name="pocetna"),
     path("select2/", include("django_select2.urls")),
     path("parohijani/", views.SpisakParohijana.as_view(), name="parohijani"),
@@ -42,16 +42,6 @@ urlpatterns = [
         "svestenik/print/<uuid:uid>/",
         views.SvestenikPDF.as_view(),
         name="svestenik_pdf",
-    ),
-    path(
-        "veroisposvest/dodaj/",
-        views.dodaj_izmeni_veroispovest,
-        name="dodaj-veroisposvest",
-    ),
-    path(
-        "veroisposvest/izmeni/<uuid:uid>/",
-        views.dodaj_izmeni_veroispovest,
-        name="izmeni-veroisposvest",
     ),
     path("search/", views.search_view, name="search_view"),
     path("unos/parohijan/", views.unos_parohijana, name="unos_parohijana"),

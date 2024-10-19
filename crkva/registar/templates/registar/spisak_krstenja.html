@@ -14,7 +14,7 @@
         {% for krstenje in krstenja %}
             <li class="stavka">
                 <a href="{% url 'krstenje_detail' uid=krstenje.uid %}" class="stavka-veza">
-                    {{ krstenje.datum_krstenja }}: {{ krstenje.ime_deteta }} ({{ krstenje.ime_oca }} {{ krstenje.prezime_oca }} и {{ krstenje.ime_majke }} {{ krstenje.prezime_majke }})
+                    {{ krstenje.datum }}: {{ krstenje.ime_deteta }} ({{ krstenje.ime_oca }} {{ krstenje.prezime_oca }} и {{ krstenje.ime_majke }} {{ krstenje.prezime_majke }})
                 </a>
                 <a href="{% url 'krstenje_pdf' uid=krstenje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
                     <button class="dugme-crveno" type="button">Штампа</button>
