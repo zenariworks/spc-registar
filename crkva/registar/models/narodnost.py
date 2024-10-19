@@ -16,7 +16,7 @@ class Narodnost(models.Model):
         return f"{self.naziv}"
 
     class Meta:
-        managed = True
+        managed = False
         db_table = "narodnosti"
         verbose_name = "Народност"
         verbose_name_plural = "Народности"
