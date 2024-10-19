@@ -1,19 +1,13 @@
 """Модул модела парохијана у бази података."""
 
-import uuid
-
 from django.db import models
 
 from .adresa import Adresa
-from .narodnost import Narodnost
-from .veroispovest import Veroispovest
-from .zanimanje import Zanimanje
 from .slava import Slava
 
 
 class Parohijan(models.Model):
     """Класа која представља парохијана."""
-
     uid = models.IntegerField(primary_key=True, unique=True, editable=False)
 
     ime = models.CharField(verbose_name="име")
@@ -24,8 +18,6 @@ class Parohijan(models.Model):
     )
 
     slava = models.ForeignKey(Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава")
-
-    # blank=True, null=True, - field is optional
     tel_fiksni = models.CharField(verbose_name="фиксни телефон", blank=True, null=True)
     tel_mobilni = models.CharField(verbose_name="мобилни телефон", blank=True, null=True)
     slavska_vodica = models.BooleanField(default=False, verbose_name="славска водица")
@@ -40,42 +32,13 @@ class Parohijan(models.Model):
 
     devojacko_prezime = models.CharField(verbose_name="девојачко презиме", blank=True, null=True)
     
-    # replace the following foreign keys with a custom char field
     zanimanje = models.CharField(verbose_name="занимање", blank=True, null=True)
     veroispovest = models.CharField(verbose_name="вероисповест", blank=True, null=True)
     narodnost = models.CharField(verbose_name="народност", blank=True, null=True)
-    
-    # zanimanje = models.ForeignKey(
-    #     Zanimanje,
-    #     verbose_name="занимање",
-    #     on_delete=models.SET_NULL,
-    #     blank=True,
-    #     null=True,
-    # )
-    # veroispovest = models.ForeignKey(
-    #     Veroispovest,
-    #     verbose_name="вероисповест",
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True,
-    # )
-    # narodnost = models.ForeignKey(
-    #     Narodnost,
-    #     verbose_name="народност",
-    #     on_delete=models.SET_NULL,
-    #     null=True,
-    #     blank=True,
-    # )
 
     def __str__(self):
         return f"{self.ime} {self.prezime}"
 
-    # def __str__(self):
-    #     detalji = f"{self.ime} {self.prezime}"
-    #     detalji += f"/{self.tel_fiksni}" if self.tel_fiksni else ""
-    #     detalji += f"/{self.tel_mobilni}" if self.tel_mobilni else ""
-    #     return detalji
-    
     class Meta:
         managed = True
         db_table = "parohijani"
