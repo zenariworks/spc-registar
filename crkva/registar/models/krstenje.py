@@ -5,7 +5,6 @@ import uuid
 from django.db import models
 
 from .hram import Hram
-from .parohijan import Parohijan
 from .svestenik import Svestenik
 
 
