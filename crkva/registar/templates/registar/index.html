@@ -6,7 +6,7 @@
   <div class="slava-reminders">
     {% for slava in naredne_slave %}
     <div class="slava-reminder">
-      <a class="slava-link" href="{% url 'prikazi_domacinstva' slava.uid %}">{{ slava }}</a>
+      {% comment %} <a class="slava-link" href="{% url 'prikazi_domacinstva' slava.uid %}">{{ slava }}</a> {% endcomment %}
     </div>
     {% empty %}
     <p>Нема наступајућих слава.</p>
