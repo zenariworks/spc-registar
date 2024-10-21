@@ -50,7 +50,7 @@ function recreate_database(){
     docker compose run --rm app sh -c "python manage.py migracija_krstenja"
     docker compose run --rm app sh -c "python manage.py migracija_vencanja"
 
-    # create super user, default uid/pwd: app/svpetka
+    # create super user, default uid/pwd: app/app
     # NOTE: for email just press Enter...
     # docker compose run --rm app sh -c "python manage.py createsuperuser"
 
@@ -58,9 +58,6 @@ function recreate_database(){
     # docker stop crkva-app-1
     # docker rm crkva-app-1
     # docker compose build
-    # uid/pwd: app/app
-    # Napomena: za unos mail-a samo 'Enter'
-    # docker compose run --rm app sh -c "python manage.py createsuperuser"
     # docker compose up 
 }
 readonly -f recreate_database
