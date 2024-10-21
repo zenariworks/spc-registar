@@ -57,7 +57,7 @@ class Krstenje(models.Model):
     
     # ostali podaci o detetu
     dete_rodjeno_zivo = models.BooleanField(verbose_name="дете рођено живо") 
-    dete_po_redu_po_majci = models.IntegerField(verbose_name="дете по реду (по мајци)")
+    dete_po_redu_po_majci = models.CharField(verbose_name="дете по реду (по мајци)", null=True, blank=True)
     dete_vanbracno = models.BooleanField(verbose_name="ванбрачно дете") 
     dete_blizanac = models.BooleanField(verbose_name="дете близанац") 
     drugo_dete_blizanac_ime = models.CharField(max_length=255, verbose_name="име другог детета близанца", null=True, blank=True)
@@ -79,12 +79,12 @@ class Krstenje(models.Model):
     adresa_kuma_mesto = models.CharField(max_length=255, verbose_name="адреса кума место", null=True, blank=True)
     
     # podaci iz matične knjige - anagraf
-    # mesto_registracije = models.CharField(max_length=255, verbose_name="место регистрације", null=True, blank=True) 
-    # datum_registracije = models.DateField(verbose_name="датум регистрације", null=True, blank=True) 
-    # maticni_broj = models.CharField(max_length=255, verbose_name="матични број", null=True, blank=True) 
-    # strana_registracije = models.CharField(max_length=255, verbose_name="страна регистрације", null=True, blank=True)
+    mesto_registracije = models.CharField(max_length=255, verbose_name="место регистрације", null=True, blank=True) 
+    datum_registracije = models.DateField(verbose_name="датум регистрације", null=True, blank=True) 
+    maticni_broj = models.CharField(max_length=255, verbose_name="матични број", null=True, blank=True) 
+    strana_registracije = models.CharField(max_length=255, verbose_name="страна регистрације", null=True, blank=True)
 
-    anagraf = models.TextField(verbose_name="анаграф", null=True, blank=True)
+    #anagraf = models.TextField(verbose_name="анаграф", null=True, blank=True)
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
     def __str__(self):

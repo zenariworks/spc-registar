@@ -56,8 +56,8 @@ class Vencanje(models.Model):
     mesto_rodjenja_neveste = models.CharField(max_length=255, verbose_name="место рођења невесте", null=True, blank=True)
 
     # podaci o braku
-    zenik_rb_brak = models.IntegerField(verbose_name="брак по реду женика")
-    nevesta_rb_brak = models.IntegerField(verbose_name="брак по реду невесте")
+    zenik_rb_brak = models.CharField(verbose_name="брак по реду женика")
+    nevesta_rb_brak = models.CharField(verbose_name="брак по реду невесте")
 
     # podaci o ispitivanju
     datum_ispita = models.DateField(verbose_name="датум испита")
@@ -76,7 +76,7 @@ class Vencanje(models.Model):
     kum = models.CharField(max_length=255, verbose_name="име кума", null=True, blank=True)
     stari_svat = models.CharField(max_length=255, verbose_name="име старот свата", null=True, blank=True)
 
-    razresenje = models.BooleanField(verbose_name="разрешење")
+    razresenje = models.CharField(verbose_name="разрешење")
     razresenje_primedba = models.TextField(verbose_name="примедба", blank=True)
 
     primedba = models.TextField(verbose_name="примедба", blank=True)
