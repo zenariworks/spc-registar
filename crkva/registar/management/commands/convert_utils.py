@@ -23,6 +23,9 @@ class ConvertUtils:
 
     @staticmethod
     def latin_to_cyrillic(text):
+
+        text = text.strip()
+
         # define a mapping from Serbian Latin to Cyrillic
         latin_to_cyrillic_map = {
             'A': 'А', 'a': 'а',

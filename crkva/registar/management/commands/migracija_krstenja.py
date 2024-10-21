@@ -77,7 +77,7 @@ class Command(BaseCommand):
                     mesto_rodjenja = ConvertUtils.latin_to_cyrillic(mesto_rodjenja),
                     ime_deteta = ConvertUtils.latin_to_cyrillic(ime_deteta),
                     gradjansko_ime_deteta = ConvertUtils.latin_to_cyrillic(gradjansko_ime_deteta),
-                    pol_deteta = ConvertUtils.latin_to_cyrillic(pol_deteta.rstrip()),
+                    pol_deteta = "мушки" if pol_deteta.rstrip() == "1" else "женски",
                     # podaci o roditeljima
                     ime_oca = ConvertUtils.latin_to_cyrillic(ime_oca),
                     prezime_oca = ConvertUtils.latin_to_cyrillic(prezime_oca),
@@ -92,7 +92,7 @@ class Command(BaseCommand):
                     veroispovest_majke = ConvertUtils.latin_to_cyrillic(veroispovest_majke),
                     # ostali podaci o detetu
                     dete_rodjeno_zivo = True if dete_rodjeno_zivo.rstrip() == "1" else False,
-                    dete_po_redu_po_majci = ConvertUtils.safe_convert_to_int(dete_po_redu_po_majci, 1),
+                    dete_po_redu_po_majci = self._get_child_str(dete_po_redu_po_majci),
                     dete_vanbracno = True if dete_vanbracno.rstrip() == "1" else False,
                     dete_blizanac = True if  dete_blizanac.rstrip() == "1" else False,
                     drugo_dete_blizanac_ime = ConvertUtils.latin_to_cyrillic(drugo_dete_blizanac_ime),
@@ -105,7 +105,11 @@ class Command(BaseCommand):
                     zanimanje_kuma = ConvertUtils.latin_to_cyrillic(zanimanje_kuma),
                     adresa_kuma_mesto = ConvertUtils.latin_to_cyrillic(adresa_kuma_mesto),
                     # podaci iz matične knjige
-                    anagraf = ConvertUtils.latin_to_cyrillic(mesto_registracije.rstrip()) + "," + str(datum_registracije).rstrip() + "," + str(maticni_broj).rstrip() + "," + str(strana_registracije).rstrip(),
+                    #anagraf = self._process_anagraf(mesto_registracije, datum_registracije, maticni_broj, strana_registracije),
+                    mesto_registracije = ConvertUtils.latin_to_cyrillic(mesto_registracije),
+                    datum_registracije = datum_registracije,
+                    maticni_broj = maticni_broj,
+                    strana_registracije = strana_registracije,
                     primedba = ""
                 )
                 krstenje.save()
@@ -120,6 +124,37 @@ class Command(BaseCommand):
             )
         )
 
+    def _get_child_str(self, child_num):
+        """
+        process `child_num` string to return a str object.
+        
+        Args:
+            child_num (int): 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+            
+        Returns:
+            str: A str object: 'прво', 'друго', 'треће', 'четврто', 'пето', 'шесто', 'седмо', 'осмо', 'девето', 'десето'
+        """
+
+        # List of Serbian ordinal numbers
+        ordinal_numbers = [
+            'прво',   # 1
+            'друго',  # 2
+            'треће',  # 3
+            'четврто',# 4
+            'пето',   # 5
+            'шесто',  # 6
+            'седмо',  # 7
+            'осмо',   # 8
+            'девето',  # 9
+            'десето'   # 10
+        ]
+        
+        # Check if child_num is within the valid range
+        if 1 <= child_num <= 10:
+            return ordinal_numbers[child_num - 1]  # Indexing starts from 0
+        else:
+            raise ValueError("child_num must be an integer between 1 and 10.")
+    
     def _process_time_values(self, time_value_str):
         """
         process `time_value_str` string to return a time object.

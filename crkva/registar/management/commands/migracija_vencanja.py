@@ -91,14 +91,14 @@ class Command(BaseCommand):
                     mesto_rodjenja_zenika = ConvertUtils.latin_to_cyrillic(mesto_rodjenja_zenika),
                     datum_rodjenja_neveste = date(godina_rodjenja_neveste, mesec_rodjenja_neveste, dan_rodjenja_neveste),
                     mesto_rodjenja_neveste = ConvertUtils.latin_to_cyrillic(mesto_rodjenja_neveste),
-                    zenik_rb_brak = brak_po_redu_zenika,
-                    nevesta_rb_brak = brak_po_redu_neveste,
+                    zenik_rb_brak = "први" if brak_po_redu_zenika  == 1 else "други",
+                    nevesta_rb_brak = "први" if brak_po_redu_neveste  == 1 else "други",
                     datum_ispita = date(godina_ispitivanja, mesec_ispitivanja, dan_ispitivanja),
                     hram = hram_instance,
                     svestenik = svestenik_instance,
                     kum = ConvertUtils.latin_to_cyrillic(ime_kuma),
                     stari_svat = ConvertUtils.latin_to_cyrillic(ime_svedoka), 
-                    razresenje = True if razresenje.rstrip() == "D" else False,
+                    razresenje = "нису" if razresenje.rstrip()  == "N" else "јесу",
                     razresenje_primedba = ConvertUtils.latin_to_cyrillic(razresenje_primedba),
                     primedba = ""
                 )
@@ -114,6 +114,38 @@ class Command(BaseCommand):
             )
         )
 
+    def _get_marriage_str(self, marriage_num):
+        """
+        process `marriage_num` string to return a str object.
+        
+        Args:
+            marriage_num (int): 1, 2, 3 
+            
+        Returns:
+            str: A str object: 'прво', 'друго', 'треће', 'четврто', 'пето', 'шесто', 'седмо', 'осмо', 'девето', 'десето'
+        """
+
+        # List of Serbian ordinal numbers
+        ordinal_numbers = [
+            'прво',   # 1
+            'друго',  # 2
+            'треће',  # 3
+            'четврто',# 4
+            'пето',   # 5
+            'шесто',  # 6
+            'седмо',  # 7
+            'осмо',   # 8
+            'девето',  # 9
+            'десето'   # 10
+        ]
+        
+        # Check if child_num is within the valid range
+        if 1 <= child_num <= 10:
+            return ordinal_numbers[child_num - 1]  # Indexing starts from 0
+        else:
+            raise ValueError("child_num must be an integer between 1 and 10.")
+
+    
     def _parse_data(self):
         """
         Migracija tabele 'HSPVENC.sqlite' 
