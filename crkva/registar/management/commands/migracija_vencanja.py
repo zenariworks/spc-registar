@@ -39,6 +39,29 @@ class Command(BaseCommand):
                 hram_instance, _ = Hram.objects.get_or_create(naziv=ConvertUtils.latin_to_cyrillic(naziv_hrama))
                 svestenik_instance, _ =  Svestenik.objects.get_or_create(uid=svestenik_id)
 
+                # postoji jedan record gde je za godinu rodjenja upisano 0 
+                # Taj record cu zakucati na 01.01.1900 godine
+                if godina_rodjenja_zenika == 0:
+                    godina_rodjenja_zenika = 1900
+                if mesec_rodjenja_zenika == 0:
+                    mesec_rodjenja_zenika = 1
+                if dan_rodjenja_zenika == 0:
+                    dan_rodjenja_zenika = 1
+
+                if godina_rodjenja_neveste == 0:
+                    godina_rodjenja_neveste = 1900
+                if mesec_rodjenja_neveste == 0:
+                    mesec_rodjenja_neveste = 1
+                if dan_rodjenja_neveste == 0:
+                    dan_rodjenja_neveste = 1
+
+                if godina_ispitivanja == 0:
+                    godina_ispitivanja = 1900
+                if mesec_ispitivanja == 0:
+                    mesec_ispitivanja = 1
+                if dan_ispitivanja == 0:
+                    dan_ispitivanja = 1
+
                 vencanje = Vencanje(
                     redni_broj_vencanja_tekuca_godina = redni_broj_vencanja_tekuca_godina,
                     vencanje_tekuca_godina = vencanje_tekuca_godina,
@@ -87,7 +110,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Успешно попуњена табела 'ulice': {created_count} нових уноса."
+                f"Успешно попуњена табела 'венчања': {created_count} нових уноса."
             )
         )
 
