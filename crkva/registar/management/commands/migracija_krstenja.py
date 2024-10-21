@@ -42,7 +42,7 @@ class Command(BaseCommand):
                 ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
                 ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
                 dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, \
-                svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
+                svestenik_id, \
                 ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
                 mesto_registracije, datum_registracije, maticni_broj, strana_registracije  in parsed_data:
             try:
@@ -105,10 +105,8 @@ class Command(BaseCommand):
                     zanimanje_kuma = ConvertUtils.latin_to_cyrillic(zanimanje_kuma),
                     adresa_kuma_mesto = ConvertUtils.latin_to_cyrillic(adresa_kuma_mesto),
                     # podaci iz matične knjige
-                    mesto_registracije = ConvertUtils.latin_to_cyrillic(mesto_registracije),
-                    datum_registracije = datum_registracije,
-                    maticni_broj = maticni_broj,
-                    strana_registracije = strana_registracije
+                    anagraf = ConvertUtils.latin_to_cyrillic(mesto_registracije.rstrip()) + "," + str(datum_registracije).rstrip() + "," + str(maticni_broj).rstrip() + "," + str(strana_registracije).rstrip(),
+                    primedba = ""
                 )
                 krstenje.save()
                 created_count += 1
@@ -267,13 +265,13 @@ class Command(BaseCommand):
                     k_rodime, k_rodprez, k_rodzanim, k_rodmest, k_rodvera, k_rodnarod, 
                     k_rod2ime, k_rod2prez, k_rod2zan, k_rod2mest, k_rod2vera, 
                     k_detzivo, k_detkoje, k_detbrac, k_detbliz, k_detbliz2, k_detmana, 
-                    k_rbrsve, k_sveime, k_svezva, k_svepar, 
+                    k_rbrsve, 
                     k_kumime, k_kumprez, k_kumzanim, k_kummest, 
                     k_regmesto, k_regkada, k_regbroj, k_regstr 
                 FROM HSPKRST
             """)
             krstenja = cursor.fetchall()
-            #print(f"Number of rows fetched: {len(rows)}")
+            #print(f"Number of rows fetched: {len(krstenja)}")
 
             for krstenje in krstenja: 
                 redni_broj_krstenja_tekuca_godina, \
@@ -284,7 +282,7 @@ class Command(BaseCommand):
                 ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
                 ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
                 dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, \
-                svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, \
+                svestenik_id, \
                 ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
                 mesto_registracije, datum_registracije, maticni_broj, strana_registracije = krstenje
             
@@ -296,7 +294,7 @@ class Command(BaseCommand):
                     ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, 
                     ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, 
                     dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, 
-                    svestenik_id, ime_prezime_svestenika, zvanje_svestenika, parohija_id, 
+                    svestenik_id, 
                     ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, 
                     mesto_registracije, datum_registracije, maticni_broj, strana_registracije ))
             

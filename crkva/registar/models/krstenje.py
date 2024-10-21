@@ -78,11 +78,14 @@ class Krstenje(models.Model):
     zanimanje_kuma = models.CharField(max_length=255, verbose_name="занимање кума", null=True, blank=True) 
     adresa_kuma_mesto = models.CharField(max_length=255, verbose_name="адреса кума место", null=True, blank=True)
     
-    # podaci iz matične knjige
-    mesto_registracije = models.CharField(max_length=255, verbose_name="место регистрације", null=True, blank=True) 
-    datum_registracije = models.DateField(verbose_name="датум регистрације", null=True, blank=True) 
-    maticni_broj = models.CharField(max_length=255, verbose_name="матични број", null=True, blank=True) 
-    strana_registracije = models.CharField(max_length=255, verbose_name="страна регистрације", null=True, blank=True)
+    # podaci iz matične knjige - anagraf
+    # mesto_registracije = models.CharField(max_length=255, verbose_name="место регистрације", null=True, blank=True) 
+    # datum_registracije = models.DateField(verbose_name="датум регистрације", null=True, blank=True) 
+    # maticni_broj = models.CharField(max_length=255, verbose_name="матични број", null=True, blank=True) 
+    # strana_registracije = models.CharField(max_length=255, verbose_name="страна регистрације", null=True, blank=True)
+
+    anagraf = models.TextField(verbose_name="анаграф", null=True, blank=True)
+    primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
     def __str__(self):
         return f"{self.uid}"

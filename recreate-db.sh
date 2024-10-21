@@ -48,6 +48,7 @@ function recreate_database(){
     docker compose run --rm app sh -c "python manage.py migracija_parohijana"
     docker compose run --rm app sh -c "python manage.py migracija_ukucana"
     docker compose run --rm app sh -c "python manage.py migracija_krstenja"
+    docker compose run --rm app sh -c "python manage.py migracija_vencanja"
 
     # create super user, default uid/pwd: app/svpetka
     # NOTE: for email just press Enter...
