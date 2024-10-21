@@ -39,8 +39,8 @@ class SpisakKrstenja(ListView):
 
 class KrstenjePDF(DetailView):
     model = Krstenje
-    #template_name = "registar/pdf_krstenje.html"
-    template_name = "registar/pdf_krstenje_stara_krstenica.html"
+    template_name = "registar/pdf_krstenje.html"
+    #template_name = "registar/pdf_krstenje_stara_krstenica.html"
     context_object_name = "krstenje"
 
     def get_object(self, queryset=None):
