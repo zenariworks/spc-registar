@@ -116,7 +116,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Успешно попуњена табела 'ulice': {created_count} нових уноса."
+                f"Успешно попуњена табела 'крштења': {created_count} нових уноса."
             )
         )
 
