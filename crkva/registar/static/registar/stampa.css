@@ -22,8 +22,8 @@ body {
     /* border: 2px solid transparent; */ /* sa ovom linijom izbacujemo crveni border frame */
     background-size: cover;
     /* background-image: url("slike/vencanica-nova.jpg"); */
-    background-image: url("slike/krstenica-stara.jpg");
-    /* background-image: url("slike/krstenica-nova.jpg"); */
+    /* background-image: url("slike/krstenica-stara.jpg"); */
+    background-image: url("slike/krstenica-nova.jpg"); 
     
 }
 
