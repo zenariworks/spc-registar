@@ -8,8 +8,8 @@ class VencanjeAdmin(admin.ModelAdmin):
 
     list_display = (
         "knjiga_strana_broj",
-        "zenik",
-        "nevesta",
+        "ime_zenika",
+        "ime_neveste",
         "datum",
         "svestenik",
         "hram",
@@ -28,11 +28,11 @@ class VencanjeAdmin(admin.ModelAdmin):
                 "fields": (
                     "datum",
                     (
-                        "zenik",
+                        "ime_zenika",
                         "zenik_rb_brak",
                     ),
                     (
-                        "nevesta",
+                        "ime_neveste",
                         "nevesta_rb_brak",
                     ),
                     "datum_ispita",
