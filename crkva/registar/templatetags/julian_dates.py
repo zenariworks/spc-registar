@@ -39,9 +39,9 @@ def to_julian_date(datum):
         julianski_mesec = GREGORIAN_MONTHS[julijanski_datum.month]
 
         if gregorijanski_mesec == julianski_mesec:
-            return f"{datum.year}, {gregorijanski_mesec} {datum.day}. ({julijanski_datum.day}.)"
+            return f"{datum.year}, {gregorijanski_mesec} {datum.day} / {julijanski_datum.day}"
         else:
-            return f"{datum.year}, {gregorijanski_mesec} {datum.day}. ({julianski_mesec} {julijanski_datum.day}.)"
+            return f"{datum.year}, {gregorijanski_mesec} {datum.day} / {julianski_mesec} {julijanski_datum.day}"
     return ""
 
 
