@@ -6,7 +6,7 @@ import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Parohija, Svestenik
-from registar.management.commands.convert_utils import ConvertUtils
+from registar.management.commands.convert_utils import Konvertor
 #from registar.models.svestenik import zvanja
 
 class Command(BaseCommand):
@@ -34,11 +34,11 @@ class Command(BaseCommand):
 
                 svestenik = Svestenik(
                     uid=svestenik_id,
-                    ime= ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
-                    prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
+                    ime= Konvertor.string(ime_prezime[0]),
+                    prezime=Konvertor.string(ime_prezime[1]),
                     mesto_rodjenja="",
                     datum_rodjenja=datum_rodjenja,
-                    zvanje=ConvertUtils.latin_to_cyrillic(zvanje),
+                    zvanje=Konvertor.string(zvanje),
                     parohija=parohija_instance,
                 )
                 svestenik.save()
