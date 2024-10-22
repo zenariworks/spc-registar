@@ -5,8 +5,8 @@ import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Hram, Svestenik, Vencanje
-from registar.management.commands.convert_utils import ConvertUtils
-from datetime import date, time
+from registar.management.commands.convert_utils import Konvertor
+from datetime import date
 
 class Command(BaseCommand):
     """
@@ -36,7 +36,7 @@ class Command(BaseCommand):
             ime_kuma, ime_svedoka, \
             razresenje, razresenje_primedba in parsed_data:
             try:
-                hram_instance, _ = Hram.objects.get_or_create(naziv=ConvertUtils.latin_to_cyrillic(naziv_hrama))
+                hram_instance, _ = Hram.objects.get_or_create(naziv=Konvertor.string(naziv_hrama))
                 svestenik_instance, _ =  Svestenik.objects.get_or_create(uid=svestenik_id)
 
                 # postoji jedan record gde je za godinu rodjenja upisano 0 
@@ -65,41 +65,41 @@ class Command(BaseCommand):
                 vencanje = Vencanje(
                     redni_broj_vencanja_tekuca_godina = redni_broj_vencanja_tekuca_godina,
                     vencanje_tekuca_godina = vencanje_tekuca_godina,
-                    knjiga = ConvertUtils.safe_convert_to_int(knjiga, 0),
-                    strana = ConvertUtils.safe_convert_to_int(strana, 0),
-                    tekuci_broj = ConvertUtils.safe_convert_to_int(broj, 0),
+                    knjiga = Konvertor.int(knjiga, 0),
+                    strana = Konvertor.int(strana, 0),
+                    tekuci_broj = Konvertor.int(broj, 0),
                     datum = datum,
-                    ime_zenika = ConvertUtils.latin_to_cyrillic(ime_zenika),
-                    prezime_zenika = ConvertUtils.latin_to_cyrillic(prezime_zenika),
-                    zanimanje_zenika = ConvertUtils.latin_to_cyrillic(zanimanje_zenika),
-                    mesto_zenika = ConvertUtils.latin_to_cyrillic(mesto_zenika),
-                    veroispovest_zenika = ConvertUtils.latin_to_cyrillic(veroispovest_zenika),
-                    narodnost_zenika = ConvertUtils.latin_to_cyrillic(narodnost_zenika),
-                    adresa_zenika = ConvertUtils.latin_to_cyrillic(adresa_zenika),
-                    ime_neveste = ConvertUtils.latin_to_cyrillic(ime_neveste),
-                    prezime_neveste = ConvertUtils.latin_to_cyrillic(prezime_neveste),
-                    zanimanje_neveste = ConvertUtils.latin_to_cyrillic(zanimanje_neveste),
-                    mesto_neveste = ConvertUtils.latin_to_cyrillic(mesto_neveste),
-                    veroispovest_neveste = ConvertUtils.latin_to_cyrillic(veroispovest_neveste),
-                    narodnost_neveste = ConvertUtils.latin_to_cyrillic(narodnost_neveste),
-                    adresa_neveste = ConvertUtils.latin_to_cyrillic(adresa_neveste),
-                    svekar = ConvertUtils.latin_to_cyrillic(ime_oca_zenika),
-                    svekrva = ConvertUtils.latin_to_cyrillic(ime_majke_zenika),
-                    tast = ConvertUtils.latin_to_cyrillic(ime_oca_neveste),
-                    tasta = ConvertUtils.latin_to_cyrillic(ime_majke_neveste),
+                    ime_zenika = Konvertor.string(ime_zenika),
+                    prezime_zenika = Konvertor.string(prezime_zenika),
+                    zanimanje_zenika = Konvertor.string(zanimanje_zenika),
+                    mesto_zenika = Konvertor.string(mesto_zenika),
+                    veroispovest_zenika = Konvertor.string(veroispovest_zenika),
+                    narodnost_zenika = Konvertor.string(narodnost_zenika),
+                    adresa_zenika = Konvertor.string(adresa_zenika),
+                    ime_neveste = Konvertor.string(ime_neveste),
+                    prezime_neveste = Konvertor.string(prezime_neveste),
+                    zanimanje_neveste = Konvertor.string(zanimanje_neveste),
+                    mesto_neveste = Konvertor.string(mesto_neveste),
+                    veroispovest_neveste = Konvertor.string(veroispovest_neveste),
+                    narodnost_neveste = Konvertor.string(narodnost_neveste),
+                    adresa_neveste = Konvertor.string(adresa_neveste),
+                    svekar = Konvertor.string(ime_oca_zenika),
+                    svekrva = Konvertor.string(ime_majke_zenika),
+                    tast = Konvertor.string(ime_oca_neveste),
+                    tasta = Konvertor.string(ime_majke_neveste),
                     datum_rodjenja_zenika = date(godina_rodjenja_zenika, mesec_rodjenja_zenika, dan_rodjenja_zenika),
-                    mesto_rodjenja_zenika = ConvertUtils.latin_to_cyrillic(mesto_rodjenja_zenika),
+                    mesto_rodjenja_zenika = Konvertor.string(mesto_rodjenja_zenika),
                     datum_rodjenja_neveste = date(godina_rodjenja_neveste, mesec_rodjenja_neveste, dan_rodjenja_neveste),
-                    mesto_rodjenja_neveste = ConvertUtils.latin_to_cyrillic(mesto_rodjenja_neveste),
+                    mesto_rodjenja_neveste = Konvertor.string(mesto_rodjenja_neveste),
                     zenik_rb_brak = "први" if brak_po_redu_zenika  == 1 else "други",
                     nevesta_rb_brak = "први" if brak_po_redu_neveste  == 1 else "други",
                     datum_ispita = date(godina_ispitivanja, mesec_ispitivanja, dan_ispitivanja),
                     hram = hram_instance,
                     svestenik = svestenik_instance,
-                    kum = ConvertUtils.latin_to_cyrillic(ime_kuma),
-                    stari_svat = ConvertUtils.latin_to_cyrillic(ime_svedoka), 
+                    kum = Konvertor.string(ime_kuma),
+                    stari_svat = Konvertor.string(ime_svedoka), 
                     razresenje = "нису" if razresenje.rstrip()  == "N" else "јесу",
-                    razresenje_primedba = ConvertUtils.latin_to_cyrillic(razresenje_primedba),
+                    razresenje_primedba = Konvertor.string(razresenje_primedba),
                     primedba = ""
                 )
                 vencanje.save()
