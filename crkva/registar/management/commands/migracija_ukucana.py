@@ -5,7 +5,7 @@ import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Ukucanin, Parohijan
-from registar.management.commands.convert_utils import ConvertUtils
+from registar.management.commands.convert_utils import Konvertor
 
 
 class Command(BaseCommand):
@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
                 ukucani_instance = Ukucanin(
                     parohijan=Parohijan.objects.get(uid=parohijan_uid),
-                    ime_ukucana=ConvertUtils.latin_to_cyrillic(ime_ukucana)
+                    ime_ukucana=Konvertor.string(ime_ukucana)
                 )
                 ukucani_instance.save()
 

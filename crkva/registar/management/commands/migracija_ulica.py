@@ -9,7 +9,7 @@ from registar.models import Ulica
 from registar.models.opstina import Opstina
 from registar.models import Mesto
 #from registar.models.svestenik import zvanja
-from registar.management.commands.convert_utils import ConvertUtils
+from registar.management.commands.convert_utils import Konvertor
 from .unos_drzava import unesi_drzavu
 
 
@@ -46,7 +46,7 @@ class Command(BaseCommand):
             try:
                 ulica = Ulica(
                     uid=ulice_id,
-                    naziv=ConvertUtils.latin_to_cyrillic(naziv_ulice),
+                    naziv=Konvertor.string(naziv_ulice),
                     drzava_id=drzava_instance.uid,
                     mesto_id=mesto_instance.uid,
                     opstina_id=opstina_instance.uid,

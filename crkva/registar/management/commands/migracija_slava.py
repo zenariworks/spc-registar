@@ -6,7 +6,7 @@ import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Dan, Mesec, Slava
-from registar.management.commands.convert_utils import ConvertUtils
+from registar.management.commands.convert_utils import Konvertor
 
 
 class Command(BaseCommand):
@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
                 _, created = Slava.objects.get_or_create(
                     uid=uid,
-                    naziv=ConvertUtils.latin_to_cyrillic(naziv),
+                    naziv=Konvertor.string(naziv),
                     opsti_naziv="",
                     dan=dan_instance,
                     mesec=mesec_instance,

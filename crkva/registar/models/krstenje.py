@@ -18,17 +18,15 @@ class Krstenje(models.Model):
     krstenje_tekuca_godina = models.IntegerField(verbose_name="крштењe текућа година")
 
     # podaci za registar(protokol) krstenih
-    knjiga = models.IntegerField(verbose_name="књига крштења") 
-    broj = models.IntegerField(verbose_name="број крштења") 
-    strana = models.IntegerField(verbose_name="страна крштења")
+    knjiga = models.IntegerField(verbose_name="књига") 
+    broj = models.IntegerField(verbose_name="број") 
+    strana = models.IntegerField(verbose_name="страна")
 
     # podaci o krstenju
-    datum = models.DateField(verbose_name="датум крштења")
-    vreme = models.TimeField(verbose_name="време крштења", null=True, blank=True)
-    mesto = models.CharField(max_length=255, verbose_name="место крштења", null=True, blank=True)
-    hram = models.ForeignKey(
-        Hram, on_delete=models.SET_NULL, null=True, verbose_name="место крштења"
-    )
+    datum = models.DateField(verbose_name="датум")
+    vreme = models.TimeField(verbose_name="време", null=True, blank=True)
+    mesto = models.CharField(max_length=255, verbose_name="место", null=True, blank=True)
+    hram = models.ForeignKey(Hram, on_delete=models.SET_NULL, null=True, verbose_name="храм")
 
     # podaci o detetu
     adresa_deteta_grad = models.CharField(max_length=255, verbose_name="адреса детета град")
@@ -39,7 +37,9 @@ class Krstenje(models.Model):
     mesto_rodjenja = models.CharField(max_length=255, verbose_name="место рођења", null=True, blank=True)
     ime_deteta = models.CharField(max_length=255, verbose_name="име детета")
     gradjansko_ime_deteta = models.CharField(max_length=255, verbose_name="грађанско име детета", null=True, blank=True)
-    pol_deteta = models.CharField(max_length=255, verbose_name="пол детета", null=True, blank=True) 
+    pol_deteta = models.CharField(
+        verbose_name="пол", choices=[("М", "мушки"), ("Ж", "женски")], blank=True, null=True
+    )
 
     # podaci o roditeljima
     ime_oca = models.CharField(max_length=255, verbose_name="име оца") 

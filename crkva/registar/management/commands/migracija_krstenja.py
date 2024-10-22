@@ -5,7 +5,7 @@ import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Hram, Svestenik, Krstenje
-from registar.management.commands.convert_utils import ConvertUtils
+from registar.management.commands.convert_utils import Konvertor
 from datetime import date, time
 
 class Command(BaseCommand):
@@ -53,60 +53,59 @@ class Command(BaseCommand):
                 vreme_rodjenja = self._process_time_values(vreme_rodjenja)
 
                 # # tabela 'hramovi'
-                hram_instance, _ = Hram.objects.get_or_create(naziv=ConvertUtils.latin_to_cyrillic(hram))
+                hram_instance, _ = Hram.objects.get_or_create(naziv=Konvertor.string(hram))
                 svestenik_instance, _ =  Svestenik.objects.get_or_create(uid=svestenik_id)
 
                 krstenje = Krstenje(
                     redni_broj_krstenja_tekuca_godina = redni_broj_krstenja_tekuca_godina,
                     krstenje_tekuca_godina = godina,
                     # podaci za registar(protokol) krstenih
-                    knjiga = ConvertUtils.safe_convert_to_int(knjiga.rstrip(), 0),
-                    broj = ConvertUtils.safe_convert_to_int(broj.rstrip(), 0),
-                    strana = ConvertUtils.safe_convert_to_int(strana, 0),
+                    knjiga = Konvertor.int(knjiga.rstrip(), 0),
+                    broj = Konvertor.int(broj.rstrip(), 0),
+                    strana = Konvertor.int(strana, 0),
                     # podaci o krstenju
                     datum = datum,
                     vreme = vreme,
-                    mesto = ConvertUtils.latin_to_cyrillic(mesto),
+                    mesto = Konvertor.string(mesto),
                     hram = hram_instance,
                     # podaci o detetu
-                    adresa_deteta_grad = ConvertUtils.latin_to_cyrillic(adresa_deteta_grad),
-                    adresa_deteta_ulica = ConvertUtils.latin_to_cyrillic(adresa_deteta_ulica),
-                    adresa_deteta_broj = ConvertUtils.latin_to_cyrillic(adresa_deteta_broj),
+                    adresa_deteta_grad = Konvertor.string(adresa_deteta_grad),
+                    adresa_deteta_ulica = Konvertor.string(adresa_deteta_ulica),
+                    adresa_deteta_broj = Konvertor.string(adresa_deteta_broj),
                     datum_rodjenja = datum_rodjenja,
                     vreme_rodjenja = vreme_rodjenja,
-                    mesto_rodjenja = ConvertUtils.latin_to_cyrillic(mesto_rodjenja),
-                    ime_deteta = ConvertUtils.latin_to_cyrillic(ime_deteta),
-                    gradjansko_ime_deteta = ConvertUtils.latin_to_cyrillic(gradjansko_ime_deteta),
-                    pol_deteta = "мушки" if pol_deteta.rstrip() == "1" else "женски",
+                    mesto_rodjenja = Konvertor.string(mesto_rodjenja),
+                    ime_deteta = Konvertor.string(ime_deteta),
+                    gradjansko_ime_deteta = Konvertor.string(gradjansko_ime_deteta),
+                    pol_deteta = "М" if pol_deteta.rstrip() == "1" else "Ж",
                     # podaci o roditeljima
-                    ime_oca = ConvertUtils.latin_to_cyrillic(ime_oca),
-                    prezime_oca = ConvertUtils.latin_to_cyrillic(prezime_oca),
-                    zanimanje_oca = ConvertUtils.latin_to_cyrillic(zanimanje_oca),
-                    adresa_oca_mesto = ConvertUtils.latin_to_cyrillic(adresa_oca_mesto),
-                    veroispovest_oca = ConvertUtils.latin_to_cyrillic(veroispovest_oca),
-                    narodnost_oca = ConvertUtils.latin_to_cyrillic(narodnost_oca),
-                    ime_majke = ConvertUtils.latin_to_cyrillic(ime_majke),
-                    prezime_majke = ConvertUtils.latin_to_cyrillic(prezime_majke),
-                    zanimanje_majke = ConvertUtils.latin_to_cyrillic(zanimanje_majke),
-                    adresa_majke_mesto = ConvertUtils.latin_to_cyrillic(adresa_majke_mesto),
-                    veroispovest_majke = ConvertUtils.latin_to_cyrillic(veroispovest_majke),
+                    ime_oca = Konvertor.string(ime_oca),
+                    prezime_oca = Konvertor.string(prezime_oca),
+                    zanimanje_oca = Konvertor.string(zanimanje_oca),
+                    adresa_oca_mesto = Konvertor.string(adresa_oca_mesto),
+                    veroispovest_oca = Konvertor.string(veroispovest_oca),
+                    narodnost_oca = Konvertor.string(narodnost_oca),
+                    ime_majke = Konvertor.string(ime_majke),
+                    prezime_majke = Konvertor.string(prezime_majke),
+                    zanimanje_majke = Konvertor.string(zanimanje_majke),
+                    adresa_majke_mesto = Konvertor.string(adresa_majke_mesto),
+                    veroispovest_majke = Konvertor.string(veroispovest_majke),
                     # ostali podaci o detetu
                     dete_rodjeno_zivo = True if dete_rodjeno_zivo.rstrip() == "1" else False,
                     dete_po_redu_po_majci = self._get_child_str(dete_po_redu_po_majci),
                     dete_vanbracno = True if dete_vanbracno.rstrip() == "1" else False,
                     dete_blizanac = True if  dete_blizanac.rstrip() == "1" else False,
-                    drugo_dete_blizanac_ime = ConvertUtils.latin_to_cyrillic(drugo_dete_blizanac_ime),
+                    drugo_dete_blizanac_ime = Konvertor.string(drugo_dete_blizanac_ime),
                     dete_sa_telesnom_manom = True if dete_sa_telesnom_manom.rstrip() == "1" else False,
                     # podaci o svesteniku
                     svestenik = svestenik_instance,
                     # podaci o kumu
-                    ime_kuma = ConvertUtils.latin_to_cyrillic(ime_kuma),
-                    prezime_kuma = ConvertUtils.latin_to_cyrillic(prezime_kuma),
-                    zanimanje_kuma = ConvertUtils.latin_to_cyrillic(zanimanje_kuma),
-                    adresa_kuma_mesto = ConvertUtils.latin_to_cyrillic(adresa_kuma_mesto),
+                    ime_kuma = Konvertor.string(ime_kuma),
+                    prezime_kuma = Konvertor.string(prezime_kuma),
+                    zanimanje_kuma = Konvertor.string(zanimanje_kuma),
+                    adresa_kuma_mesto = Konvertor.string(adresa_kuma_mesto),
                     # podaci iz matične knjige
-                    #anagraf = self._process_anagraf(mesto_registracije, datum_registracije, maticni_broj, strana_registracije),
-                    mesto_registracije = ConvertUtils.latin_to_cyrillic(mesto_registracije),
+                    mesto_registracije = Konvertor.string(mesto_registracije),
                     datum_registracije = datum_registracije,
                     maticni_broj = maticni_broj,
                     strana_registracije = strana_registracije,
@@ -177,17 +176,17 @@ class Command(BaseCommand):
             if '.' in time_value_str:
                 HH = time_value_str.split(".")[0]
                 MM = time_value_str.split(".")[1]
-                HH = ConvertUtils.safe_convert_to_int(HH, 12)
-                MM = ConvertUtils.safe_convert_to_int(MM, 0)
+                HH = Konvertor.int(HH, 12)
+                MM = Konvertor.int(MM, 0)
             # Check if it contains a comma `,`
             elif ',' in time_value_str:
                 HH = time_value_str.split(",")[0]
                 MM = time_value_str.split(",")[1]
-                HH = ConvertUtils.safe_convert_to_int(HH, 12)
-                MM = ConvertUtils.safe_convert_to_int(MM, 0)
+                HH = Konvertor.int(HH, 12)
+                MM = Konvertor.int(MM, 0)
             else:
                 HH = time_value_str
-                HH = ConvertUtils.safe_convert_to_int(HH, 12)
+                HH = Konvertor.int(HH, 12)
                 MM = 0  # Set MM to 0 if no minutes are provided
             
             

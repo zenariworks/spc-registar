@@ -5,7 +5,7 @@ import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.models import Ulica, Parohijan, Adresa, Slava
-from registar.management.commands.convert_utils import ConvertUtils
+from registar.management.commands.convert_utils import Konvertor
 
 class Command(BaseCommand):
     """
@@ -39,9 +39,9 @@ class Command(BaseCommand):
                     broj=broj_ulice,
                     sprat=None,
                     broj_stana=broj_stana,
-                    dodatak=ConvertUtils.latin_to_cyrillic(oznaka_ulice),
+                    dodatak=Konvertor.string(oznaka_ulice),
                     postkod=None,
-                    primedba=ConvertUtils.latin_to_cyrillic(napomena),
+                    primedba=Konvertor.string(napomena),
                     ulica=Ulica.objects.get(uid=ulica_uid)
                 )
                 adresa_instance.save()
@@ -53,8 +53,8 @@ class Command(BaseCommand):
 
                 parohijan = Parohijan(
                     uid=parohijan_uid,
-                    ime=ConvertUtils.latin_to_cyrillic(ime_prezime[0]),
-                    prezime=ConvertUtils.latin_to_cyrillic(ime_prezime[1]),
+                    ime=Konvertor.string(ime_prezime[0]),
+                    prezime=Konvertor.string(ime_prezime[1]),
                     adresa=adresa_instance,
                     slava=Slava.objects.get(uid=slava_uid),
                     tel_fiksni=telefon_fiksni,
