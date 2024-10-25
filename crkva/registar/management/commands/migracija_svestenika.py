@@ -23,19 +23,35 @@ class Command(BaseCommand):
         parsed_data = self._parse_data()
         created_count = 0
 
+        print(f"Number of parsed_data: {len(parsed_data)}")
         for svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja in parsed_data:
             try:
                 broj_parohije = self._convert_roman_to_integer(parohija)
-                parohija_instance, _ = Parohija.objects.get_or_create(naziv=broj_parohije)
+                if broj_parohije != 0:
+                    parohija_instance, _ = Parohija.objects.get_or_create(naziv=broj_parohije)
+                else:
+                    parohija_instance = None
 
                 # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
                 # i unesi kao ime i prezime
-                ime_prezime = ime_prezime.split(" ")
+                ime = ''
+                prezime = ''
+                ime_prezime = ime_prezime.strip()
+                #print("ime_prezime: " + ime_prezime + ", svestenik_id: " + str(svestenik_id))
+            
+                if ime_prezime == "" or ime_prezime == None:
+                    continue
+                if " " in ime_prezime:
+                    ime_prezime = ime_prezime.split(" ")
+                    ime = ime_prezime[0]
+                    prezime = ime_prezime[1]
+                else :
+                    ime = ime_prezime
 
                 svestenik = Svestenik(
                     uid=svestenik_id,
-                    ime= Konvertor.string(ime_prezime[0]),
-                    prezime=Konvertor.string(ime_prezime[1]),
+                    ime= Konvertor.string(ime),
+                    prezime=Konvertor.string(prezime),
                     mesto_rodjenja="",
                     datum_rodjenja=datum_rodjenja,
                     zvanje=Konvertor.string(zvanje),
@@ -73,8 +89,8 @@ class Command(BaseCommand):
         #converted_value = roman_to_int.get(roman_numeral, None)
         
         # vrati '0' za broj parohije ako svesteniku nije dodeljena parohija koja ima redni broj [1,2,3]
-        converted_value = roman_to_int.get(parohija, '')
-        #print("broj_parohije: " + converted_value)
+        converted_value = roman_to_int.get(parohija, 0)
+        #print("broj_parohije: " + str(converted_value))
         return converted_value
 
     def _parse_data(self):
