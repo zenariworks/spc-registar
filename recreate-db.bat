@@ -1,21 +1,20 @@
-#!/bin/bash
 
-set -x
+@echo off
+SETLOCAL ENABLEDELAYEDEXPANSION
 
-function recreate_database(){
-
+:recreate_database
+    
+    REM migrate .dbf files to .sqlite database 
     python migrate-original-dbf-files-to-sqlite.py
 
-    # remove migration files
-    rm crkva/registar/migrations/0*
+    REM Remove migration files
+    del /Q "crkva\registar\migrations\0*"
     
-    # stop and remove db container and image
+    REM Stop and remove db container
     docker stop crkva-db-1
     docker rm crkva-db-1
-    #docker rmi postgres:13-alpine
-    #docker images
-    
-    # create database image: postgres:13-alpine
+
+    REM Create database image: postgres:13-alpine
     docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
     
     docker compose run --rm app sh -c "python manage.py unosi"
@@ -29,17 +28,14 @@ function recreate_database(){
     docker compose run --rm app sh -c "python manage.py migracija_krstenja"
     docker compose run --rm app sh -c "python manage.py migracija_vencanja"
 
-    # create super user, default uid/pwd: app/app
-    # NOTE: for email just press Enter...
-    # docker compose run --rm app sh -c "python manage.py createsuperuser"
+    REM Create super user, default uid/pwd: app/app
+    REM NOTE: for email just press Enter...
+    REM docker compose run --rm app sh -c "python manage.py createsuperuser"
 
-    # run app
-    # docker stop crkva-app-1
-    # docker rm crkva-app-1
-    # docker compose build
-    # docker compose up 
-}
-readonly -f recreate_database
+    REM Run app
+    REM docker stop crkva-app-1
+    REM docker rm crkva-app-1
+    REM docker compose build
+    REM docker compose up 
 
-#run script
-recreate_database
+ENDLOCAL

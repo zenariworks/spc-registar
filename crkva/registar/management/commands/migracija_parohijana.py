@@ -33,6 +33,9 @@ class Command(BaseCommand):
                 #     print("slava_uid is an integer.")
                 # elif type(slava_uid) == str:
                 #     print("slava_uid is a string.")
+
+                if ulica_uid == None or ulica_uid == 0:
+                    continue
                 
                 # tabela 'adrese'
                 adresa_instance = Adresa(
@@ -49,12 +52,23 @@ class Command(BaseCommand):
                 # tabela 'parohijani'
                 # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
                 # i unesi kao ime i prezime
-                ime_prezime = ime_prezime.split(" ")
+                ime = ''
+                prezime = ''
+                ime_prezime = ime_prezime.strip()
+                #if ime_prezime == "" or ime_prezime == None:
+                #    continue
+                if " " in ime_prezime:
+                    ime_prezime = ime_prezime.split(" ")
+                    ime = ime_prezime[0]
+                    prezime = ime_prezime[1]
+                else :
+                    ime = ime_prezime
+
 
                 parohijan = Parohijan(
                     uid=parohijan_uid,
-                    ime=Konvertor.string(ime_prezime[0]),
-                    prezime=Konvertor.string(ime_prezime[1]),
+                    ime=Konvertor.string(ime),
+                    prezime=Konvertor.string(prezime),
                     adresa=adresa_instance,
                     slava=Slava.objects.get(uid=slava_uid),
                     tel_fiksni=telefon_fiksni,
@@ -79,7 +93,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Успешно попуњена табеле 'адресе' и 'parohijani': {created_count} нових уноса."
+                f"Успешно попуњене табеле 'адресе' и 'парохијани': {created_count} нових уноса."
             )
         )
 
