@@ -64,7 +64,7 @@ def convert_all_hsp_dbf_files_to_sqlite():
     remove_matching_files("*.dbf")
     remove_matching_files("*.DBF")
     
-    remove_matching_files("crkva\registar\migrations\0*")
+    #remove_matching_files("crkva\registar\migrations\0*")
 
 
 # Konvertuje .dbf fajl u .sqlite 
@@ -115,14 +115,21 @@ def main():
     # parser.add_argument('--src_dir', type=str, default='e:\\projects\\hram-svete-petke\\resources\\dbf', help='Source directory containing .dbf files')
     # parser.add_argument('--dest_dir', type=str, default='e:\\projects\\hram-svete-petke\\crkva\\crkva\\fixtures', help='Destination directory to copy .dbf files to')
 
-    # WSL setup - in progress
+    # WSL setup (crkva)
     # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
     # parser.add_argument('--src_dir', type=str, default='/mnt/c/HramSP/dbf', help='Source directory containing .dbf files')
     # parser.add_argument('--dest_dir', type=str, default='/mnt/c/crkva/crkva/fixtures', help='Destination directory to copy .dbf files to')
 
+    
+    # WSL setup (home)
     parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
-    parser.add_argument('--src_dir', type=str, default='C:\\HramSP\\dbf', help='Source directory containing .dbf files')
-    parser.add_argument('--dest_dir', type=str, default='C:\\crkva\\crkva\\fixtures', help='Destination directory to copy .dbf files to')
+    parser.add_argument('--src_dir', type=str, default='/mnt/e/projects/hram-svete-petke/resources/dbf', help='Source directory containing .dbf files')
+    parser.add_argument('--dest_dir', type=str, default='crkva/fixtures', help='Destination directory to copy .dbf files to')
+
+
+    #parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
+    #parser.add_argument('--src_dir', type=str, default='C:\\HramSP\\dbf', help='Source directory containing .dbf files')
+    #parser.add_argument('--dest_dir', type=str, default='C:\\crkva\\crkva\\fixtures', help='Destination directory to copy .dbf files to')
 
     # Parse the arguments
     args = parser.parse_args()
