@@ -25,8 +25,8 @@ class Svestenik(models.Model):
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")
 
-    mesto_rodjenja = models.CharField(verbose_name="место рођења")
-    datum_rodjenja = models.DateField(blank=True, null=True, verbose_name="датум рођења")
+    mesto_rodjenja = models.CharField(verbose_name="место рођења", blank=True, null=True)
+    datum_rodjenja = models.DateField(blank=True, null=True, verbose_name="датум рођења", default=None)
 
     zvanje = models.CharField(max_length=30, choices=zvanja, verbose_name="звање")
     parohija = models.ForeignKey(
