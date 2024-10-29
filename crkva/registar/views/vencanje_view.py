@@ -15,11 +15,15 @@ class SpisakVencanja(FilterView, ListView):
     filterset_class = VencanjeFilter
 
     def get_queryset(self):
-        return self.filterset_class(self.request.GET, queryset=super().get_queryset()).qs
+        return self.filterset_class(
+            self.request.GET, queryset=super().get_queryset()
+        ).qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["filter"] = self.filterset_class(self.request.GET, queryset=self.get_queryset())
+        context["filter"] = self.filterset_class(
+            self.request.GET, queryset=self.get_queryset()
+        )
         return context
 
 

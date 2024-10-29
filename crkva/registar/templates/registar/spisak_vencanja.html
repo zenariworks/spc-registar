@@ -12,7 +12,7 @@
         {% for vencanje in vencanja %}
             <li class="stavka">
                 <a href="{% url 'vencanje_detail' uid=vencanje.uid %}" class="stavka-veza" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
-                    {{ vencanje.ime_zenika }} и {{ vencanje.ime_neveste }} {{ vencanje.prezime_zenika }}, {{ vencanje.datum }} 
+                    {{ vencanje.ime_zenika }} и {{ vencanje.ime_neveste }} {{ vencanje.prezime_zenika }}, {{ vencanje.datum }}
                 </a>
                 <a href="{% url 'vencanje_pdf' uid=vencanje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
                     <button class="dugme-crveno" type="button">Штампа</button>

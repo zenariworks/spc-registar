@@ -22,9 +22,9 @@ body {
     background-size: cover;
     /* background-image: url("slike/vencanica-nova.jpg"); */
     /* background-image: url("slike/krstenica-stara.jpg"); */
-    
+
     /* background-image: url("slike/krstenica-nova.jpg");  */
-    
+
 }
 
 
@@ -41,6 +41,6 @@ body {
     /* border: 2px solid orange; */
     border: 2px solid transparent;  /*sa ovom linijom izbacujemo narandzasti border  */
     display: flex;
-    justify-content: center; 
-    align-items: center; 
+    justify-content: center;
+    align-items: center;
 }

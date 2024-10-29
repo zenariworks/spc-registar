@@ -1,7 +1,5 @@
 """Модул модела славе у бази података."""
 
-import uuid
-
 from django.db import models
 
 from .dan import Dan

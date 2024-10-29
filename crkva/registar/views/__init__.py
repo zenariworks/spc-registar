@@ -1,4 +1,5 @@
 """Модул за приказе у апликацији регистар."""
+
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render

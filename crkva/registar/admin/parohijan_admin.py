@@ -1,14 +1,7 @@
 """Модул админ интерфејса модела Парохијан са опцијама увоз и извоз."""
 
-from admin_searchable_dropdown.filters import AutocompleteFilter
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
-
-
-# class ZanimanjeFilter(AutocompleteFilter):
-#     title = "Занимање"
-#     field_name = "zanimanje"
-
 
 class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Парохија."""
@@ -30,7 +23,7 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
         "adresa__naziv",
         "veroispovest",
     ]
-    #list_filter = [ZanimanjeFilter]
+    # list_filter = [ZanimanjeFilter]
 
     def get_full_name(self, obj):
         devojacko = f", ({obj.devojacko_prezime})" if obj.devojacko_prezime else ""
