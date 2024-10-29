@@ -3,15 +3,11 @@
 {% block content %}
     <div class="header-container">
         <h1 style="margin: 0;">Венчања</h1>
-        <form method="get" action="" class="form-container">
-            <div>
-                {% for field in form.visible_fields %}
-                    {{ field }}
-                {% endfor %}
-                <input type="submit" class="hidden-submit">
-            </div>
-        </form>
     </div>
+    <form method="get" action="" class="form-container">
+        {{ filter.form.as_p }} <!-- Prikazuje filter formu -->
+        {% comment %} <input type="submit" value="Претражи" class="submit-button"> {% endcomment %}
+    </form>
     <ul class="spisak">
         {% for vencanje in vencanja %}
             <li class="stavka">
@@ -23,7 +19,7 @@
                 </a>
             </li>
         {% empty %}
-            <li>Нема уноса свештеника у бази.</li>
+            <li>Нема уноса венчања у бази.</li>
         {% endfor %}
     </ul>
 

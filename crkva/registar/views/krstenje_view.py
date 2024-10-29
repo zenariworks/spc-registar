@@ -1,9 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
-from registar.forms import SearchForm
-from registar.forms.krstenje_form import KrstenjeForm
-from registar.models.krstenje import Krstenje
+from django_filters.views import FilterView
+
+from registar.filters import KrstenjeFilter
+from registar.forms import KrstenjeForm
+from registar.models import Krstenje
 from weasyprint import HTML
 
 
@@ -18,22 +20,19 @@ def unos_krstenja(request):
     return render(request, "registar/unos_krstenja.html", {"form": form})
 
 
-class SpisakKrstenja(ListView):
+class SpisakKrstenja(FilterView, ListView):
     model = Krstenje
     template_name = "registar/spisak_krstenja.html"
     context_object_name = "krstenja"
     paginate_by = 10
+    filterset_class = KrstenjeFilter
 
     def get_queryset(self):
-        form = SearchForm(self.request.GET)
-        if form.is_valid():
-            query = form.cleaned_data["query"]
-            return Krstenje.objects.filter(dete__name__icontains=query)
-        return Krstenje.objects.all()
+        return self.filterset_class(self.request.GET, queryset=super().get_queryset()).qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = SearchForm(self.request.GET)
+        context["filter"] = self.filterset_class(self.request.GET, queryset=self.get_queryset())
         return context
 
 

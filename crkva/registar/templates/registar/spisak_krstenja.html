@@ -3,13 +3,11 @@
 {% block content %}
     <div class="header-container">
         <h1 style="margin: 0;">Крштења</h1>
-            <form method="get" action="" class="form-container">
-                <div>
-                    <!-- Remainder of the form -->
-                    <input type="submit" class="hidden-submit">
-                </div>
-            </form>
     </div>
+    <form method="get" action="" class="form-container">
+        {{ filter.form.as_p }}
+        {% comment %} <input type="submit" value="Претражи" class="submit-button"> {% endcomment %}
+    </form>
     <ul class="spisak">
         {% for krstenje in krstenja %}
             <li class="stavka">
