@@ -3,10 +3,11 @@ Migracija tabele 'hspslave.sqlite' u tabelu 'slave' (са славама за ц
 """
 
 import sqlite3
+
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from registar.models import Dan, Mesec, Slava
 from registar.management.commands.convert_utils import Konvertor
+from registar.models import Dan, Mesec, Slava
 
 
 class Command(BaseCommand):
@@ -64,4 +65,3 @@ class Command(BaseCommand):
                 parsed_data.append((uid, naziv, dan, mesec))
 
         return parsed_data
-

@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from django_filters.views import FilterView
-
 from registar.filters import KrstenjeFilter
 from registar.forms import KrstenjeForm
 from registar.models import Krstenje
@@ -28,18 +27,22 @@ class SpisakKrstenja(FilterView, ListView):
     filterset_class = KrstenjeFilter
 
     def get_queryset(self):
-        return self.filterset_class(self.request.GET, queryset=super().get_queryset()).qs
+        return self.filterset_class(
+            self.request.GET, queryset=super().get_queryset()
+        ).qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["filter"] = self.filterset_class(self.request.GET, queryset=self.get_queryset())
+        context["filter"] = self.filterset_class(
+            self.request.GET, queryset=self.get_queryset()
+        )
         return context
 
 
 class KrstenjePDF(DetailView):
     model = Krstenje
     template_name = "registar/pdf_krstenje.html"
-    #template_name = "registar/pdf_krstenje_stara_krstenica.html"
+    # template_name = "registar/pdf_krstenje_stara_krstenica.html"
     context_object_name = "krstenje"
 
     def get_object(self, queryset=None):

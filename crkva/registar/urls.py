@@ -1,4 +1,5 @@
 """Овај модул дефинише URL обрасце за апликацију регистар."""
+
 from django.urls import include, path
 
 from . import views

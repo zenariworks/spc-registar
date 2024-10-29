@@ -1,7 +1,5 @@
 """Модул модела улице у бази података."""
 
-import uuid
-
 from django.db import models
 
 from .drzava import Drzava
@@ -12,6 +10,7 @@ from .svestenik import Svestenik
 
 class Ulica(models.Model):
     """Класа која представља улица."""
+
     uid = models.IntegerField(primary_key=True, unique=True, editable=False)
     naziv = models.CharField(max_length=255, verbose_name="назив")
     mesto = models.ForeignKey(Mesto, on_delete=models.CASCADE, verbose_name="место")

@@ -13,7 +13,9 @@ class Adresa(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
     broj = models.CharField(max_length=10, verbose_name="број")
     sprat = models.CharField(max_length=10, verbose_name="спрат", null=True, blank=True)
-    broj_stana = models.CharField(max_length=10, verbose_name="број_стана", null=True, blank=True)
+    broj_stana = models.CharField(
+        max_length=10, verbose_name="број_стана", null=True, blank=True
+    )
     dodatak = models.CharField(
         max_length=10, blank=True, null=True, verbose_name="додатак"
     )

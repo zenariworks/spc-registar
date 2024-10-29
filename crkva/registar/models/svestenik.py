@@ -1,7 +1,5 @@
 """Модул модела свештеника у бази података."""
 
-import uuid
-
 from django.db import models
 
 from .parohija import Parohija
@@ -20,13 +18,19 @@ zvanja = [
 class Svestenik(models.Model):
     """Класа која представља свештеника."""
 
-    uid = models.IntegerField(verbose_name="свестеник ид", primary_key=True, unique=True, editable=False)
+    uid = models.IntegerField(
+        verbose_name="свестеник ид", primary_key=True, unique=True, editable=False
+    )
 
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")
 
-    mesto_rodjenja = models.CharField(verbose_name="место рођења", blank=True, null=True)
-    datum_rodjenja = models.DateField(blank=True, null=True, verbose_name="датум рођења", default=None)
+    mesto_rodjenja = models.CharField(
+        verbose_name="место рођења", blank=True, null=True
+    )
+    datum_rodjenja = models.DateField(
+        blank=True, null=True, verbose_name="датум рођења", default=None
+    )
 
     zvanje = models.CharField(max_length=30, choices=zvanja, verbose_name="звање")
     parohija = models.ForeignKey(
