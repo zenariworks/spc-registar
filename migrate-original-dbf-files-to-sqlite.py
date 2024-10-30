@@ -122,8 +122,13 @@ def main():
 
     
     # WSL setup (home)
+    # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
+    # parser.add_argument('--src_dir', type=str, default='/mnt/e/projects/hram-svete-petke/resources/dbf', help='Source directory containing .dbf files')
+    # parser.add_argument('--dest_dir', type=str, default='crkva/fixtures', help='Destination directory to copy .dbf files to')
+
+    # Linux setup (home)
     parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
-    parser.add_argument('--src_dir', type=str, default='/mnt/e/projects/hram-svete-petke/resources/dbf', help='Source directory containing .dbf files')
+    parser.add_argument('--src_dir', type=str, default='../resources/dbf', help='Source directory containing .dbf files')
     parser.add_argument('--dest_dir', type=str, default='crkva/fixtures', help='Destination directory to copy .dbf files to')
 
 
