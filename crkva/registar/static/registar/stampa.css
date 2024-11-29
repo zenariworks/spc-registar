@@ -17,15 +17,9 @@ body {
     margin: 0;
     width: 210mm;
     height: 297mm;
-    /* border: 2px solid red; */
-    border: 2px solid transparent; /* sa ovom linijom izbacujemo crveni border frame */
+    border: 2px solid transparent;
     background-size: cover;
-    /* background-image: url("slike/vencanica-nova.jpg"); */
-    /* background-image: url("slike/krstenica-stara.jpg"); */
-    
     /* background-image: url("slike/krstenica-nova.jpg");  */
-    /*background-image: url("slike/IMG_20241030_0001.jpg");*/
-    
 }
 
 
@@ -39,9 +33,8 @@ body {
 }
 
 .row {
-    /* border: 2px solid orange; */
-    border: 2px solid transparent;  /*sa ovom linijom izbacujemo narandzasti border  */
+    border: 2px solid transparent;
     display: flex;
-    justify-content: center; 
-    align-items: center; 
+    justify-content: center;
+    align-items: center;
 }

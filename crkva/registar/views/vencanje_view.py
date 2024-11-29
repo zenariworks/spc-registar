@@ -1,27 +1,29 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView, ListView
-from registar.forms import SearchForm
+from django_filters.views import FilterView
+from registar.filters import VencanjeFilter
 from registar.models.vencanje import Vencanje
 from weasyprint import HTML
 
 
-class SpisakVencanja(ListView):
+class SpisakVencanja(FilterView, ListView):
     model = Vencanje
     template_name = "registar/spisak_vencanja.html"
     context_object_name = "vencanja"
     paginate_by = 10
+    filterset_class = VencanjeFilter
 
     def get_queryset(self):
-        form = SearchForm(self.request.GET)
-        if form.is_valid():
-            query = form.cleaned_data["query"]
-            return Vencanje.objects.filter(dete__name__icontains=query)
-        return Vencanje.objects.all()
+        return self.filterset_class(
+            self.request.GET, queryset=super().get_queryset()
+        ).qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["form"] = SearchForm(self.request.GET)
+        context["filter"] = self.filterset_class(
+            self.request.GET, queryset=self.get_queryset()
+        )
         return context
 
 

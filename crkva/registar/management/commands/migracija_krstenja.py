@@ -1,12 +1,15 @@
 """
 Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
 """
+
 import sqlite3
+from datetime import date, time
+
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from registar.models import Hram, Svestenik, Krstenje
 from registar.management.commands.convert_utils import Konvertor
-from datetime import date, time
+from registar.models import Hram, Krstenje, Svestenik
+
 
 class Command(BaseCommand):
     """
@@ -25,91 +28,138 @@ class Command(BaseCommand):
     k_rodjmesto --> Krstenje.dete <= Parohijan.mesto_rodjena
     k_rodjopst -->
     """
+
     help = "Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'"
 
     def handle(self, *args, **kwargs):
 
         parsed_data = self._parse_data()
-        #print(f"parsed_data: {len(parsed_data)}")
+        # print(f"parsed_data: {len(parsed_data)}")
 
         created_count = 0
 
-        for redni_broj_krstenja_tekuca_godina, \
-                knjiga, broj, strana, \
-                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
-                godina, mesec, dan, vreme, mesto, hram, \
-                ime_deteta, gradjansko_ime_deteta, pol_deteta, \
-                ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
-                ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
-                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, \
-                svestenik_id, \
-                ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
-                mesto_registracije, datum_registracije, maticni_broj, strana_registracije  in parsed_data:
+        for (
+            redni_broj_krstenja_tekuca_godina,
+            knjiga,
+            broj,
+            strana,
+            adresa_deteta_grad,
+            adresa_deteta_ulica,
+            adresa_deteta_broj,
+            godina_rodjenja,
+            mesec_rodjenja,
+            dan_rodjenja,
+            vreme_rodjenja,
+            mesto_rodjenja,
+            godina,
+            mesec,
+            dan,
+            vreme,
+            mesto,
+            hram,
+            ime_deteta,
+            gradjansko_ime_deteta,
+            pol_deteta,
+            ime_oca,
+            prezime_oca,
+            zanimanje_oca,
+            adresa_oca_mesto,
+            veroispovest_oca,
+            narodnost_oca,
+            ime_majke,
+            prezime_majke,
+            zanimanje_majke,
+            adresa_majke_mesto,
+            veroispovest_majke,
+            dete_rodjeno_zivo,
+            dete_po_redu_po_majci,
+            dete_vanbracno,
+            dete_blizanac,
+            drugo_dete_blizanac_ime,
+            dete_sa_telesnom_manom,
+            svestenik_id,
+            ime_kuma,
+            prezime_kuma,
+            zanimanje_kuma,
+            adresa_kuma_mesto,
+            mesto_registracije,
+            datum_registracije,
+            maticni_broj,
+            strana_registracije,
+        ) in parsed_data:
             try:
                 datum = date(godina, mesec, dan)
                 vreme = self._process_time_values(vreme)
 
-                datum_rodjenja = date(godina_rodjenja, mesec_rodjenja, dan_rodjenja) 
+                datum_rodjenja = date(godina_rodjenja, mesec_rodjenja, dan_rodjenja)
                 vreme_rodjenja = self._process_time_values(vreme_rodjenja)
 
                 # # tabela 'hramovi'
-                hram_instance, _ = Hram.objects.get_or_create(naziv=Konvertor.string(hram))
-                svestenik_instance, _ =  Svestenik.objects.get_or_create(uid=svestenik_id)
+                hram_instance, _ = Hram.objects.get_or_create(
+                    naziv=Konvertor.string(hram)
+                )
+                svestenik_instance, _ = Svestenik.objects.get_or_create(
+                    uid=svestenik_id
+                )
 
                 krstenje = Krstenje(
-                    redni_broj_krstenja_tekuca_godina = redni_broj_krstenja_tekuca_godina,
-                    krstenje_tekuca_godina = godina,
+                    redni_broj_krstenja_tekuca_godina=redni_broj_krstenja_tekuca_godina,
+                    krstenje_tekuca_godina=godina,
                     # podaci za registar(protokol) krstenih
-                    knjiga = Konvertor.int(knjiga.rstrip(), 0),
-                    broj = Konvertor.int(broj.rstrip(), 0),
-                    strana = Konvertor.int(strana, 0),
+                    knjiga=Konvertor.int(knjiga.rstrip(), 0),
+                    broj=Konvertor.int(broj.rstrip(), 0),
+                    strana=Konvertor.int(strana, 0),
                     # podaci o krstenju
-                    datum = datum,
-                    vreme = vreme,
-                    mesto = Konvertor.string(mesto),
-                    hram = hram_instance,
+                    datum=datum,
+                    vreme=vreme,
+                    mesto=Konvertor.string(mesto),
+                    hram=hram_instance,
                     # podaci o detetu
-                    adresa_deteta_grad = Konvertor.string(adresa_deteta_grad),
-                    adresa_deteta_ulica = Konvertor.string(adresa_deteta_ulica),
-                    adresa_deteta_broj = Konvertor.string(adresa_deteta_broj),
-                    datum_rodjenja = datum_rodjenja,
-                    vreme_rodjenja = vreme_rodjenja,
-                    mesto_rodjenja = Konvertor.string(mesto_rodjenja),
-                    ime_deteta = Konvertor.string(ime_deteta),
-                    gradjansko_ime_deteta = Konvertor.string(gradjansko_ime_deteta),
-                    pol_deteta = "М" if pol_deteta.rstrip() == "1" else "Ж",
+                    adresa_deteta_grad=Konvertor.string(adresa_deteta_grad),
+                    adresa_deteta_ulica=Konvertor.string(adresa_deteta_ulica),
+                    adresa_deteta_broj=Konvertor.string(adresa_deteta_broj),
+                    datum_rodjenja=datum_rodjenja,
+                    vreme_rodjenja=vreme_rodjenja,
+                    mesto_rodjenja=Konvertor.string(mesto_rodjenja),
+                    ime_deteta=Konvertor.string(ime_deteta),
+                    gradjansko_ime_deteta=Konvertor.string(gradjansko_ime_deteta),
+                    pol_deteta="М" if pol_deteta.rstrip() == "1" else "Ж",
                     # podaci o roditeljima
-                    ime_oca = Konvertor.string(ime_oca),
-                    prezime_oca = Konvertor.string(prezime_oca),
-                    zanimanje_oca = Konvertor.string(zanimanje_oca),
-                    adresa_oca_mesto = Konvertor.string(adresa_oca_mesto),
-                    veroispovest_oca = Konvertor.string(veroispovest_oca),
-                    narodnost_oca = Konvertor.string(narodnost_oca),
-                    ime_majke = Konvertor.string(ime_majke),
-                    prezime_majke = Konvertor.string(prezime_majke),
-                    zanimanje_majke = Konvertor.string(zanimanje_majke),
-                    adresa_majke_mesto = Konvertor.string(adresa_majke_mesto),
-                    veroispovest_majke = Konvertor.string(veroispovest_majke),
+                    ime_oca=Konvertor.string(ime_oca),
+                    prezime_oca=Konvertor.string(prezime_oca),
+                    zanimanje_oca=Konvertor.string(zanimanje_oca),
+                    adresa_oca_mesto=Konvertor.string(adresa_oca_mesto),
+                    veroispovest_oca=Konvertor.string(veroispovest_oca),
+                    narodnost_oca=Konvertor.string(narodnost_oca),
+                    ime_majke=Konvertor.string(ime_majke),
+                    prezime_majke=Konvertor.string(prezime_majke),
+                    zanimanje_majke=Konvertor.string(zanimanje_majke),
+                    adresa_majke_mesto=Konvertor.string(adresa_majke_mesto),
+                    veroispovest_majke=Konvertor.string(veroispovest_majke),
                     # ostali podaci o detetu
-                    dete_rodjeno_zivo = True if dete_rodjeno_zivo.rstrip() == "1" else False,
-                    dete_po_redu_po_majci = self._get_child_str(dete_po_redu_po_majci),
-                    dete_vanbracno = True if dete_vanbracno.rstrip() == "1" else False,
-                    dete_blizanac = True if  dete_blizanac.rstrip() == "1" else False,
-                    drugo_dete_blizanac_ime = Konvertor.string(drugo_dete_blizanac_ime),
-                    dete_sa_telesnom_manom = True if dete_sa_telesnom_manom.rstrip() == "1" else False,
+                    dete_rodjeno_zivo=(
+                        True if dete_rodjeno_zivo.rstrip() == "1" else False
+                    ),
+                    dete_po_redu_po_majci=self._get_child_str(dete_po_redu_po_majci),
+                    dete_vanbracno=True if dete_vanbracno.rstrip() == "1" else False,
+                    dete_blizanac=True if dete_blizanac.rstrip() == "1" else False,
+                    drugo_dete_blizanac_ime=Konvertor.string(drugo_dete_blizanac_ime),
+                    dete_sa_telesnom_manom=(
+                        True if dete_sa_telesnom_manom.rstrip() == "1" else False
+                    ),
                     # podaci o svesteniku
-                    svestenik = svestenik_instance,
+                    svestenik=svestenik_instance,
                     # podaci o kumu
-                    ime_kuma = Konvertor.string(ime_kuma),
-                    prezime_kuma = Konvertor.string(prezime_kuma),
-                    zanimanje_kuma = Konvertor.string(zanimanje_kuma),
-                    adresa_kuma_mesto = Konvertor.string(adresa_kuma_mesto),
+                    ime_kuma=Konvertor.string(ime_kuma),
+                    prezime_kuma=Konvertor.string(prezime_kuma),
+                    zanimanje_kuma=Konvertor.string(zanimanje_kuma),
+                    adresa_kuma_mesto=Konvertor.string(adresa_kuma_mesto),
                     # podaci iz matične knjige
-                    mesto_registracije = Konvertor.string(mesto_registracije),
-                    datum_registracije = datum_registracije,
-                    maticni_broj = maticni_broj,
-                    strana_registracije = strana_registracije,
-                    primedba = ""
+                    mesto_registracije=Konvertor.string(mesto_registracije),
+                    datum_registracije=datum_registracije,
+                    maticni_broj=maticni_broj,
+                    strana_registracije=strana_registracije,
+                    primedba="",
                 )
                 krstenje.save()
                 created_count += 1
@@ -126,60 +176,60 @@ class Command(BaseCommand):
     def _get_child_str(self, child_num):
         """
         process `child_num` string to return a str object.
-        
+
         Args:
             child_num (int): 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
-            
+
         Returns:
             str: A str object: 'прво', 'друго', 'треће', 'четврто', 'пето', 'шесто', 'седмо', 'осмо', 'девето', 'десето'
         """
 
         # List of Serbian ordinal numbers
         ordinal_numbers = [
-            'прво',   # 1
-            'друго',  # 2
-            'треће',  # 3
-            'четврто',# 4
-            'пето',   # 5
-            'шесто',  # 6
-            'седмо',  # 7
-            'осмо',   # 8
-            'девето',  # 9
-            'десето'   # 10
+            "прво",  # 1
+            "друго",  # 2
+            "треће",  # 3
+            "четврто",  # 4
+            "пето",  # 5
+            "шесто",  # 6
+            "седмо",  # 7
+            "осмо",  # 8
+            "девето",  # 9
+            "десето",  # 10
         ]
-        
+
         # Check if child_num is within the valid range
         if 1 <= child_num <= 10:
             return ordinal_numbers[child_num - 1]  # Indexing starts from 0
         else:
             raise ValueError("child_num must be an integer between 1 and 10.")
-    
+
     def _process_time_values(self, time_value_str):
         """
         process `time_value_str` string to return a time object.
-        
+
         Args:
             time_value (str): The time in either 'HH.MM' or 'HH' format.
-            
+
         Returns:
             time: A time object representing the processed time in format HH:MM:SS, or None if invalid.
         """
         # Initialize time_obj as None
         time_obj = None
-        
+
         # Strip whitespace and check if the string is not empty
         if time_value_str.rstrip() not in ["", " ", None]:
             time_value_str = time_value_str.rstrip()
-            #print("time_value_str: ", time_value_str)
+            # print("time_value_str: ", time_value_str)
 
             # Check if it contains a period `.`
-            if '.' in time_value_str:
+            if "." in time_value_str:
                 HH = time_value_str.split(".")[0]
                 MM = time_value_str.split(".")[1]
                 HH = Konvertor.int(HH, 12)
                 MM = Konvertor.int(MM, 0)
             # Check if it contains a comma `,`
-            elif ',' in time_value_str:
+            elif "," in time_value_str:
                 HH = time_value_str.split(",")[0]
                 MM = time_value_str.split(",")[1]
                 HH = Konvertor.int(HH, 12)
@@ -188,8 +238,7 @@ class Command(BaseCommand):
                 HH = time_value_str
                 HH = Konvertor.int(HH, 12)
                 MM = 0  # Set MM to 0 if no minutes are provided
-            
-            
+
             # Validate HH and MM
             if 0 <= HH < 24 and 0 <= MM <= 60:
                 time_obj = time(HH, MM, 0)
@@ -198,9 +247,9 @@ class Command(BaseCommand):
                 if HH == 24:
                     HH = 0
                 else:
-                    HH = 12 # Default HH to 12 if invalid
+                    HH = 12  # Default HH to 12 if invalid
                 time_obj = time(HH, MM, 0)
-            elif not (0 <= MM < 60): 
+            elif not (0 <= MM < 60):
                 print("Invalid time: MM must be in [0, 60), MM: ", MM)
                 MM = 0  # Default MM to 0 if invalid
                 time_obj = time(HH, MM, 0)
@@ -209,11 +258,11 @@ class Command(BaseCommand):
 
     def _parse_data(self):
         """
-        Migracija tabele 'HSPKRST.sqlite' 
+        Migracija tabele 'HSPKRST.sqlite'
             k_sifra         - redni_broj_krstenja_tekuca_godina
             k_aktgod        - godina krstenja
             k_datum         - datum krstenja
-            
+
             // registar(protokol) krstenih
             k_proknj        - knjiga krstenja
             k_probr         - broj krstenja
@@ -289,48 +338,127 @@ class Command(BaseCommand):
         parsed_data = []
         with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
             cursor = conn.cursor()
-            cursor.execute("""
-                SELECT 
-                    k_sifra, 
-                    k_proknj, k_protbr, k_protst, 
-                    k_iz, k_ulica, k_broj, k_rodjgod, k_rodjmese, k_rodjdan, k_rodjvre, k_rodjmest, 
-                    k_krsgod, k_krsmese, k_krsdan, k_krsvre, k_krsmest, k_krshram, 
-                    k_detime, k_detimeg, k_detpol, 
-                    k_rodime, k_rodprez, k_rodzanim, k_rodmest, k_rodvera, k_rodnarod, 
-                    k_rod2ime, k_rod2prez, k_rod2zan, k_rod2mest, k_rod2vera, 
-                    k_detzivo, k_detkoje, k_detbrac, k_detbliz, k_detbliz2, k_detmana, 
-                    k_rbrsve, 
-                    k_kumime, k_kumprez, k_kumzanim, k_kummest, 
-                    k_regmesto, k_regkada, k_regbroj, k_regstr 
+            cursor.execute(
+                """
+                SELECT
+                    k_sifra,
+                    k_proknj, k_protbr, k_protst,
+                    k_iz, k_ulica, k_broj, k_rodjgod, k_rodjmese, k_rodjdan, k_rodjvre, k_rodjmest,
+                    k_krsgod, k_krsmese, k_krsdan, k_krsvre, k_krsmest, k_krshram,
+                    k_detime, k_detimeg, k_detpol,
+                    k_rodime, k_rodprez, k_rodzanim, k_rodmest, k_rodvera, k_rodnarod,
+                    k_rod2ime, k_rod2prez, k_rod2zan, k_rod2mest, k_rod2vera,
+                    k_detzivo, k_detkoje, k_detbrac, k_detbliz, k_detbliz2, k_detmana,
+                    k_rbrsve,
+                    k_kumime, k_kumprez, k_kumzanim, k_kummest,
+                    k_regmesto, k_regkada, k_regbroj, k_regstr
                 FROM HSPKRST
-            """)
+            """
+            )
             krstenja = cursor.fetchall()
-            #print(f"Number of rows fetched: {len(krstenja)}")
+            # print(f"Number of rows fetched: {len(krstenja)}")
 
-            for krstenje in krstenja: 
-                redni_broj_krstenja_tekuca_godina, \
-                knjiga, broj, strana, \
-                adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, \
-                godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram, \
-                ime_deteta, gradjansko_ime_deteta, pol_deteta, \
-                ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, \
-                ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, \
-                dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, \
-                svestenik_id, \
-                ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, \
-                mesto_registracije, datum_registracije, maticni_broj, strana_registracije = krstenje
-            
-                parsed_data.append((redni_broj_krstenja_tekuca_godina, 
-                    knjiga, broj, strana, 
-                    adresa_deteta_grad, adresa_deteta_ulica, adresa_deteta_broj, godina_rodjenja, mesec_rodjenja, dan_rodjenja, vreme_rodjenja, mesto_rodjenja, 
-                    godina_krstenja, mesec_krstenja, dan_krstenja, vreme_krstenja, mesto_krstenja, hram, 
-                    ime_deteta, gradjansko_ime_deteta, pol_deteta, 
-                    ime_oca, prezime_oca, zanimanje_oca, adresa_oca_mesto, veroispovest_oca, narodnost_oca, 
-                    ime_majke, prezime_majke, zanimanje_majke, adresa_majke_mesto, veroispovest_majke, 
-                    dete_rodjeno_zivo, dete_po_redu_po_majci, dete_vanbracno, dete_blizanac, drugo_dete_blizanac_ime, dete_sa_telesnom_manom, 
-                    svestenik_id, 
-                    ime_kuma, prezime_kuma, zanimanje_kuma, adresa_kuma_mesto, 
-                    mesto_registracije, datum_registracije, maticni_broj, strana_registracije ))
-            
+            for krstenje in krstenja:
+                (
+                    redni_broj_krstenja_tekuca_godina,
+                    knjiga,
+                    broj,
+                    strana,
+                    adresa_deteta_grad,
+                    adresa_deteta_ulica,
+                    adresa_deteta_broj,
+                    godina_rodjenja,
+                    mesec_rodjenja,
+                    dan_rodjenja,
+                    vreme_rodjenja,
+                    mesto_rodjenja,
+                    godina_krstenja,
+                    mesec_krstenja,
+                    dan_krstenja,
+                    vreme_krstenja,
+                    mesto_krstenja,
+                    hram,
+                    ime_deteta,
+                    gradjansko_ime_deteta,
+                    pol_deteta,
+                    ime_oca,
+                    prezime_oca,
+                    zanimanje_oca,
+                    adresa_oca_mesto,
+                    veroispovest_oca,
+                    narodnost_oca,
+                    ime_majke,
+                    prezime_majke,
+                    zanimanje_majke,
+                    adresa_majke_mesto,
+                    veroispovest_majke,
+                    dete_rodjeno_zivo,
+                    dete_po_redu_po_majci,
+                    dete_vanbracno,
+                    dete_blizanac,
+                    drugo_dete_blizanac_ime,
+                    dete_sa_telesnom_manom,
+                    svestenik_id,
+                    ime_kuma,
+                    prezime_kuma,
+                    zanimanje_kuma,
+                    adresa_kuma_mesto,
+                    mesto_registracije,
+                    datum_registracije,
+                    maticni_broj,
+                    strana_registracije,
+                ) = krstenje
+
+                parsed_data.append(
+                    (
+                        redni_broj_krstenja_tekuca_godina,
+                        knjiga,
+                        broj,
+                        strana,
+                        adresa_deteta_grad,
+                        adresa_deteta_ulica,
+                        adresa_deteta_broj,
+                        godina_rodjenja,
+                        mesec_rodjenja,
+                        dan_rodjenja,
+                        vreme_rodjenja,
+                        mesto_rodjenja,
+                        godina_krstenja,
+                        mesec_krstenja,
+                        dan_krstenja,
+                        vreme_krstenja,
+                        mesto_krstenja,
+                        hram,
+                        ime_deteta,
+                        gradjansko_ime_deteta,
+                        pol_deteta,
+                        ime_oca,
+                        prezime_oca,
+                        zanimanje_oca,
+                        adresa_oca_mesto,
+                        veroispovest_oca,
+                        narodnost_oca,
+                        ime_majke,
+                        prezime_majke,
+                        zanimanje_majke,
+                        adresa_majke_mesto,
+                        veroispovest_majke,
+                        dete_rodjeno_zivo,
+                        dete_po_redu_po_majci,
+                        dete_vanbracno,
+                        dete_blizanac,
+                        drugo_dete_blizanac_ime,
+                        dete_sa_telesnom_manom,
+                        svestenik_id,
+                        ime_kuma,
+                        prezime_kuma,
+                        zanimanje_kuma,
+                        adresa_kuma_mesto,
+                        mesto_registracije,
+                        datum_registracije,
+                        maticni_broj,
+                        strana_registracije,
+                    )
+                )
+
         return parsed_data
-

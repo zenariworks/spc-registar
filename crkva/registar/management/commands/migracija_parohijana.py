@@ -1,11 +1,14 @@
 """
 Migracija tabele `HSPDOMACINI.sqlite` (tabele domacina) u tabele: 'adresa', 'parohijani'
 """
+
 import sqlite3
+
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from registar.models import Ulica, Parohijan, Adresa, Slava
 from registar.management.commands.convert_utils import Konvertor
+from registar.models import Adresa, Parohijan, Slava, Ulica
+
 
 class Command(BaseCommand):
     """
@@ -14,6 +17,7 @@ class Command(BaseCommand):
     cmd:
     docker compose run --rm app sh -c "python manage.py migracija_parohijana"
     """
+
     help = "Migracija tabele `HSPDOMACINI.sqlite` (tabela domacina) u tabele: 'adrese', 'parohijani'"
 
     def handle(self, *args, **kwargs):
@@ -21,8 +25,20 @@ class Command(BaseCommand):
         parsed_data = self._parse_data()
         created_count = 0
 
-        for parohijan_uid, ime_prezime, ulica_uid, broj_ulice, oznaka_ulice, broj_stana, \
-            telefon_fiksni, telefon_mobilni, slava_uid, slavska_vodica, uskrsnja_vodica, napomena in parsed_data:
+        for (
+            parohijan_uid,
+            ime_prezime,
+            ulica_uid,
+            broj_ulice,
+            oznaka_ulice,
+            broj_stana,
+            telefon_fiksni,
+            telefon_mobilni,
+            slava_uid,
+            slavska_vodica,
+            uskrsnja_vodica,
+            napomena,
+        ) in parsed_data:
             try:
                 # print("ulica_uid: " + str(ulica_uid)) 
                 # uid=Ulica.objects.get(uid=ulica_uid).uid,
@@ -45,7 +61,7 @@ class Command(BaseCommand):
                     dodatak=Konvertor.string(oznaka_ulice),
                     postkod=None,
                     primedba=Konvertor.string(napomena),
-                    ulica=Ulica.objects.get(uid=ulica_uid)
+                    ulica=Ulica.objects.get(uid=ulica_uid),
                 )
                 adresa_instance.save()
 
@@ -82,7 +98,7 @@ class Command(BaseCommand):
                     devojacko_prezime=None,
                     zanimanje=None,
                     veroispovest=None,
-                    narodnost=None
+                    narodnost=None,
                 )
                 parohijan.save()
 
@@ -99,8 +115,8 @@ class Command(BaseCommand):
 
     def _parse_data(self):
         """
-        Migracija tabele 'HSPDOMACINI.sqlite' 
-            dom_sifra       - parohijan_uid, 
+        Migracija tabele 'HSPDOMACINI.sqlite'
+            dom_sifra       - parohijan_uid,
             dom_ime         - ime i prezime
             dom_rbrul       - ulica_id  (npr. Radnicka je 22)
             dom_broj        - broj ulice (npr. 42)
@@ -118,15 +134,42 @@ class Command(BaseCommand):
         parsed_data = []
         with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
             cursor = conn.cursor()
-            cursor.execute("SELECT dom_rbr, dom_ime, dom_rbrul, dom_broj, dom_oznaka, dom_stan, \
-                           dom_teldir, dom_telmob, dom_rbrsl, dom_slavod, dom_uskvod, dom_napom FROM HSPDOMACINI")
+            cursor.execute(
+                "SELECT dom_rbr, dom_ime, dom_rbrul, dom_broj, dom_oznaka, dom_stan, \
+                           dom_teldir, dom_telmob, dom_rbrsl, dom_slavod, dom_uskvod, dom_napom FROM HSPDOMACINI"
+            )
             rows = cursor.fetchall()
 
             for row in rows:
-                parohijan_uid, ime_prezime, ulica_uid, broj_ulice, oznaka_ulice, broj_stana, telefon_fiksni, \
-                    telefon_mobilni, slava_uid, slavska_vodica, uskrsnja_vodica, napomena = row
-                parsed_data.append((parohijan_uid, ime_prezime, ulica_uid, broj_ulice, oznaka_ulice, broj_stana, telefon_fiksni, \
-                                    telefon_mobilni, slava_uid, slavska_vodica, uskrsnja_vodica, napomena))
+                (
+                    parohijan_uid,
+                    ime_prezime,
+                    ulica_uid,
+                    broj_ulice,
+                    oznaka_ulice,
+                    broj_stana,
+                    telefon_fiksni,
+                    telefon_mobilni,
+                    slava_uid,
+                    slavska_vodica,
+                    uskrsnja_vodica,
+                    napomena,
+                ) = row
+                parsed_data.append(
+                    (
+                        parohijan_uid,
+                        ime_prezime,
+                        ulica_uid,
+                        broj_ulice,
+                        oznaka_ulice,
+                        broj_stana,
+                        telefon_fiksni,
+                        telefon_mobilni,
+                        slava_uid,
+                        slavska_vodica,
+                        uskrsnja_vodica,
+                        napomena,
+                    )
+                )
 
         return parsed_data
-
