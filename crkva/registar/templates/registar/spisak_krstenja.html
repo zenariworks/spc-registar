@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load custom_filters %}
 
 {% block content %}
     <div class="header-container">
@@ -6,13 +7,15 @@
     </div>
     <form method="get" action="" class="form-container">
         {{ filter.form.as_p }}
-        {% comment %} <input type="submit" value="Претражи" class="submit-button"> {% endcomment %}
     </form>
     <ul class="spisak">
         {% for krstenje in krstenja %}
             <li class="stavka">
                 <a href="{% url 'krstenje_detail' uid=krstenje.uid %}" class="stavka-veza">
-                    {{ krstenje.datum }}: {{ krstenje.ime_deteta }} ({{ krstenje.ime_oca }} {{ krstenje.prezime_oca }} и {{ krstenje.ime_majke }} {{ krstenje.prezime_majke }})
+                    {{ krstenje.datum }}:
+                    {{ krstenje.ime_deteta|highlight:search_query|safe }}&nbsp;
+                    ({{ krstenje.ime_oca|highlight:search_query|safe }}&nbsp;{{ krstenje.prezime_oca|highlight:search_query|safe }}&nbsp;
+                    и&nbsp;{{ krstenje.ime_majke|highlight:search_query|safe }}&nbsp;{{ krstenje.prezime_majke|highlight:search_query|safe }})
                 </a>
                 <a href="{% url 'krstenje_pdf' uid=krstenje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
                     <button class="dugme-crveno" type="button">Штампа</button>
@@ -26,8 +29,8 @@
     <div class="pagination">
         <span class="step-links">
             {% if page_obj.has_previous %}
-                <a href="?page=1" class="page-link">&laquo; прва</a>
-                <a href="?page={{ page_obj.previous_page_number }}" class="page-link">претходна</a>
+                <a href="?page=1&{{ request.GET.urlencode }}" class="page-link">&laquo; прва</a>
+                <a href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode }}" class="page-link">претходна</a>
             {% endif %}
 
             <span class="current">
@@ -35,8 +38,8 @@
             </span>
 
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}" class="page-link">следеђа</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}" class="page-link">последња &raquo;</a>
+                <a href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode }}" class="page-link">следеђа</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}&{{ request.GET.urlencode }}" class="page-link">последња &raquo;</a>
             {% endif %}
         </span>
     </div>

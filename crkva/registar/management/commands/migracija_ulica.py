@@ -44,8 +44,7 @@ class Command(BaseCommand):
         for ulice_id, naziv_ulice, svestenik_id in parsed_data_streets:
             try:
                 naziv_ulice = naziv_ulice.strip()
-                #print("ime_prezime: " + ime_prezime + ", svestenik_id: " + str(svestenik_id))
-            
+
                 if naziv_ulice == "" or naziv_ulice == None:
                     continue
 

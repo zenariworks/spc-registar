@@ -1,4 +1,6 @@
-"""Модул модела крштења у бази података."""
+"""
+Модул модела крштења у бази података.
+"""
 
 import uuid
 
@@ -13,7 +15,6 @@ class Krstenje(models.Model):
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    # tekuca godina i redni broj krstenja u godini
     redni_broj_krstenja_tekuca_godina = models.IntegerField(
         verbose_name="редни број крштења текућа година"
     )
@@ -135,7 +136,6 @@ class Krstenje(models.Model):
         max_length=255, verbose_name="страна регистрације", null=True, blank=True
     )
 
-    # anagraf = models.TextField(verbose_name="анаграф", null=True, blank=True)
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
     def __str__(self):
@@ -144,5 +144,5 @@ class Krstenje(models.Model):
     class Meta:
         managed = True
         db_table = "krstenja"
-        verbose_name = "Крштењe"
+        verbose_name = "Крштење"
         verbose_name_plural = "Крштења"

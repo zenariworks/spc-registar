@@ -32,25 +32,10 @@ class Command(BaseCommand):
                     naziv=broj_parohije
                 )
 
-                # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
-                # i unesi kao ime i prezime
-                ime = ''
-                prezime = ''
-                ime_prezime = ime_prezime.strip()
-                #print("ime_prezime: " + ime_prezime + ", svestenik_id: " + str(svestenik_id))
-            
-                if ime_prezime == "" or ime_prezime == None:
-                    continue
-                if " " in ime_prezime:
-                    ime_prezime = ime_prezime.split(" ")
-                    ime = ime_prezime[0]
-                    prezime = ime_prezime[1]
-                else :
-                    ime = ime_prezime
-
+                ime, prezime = (ime_prezime.strip().split(" ", 1) + [""])[:2]
                 svestenik = Svestenik(
                     uid=svestenik_id,
-                    ime= Konvertor.string(ime),
+                    ime=Konvertor.string(ime),
                     prezime=Konvertor.string(prezime),
                     mesto_rodjenja="",
                     datum_rodjenja=datum_rodjenja,
@@ -73,17 +58,8 @@ class Command(BaseCommand):
     def _convert_roman_to_integer(self, parohija):
         # Define a mapping from Roman numerals to integers
         roman_to_int = {"I": "1", "II": "2", "III": "3", "1": "1", "2": "2", "3": "3"}
-
-        # remove spaces from the end of the string
         parohija = parohija.rstrip()
-        # print("roman_numeral: " + parohija)
-
-        # Convert each Roman numeral to its integer value
-        # converted_value = roman_to_int.get(roman_numeral, None)
-
-        # vrati '0' za broj parohije ako svesteniku nije dodeljena parohija koja ima redni broj [1,2,3]
         converted_value = roman_to_int.get(parohija, 0)
-        #print("broj_parohije: " + str(converted_value))
         return converted_value
 
     def _parse_data(self):
