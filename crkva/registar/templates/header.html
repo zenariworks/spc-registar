@@ -12,7 +12,9 @@
      </button>
      <nav id="menu">
         <ul>
-           <li>
+         <li><a href="{% url 'krstenja' %}">Крштења</a></li>
+         <li><a href="{% url 'vencanja' %}">Венчања</a></li>
+           {% comment %} <li>
               <a href="#">Спискови</a>
               <ul class="dropdown">
                  <li><a href="{% url 'krstenja' %}">Крштења</a></li>
@@ -29,7 +31,7 @@
                  <li><a href="{% url 'pocetna' %}">Свештеници</a></li>
                  <li><a href="{% url 'unos_parohijana' %}">Парохијан</a></li>
               </ul>
-           </li>
+           </li> {% endcomment %}
            <li class="search-icon">
               <a href="#" id="search-trigger" class="fusion-main-menu-icon">
               <i class="ti-search"></i>
