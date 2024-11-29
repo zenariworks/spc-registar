@@ -40,20 +40,9 @@ class Command(BaseCommand):
             napomena,
         ) in parsed_data:
             try:
-                # print("ulica_uid: " + str(ulica_uid)) 
-                # uid=Ulica.objects.get(uid=ulica_uid).uid,
-                # print("uid: " + str(uid)) 
-                # print("slavska_vodica: " + slavska_vodica) 
-
-                # if type(slava_uid) == int:
-                #     print("slava_uid is an integer.")
-                # elif type(slava_uid) == str:
-                #     print("slava_uid is a string.")
-
                 if ulica_uid == None or ulica_uid == 0:
                     continue
                 
-                # tabela 'adrese'
                 adresa_instance = Adresa(
                     broj=broj_ulice,
                     sprat=None,
@@ -65,22 +54,7 @@ class Command(BaseCommand):
                 )
                 adresa_instance.save()
 
-                # tabela 'parohijani'
-                # razdvoji ime i prezime" "ime prezime" -> ["ime", "prezime"]
-                # i unesi kao ime i prezime
-                ime = ''
-                prezime = ''
-                ime_prezime = ime_prezime.strip()
-                #if ime_prezime == "" or ime_prezime == None:
-                #    continue
-                if " " in ime_prezime:
-                    ime_prezime = ime_prezime.split(" ")
-                    ime = ime_prezime[0]
-                    prezime = ime_prezime[1]
-                else :
-                    ime = ime_prezime
-
-
+                ime, prezime = (ime_prezime.strip().split(" ", 1) + [""])[:2]
                 parohijan = Parohijan(
                     uid=parohijan_uid,
                     ime=Konvertor.string(ime),

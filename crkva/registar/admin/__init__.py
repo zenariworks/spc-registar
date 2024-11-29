@@ -1,7 +1,6 @@
 from django.contrib import admin
 from registar.models.adresa import Adresa
 from registar.models.crkvena_opstina import CrkvenaOpstina
-
 from registar.models.drzava import Drzava
 from registar.models.eparhija import Eparhija
 from registar.models.hram import Hram
@@ -19,7 +18,6 @@ from registar.models.zanimanje import Zanimanje
 
 from .adresa_admin import AdresaAdmin
 from .crkvena_opstina_admin import CrkvenaOpstinaAdmin
-
 from .drzava_admin import DrzavaAdmin
 from .eparhija_admin import EparhijaAdmin
 from .hram_admin import HramAdmin
