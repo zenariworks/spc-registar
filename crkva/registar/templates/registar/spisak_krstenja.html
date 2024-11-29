@@ -4,10 +4,16 @@
 {% block content %}
     <div class="header-container">
         <h1 style="margin: 0;">Крштења</h1>
+        <form method="get" action="" class="form-container">
+            <input
+                type="text"
+                name="search"
+                value="{{ request.GET.search|default:'' }}"
+                placeholder="Филтер за претрагу"
+                class="search-input"
+            >
+        </form>
     </div>
-    <form method="get" action="" class="form-container">
-        {{ filter.form.as_p }}
-    </form>
     <ul class="spisak">
         {% for krstenje in krstenja %}
             <li class="stavka">
