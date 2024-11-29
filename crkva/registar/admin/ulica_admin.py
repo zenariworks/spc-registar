@@ -3,7 +3,7 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 from registar.models import Mesto
-
+from registar.models import Ulica
 
 class DrzavaFilter(admin.SimpleListFilter):
     """Класа за филтрирање држава"""
@@ -52,6 +52,7 @@ class MestoFilter(admin.SimpleListFilter):
         return queryset
 
 
+@admin.register(Ulica)
 class UlicaAdmin(admin.ModelAdmin):
     """Класа админ интерфејса модела Улица."""
 

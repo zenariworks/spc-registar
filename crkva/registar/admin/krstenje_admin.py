@@ -2,8 +2,9 @@
 
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
+from registar.models import Krstenje
 
-
+@admin.register(Krstenje)
 class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Крштење."""
 

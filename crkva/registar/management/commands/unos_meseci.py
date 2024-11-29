@@ -4,7 +4,7 @@
 
 from django.core.management.base import BaseCommand
 from registar.models import Mesec
-from registar.utils import GREGORIAN_MONTHS
+from registar.utils import MESECI
 
 
 class Command(BaseCommand):
@@ -15,7 +15,7 @@ class Command(BaseCommand):
     help = "Попуњава табелу Месец са месецима и њиховим називима на српском ћирилицом"
 
     def handle(self, *args, **kwargs):
-        meseci = GREGORIAN_MONTHS
+        meseci = MESECI
 
         for redni_broj, naziv in meseci.items():
             Mesec.objects.get_or_create(mesec=redni_broj, naziv=naziv)
