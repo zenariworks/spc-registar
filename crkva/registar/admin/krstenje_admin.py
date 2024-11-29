@@ -13,7 +13,7 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "krstenje_tekuca_godina",
         "knjiga",
         "broj",
-        "strana", 
+        "strana",
         "datum",
         "vreme",
         "mesto",
@@ -54,7 +54,5 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "strana_registracije",
         "primedba",
     )
-    fieldsets = (
-        (None, {"fields": ("knjiga", "broj", "strana")}),
-    )
+    fieldsets = ((None, {"fields": ("knjiga", "broj", "strana")}),)
     readonly_fields = ("uid",)

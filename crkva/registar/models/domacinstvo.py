@@ -5,7 +5,6 @@ import uuid
 from django.db import models
 
 from .adresa import Adresa
-from .parohijan import Parohijan
 from .slava import Slava
 
 # from phonenumber_field.modelfields import PhoneNumberField
@@ -15,9 +14,9 @@ class Domacinstvo(models.Model):
     """Класа која представља домаћинства."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    #domacin = models.ForeignKey(
+    # domacin = models.ForeignKey(
     #    Parohijan, on_delete=models.CASCADE, null=False, verbose_name="домаћин"
-    #)
+    # )
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
     )
