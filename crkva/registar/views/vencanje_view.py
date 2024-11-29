@@ -21,9 +21,9 @@ class SpisakVencanja(FilterView, ListView):
 
     def get_queryset(self):
         """Филтрира податке на основу захтева корисника."""
-        return self.filterset_class(
-            self.request.GET, queryset=super().get_queryset()
-        ).qs
+        queryset = super().get_queryset()
+        filtered_queryset = self.filterset_class(self.request.GET, queryset=queryset).qs
+        return filtered_queryset.order_by("datum")
 
     def get_context_data(self, **kwargs):
         """Додаје филтер и претражени текст у контекст шаблона."""
