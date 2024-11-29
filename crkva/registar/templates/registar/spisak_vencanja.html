@@ -4,11 +4,16 @@
 {% block content %}
     <div class="header-container">
         <h1 style="margin: 0;">Венчања</h1>
+        <form method="get" action="" class="form-container">
+            <input
+                type="text"
+                name="search"
+                value="{{ request.GET.search|default:'' }}"
+                placeholder="Филтер за претрагу"
+                class="search-input"
+            >
+        </form>
     </div>
-    <form method="get" action="" class="form-container">
-        {{ filter.form.as_p }} <!-- Prikazuje filter formu -->
-        {% comment %} <input type="submit" value="Претражи" class="submit-button"> {% endcomment %}
-    </form>
     <ul class="spisak">
         {% for vencanje in vencanja %}
             <li class="stavka">
