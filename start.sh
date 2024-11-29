@@ -12,6 +12,5 @@ docker compose run --rm app sh -c "python manage.py migracija_krstenja"
 docker compose run --rm app sh -c "python manage.py migracija_vencanja"
 
 # run both db and app containers
-# docker compose up -d 
+# docker compose up -d
 docker compose up
-

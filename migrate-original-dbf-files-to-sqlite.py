@@ -1,11 +1,11 @@
+import argparse
+import glob
 import os
 import shutil
-import argparse
-import pandas as pd
 import sqlite3
-from dbfread import DBF
-import glob
 
+import pandas as pd
+from dbfread import DBF
 
 # Ovaj :
 #   - kopira fajlove sa originalne putanje '/c/HramSP/dbf' u '/c/crkva/crkva/fixtures' gde se nalazi ova skripta
@@ -20,11 +20,12 @@ def copy_dbf_files(src_dir, dest_dir):
         os.makedirs(dest_dir)  # Create the destination directory if it doesn't exist
 
     for file_name in os.listdir(src_dir):
-        if file_name.endswith('.dbf') or file_name.endswith('.DBF'):
+        if file_name.endswith(".dbf") or file_name.endswith(".DBF"):
             src_file = os.path.join(src_dir, file_name)
             dest_file = os.path.join(dest_dir, file_name)
             shutil.copy(src_file, dest_file)
             print(f"Copied: {file_name} to {dest_dir}")
+
 
 # Originalni fajlovi (tabele) iz starog programa za hram sv.Petke 'hsp' su u .dbf formatu
 # i nalaze se u folderu:
@@ -36,19 +37,20 @@ def copy_dbf_files(src_dir, dest_dir):
 # Ovaj program kombinuje sve .dbf fajlove od interesa u jedinstvenu bazu 'combined_original_hsp_database.sqlite'
 # koja sadrzi originalne tabele stare baze
 
+
 def convert_all_hsp_dbf_files_to_sqlite():
     dbf_files = {
-        'HSPDOMACINI.DBF': 'HSPDOMACINI',
-        'HSPKRST.DBF': 'HSPKRST',
-        'HSPSLAVE.DBF': 'HSPSLAVE',
-        'HSPSVEST.DBF': 'HSPSVEST',
-        'HSPUKUCANI.DBF': 'HSPUKUCANI',
-        'HSPULICE.DBF': 'HSPULICE',
-        'HSPVENC.DBF': 'HSPVENC'
+        "HSPDOMACINI.DBF": "HSPDOMACINI",
+        "HSPKRST.DBF": "HSPKRST",
+        "HSPSLAVE.DBF": "HSPSLAVE",
+        "HSPSVEST.DBF": "HSPSVEST",
+        "HSPUKUCANI.DBF": "HSPUKUCANI",
+        "HSPULICE.DBF": "HSPULICE",
+        "HSPVENC.DBF": "HSPVENC",
     }
-    
+
     # Path for the .sqlite database
-    sqlite_db_path = 'combined_original_hsp_database.sqlite'
+    sqlite_db_path = "combined_original_hsp_database.sqlite"
 
     # Remove the existing .sqlite database file
     remove_matching_files(sqlite_db_path)
@@ -63,15 +65,15 @@ def convert_all_hsp_dbf_files_to_sqlite():
     # remove all .dbf files
     remove_matching_files("*.dbf")
     remove_matching_files("*.DBF")
-    
-    #remove_matching_files("crkva\registar\migrations\0*")
+
+    # remove_matching_files("crkva\registar\migrations\0*")
 
 
-# Konvertuje .dbf fajl u .sqlite 
+# Konvertuje .dbf fajl u .sqlite
 def convert_dbf_to_sqlite(dbf_file, sqlite_db_file, table_name):
     # Read the DBF file
     dbf_data = DBF(dbf_file)
-    
+
     # Convert DBF data to a pandas DataFrame
     df = pd.DataFrame(iter(dbf_data))
 
@@ -79,7 +81,7 @@ def convert_dbf_to_sqlite(dbf_file, sqlite_db_file, table_name):
     conn = sqlite3.connect(sqlite_db_file)
 
     # Write the DataFrame to the SQLite database
-    df.to_sql(table_name, conn, if_exists='replace', index=False)
+    df.to_sql(table_name, conn, if_exists="replace", index=False)
 
     # Close the connection
     conn.close()
@@ -88,11 +90,14 @@ def convert_dbf_to_sqlite(dbf_file, sqlite_db_file, table_name):
 def change_working_directory(new_dir):
     try:
         os.chdir(new_dir)  # Change the current working directory
-        print(f"Changed working directory to: {os.getcwd()}")  # Print the new working directory
+        print(
+            f"Changed working directory to: {os.getcwd()}"
+        )  # Print the new working directory
     except FileNotFoundError:
         print(f"Error: The directory '{new_dir}' does not exist.")
     except PermissionError:
         print(f"Error: Permission denied to change to '{new_dir}'.")
+
 
 def remove_matching_files(pattern):
     # Use glob to find files matching the pattern
@@ -104,12 +109,12 @@ def remove_matching_files(pattern):
         except OSError as e:
             print(f"Error removing file {file}: {e}")
 
+
 def main():
     # Define source and destination directories
     # src_dir = r"C:\HramSP\dbf"
     # dest_dir = r"C:\crkva\crkva\fixtures"
 
-   
     # Set up argument parsing - my home setup
     # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
     # parser.add_argument('--src_dir', type=str, default='e:\\projects\\hram-svete-petke\\resources\\dbf', help='Source directory containing .dbf files')
@@ -120,41 +125,50 @@ def main():
     # parser.add_argument('--src_dir', type=str, default='/mnt/c/HramSP/dbf', help='Source directory containing .dbf files')
     # parser.add_argument('--dest_dir', type=str, default='/mnt/c/crkva/crkva/fixtures', help='Destination directory to copy .dbf files to')
 
-    
     # WSL setup (home)
     # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
     # parser.add_argument('--src_dir', type=str, default='/mnt/e/projects/hram-svete-petke/resources/dbf', help='Source directory containing .dbf files')
     # parser.add_argument('--dest_dir', type=str, default='crkva/fixtures', help='Destination directory to copy .dbf files to')
 
     # Linux setup (home)
-    parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
-    parser.add_argument('--src_dir', type=str, default='../resources/dbf', help='Source directory containing .dbf files')
-    parser.add_argument('--dest_dir', type=str, default='crkva/fixtures', help='Destination directory to copy .dbf files to')
+    parser = argparse.ArgumentParser(
+        description="Copy .dbf files from source to destination."
+    )
+    parser.add_argument(
+        "--src_dir",
+        type=str,
+        default="../resources/dbf",
+        help="Source directory containing .dbf files",
+    )
+    parser.add_argument(
+        "--dest_dir",
+        type=str,
+        default="crkva/fixtures",
+        help="Destination directory to copy .dbf files to",
+    )
 
-
-    #parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
-    #parser.add_argument('--src_dir', type=str, default='C:\\HramSP\\dbf', help='Source directory containing .dbf files')
-    #parser.add_argument('--dest_dir', type=str, default='C:\\crkva\\crkva\\fixtures', help='Destination directory to copy .dbf files to')
+    # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
+    # parser.add_argument('--src_dir', type=str, default='C:\\HramSP\\dbf', help='Source directory containing .dbf files')
+    # parser.add_argument('--dest_dir', type=str, default='C:\\crkva\\crkva\\fixtures', help='Destination directory to copy .dbf files to')
 
     # Parse the arguments
     args = parser.parse_args()
-
 
     # Copy all .dbf files from the source directory to the destination directory
     copy_dbf_files(args.src_dir, args.dest_dir)
 
     home_dir = os.getcwd()
     print("Current working directory:", home_dir)
-    
+
     # change directory to dest_dir
     change_working_directory(args.dest_dir)
-    
-    # migrate database 
+
+    # migrate database
     convert_all_hsp_dbf_files_to_sqlite()
 
     # change directory to home directory
     change_working_directory(home_dir)
 
+
 if __name__ == "__main__":
     main()
-

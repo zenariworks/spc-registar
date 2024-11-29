@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# This script is used to recreate the database from the original dbf files and rebuild the app. 
+# This script is used to recreate the database from the original dbf files and rebuild the app.
 #
 
 set -x
@@ -55,17 +55,17 @@ function recreate_database(){
 
     # remove migration files
     delete_migrations
-    
+
     # stop and remove db container and image if exist
     DB_CONTAINER_NAME="crkva-db-1"
     delete_docker_container "${DB_CONTAINER_NAME}"
 
     #docker rmi postgres:13-alpine
     #docker images
-    
+
     # create database image: postgres:13-alpine
     docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
-    
+
     docker compose run --rm app sh -c "python manage.py unosi"
     docker compose run --rm app sh -c "python manage.py unos_meseci"
     docker compose run --rm app sh -c "python manage.py migracija_slava"
@@ -88,11 +88,11 @@ function rebuild_app(){
     # stop and remove app container if exist
     APP_CONTAINER_NAME="crkva-app-1"
     delete_docker_container "${APP_CONTAINER_NAME}"
-   
+
     docker compose build
-    
-    # run both containers 
-    # docker compose up 
+
+    # run both containers
+    # docker compose up
 }
 readonly -f rebuild_app
 

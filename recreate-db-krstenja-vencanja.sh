@@ -10,13 +10,13 @@ function update_krstenja_vencanja(){
     # stop and remove db container
     docker stop crkva-db-1
     docker rm crkva-db-1
-    
+
     # update krstenja and vencanja
     docker compose run --rm app sh -c "python manage.py migracija_krstenja"
     docker compose run --rm app sh -c "python manage.py migracija_vencanja"
-    
+
     # run app
-    docker compose up 
+    docker compose up
 }
 readonly -f update_krstenja_vencanja
 

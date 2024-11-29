@@ -3,20 +3,20 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 :recreate_database
-    
+
     # migrate .dbf files to .sqlite database
     python migrate-original-dbf-files-to-sqlite.py
 
     # Remove migration files
     del /Q "crkva\registar\migrations\0*"
-    
+
     # Stop and remove db container
     docker stop crkva-db-1
     docker rm crkva-db-1
 
     # Create database image: postgres:13-alpine
     docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
-    
+
     docker compose run --rm app sh -c "python manage.py unosi"
     docker compose run --rm app sh -c "python manage.py unos_meseci"
     docker compose run --rm app sh -c "python manage.py migracija_slava"
