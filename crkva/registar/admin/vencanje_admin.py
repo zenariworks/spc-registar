@@ -2,7 +2,9 @@
 
 from django.contrib import admin
 
+from registar.models import Vencanje
 
+@admin.register(Vencanje)
 class VencanjeAdmin(admin.ModelAdmin):
     """Класа админ интерфејса модела Венчање."""
 
