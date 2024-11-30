@@ -23,6 +23,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
 
+        # clear the table before migrating the data
+        Vencanje.objects.all().delete()
+
         parsed_data = self._parse_data()
         # print(f"parsed_data: {len(parsed_data)}")
 
