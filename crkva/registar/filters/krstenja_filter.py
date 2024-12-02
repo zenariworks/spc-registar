@@ -4,6 +4,8 @@
 
 import django_filters
 from django.db import models
+from django.db.models.functions import Cast
+
 from registar.models import Krstenje
 
 
@@ -17,14 +19,23 @@ class KrstenjeFilter(django_filters.FilterSet):
         fields = []
 
     def filter_search(self, queryset, name, value):
-        """Претражује уносе на основу више текстуалних поља."""
-        return queryset.filter(
-            models.Q(ime_deteta__icontains=value)
-            | models.Q(gradjansko_ime_deteta__icontains=value)
-            | models.Q(ime_oca__icontains=value)
-            | models.Q(prezime_oca__icontains=value)
-            | models.Q(ime_majke__icontains=value)
-            | models.Q(prezime_majke__icontains=value)
-            | models.Q(ime_kuma__icontains=value)
-            | models.Q(prezime_kuma__icontains=value)
+        """Претражује уносе на основу више текстуалних поља, укључујући датум."""
+        termini_pretrage = value.split()
+        queryset = queryset.annotate(
+            datum_str=Cast("datum", models.CharField())
         )
+
+        query = models.Q()
+        for rec in termini_pretrage:
+            query &= (
+                models.Q(ime_deteta__icontains=rec)
+                | models.Q(gradjansko_ime_deteta__icontains=rec)
+                | models.Q(ime_oca__icontains=rec)
+                | models.Q(prezime_oca__icontains=rec)
+                | models.Q(ime_majke__icontains=rec)
+                | models.Q(prezime_majke__icontains=rec)
+                | models.Q(ime_kuma__icontains=rec)
+                | models.Q(prezime_kuma__icontains=rec)
+                | models.Q(datum_str__icontains=rec)
+            )
+        return queryset.filter(query)
