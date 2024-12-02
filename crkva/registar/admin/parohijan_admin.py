@@ -1,8 +1,12 @@
-"""Модул админ интерфејса модела Парохијан са опцијама увоз и извоз."""
+"""
+Модул админ интерфејса модела Парохијан са опцијама увоз и извоз.
+"""
 
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
+from registar.models import Parohijan
 
+@admin.register(Parohijan)
 class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Парохија."""
 

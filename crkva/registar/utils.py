@@ -1,5 +1,5 @@
 # Define a dictionary for month names in both Gregorian and Julian calendars
-GREGORIAN_MONTHS = {
+MESECI = {
     1: "јануар",
     2: "фебруар",
     3: "март",

@@ -1,34 +1,29 @@
+"""
+Модул за дефинисање филтера за венчања у бази података.
+"""
+
 import django_filters
+from django.db import models
 from registar.models import Vencanje
 
 
 class VencanjeFilter(django_filters.FilterSet):
-    datum = django_filters.DateFilter(
-        field_name="datum", lookup_expr="exact", label="Датум"
-    )
-    ime_zenika = django_filters.CharFilter(
-        field_name="ime_zenika", lookup_expr="icontains", label="Име женика"
-    )
-    prezime_zenika = django_filters.CharFilter(
-        field_name="prezime_zenika", lookup_expr="icontains", label="Презиме женика"
-    )
-    ime_neveste = django_filters.CharFilter(
-        field_name="ime_neveste", lookup_expr="icontains", label="Име невесте"
-    )
-    prezime_neveste = django_filters.CharFilter(
-        field_name="prezime_neveste", lookup_expr="icontains", label="Презиме невесте"
-    )
-    hram = django_filters.CharFilter(
-        field_name="hram__naziv", lookup_expr="icontains", label="Храм"
-    )
+    """Филтер за претрагу венчања на основу различитих поља."""
+
+    search = django_filters.CharFilter(method="filter_search", label="Претрага")
 
     class Meta:
         model = Vencanje
-        fields = [
-            "datum",
-            "ime_zenika",
-            "prezime_zenika",
-            "ime_neveste",
-            "prezime_neveste",
-            "hram",
-        ]
+        fields = []
+
+    def filter_search(self, queryset, name, value):
+        """Претражује уносе на основу више текстуалних поља."""
+        return queryset.filter(
+            models.Q(ime_zenika__icontains=value)
+            | models.Q(prezime_zenika__icontains=value)
+            | models.Q(ime_neveste__icontains=value)
+            | models.Q(prezime_neveste__icontains=value)
+            | models.Q(kum__icontains=value)
+            | models.Q(stari_svat__icontains=value)
+            | models.Q(hram__naziv__icontains=value)
+        )

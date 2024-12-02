@@ -40,6 +40,9 @@ class Command(BaseCommand):
             napomena,
         ) in parsed_data:
             try:
+                if ulica_uid == None or ulica_uid == 0:
+                    continue
+                
                 adresa_instance = Adresa(
                     broj=broj_ulice,
                     sprat=None,
@@ -51,12 +54,11 @@ class Command(BaseCommand):
                 )
                 adresa_instance.save()
 
-                ime_prezime = ime_prezime.split(" ")
-
+                ime, prezime = (ime_prezime.strip().split(" ", 1) + [""])[:2]
                 parohijan = Parohijan(
                     uid=parohijan_uid,
-                    ime=Konvertor.string(ime_prezime[0]),
-                    prezime=Konvertor.string(ime_prezime[1]),
+                    ime=Konvertor.string(ime),
+                    prezime=Konvertor.string(prezime),
                     adresa=adresa_instance,
                     slava=Slava.objects.get(uid=slava_uid),
                     tel_fiksni=telefon_fiksni,
@@ -81,7 +83,7 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Успешно попуњена табеле 'адресе' и 'parohijani': {created_count} нових уноса."
+                f"Успешно попуњене табеле 'адресе' и 'парохијани': {created_count} нових уноса."
             )
         )
 
