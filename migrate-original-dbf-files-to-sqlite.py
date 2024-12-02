@@ -11,7 +11,7 @@ from dbfread import DBF
 #   - kopira fajlove sa originalne putanje '/c/HramSP/dbf' u '/c/crkva/crkva/fixtures' gde se nalazi ova skripta
 #
 # example:
-# python copy-original-dbf.py --src_dir "C:\OtherSource\dbf" --dest_dir "C:\OtherDest\fixtures"
+# python migrate-original-dbf-files-to-sqlite.py --src_dir "C:\OtherSource\dbf" --dest_dir "C:\OtherDest\fixtures"
 
 
 def copy_dbf_files(src_dir, dest_dir):
@@ -111,33 +111,14 @@ def remove_matching_files(pattern):
 
 
 def main():
-    # Define source and destination directories
-    # src_dir = r"C:\HramSP\dbf"
-    # dest_dir = r"C:\crkva\crkva\fixtures"
 
-    # Set up argument parsing - my home setup
-    # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
-    # parser.add_argument('--src_dir', type=str, default='e:\\projects\\hram-svete-petke\\resources\\dbf', help='Source directory containing .dbf files')
-    # parser.add_argument('--dest_dir', type=str, default='e:\\projects\\hram-svete-petke\\crkva\\crkva\\fixtures', help='Destination directory to copy .dbf files to')
-
-    # WSL setup (crkva)
-    # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
-    # parser.add_argument('--src_dir', type=str, default='/mnt/c/HramSP/dbf', help='Source directory containing .dbf files')
-    # parser.add_argument('--dest_dir', type=str, default='/mnt/c/crkva/crkva/fixtures', help='Destination directory to copy .dbf files to')
-
-    # WSL setup (home)
-    # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
-    # parser.add_argument('--src_dir', type=str, default='/mnt/e/projects/hram-svete-petke/resources/dbf', help='Source directory containing .dbf files')
-    # parser.add_argument('--dest_dir', type=str, default='crkva/fixtures', help='Destination directory to copy .dbf files to')
-
-    # Linux setup (home)
     parser = argparse.ArgumentParser(
         description="Copy .dbf files from source to destination."
     )
     parser.add_argument(
         "--src_dir",
         type=str,
-        default="../resources/dbf",
+        default="/mnt/c/HramSP/dbf",
         help="Source directory containing .dbf files",
     )
     parser.add_argument(
@@ -146,10 +127,6 @@ def main():
         default="crkva/fixtures",
         help="Destination directory to copy .dbf files to",
     )
-
-    # parser = argparse.ArgumentParser(description='Copy .dbf files from source to destination.')
-    # parser.add_argument('--src_dir', type=str, default='C:\\HramSP\\dbf', help='Source directory containing .dbf files')
-    # parser.add_argument('--dest_dir', type=str, default='C:\\crkva\\crkva\\fixtures', help='Destination directory to copy .dbf files to')
 
     # Parse the arguments
     args = parser.parse_args()

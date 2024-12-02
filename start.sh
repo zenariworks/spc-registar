@@ -6,7 +6,7 @@
 
 set -x
 
-python migrate-original-dbf-files-to-sqlite.py
+python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
 
 docker compose run --rm app sh -c "python manage.py migracija_krstenja"
 docker compose run --rm app sh -c "python manage.py migracija_vencanja"

@@ -4,7 +4,32 @@
 # This script is used to recreate the database from the original dbf files and rebuild the app.
 #
 
+function show_usage() {
+    echo "Usage: $0 [--app] [--db]"
+    exit 1
+}
+
 set -x
+# Initialize flags
+APP_FLAG=false
+DB_FLAG=false
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --app) APP_FLAG=true ;;
+        --db) DB_FLAG=true ;;
+        *) show_usage ;;
+    esac
+    shift
+done
+
+# Check if no arguments were provided
+if [ "$APP_FLAG" = false ] && [ "$DB_FLAG" = false ]; then
+    echo "No arguments provided. Both --app and --db options will be active..."
+    APP_FLAG=true
+    DB_FLAG=true
+fi
 
 # Function to check if a Docker container exists, stop and delete it
 function delete_docker_container() {
@@ -51,7 +76,15 @@ readonly -f delete_migrations
 
 function recreate_database(){
 
-    python migrate-original-dbf-files-to-sqlite.py
+    pip install --upgrade -r requirements.txt
+
+    # WSL setup (crkva)
+    python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
+
+    # WSL setup (home)
+    #python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/resources/dbf" --dest_dir "crkva/fixtures"
+    # Linux setup (home)
+    #python migrate-original-dbf-files-to-sqlite.py --src_dir "e:\\projects\\hram-svete-petke\\resources\\dbf" --dest_dir "e:\\projects\\hram-svete-petke\\crkva\\crkva\\fixtures"
 
     # remove migration files
     delete_migrations
@@ -99,5 +132,14 @@ readonly -f rebuild_app
 #
 #run script
 #
-recreate_database
-rebuild_app
+if [ "$APP_FLAG" = true ]; then
+    echo "Building the app container 'crkva-app-1'..."
+    recreate_database
+fi
+
+if [ "$DB_FLAG" = true ]; then
+    echo "Building the database container 'crkva-db-1'..."
+    rebuild_app
+fi
+
+
