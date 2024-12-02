@@ -10,15 +10,15 @@ register = template.Library()
 
 
 @register.filter
-def highlight(value, search_query):
-    """Истиче жутом бојом задати текст из search_query."""
-    if not search_query:
+def markiraj(value, upit):
+    """Истиче жутом бојом задати текст из 'upit' аргумента."""
+    if not upit:
         return value
 
-    termini = [re.escape(termin) for termin in search_query.split()]
+    termini = [re.escape(termin) for termin in upit.split()]
     pattern = re.compile(r'({})'.format('|'.join(termini)), re.IGNORECASE)
 
     def replace(match):
-        return f'<span style="background-color: yellow;">{match.group()}</span>'
+        return f'<span style="background-color: peachpuff;">{match.group()}</span>'
 
     return pattern.sub(replace, value)

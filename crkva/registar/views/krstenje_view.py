@@ -48,7 +48,7 @@ class SpisakKrstenja(FilterView, ListView):
         context["filter"] = self.filterset_class(
             self.request.GET, queryset=self.get_queryset()
         )
-        context["search_query"] = self.request.GET.get("search", "")
+        context["upit"] = self.request.GET.get("search", "")
         return context
 
 
