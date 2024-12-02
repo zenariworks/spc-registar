@@ -1,8 +1,11 @@
-"""Модул админ интерфејса модела Адреса са опцијама за увоз и извоз."""
+"""
+Модул админ интерфејса модела Адреса са опцијама за увоз и извоз.
+"""
 
 from django.contrib import admin
+from registar.models import Adresa
 
-
+@admin.register(Adresa)
 class AdresaAdmin(admin.ModelAdmin):
     """Класа админ интерфејса модела Адреса."""
 

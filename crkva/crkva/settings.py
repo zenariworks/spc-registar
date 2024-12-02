@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "import_export",
     "django_select2",
     "admin_searchable_dropdown",
+    "django_filters",
     # "phonenumber_field",
 ]
 
