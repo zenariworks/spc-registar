@@ -3,6 +3,7 @@ Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
 """
 
 import sqlite3
+import re
 from datetime import date, time
 
 from django.core.management.base import BaseCommand
@@ -98,12 +99,19 @@ class Command(BaseCommand):
                 vreme_rodjenja = self._process_time_values(vreme_rodjenja)
 
                 # # tabela 'hramovi'
+                hram_samo_naziv = re.sub(r'(?i)\bhram\b', '', hram).strip()
                 hram_instance, _ = Hram.objects.get_or_create(
-                    naziv=Konvertor.string(hram)
+                    naziv=Konvertor.string(hram_samo_naziv)
                 )
                 svestenik_instance, _ = Svestenik.objects.get_or_create(
                     uid=svestenik_id
                 )
+
+                # ako je gradjansko ime deteta definisano, npr. 'Хана' upisi '(грађанско Хана)
+                if gradjansko_ime_deteta:
+                    gradjansko_ime_deteta_ = f" (грађанско {Konvertor.string(gradjansko_ime_deteta)})"
+                else:
+                    gradjansko_ime_deteta_ = ""
 
                 krstenje = Krstenje(
                     redni_broj_krstenja_tekuca_godina=redni_broj_krstenja_tekuca_godina,
@@ -125,7 +133,7 @@ class Command(BaseCommand):
                     vreme_rodjenja=vreme_rodjenja,
                     mesto_rodjenja=Konvertor.string(mesto_rodjenja),
                     ime_deteta=Konvertor.string(ime_deteta),
-                    gradjansko_ime_deteta=Konvertor.string(gradjansko_ime_deteta),
+                    gradjansko_ime_deteta=gradjansko_ime_deteta_,
                     pol_deteta="М" if pol_deteta.rstrip() == "1" else "Ж",
                     # podaci o roditeljima
                     ime_oca=Konvertor.string(ime_oca),
