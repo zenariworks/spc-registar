@@ -134,12 +134,12 @@ readonly -f rebuild_app
 #
 if [ "$APP_FLAG" = true ]; then
     echo "Building the app container 'crkva-app-1'..."
-    recreate_database
+    rebuild_app
 fi
 
 if [ "$DB_FLAG" = true ]; then
     echo "Building the database container 'crkva-db-1'..."
-    rebuild_app
+    recreate_database
 fi
 
 
