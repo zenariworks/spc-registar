@@ -27,7 +27,7 @@ body {
     border: 2px solid transparent;
     /* border: 2px solid red; */
     background-size: cover;
-    background-image: url("slike/krstenica-aktuelna.jpg");
+    /*background-image: url("slike/krstenica-aktuelna.jpg");*/
     font-weight: 600;
 }
 
