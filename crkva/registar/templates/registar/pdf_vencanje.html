@@ -47,7 +47,7 @@
         <!-- 1. Ime, prezime i zanimanje vencanih, mesto stanovanja, vera i narodnost a) zenika -->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 9pt; justify-content: center; line-height: 10px;">
-          {{ vencanje.ime_zenika }}, {{ vencanje.zanimanje_zenika|lower }},</br>
+          {{ vencanje.ime_zenika }} {{ vencanje.prezime_zenika }}, {{ vencanje.zanimanje_zenika|lower }},</br>
           <small>{{ vencanje.adresa_zenika }}</small></br>
           <small>{{ vencanje.veroispovest_zenika|lower }} {{ vencanje.narodnost_zenika|lower }}</small>
         </div>
@@ -57,7 +57,7 @@
         <!-- 1. Ime, prezime i zanimanje vencanih, mesto stanovanja, vera i narodnost b) neveste -->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 9pt; justify-content: center; line-height: 10px;">
-          {{ vencanje.ime_neveste }}, {{ vencanje.zanimanje_neveste|lower }},</br>
+          {{ vencanje.ime_neveste }} {{ vencanje.prezime_neveste }}, {{ vencanje.zanimanje_neveste|lower }},</br>
           <small>{{ vencanje.adresa_neveste }}</small></br>
           <small>{{ vencanje.veroispovest_neveste|lower }} {{ vencanje.narodnost.neveste|lower }}</small>
         </div>
