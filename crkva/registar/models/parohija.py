@@ -22,7 +22,7 @@ class Parohija(models.Model):
     )
 
     def __str__(self) -> str:
-        return f"{'I' if self.naziv == '1' else 'II' if self.naziv == '2' else 'III'}"
+        return f"{'I' if self.naziv == '1' else 'II' if self.naziv == '2' else 'III' if self.naziv == '3' else ''}"
 
     class Meta:
         managed = True
