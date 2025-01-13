@@ -71,7 +71,7 @@ class Command(BaseCommand):
         with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "SELECT sv_sifra, sv_ime, sv_zvanje, sv_paroh, sv_datrod FROM HSPSVEST"
+                "SELECT sv_rbr, sv_ime, sv_zvanje, sv_paroh, sv_datrod FROM HSPSVEST"
             )
             rows = cursor.fetchall()
 
