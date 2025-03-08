@@ -20,10 +20,10 @@ while getopts "hc" opt; do
 done
 
 if [ "$location" = "h" ]; then
-  # WSL setup (home)
-  python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/resources/dbf" --dest_dir "crkva/fixtures" 
+  # WSL setup (home) - use .dbf files in old-app (HramSP) on my home machine
+  python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf" --dest_dir "crkva/fixtures" 
 else
-  # WSL setup (crkva)
+  # WSL setup (crkva)  - use .dbf files in old-app (HramSP) on church laptop
   python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
 fi
 

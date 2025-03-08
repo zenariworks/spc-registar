@@ -1,6 +1,7 @@
 @echo on
 
-REM ova skripta pokrenuti WSL i skriptu 'start.sh', koja ce migrirati tabelu krstena i vencanja i pokrenuti aplikaciju
+REM izvrsava se na crkvenom laptopu da bi se startovala aplikacija
+REM ova skripta ce pokrenuti WSL i skriptu './start.sh', koja ce migrirati tabelu krstenja i vencanja i pokrenuti aplikaciju
 REM kojoj se pristupa preko http://localhost:8000
 REM tako da sve jednim klikom bude spremno za stampu
 

@@ -2,10 +2,12 @@
 {% load julian_dates %}
 <!DOCTYPE html>
 <html>
+
 <head>
   <link rel="stylesheet" href="{% static 'registar/stampa.css' %}">
   <title>Крштеница-{{ krstenje.knjiga }}.{{ krstenje.strana }}.{{ krstenje.broj }}</title>
 </head>
+
 <body>
   <div class="frame">
     <div class="row" style="height: 35mm">
@@ -38,10 +40,12 @@
       </div>
     </div>
     <div class="row" style="height: 11mm">
-        <div class="row" style="width: 45%; justify-content: flex-start; padding-left: 12.2%; padding-bottom: 2%; height: 9mm">
+      <div class="row"
+        style="width: 45%; justify-content: flex-start; padding-left: 12.2%; padding-bottom: 2%; height: 9mm">
         {{ krstenje.hram }}
       </div>
-        <div class="row" style="width: 30%; justify-content: flex-start; padding-left: 6%; letter-spacing: 1px; padding-bottom: 2%; height: 9mm">
+      <div class="row"
+        style="width: 30%; justify-content: flex-start; padding-left: 6%; letter-spacing: 1px; padding-bottom: 2%; height: 9mm">
         {{ krstenje.mesto }}у
       </div>
       <div class="row" style="width: 12%; padding-bottom: 2%; height: 9mm; justify-content: flex-start;">
@@ -69,7 +73,8 @@
       <!-- 3. Година, месец, дан и време крштења и миропомазања -->
       <div style="width: 46%"></div>
       <div style="width: 53%; letter-spacing: 1px;">
-          {{ krstenje.datum|julian_date|default_if_none:"" }}{% if krstenje.vreme is not none %}, {{ krstenje.vreme }} часова{% endif %}
+        {{ krstenje.datum|julian_date|default_if_none:"" }}{% if krstenje.vreme is not none %}, {{ krstenje.vreme }}
+        часова{% endif %}
       </div>
     </div>
     <div class="row" style="height: 10mm">
@@ -120,7 +125,9 @@
       <!-- 9. Је ли дете близанац -->
       <div style="width: 55.5%"></div>
       <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">
-        {{ krstenje.dete_blizanac|yesno:"јесте,није" }} {% if krstenje.drugo_dete_blizanac_ime %}, {{krstenje.drugo_dete_blizanac_ime }}{% endif %}
+        <!-- ovako se printa ', ' i ime drugog blizanca ako postoji. o.Nikola je 07.03.2025 rekao da to vise nije potrebno  
+        {{ krstenje.dete_blizanac|yesno:"јесте,није" }}{% if krstenje.drugo_dete_blizanac_ime %}, {{krstenje.drugo_dete_blizanac_ime }}{% endif %} -->
+        {{ krstenje.dete_blizanac|yesno:"јесте,није" }}
       </div>
     </div>
     <div class="row" style="height: 9mm">
@@ -168,16 +175,19 @@
     </div>
     <div class="row" style="width: 100%; height: 14mm"></div>
     <div class="row" style="height: 5mm">
-      <div class="row" style="width: 12%; justify-content: center; padding-right: 5%; letter-spacing: 1px; height: 5mm ">
+      <div class="row"
+        style="width: 12%; justify-content: center; padding-right: 5%; letter-spacing: 1px; height: 5mm ">
         {% now "d.m" %}
       </div>
       <div class="row" style="width: 11%; justify-content: flex-start; height: 5mm">
         {% now "y" %}
       </div>
-      <div class="row" style="width: 36%; justify-content: flex-end; font-size: 12pt; letter-spacing: 1px; padding-right: 5%; padding-top: 1%; height: 4mm">
+      <div class="row"
+        style="width: 36%; justify-content: flex-end; font-size: 12pt; letter-spacing: 1px; padding-right: 5%; padding-top: 1%; height: 4mm">
         {{krstenje.svestenik.parohija}}
       </div>
-      <div class="row" style="width: 36%; justify-content: flex-end; font-size: 12pt; letter-spacing: 1px; padding-right: 8%; padding-bottom: 0.2%; height: 5mm">
+      <div class="row"
+        style="width: 36%; justify-content: flex-end; font-size: 12pt; letter-spacing: 1px; padding-right: 8%; padding-bottom: 0.2%; height: 5mm">
         при Храму Свете Петке
       </div>
     </div>
@@ -187,4 +197,5 @@
   </div>
   </div>
 </body>
+
 </html>

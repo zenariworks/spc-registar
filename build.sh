@@ -5,20 +5,24 @@
 #
 
 function show_usage() {
-    echo "Usage: $0 [--app] [--db]"
+    echo "Usage: $0 [--app] [--db] [--home]"
     exit 1
 }
 
-set -x
+#set -x
+
 # Initialize flags
 APP_FLAG=false
 DB_FLAG=false
+# Default location is church 'c'. Use '--home' for my home setup in WSL
+LOCATION="c" 
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --app) APP_FLAG=true ;;
         --db) DB_FLAG=true ;;
+        --home) LOCATION="h" ;;
         *) show_usage ;;
     esac
     shift
@@ -78,13 +82,13 @@ function recreate_database(){
 
     pip install --upgrade -r requirements.txt
 
-    # WSL setup (crkva)
-    python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
-
-    # WSL setup (home)
-    #python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/resources/dbf" --dest_dir "crkva/fixtures"
-    # Linux setup (home)
-    #python migrate-original-dbf-files-to-sqlite.py --src_dir "e:\\projects\\hram-svete-petke\\resources\\dbf" --dest_dir "e:\\projects\\hram-svete-petke\\crkva\\crkva\\fixtures"
+    if [ "$LOCATION" = "h" ]; then
+        # WSL setup (home)
+        python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf" --dest_dir "crkva/fixtures" 
+    else
+        # WSL setup (crkva)
+        python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
+    fi
 
     # remove migration files
     delete_migrations
