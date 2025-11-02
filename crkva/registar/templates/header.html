@@ -17,6 +17,7 @@
          {% url 'krstenja' as krstenja_url %}
          {% url 'vencanja' as vencanja_url %}
          {% url 'svestenici' as svestenici_url %}
+         {% url 'slava_kalendar' as slava_kalendar_url %}
          {% url 'unos_krstenja' as unos_krstenja_url %}
          {% url 'unos_vencanja' as unos_vencanja_url %}
          {% url 'unos_parohijana' as unos_parohijana_url %}
@@ -29,6 +30,7 @@
                <li><a href="{{ krstenja_url }}" class="{% if request.path == krstenja_url %}active{% endif %}">Крштења</a></li>
                <li><a href="{{ vencanja_url }}" class="{% if request.path == vencanja_url %}active{% endif %}">Венчања</a></li>
                <li><a href="{{ svestenici_url }}" class="{% if request.path == svestenici_url %}active{% endif %}">Свештеници</a></li>
+               <li><a href="{{ slava_kalendar_url }}" class="{% if request.path == slava_kalendar_url %}active{% endif %}">Календар слава</a></li>
             </ul>
          </li>
          <li class="has-dropdown">

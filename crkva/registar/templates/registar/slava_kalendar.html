@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Календар слава{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+    <i class="bi bi-arrow-left"></i>
+  </a>
+  <h1 class="page-title">Календар слава</h1>
+  <form class="form-container" action="" method="get">
+    <div>
+      <a class="page-link" href="{% url 'slava_kalendar_mesec' prev_year prev_month %}">&laquo; претходни</a>
+      <span style="font-weight:600;">{{ month_name }} / {{ year }}</span>
+      <a class="page-link" href="{% url 'slava_kalendar_mesec' next_year next_month %}">следеђи &raquo;</a>
+    </div>
+  </form>
+</div>
+
+<div class="calendar-grid" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:8px;">
+  <!-- Weekday headers (desktop) -->
+  {% for w in weekday_labels %}
+    <div class="weekday-header" style="font-weight:600; text-align:center;">
+      {{ w }}
+    </div>
+  {% endfor %}
+
+  {% for day in cells %}
+    {% if day.is_placeholder %}
+      <div class="calendar-cell placeholder" style="border:1px solid transparent; border-radius:8px; padding:10px; background:transparent;"></div>
+    {% else %}
+      <div class="calendar-cell {% if day.is_fasting %}fasting{% endif %}" style="border:1px solid #ddd; border-radius:8px; padding:10px; background:{% if day.is_fasting %}#A21514{% else %}#fff{% endif %}; color:{% if day.is_fasting %}#fff{% else %}inherit{% endif %};">
+        <div class="cell-header" style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="date" style="font-weight:700;">{{ day.date.day }}.</div>
+          <div class="weekday" style="font-size:12px; opacity:0.9;">{{ day.weekday_label }}</div>
+        </div>
+        {% if day.slave %}
+          <div class="slavas" style="margin-top:6px;">
+            {% for s in day.slave %}
+              <div>{{ s.naziv }}</div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div style="margin-top:6px; font-size:12px; opacity:0.85;">Нема уписаних слава</div>
+        {% endif %}
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+<style>
+@media (max-width: 768px) {
+  .calendar-grid { grid-template-columns: repeat(2, 1fr); }
+  .weekday-header { display: none; }
+}
+
+/* Make all cards the same size */
+.calendar-cell {
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+}
+.calendar-cell.placeholder { height: 140px; }
+.calendar-cell .slavas { flex: 1; overflow: auto; }
+
+@media (max-width: 768px) {
+  .calendar-cell { height: 120px; }
+  .calendar-cell.placeholder { height: 120px; }
+}
+</style>
+
+<div class="pagination" style="margin-top: 12px;">
+  <span class="step-links">
+    <a href="{% url 'slava_kalendar_mesec' prev_year prev_month %}" class="page-link">&laquo; претходни</a>
+    <span class="current">{{ month_name }} {{ year }}</span>
+    <a href="{% url 'slava_kalendar_mesec' next_year next_month %}" class="page-link">следеђи &raquo;</a>
+  </span>
+  </div>
+
+{% endblock %}
