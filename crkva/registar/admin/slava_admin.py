@@ -19,6 +19,7 @@ class SlavaAdmin(ImportExportMixin, admin.ModelAdmin):
     list_display = (
         "dan",
         "mesec",
+        "mesec_naziv",
         "opsti_naziv",
         "naziv",
     )
@@ -27,3 +28,8 @@ class SlavaAdmin(ImportExportMixin, admin.ModelAdmin):
         "dan",
     )
     list_display_links = ("naziv",)
+
+    @admin.display(description="Назив месеца")
+    def mesec_naziv(self, obj):
+        """Приказује назив месеца."""
+        return obj.get_mesec_naziv()

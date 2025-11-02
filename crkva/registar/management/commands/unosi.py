@@ -16,8 +16,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # Списак команди које треба извршити
         komande = [
-            ("unos_dana", {}),
-            ("unos_meseci", {}),
             ("unos_narodnosti", {}),
             ("unos_veroispovesti", {}),
             ("unos_zanimanja", {}),

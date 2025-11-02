@@ -4,7 +4,7 @@
 
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from registar.models import Dan, Mesec, Slava
+from registar.models import Slava
 
 
 class Command(BaseCommand):
@@ -20,14 +20,11 @@ class Command(BaseCommand):
 
         for name, opsti_naziv, day, month in parsed_data:
             try:
-                dan_instance, _ = Dan.objects.get_or_create(dan=day)
-                mesec_instance, _ = Mesec.objects.get_or_create(mesec=month)
-
                 _, created = Slava.objects.get_or_create(
                     naziv=name,
                     opsti_naziv=opsti_naziv if opsti_naziv else "",
-                    dan=dan_instance,
-                    mesec=mesec_instance,
+                    dan=day,
+                    mesec=month,
                 )
 
                 if created:

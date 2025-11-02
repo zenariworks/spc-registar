@@ -7,7 +7,7 @@ import sqlite3
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 from registar.management.commands.convert_utils import Konvertor
-from registar.models import Dan, Mesec, Slava
+from registar.models import Slava
 
 
 class Command(BaseCommand):
@@ -26,15 +26,12 @@ class Command(BaseCommand):
 
         for uid, naziv, dan, mesec in parsed_data:
             try:
-                dan_instance, _ = Dan.objects.get_or_create(dan=dan)
-                mesec_instance, _ = Mesec.objects.get_or_create(mesec=mesec)
-
                 _, created = Slava.objects.get_or_create(
                     uid=uid,
                     naziv=Konvertor.string(naziv),
                     opsti_naziv="",
-                    dan=dan_instance,
-                    mesec=mesec_instance,
+                    dan=dan,
+                    mesec=mesec,
                 )
 
                 if created:
