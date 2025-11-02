@@ -1,19 +1,22 @@
 <!-- header.html -->
 {% load static %}
 <header>
-  <div class="fusion-logo">
-     <a href="{% url 'pocetna' %}">
-     <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" alt="Logo">
-     </a>
-  </div>
-  <div class="menu-search-wrapper">
-     <button class="hamburger-menu" onclick="toggleMenu()">
-     <i class="ti-menu"></i>
-     </button>
-     <nav id="menu">
-        <ul>
-         <li><a href="{% url 'krstenja' %}">Крштења</a></li>
-         <li><a href="{% url 'vencanja' %}">Венчања</a></li>
+  <div class="container header-bar">
+    <div class="fusion-logo">
+       <a href="{% url 'pocetna' %}">
+       <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" alt="Logo СПЦ">
+       </a>
+    </div>
+    <div class="menu-search-wrapper">
+       <button class="hamburger-menu" onclick="toggleMenu()" aria-label="Отвори мени">
+       <i class="ti-menu"></i>
+       </button>
+       <nav id="menu" aria-label="Главни мени">
+         <ul>
+         {% url 'krstenja' as krstenja_url %}
+         {% url 'vencanja' as vencanja_url %}
+         <li><a href="{{ krstenja_url }}" class="{% if request.path == krstenja_url %}active{% endif %}">Крштења</a></li>
+         <li><a href="{{ vencanja_url }}" class="{% if request.path == vencanja_url %}active{% endif %}">Венчања</a></li>
            {% comment %} <li>
               <a href="#">Спискови</a>
               <ul class="dropdown">
@@ -38,16 +41,17 @@
               </a>
            </li>
         </ul>
-     </nav>
-     <div id="search-overlay" style="display: none;">
-        <form method="get" action="{% url 'search_view' %}" class="search-form">
-           <div class="search-box">
-              <button type="submit" class="search-icon-button"><i class="ti-search"></i></button>
-              <input type="text" name="query" placeholder="Претрага..." autofocus>
-              <a href="#" id="close-search" class="close-search"><i class="ti-close"></i></a>
-           </div>
-        </form>
-     </div>
+       </nav>
+       <div id="search-overlay" style="display: none;">
+         <form method="get" action="{% url 'search_view' %}" class="search-form">
+            <div class="search-box">
+               <button type="submit" class="search-icon-button"><i class="ti-search"></i></button>
+               <input type="text" name="query" placeholder="Претрага..." autofocus>
+               <a href="#" id="close-search" class="close-search"><i class="ti-close"></i></a>
+            </div>
+         </form>
+       </div>
+    </div>
   </div>
   <script>
      document.getElementById('search-trigger').addEventListener('click', function(event) {
@@ -61,13 +65,31 @@
        document.getElementById('search-overlay').style.display = 'none';
        document.getElementById("menu").style.display = "flex";
      });
-     function toggleMenu() {
-       var menu = document.getElementById("menu");
-       if (menu.classList.contains("open")) {
-           menu.classList.remove("open");
-       } else {
-           menu.classList.add("open");
+     // ESC zatvara pretragu
+     document.addEventListener('keydown', function(event) {
+       if (event.key === 'Escape') {
+         document.getElementById('search-overlay').style.display = 'none';
+         document.getElementById("menu").style.display = "flex";
        }
+     });
+     // Klik van polja zatvara pretragu
+     document.addEventListener('click', function(event) {
+       const overlay = document.getElementById('search-overlay');
+       const searchTrigger = document.getElementById('search-trigger');
+       if (!overlay.contains(event.target) && event.target !== searchTrigger) {
+         if (overlay.style.display === 'flex') {
+           overlay.style.display = 'none';
+           document.getElementById("menu").style.display = "flex";
+         }
+       }
+     });
+   function toggleMenu() {
+     var menu = document.getElementById("menu");
+     if (menu.classList.contains("open")) {
+         menu.classList.remove("open");
+     } else {
+         menu.classList.add("open");
      }
+   }
   </script>
 </header>
