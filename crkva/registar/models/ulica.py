@@ -11,7 +11,7 @@ from .svestenik import Svestenik
 class Ulica(models.Model):
     """Класа која представља улица."""
 
-    uid = models.IntegerField(primary_key=True, unique=True, editable=False)
+    uid = models.AutoField(primary_key=True, unique=True, editable=False)
     naziv = models.CharField(max_length=255, verbose_name="назив")
     mesto = models.ForeignKey(Mesto, on_delete=models.CASCADE, verbose_name="место")
     opstina = models.ForeignKey(

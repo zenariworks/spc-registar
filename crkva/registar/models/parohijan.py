@@ -9,7 +9,7 @@ from .slava import Slava
 class Parohijan(models.Model):
     """Класа која представља парохијана."""
 
-    uid = models.IntegerField(primary_key=True, unique=True, editable=False)
+    uid = models.AutoField(primary_key=True, unique=True, editable=False)
 
     ime = models.CharField(verbose_name="име")
     prezime = models.CharField(verbose_name="презиме")

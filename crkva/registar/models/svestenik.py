@@ -18,7 +18,7 @@ zvanja = [
 class Svestenik(models.Model):
     """Класа која представља свештеника."""
 
-    uid = models.IntegerField(
+    uid = models.AutoField(
         verbose_name="свестеник ид", primary_key=True, unique=True, editable=False
     )
 

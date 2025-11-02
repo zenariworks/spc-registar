@@ -41,10 +41,24 @@ class RandomUtils:
         return Narodnost.objects.all()
 
     @staticmethod
+    def sample_nationalities_text():
+        return [
+            "Српска", "Хрватска", "Бошњачка", "Албанска",
+            "Мађарска", "Ромска", "Словачка", "Румунска"
+        ]
+
+    @staticmethod
     def sample_religions():
         from registar.models import Veroispovest
         """Враћа све доступне вероисповести."""
         return Veroispovest.objects.all()
+
+    @staticmethod
+    def sample_religions_text():
+        return [
+            "Православна", "Католичка", "Исламска", "Протестантска",
+            "Јеврејска", "Атеиста", "Агностик"
+        ]
 
     @staticmethod
     def random_date_of_birth(min_age=0, max_age=100):
@@ -97,16 +111,14 @@ class RandomUtils:
         return adresa
 
     @staticmethod
-    def create_random_hram(unesi_adresu):
+    def create_random_hram(unesi_adresu=None):
         """Креира насумичан објекат Hram."""
         from registar.models import Hram
-        adresa = RandomUtils.create_random_adresa(unesi_adresu)
         hram = Hram(
             naziv="Храм "
             + random.choice(
                 ["Светог Саве", "Светог Николе", "Светог Марка", "Свете Петке"]
             ),
-            adresa=adresa,
         )
         hram.save()
         return hram
@@ -130,9 +142,9 @@ class RandomUtils:
             devojacko_prezime=(
                 "" if gender == "М" else random.choice(RandomUtils.surnames)
             ),
-            zanimanje=random.choice(RandomUtils.sample_occupations()),
-            veroispovest=random.choice(RandomUtils.sample_religions()),
-            narodnost=random.choice(RandomUtils.sample_nationalities()),
+            zanimanje=random.choice(RandomUtils.sample_occupations_text()),
+            veroispovest=random.choice(RandomUtils.sample_religions_text()),
+            narodnost=random.choice(RandomUtils.sample_nationalities_text()),
             adresa=RandomUtils.create_random_adresa(unesi_adresu),
         )
         parohijan.save()
