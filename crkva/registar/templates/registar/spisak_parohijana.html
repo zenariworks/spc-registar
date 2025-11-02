@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="header-container">
-        <h1 style="margin: 0;">Парохијани</h1>
+    <div class="page-header">
+        <h1 class="page-title">Парохијани</h1>
         <form method="get" action="" class="form-container">
             <div>
                 {% for field in form.visible_fields %}
@@ -19,9 +19,9 @@
                 <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
                     {{ parohijan.ime }} {{ parohijan.prezime }} ({{ parohijan.datum_rodjenja|date:"Y" }})
                 </a>
-                <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
-                    <button class="dugme-crveno" type="button">Штампа</button>
-                </a>
+                        <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
+                            <button class="dugme-crveno" type="button">Штампај</button>
+                        </a>
             </li>
         {% empty %}
             <li>Нема уписаних парохијана у бази.</li>

@@ -2,10 +2,19 @@
 
 {% block content %}
 
-<form method="post">
+<form method="post" class="form">
     {% csrf_token %}
+
+    <div class="page-header">
+      <h1 class="page-title">Вероисповест</h1>
+      <button class="dugme-crveno" type="submit" title="Сачувај">
+        <i class="bi bi-save" style="margin-right: 6px;"></i> Сачувај
+      </button>
+    </div>
+
     {{ form.as_p }}
-    <button class="dugme-crveno" type="submit">Сачувај</button>
+
+    <!-- Bottom save removed as per request: action button is now at the top -->
 </form>
 
 {% endblock %}

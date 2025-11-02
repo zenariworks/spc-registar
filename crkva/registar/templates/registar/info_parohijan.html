@@ -2,13 +2,13 @@
 {% block content %}
 
 <div>
-    <div style='position: relative;'>
-        <div class="row" style='display: flex; margin-bottom: 10px; align-items: center;'>
-            <h1 style="margin-right: auto;">Парохијан</h1>
-            <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" style="text-decoration: none;">
-                <button class="dugme-crveno" type="button">Штампа</button>
-            </a>
-        </div>
+    <div class="page-header">
+        <h1 class="page-title">Парохијан</h1>
+        <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" style="text-decoration: none;">
+            <button class="dugme-crveno" type="button" title="Штампај">
+              <i class="bi bi-printer" style="margin-right: 6px;"></i> Штампај
+            </button>
+        </a>
     </div>
 
     <h2>{{ parohijan.ime }} {{ parohijan.prezime }}</h2>

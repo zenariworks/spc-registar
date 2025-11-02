@@ -2,8 +2,8 @@
 {% load marker_filter %}
 
 {% block content %}
-    <div class="header-container">
-        <h1 style="margin: 0;">Венчања</h1>
+    <div class="page-header">
+        <h1 class="page-title">Венчања</h1>
         <form method="get" action="" class="form-container">
             <input
                 type="text"
@@ -23,9 +23,9 @@
                     и&nbsp;
                     {{ vencanje.ime_neveste|markiraj:upit|safe }}&nbsp;{{ vencanje.prezime_zenika|markiraj:upit|safe }}
                 </a>
-                <a href="{% url 'vencanje_pdf' uid=vencanje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
-                    <button class="dugme-crveno" type="button">Штампа</button>
-                </a>
+                        <a href="{% url 'vencanje_pdf' uid=vencanje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
+                            <button class="dugme-crveno" type="button">Штампај</button>
+                        </a>
             </li>
         {% empty %}
             <li>Нема уноса венчања у бази.</li>
