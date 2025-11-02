@@ -36,8 +36,12 @@ RUN apk add --update --no-cache --virtual .tmp-deps \
         linux-headers \
         git \
         postgresql-dev \
-        musl-dev && \
-    /py/bin/pip install -r /requirements.txt && \
+        musl-dev \
+        zlib-dev \
+        libjpeg-turbo-dev \
+        tiff-dev && \
+    # Force Pillow to build from source on Alpine to avoid glibc-linked wheels (libzstd qsort_r error)
+    /py/bin/pip install --no-binary Pillow -r /requirements.txt && \
     apk del .tmp-deps
 
 # Подешавање корисника и дозвола
