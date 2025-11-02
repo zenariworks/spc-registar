@@ -9,7 +9,7 @@ from .mesec import Mesec
 class Slava(models.Model):
     """Класа која представља слава."""
 
-    uid = models.IntegerField(primary_key=True, unique=True, editable=False)
+    uid = models.AutoField(primary_key=True, unique=True, editable=False)
 
     naziv = models.CharField(verbose_name="назив")
     opsti_naziv = models.CharField(verbose_name="општи назив")
