@@ -4,37 +4,58 @@
 <div class="container">
   </br>
   <div class="slava-reminders panel">
-    <h4>Јуче</h4>
-    {% if juce_slave %}
-      {% for slava in juce_slave %}
-      <div class="slava-reminder">{{ slava }}</div>
-      {% endfor %}
-    {% else %}
-      <p>Нема јучерашњих слава.</p>
-    {% endif %}
+    <div class="slava-header">
+      <h4><i class="bi bi-calendar3"></i> Најновије славе</h4>
+      <a class="slava-link" href="{% url 'slava_kalendar' %}"><i class="bi bi-arrow-right-circle"></i> Календар</a>
+    </div>
 
-    <h4>Данас</h4>
-    {% if danas_slave %}
-      {% for slava in danas_slave %}
-      <div class="slava-reminder">{{ slava }}</div>
-      {% endfor %}
-    {% else %}
-      <p>Данас нема слава.</p>
-    {% endif %}
-
-    <h4>Наредних 7 дана</h4>
-    {% if narednih_slave %}
-      {% for dan in narednih_slave %}
-        <div class="slava-reminder">
-          <strong>{{ dan.datum|date:"d.m." }}</strong>
-          {% for slava in dan.slave %}
-            <div>{{ slava }}</div>
-          {% endfor %}
+    <div class="slava-upcoming">
+      {% if juce_slave %}
+        <div class="slava-date-card yesterday {% if juce_post %}post{% endif %}">
+          <div class="slava-list compact">
+            {% for slava in juce_slave %}
+              <div class="slava-row">
+                <span class="slava-date">{{ juce_datum|date:"d.m." }}</span>
+                <span class="slava-title">{{ slava }}</span>
+                {% if juce_post %}<span class="badge badge-red">Пост</span>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
         </div>
-      {% endfor %}
-    {% else %}
-      <p>Нема наступајућих слава.</p>
-    {% endif %}
+      {% endif %}
+
+      {% if danas_slave %}
+        <div class="slava-date-card today {% if danas_post %}post{% endif %}">
+          <div class="slava-list compact">
+            {% for slava in danas_slave %}
+              <div class="slava-row">
+                <span class="slava-date">{{ danas_datum|date:"d.m." }}</span>
+                <span class="slava-title">{{ slava }}</span>
+                {% if danas_post %}<span class="badge badge-red">Пост</span>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if narednih_slave %}
+        {% for dan in narednih_slave %}
+          <div class="slava-date-card {% if dan.post %}post{% endif %}">
+            <div class="slava-list compact">
+              {% for slava in dan.slave %}
+                <div class="slava-row">
+                  <span class="slava-date">{{ dan.datum|date:"d.m." }}</span>
+                  <span class="slava-title">{{ slava }}</span>
+                  {% if dan.post %}<span class="badge badge-red">Пост</span>{% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="slava-empty">Нема наступајућих слава.</p>
+      {% endif %}
+    </div>
   </div>
 </div>
 {% endblock %}
