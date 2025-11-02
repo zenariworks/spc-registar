@@ -6,7 +6,7 @@ import random
 from datetime import date, datetime, time, timedelta
 
 from django.utils import timezone
-from registar.models import Hram, Narodnost, Parohijan, Veroispovest, Zanimanje
+from registar.models import Parohijan
 
 
 class RandomUtils:
@@ -22,16 +22,27 @@ class RandomUtils:
 
     @staticmethod
     def sample_occupations():
+        from registar.models import Zanimanje
         """Враћа све доступне занимања."""
         return Zanimanje.objects.all()
 
     @staticmethod
+    def sample_occupations_text():
+        return [
+            "инжењер", "учитељ", "лекар", "пољопривредник",
+            "возач", "пекар", "механичар", "економиста",
+            "програмер", "архитекта"
+        ]
+
+    @staticmethod
     def sample_nationalities():
+        from registar.models import Narodnost
         """Враћа све доступне народности."""
         return Narodnost.objects.all()
 
     @staticmethod
     def sample_religions():
+        from registar.models import Veroispovest
         """Враћа све доступне вероисповести."""
         return Veroispovest.objects.all()
 
@@ -88,6 +99,7 @@ class RandomUtils:
     @staticmethod
     def create_random_hram(unesi_adresu):
         """Креира насумичан објекат Hram."""
+        from registar.models import Hram
         adresa = RandomUtils.create_random_adresa(unesi_adresu)
         hram = Hram(
             naziv="Храм "
