@@ -57,7 +57,8 @@ class Command(BaseCommand):
 
     def create_random_krstenje(self, parohijan):
         """Креира насумично крштење."""
-        dete = self.random_parohijan("М" if random.choice([True, False]) else "Ж")
+        dete_pol = "М" if random.choice([True, False]) else "Ж"
+        dete_ime = random.choice(RandomUtils.male_names if dete_pol == "М" else RandomUtils.female_names)
         otac = self.random_parohijan("М", min_age=20)
         majka = self.random_parohijan("Ж", min_age=20)
         kum = self.random_parohijan(
@@ -66,24 +67,44 @@ class Command(BaseCommand):
         svestenik = self.create_random_svestenik()
         hram = Hram.objects.order_by("?").first()
 
+        today = date.today()
+        datum_rodjenja = RandomUtils.random_date_of_birth(0, 1)
+
         krstenje = Krstenje(
+            redni_broj_krstenja_tekuca_godina=random.randint(1, 1000),
+            krstenje_tekuca_godina=today.year,
             knjiga=random.randint(1, 100),
+            broj=random.randint(1, 1000),
             strana=random.randint(1, 500),
-            tekuci_broj=random.randint(1, 1000),
             datum=RandomUtils.random_datetime().date(),
             vreme=RandomUtils.random_datetime().time(),
             hram=hram,
-            dete=dete,
-            dete_majci=random.randint(1, 10),
-            dete_bracno=random.choice([True, False]),
-            mana=random.choice([True, False]),
-            blizanac=self.random_parohijan(
-                "М" if random.choice([True, False]) else "Ж"
-            ),
-            otac=otac,
-            majka=majka,
+            adresa_deteta_grad="Београд",
+            adresa_deteta_ulica="Улица " + str(random.randint(1, 100)),
+            adresa_deteta_broj=str(random.randint(1, 100)),
+            datum_rodjenja=datum_rodjenja,
+            vreme_rodjenja=RandomUtils.random_datetime().time(),
+            mesto_rodjenja="Београд",
+            ime_deteta=dete_ime,
+            pol_deteta=dete_pol,
+            ime_oca=otac.ime,
+            prezime_oca=otac.prezime,
+            zanimanje_oca=otac.zanimanje,
+            veroispovest_oca=otac.veroispovest,
+            narodnost_oca=otac.narodnost,
+            ime_majke=majka.ime,
+            prezime_majke=majka.prezime,
+            zanimanje_majke=majka.zanimanje,
+            veroispovest_majke=majka.veroispovest,
+            dete_rodjeno_zivo=True,
+            dete_po_redu_po_majci=str(random.randint(1, 10)),
+            dete_vanbracno=random.choice([True, False]),
+            dete_blizanac=random.choice([True, False]),
+            dete_sa_telesnom_manom=random.choice([True, False]),
             svestenik=svestenik,
-            kum=kum,
+            ime_kuma=kum.ime,
+            prezime_kuma=kum.prezime,
+            zanimanje_kuma=kum.zanimanje,
             primedba="Примедба...",
         )
         krstenje.save()
