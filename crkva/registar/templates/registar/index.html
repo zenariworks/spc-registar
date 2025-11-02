@@ -1,23 +1,68 @@
 {% extends "base.html" %}
 {% load static %}
 {% block content %}
-<div class="container">
-  </br>
-  <div class="slava-reminders panel">
-    <div class="slava-header">
-      <h4><i class="bi bi-calendar3"></i> Најновије славе</h4>
-      <a class="slava-link" href="{% url 'slava_kalendar' %}"><i class="bi bi-arrow-right-circle"></i> Календар</a>
-    </div>
 
-    <div class="slava-upcoming">
+<!-- Main Content Grid -->
+<div class="main-grid">
+  
+  <!-- Quick Actions -->
+  <div class="quick-actions-card">
+    <div class="card-header">
+      <h3><i class="bi bi-lightning-charge"></i> Брзе акције</h3>
+    </div>
+    <div class="action-grid">
+      <a href="{% url 'unos_krstenja' %}" class="action-item">
+        <div class="action-icon"><i class="bi bi-plus-circle"></i></div>
+        <div class="action-text">
+          <div class="action-title">Унос крштења</div>
+          <div class="action-desc">Додај ново крштење</div>
+        </div>
+      </a>
+      <a href="{% url 'unos_vencanja' %}" class="action-item">
+        <div class="action-icon"><i class="bi bi-heart"></i></div>
+        <div class="action-text">
+          <div class="action-title">Унос венчања</div>
+          <div class="action-desc">Додај ново венчање</div>
+        </div>
+      </a>
+      <a href="{% url 'unos_parohijana' %}" class="action-item">
+        <div class="action-icon"><i class="bi bi-person-plus"></i></div>
+        <div class="action-text">
+          <div class="action-title">Унос парохијана</div>
+          <div class="action-desc">Додај новог парохијана</div>
+        </div>
+      </a>
+      <a href="{% url 'slava_kalendar' %}" class="action-item">
+        <div class="action-icon"><i class="bi bi-calendar3"></i></div>
+        <div class="action-text">
+          <div class="action-title">Календар слава</div>
+          <div class="action-desc">Прегледај славе</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Slava Calendar Widget -->
+  <div class="slava-widget">
+    <div class="card-header">
+      <h3><i class="bi bi-calendar-event"></i> Актуелне славе</h3>
+      <a href="{% url 'slava_kalendar' %}" class="view-all-link">
+        <i class="bi bi-arrow-right"></i> Календар
+      </a>
+    </div>
+    
+    <div class="slava-timeline">
       {% if juce_slave %}
-        <div class="slava-date-card yesterday {% if juce_post %}post{% endif %}">
-          <div class="slava-list compact">
+        <div class="slava-day yesterday">
+          <div class="day-header">
+            <span class="day-date">{{ juce_datum|date:"d.m." }}</span>
+            <span class="day-label">јуче</span>
+          </div>
+          <div class="slava-items">
             {% for slava in juce_slave %}
-              <div class="slava-row">
-                <span class="slava-date">{{ juce_datum|date:"d.m." }}</span>
-                <span class="slava-title">{{ slava }}</span>
-                {% if juce_post %}<span class="badge badge-red">Пост</span>{% endif %}
+              <div class="slava-item">
+                <span class="slava-name">{{ slava }}</span>
+                {% if juce_post %}<span class="fasting-badge">Пост</span>{% endif %}
               </div>
             {% endfor %}
           </div>
@@ -25,37 +70,85 @@
       {% endif %}
 
       {% if danas_slave %}
-        <div class="slava-date-card today {% if danas_post %}post{% endif %}">
-          <div class="slava-list compact">
+        <div class="slava-day today">
+          <div class="day-header">
+            <span class="day-date">{{ danas_datum|date:"d.m." }}</span>
+            <span class="day-label">данас</span>
+          </div>
+          <div class="slava-items">
             {% for slava in danas_slave %}
-              <div class="slava-row">
-                <span class="slava-date">{{ danas_datum|date:"d.m." }}</span>
-                <span class="slava-title">{{ slava }}</span>
-                {% if danas_post %}<span class="badge badge-red">Пост</span>{% endif %}
+              <div class="slava-item">
+                <span class="slava-name">{{ slava }}</span>
+                {% if danas_post %}<span class="fasting-badge">Пост</span>{% endif %}
               </div>
             {% endfor %}
           </div>
         </div>
       {% endif %}
 
-      {% if narednih_slave %}
-        {% for dan in narednih_slave %}
-          <div class="slava-date-card {% if dan.post %}post{% endif %}">
-            <div class="slava-list compact">
-              {% for slava in dan.slave %}
-                <div class="slava-row">
-                  <span class="slava-date">{{ dan.datum|date:"d.m." }}</span>
-                  <span class="slava-title">{{ slava }}</span>
-                  {% if dan.post %}<span class="badge badge-red">Пост</span>{% endif %}
-                </div>
-              {% endfor %}
-            </div>
+      {% for dan in narednih_slave|slice:":3" %}
+        <div class="slava-day upcoming">
+          <div class="day-header">
+            <span class="day-date">{{ dan.datum|date:"d.m." }}</span>
+            <span class="day-label">{{ dan.datum|date:"l"|lower }}</span>
           </div>
-        {% endfor %}
-      {% else %}
-        <p class="slava-empty">Нема наступајућих слава.</p>
+          <div class="slava-items">
+            {% for slava in dan.slave %}
+              <div class="slava-item">
+                <span class="slava-name">{{ slava }}</span>
+                {% if dan.post %}<span class="fasting-badge">Пост</span>{% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+
+      {% if not juce_slave and not danas_slave and not narednih_slave %}
+        <div class="no-slavas">
+          <i class="bi bi-calendar-x"></i>
+          <p>Нема актуелних слава</p>
+        </div>
       {% endif %}
     </div>
   </div>
+
+  <!-- Registry Overview -->
+  <div class="registry-overview">
+    <div class="card-header">
+      <h3><i class="bi bi-archive"></i> Регистри</h3>
+    </div>
+    <div class="registry-grid">
+      <a href="{% url 'parohijani' %}" class="registry-card">
+        <div class="registry-icon"><i class="bi bi-people"></i></div>
+        <div class="registry-info">
+          <div class="registry-title">Парохијани</div>
+          <div class="registry-desc">Евиденција парохијана</div>
+        </div>
+      </a>
+      <a href="{% url 'krstenja' %}" class="registry-card">
+        <div class="registry-icon"><i class="bi bi-droplet"></i></div>
+        <div class="registry-info">
+          <div class="registry-title">Крштења</div>
+          <div class="registry-desc">Књига крштених</div>
+        </div>
+      </a>
+      <a href="{% url 'vencanja' %}" class="registry-card">
+        <div class="registry-icon"><i class="bi bi-heart"></i></div>
+        <div class="registry-info">
+          <div class="registry-title">Венчања</div>
+          <div class="registry-desc">Књига венчаних</div>
+        </div>
+      </a>
+      <a href="{% url 'svestenici' %}" class="registry-card">
+        <div class="registry-icon"><i class="bi bi-person-badge"></i></div>
+        <div class="registry-info">
+          <div class="registry-title">Свештеници</div>
+          <div class="registry-desc">Евиденција свештеника</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
 </div>
+
 {% endblock %}
