@@ -13,16 +13,29 @@
        </button>
        <nav id="menu" aria-label="Главни мени">
          <ul>
+         {% url 'parohijani' as parohijani_url %}
          {% url 'krstenja' as krstenja_url %}
          {% url 'vencanja' as vencanja_url %}
+         {% url 'svestenici' as svestenici_url %}
          {% url 'unos_krstenja' as unos_krstenja_url %}
          {% url 'unos_vencanja' as unos_vencanja_url %}
          {% url 'unos_parohijana' as unos_parohijana_url %}
-         <li><a href="{{ krstenja_url }}" class="{% if request.path == krstenja_url %}active{% endif %}">Крштења</a></li>
-         <li><a href="{{ vencanja_url }}" class="{% if request.path == vencanja_url %}active{% endif %}">Венчања</a></li>
-         <li>
-            <a href="#">Уноси</a>
-            <ul class="dropdown">
+         <li class="has-dropdown">
+            <button type="button" class="menu-item-toggle" aria-expanded="false" aria-controls="dropdown-lists">
+              Спискови <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown" id="dropdown-lists">
+               <li><a href="{{ parohijani_url }}" class="{% if request.path == parohijani_url %}active{% endif %}">Парохијани</a></li>
+               <li><a href="{{ krstenja_url }}" class="{% if request.path == krstenja_url %}active{% endif %}">Крштења</a></li>
+               <li><a href="{{ vencanja_url }}" class="{% if request.path == vencanja_url %}active{% endif %}">Венчања</a></li>
+               <li><a href="{{ svestenici_url }}" class="{% if request.path == svestenici_url %}active{% endif %}">Свештеници</a></li>
+            </ul>
+         </li>
+         <li class="has-dropdown">
+            <button type="button" class="menu-item-toggle" aria-expanded="false" aria-controls="dropdown-entries">
+              Уноси <i class="bi bi-chevron-down" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown" id="dropdown-entries">
                <li><a href="{{ unos_krstenja_url }}" class="{% if request.path == unos_krstenja_url %}active{% endif %}">Крштење</a></li>
                <li><a href="{{ unos_vencanja_url }}" class="{% if request.path == unos_vencanja_url %}active{% endif %}">Венчање</a></li>
                <li><a href="{{ unos_parohijana_url }}" class="{% if request.path == unos_parohijana_url %}active{% endif %}">Парохијан</a></li>
@@ -129,5 +142,39 @@
            menu.classList.add("open");
        }
      }
+
+     // Mobile-friendly dropdown toggles
+     (function(){
+       function setupDropdownToggles(){
+         var toggles = document.querySelectorAll('.menu-item-toggle');
+         toggles.forEach(function(btn){
+           btn.addEventListener('click', function(e){
+             e.preventDefault();
+             var expanded = btn.getAttribute('aria-expanded') === 'true';
+             btn.setAttribute('aria-expanded', (!expanded).toString());
+             var dropdown = btn.nextElementSibling;
+             if (dropdown) {
+               dropdown.classList.toggle('open', !expanded);
+             }
+           });
+         });
+
+         // Close when clicking outside
+         document.addEventListener('click', function(e){
+           toggles.forEach(function(btn){
+             var dropdown = btn.nextElementSibling;
+             if (!btn.contains(e.target) && dropdown && !dropdown.contains(e.target)) {
+               btn.setAttribute('aria-expanded','false');
+               dropdown.classList.remove('open');
+             }
+           });
+         });
+       }
+       if (document.readyState === 'loading') {
+         document.addEventListener('DOMContentLoaded', setupDropdownToggles);
+       } else {
+         setupDropdownToggles();
+       }
+     })();
   </script>
 </header>

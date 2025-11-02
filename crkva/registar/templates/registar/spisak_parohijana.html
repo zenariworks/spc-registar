@@ -2,7 +2,10 @@
 
 {% block content %}
     <div class="page-header">
-        <h1 class="page-title">Парохијани</h1>
+        <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <h1 class="page-title">Парохијани ({{ page_obj.paginator.count }})</h1>
         <form method="get" action="" class="form-container">
             <div>
                 {% for field in form.visible_fields %}
@@ -16,7 +19,7 @@
     <ul class="spisak">
         {% for parohijan in parohijani %}
             <li class="stavka">
-                <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
+                <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza">
                     {{ parohijan.ime }} {{ parohijan.prezime }} ({{ parohijan.datum_rodjenja|date:"Y" }})
                 </a>
                         <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">

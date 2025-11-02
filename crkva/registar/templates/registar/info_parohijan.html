@@ -3,6 +3,9 @@
 
 <div>
     <div class="page-header">
+        <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+            <i class="bi bi-arrow-left"></i>
+        </a>
         <h1 class="page-title">Парохијан</h1>
         <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" style="text-decoration: none;">
             <button class="dugme-crveno" type="button" title="Штампај">
