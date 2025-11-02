@@ -15,26 +15,19 @@
          <ul>
          {% url 'krstenja' as krstenja_url %}
          {% url 'vencanja' as vencanja_url %}
+         {% url 'unos_krstenja' as unos_krstenja_url %}
+         {% url 'unos_vencanja' as unos_vencanja_url %}
+         {% url 'unos_parohijana' as unos_parohijana_url %}
          <li><a href="{{ krstenja_url }}" class="{% if request.path == krstenja_url %}active{% endif %}">Крштења</a></li>
          <li><a href="{{ vencanja_url }}" class="{% if request.path == vencanja_url %}active{% endif %}">Венчања</a></li>
-           {% comment %} <li>
-              <a href="#">Спискови</a>
-              <ul class="dropdown">
-                 <li><a href="{% url 'krstenja' %}">Крштења</a></li>
-                 <li><a href="{% url 'vencanja' %}">Венчања</a></li>
-                 <li><a href="{% url 'svestenici' %}">Свештеници</a></li>
-                 <li><a href="{% url 'parohijani' %}">Парохијани</a></li>
-              </ul>
-           </li>
-           <li>
-              <a href="#">Уноси</a>
-              <ul class="dropdown">
-                 <li><a href="{% url 'unos_krstenja' %}">Крштења</a></li>
-                 <li><a href="{% url 'pocetna' %}">Венчања</a></li>
-                 <li><a href="{% url 'pocetna' %}">Свештеници</a></li>
-                 <li><a href="{% url 'unos_parohijana' %}">Парохијан</a></li>
-              </ul>
-           </li> {% endcomment %}
+         <li>
+            <a href="#">Уноси</a>
+            <ul class="dropdown">
+               <li><a href="{{ unos_krstenja_url }}" class="{% if request.path == unos_krstenja_url %}active{% endif %}">Крштење</a></li>
+               <li><a href="{{ unos_vencanja_url }}" class="{% if request.path == unos_vencanja_url %}active{% endif %}">Венчање</a></li>
+               <li><a href="{{ unos_parohijana_url }}" class="{% if request.path == unos_parohijana_url %}active{% endif %}">Парохијан</a></li>
+            </ul>
+         </li>
            <li class="search-icon">
               <a href="#" id="search-trigger" class="fusion-main-menu-icon">
               <i class="ti-search"></i>

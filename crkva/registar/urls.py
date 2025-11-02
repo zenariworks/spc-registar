@@ -47,4 +47,5 @@ urlpatterns = [
     path("search/", views.search_view, name="search_view"),
     path("unos/parohijan/", views.unos_parohijana, name="unos_parohijana"),
     path("unos/krstenje/", views.unos_krstenja, name="unos_krstenja"),
+    path("unos/vencanje/", views.unos_vencanja, name="unos_vencanja"),
 ]

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Унос венчања</h2>
+  <form method="post" class="form">
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="form-row">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <fieldset>
+      <legend>Регистар</legend>
+      <div class="form-row">
+        {{ form.redni_broj_vencanja_tekuca_godina.label_tag }} {{ form.redni_broj_vencanja_tekuca_godina }}
+        {{ form.vencanje_tekuca_godina.label_tag }} {{ form.vencanje_tekuca_godina }}
+      </div>
+      <div class="form-row">
+        {{ form.knjiga.label_tag }} {{ form.knjiga }}
+        {{ form.strana.label_tag }} {{ form.strana }}
+        {{ form.tekuci_broj.label_tag }} {{ form.tekuci_broj }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Детаљи венчања</legend>
+      <div class="form-row">
+        {{ form.datum.label_tag }} {{ form.datum }}
+        {{ form.hram.label_tag }} {{ form.hram }}
+        {{ form.svestenik.label_tag }} {{ form.svestenik }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Женик</legend>
+      <div class="form-row">
+        {{ form.ime_zenika.label_tag }} {{ form.ime_zenika }}
+        {{ form.prezime_zenika.label_tag }} {{ form.prezime_zenika }}
+        {{ form.zanimanje_zenika.label_tag }} {{ form.zanimanje_zenika }}
+      </div>
+      <div class="form-row">
+        {{ form.mesto_zenika.label_tag }} {{ form.mesto_zenika }}
+        {{ form.veroispovest_zenika.label_tag }} {{ form.veroispovest_zenika }}
+        {{ form.narodnost_zenika.label_tag }} {{ form.narodnost_zenika }}
+      </div>
+      <div class="form-row">
+        {{ form.adresa_zenika.label_tag }} {{ form.adresa_zenika }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Невеста</legend>
+      <div class="form-row">
+        {{ form.ime_neveste.label_tag }} {{ form.ime_neveste }}
+        {{ form.prezime_neveste.label_tag }} {{ form.prezime_neveste }}
+        {{ form.zanimanje_neveste.label_tag }} {{ form.zanimanje_neveste }}
+      </div>
+      <div class="form-row">
+        {{ form.mesto_neveste.label_tag }} {{ form.mesto_neveste }}
+        {{ form.veroispovest_neveste.label_tag }} {{ form.veroispovest_neveste }}
+        {{ form.narodnost_neveste.label_tag }} {{ form.narodnost_neveste }}
+      </div>
+      <div class="form-row">
+        {{ form.adresa_neveste.label_tag }} {{ form.adresa_neveste }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Родитељи</legend>
+      <div class="form-row">
+        {{ form.svekar.label_tag }} {{ form.svekar }}
+        {{ form.svekrva.label_tag }} {{ form.svekrva }}
+      </div>
+      <div class="form-row">
+        {{ form.tast.label_tag }} {{ form.tast }}
+        {{ form.tasta.label_tag }} {{ form.tasta }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Рођење</legend>
+      <div class="form-row">
+        {{ form.datum_rodjenja_zenika.label_tag }} {{ form.datum_rodjenja_zenika }}
+        {{ form.mesto_rodjenja_zenika.label_tag }} {{ form.mesto_rodjenja_zenika }}
+      </div>
+      <div class="form-row">
+        {{ form.datum_rodjenja_neveste.label_tag }} {{ form.datum_rodjenja_neveste }}
+        {{ form.mesto_rodjenja_neveste.label_tag }} {{ form.mesto_rodjenja_neveste }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Брак по реду</legend>
+      <div class="form-row">
+        {{ form.zenik_rb_brak.label_tag }} {{ form.zenik_rb_brak }}
+        {{ form.nevesta_rb_brak.label_tag }} {{ form.nevesta_rb_brak }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Испитивање</legend>
+      <div class="form-row">
+        {{ form.datum_ispita.label_tag }} {{ form.datum_ispita }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Кум и стари сват</legend>
+      <div class="form-row">
+        {{ form.kum.label_tag }} {{ form.kum }}
+        {{ form.stari_svat.label_tag }} {{ form.stari_svat }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Разрешење</legend>
+      <div class="form-row">
+        {{ form.razresenje.label_tag }} {{ form.razresenje }}
+      </div>
+      <div class="form-row">
+        {{ form.razresenje_primedba.label_tag }} {{ form.razresenje_primedba }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Напомена</legend>
+      <div class="form-row">
+        {{ form.primedba.label_tag }} {{ form.primedba }}
+      </div>
+    </fieldset>
+
+    <button class="dugme-crveno" type="submit">Сачувај</button>
+  </form>
+{% endblock %}

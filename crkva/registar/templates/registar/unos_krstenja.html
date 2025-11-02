@@ -4,39 +4,125 @@
   <h2>Унос крштења</h2>
   <form method="post" class="form">
     {% csrf_token %}
-    <div class="form-row">
-      {{ form.pol.label_tag }} {{ form.pol }}
-    </div>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {{ form.ime.label_tag }} {{ form.prezime.label_tag }}
-      </div>
-      <div class="form-group col-md-6">
-        {{ form.ime }} {{ form.prezime }}
-      </br>{{ form.devojacko_prezime.label_tag }} {{ form.devojacko_prezime }}
-      </div>
-    </div>
 
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {{ form.datum_rodjenja.label_tag }} {{ form.vreme_rodjenja.label_tag }}
+    {% if form.non_field_errors %}
+      <div class="form-row">
+        {{ form.non_field_errors }}
       </div>
-      <div class="form-group col-md-6">
-        {{ form.datum_rodjenja }} {{ form.vreme_rodjenja }}
-      </div>
-    </div>
+    {% endif %}
 
-    <!-- Renderujte ostala polja -->
-    <div class="form-row">
-    {{ form.zanimanje.label_tag }} {{ form.zanimanje }}
-    </div>
-    <div class="form-row">
-    {{ form.veroispovest.label_tag }} {{ form.veroispovest }}
-    </div>
-    <div class="form-row">
-    {{ form.narodnost.label_tag }} {{ form.narodnost }}
-    {{ form.adresa.label_tag }} {{ form.adresa }}
-    </div>
+    <fieldset>
+      <legend>Регистар</legend>
+      <div class="form-row">
+        {{ form.redni_broj_krstenja_tekuca_godina.label_tag }} {{ form.redni_broj_krstenja_tekuca_godina }}
+        {{ form.krstenje_tekuca_godina.label_tag }} {{ form.krstenje_tekuca_godina }}
+      </div>
+      <div class="form-row">
+        {{ form.knjiga.label_tag }} {{ form.knjiga }}
+        {{ form.strana.label_tag }} {{ form.strana }}
+        {{ form.broj.label_tag }} {{ form.broj }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Детаљи крштења</legend>
+      <div class="form-row">
+        {{ form.datum.label_tag }} {{ form.datum }}
+        {{ form.vreme.label_tag }} {{ form.vreme }}
+      </div>
+      <div class="form-row">
+        {{ form.mesto.label_tag }} {{ form.mesto }}
+        {{ form.hram.label_tag }} {{ form.hram }}
+        {{ form.svestenik.label_tag }} {{ form.svestenik }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Дете</legend>
+      <div class="form-row">
+        {{ form.ime_deteta.label_tag }} {{ form.ime_deteta }}
+        {{ form.gradjansko_ime_deteta.label_tag }} {{ form.gradjansko_ime_deteta }}
+        {{ form.pol_deteta.label_tag }} {{ form.pol_deteta }}
+      </div>
+      <div class="form-row">
+        {{ form.datum_rodjenja.label_tag }} {{ form.datum_rodjenja }}
+        {{ form.vreme_rodjenja.label_tag }} {{ form.vreme_rodjenja }}
+        {{ form.mesto_rodjenja.label_tag }} {{ form.mesto_rodjenja }}
+      </div>
+      <div class="form-row">
+        {{ form.adresa_deteta_grad.label_tag }} {{ form.adresa_deteta_grad }}
+        {{ form.adresa_deteta_ulica.label_tag }} {{ form.adresa_deteta_ulica }}
+        {{ form.adresa_deteta_broj.label_tag }} {{ form.adresa_deteta_broj }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Родитељи</legend>
+      <div class="form-row">
+        {{ form.ime_oca.label_tag }} {{ form.ime_oca }}
+        {{ form.prezime_oca.label_tag }} {{ form.prezime_oca }}
+        {{ form.zanimanje_oca.label_tag }} {{ form.zanimanje_oca }}
+      </div>
+      <div class="form-row">
+        {{ form.adresa_oca_mesto.label_tag }} {{ form.adresa_oca_mesto }}
+        {{ form.veroispovest_oca.label_tag }} {{ form.veroispovest_oca }}
+        {{ form.narodnost_oca.label_tag }} {{ form.narodnost_oca }}
+      </div>
+      <div class="form-row">
+        {{ form.ime_majke.label_tag }} {{ form.ime_majke }}
+        {{ form.prezime_majke.label_tag }} {{ form.prezime_majke }}
+        {{ form.zanimanje_majke.label_tag }} {{ form.zanimanje_majke }}
+      </div>
+      <div class="form-row">
+        {{ form.adresa_majke_mesto.label_tag }} {{ form.adresa_majke_mesto }}
+        {{ form.veroispovest_majke.label_tag }} {{ form.veroispovest_majke }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Податци о детету</legend>
+      <div class="form-row">
+        {{ form.dete_rodjeno_zivo.label_tag }} {{ form.dete_rodjeno_zivo }}
+        {{ form.dete_po_redu_po_majci.label_tag }} {{ form.dete_po_redu_po_majci }}
+      </div>
+      <div class="form-row">
+        {{ form.dete_vanbracno.label_tag }} {{ form.dete_vanbracno }}
+        {{ form.dete_blizanac.label_tag }} {{ form.dete_blizanac }}
+        {{ form.drugo_dete_blizanac_ime.label_tag }} {{ form.drugo_dete_blizanac_ime }}
+        {{ form.dete_sa_telesnom_manom.label_tag }} {{ form.dete_sa_telesnom_manom }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Свештеник и Кум</legend>
+      <div class="form-row">
+        {{ form.svestenik.label_tag }} {{ form.svestenik }}
+        {{ form.ime_kuma.label_tag }} {{ form.ime_kuma }}
+        {{ form.prezime_kuma.label_tag }} {{ form.prezime_kuma }}
+      </div>
+      <div class="form-row">
+        {{ form.zanimanje_kuma.label_tag }} {{ form.zanimanje_kuma }}
+        {{ form.adresa_kuma_mesto.label_tag }} {{ form.adresa_kuma_mesto }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Матична књига – анаграф</legend>
+      <div class="form-row">
+        {{ form.mesto_registracije.label_tag }} {{ form.mesto_registracije }}
+        {{ form.datum_registracije.label_tag }} {{ form.datum_registracije }}
+        {{ form.maticni_broj.label_tag }} {{ form.maticni_broj }}
+        {{ form.strana_registracije.label_tag }} {{ form.strana_registracije }}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Напомена</legend>
+      <div class="form-row">
+        {{ form.primedba.label_tag }} {{ form.primedba }}
+      </div>
+    </fieldset>
+
     <button class="dugme-crveno" type="submit">Сачувај</button>
   </form>
 {% endblock %}

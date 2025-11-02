@@ -1,14 +1,15 @@
 """
-Модул за приказ, претрагу и генерисање PDF докумената за венчања.
+Модул за приказ, унос, претрагу и генерисање PDF докумената за венчања.
 """
 
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from django_filters.views import FilterView
 from registar.filters import VencanjeFilter
 from registar.models.vencanje import Vencanje
 from weasyprint import HTML
+from registar.forms import VencanjeForm
 
 
 class SpisakVencanja(FilterView, ListView):
@@ -75,3 +76,19 @@ class PrikazVencanja(DetailView):
         """Враћа објекат венчања на основу UID-а."""
         uid = self.kwargs.get("uid")
         return get_object_or_404(Vencanje, uid=uid)
+
+
+def unos_vencanja(request):
+    """Обрада уноса новог венчања.
+
+    Ако је захтев POST и форма валидна – чува запис и враћа на списак венчања.
+    У супротном приказује формулар за унос.
+    """
+    if request.method == "POST":
+        form = VencanjeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("vencanja")
+    else:
+        form = VencanjeForm()
+    return render(request, "registar/unos_vencanja.html", {"form": form})
