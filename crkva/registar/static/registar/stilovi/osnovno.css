@@ -125,3 +125,30 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 
 /* Sekundarni tekst */
 .muted { color: var(--color-text-muted); }
+
+/* Unified page header (title left, actions right) */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: var(--space-5) 0 var(--space-3);
+    flex-wrap: nowrap; /* Keep actions on the same row */
+    width: 100%;
+}
+.page-title {
+    margin: 0;
+    line-height: 1.25;
+    font-weight: 600;
+    flex: 1 1 auto; /* Allow title to take remaining space */
+    min-width: 0;    /* Enable ellipsis */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Truncate long titles so the button stays to the right */
+}
+
+/* Ensure action buttons stay visible and don't shrink */
+.page-header a,
+.page-header button {
+    flex-shrink: 0;
+}

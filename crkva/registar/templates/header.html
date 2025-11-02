@@ -97,7 +97,6 @@
        function updateThemeIcon() {
          var current = getTheme();
          if (!iconEl) return;
-         // Swap Bootstrap Icons based on theme
          if (current === 'dark') {
            iconEl.className = 'bi bi-moon';
            toggle.setAttribute('aria-label', 'Промени тему: светла');

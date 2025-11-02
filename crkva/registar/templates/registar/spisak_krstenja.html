@@ -2,8 +2,8 @@
 {% load marker_filter %}
 
 {% block content %}
-    <div class="header-container">
-        <h1 style="margin: 0;">Крштења</h1>
+    <div class="page-header">
+        <h1 class="page-title">Крштења</h1>
         <form method="get" action="" class="form-container">
             <input
                 type="text"
@@ -23,9 +23,9 @@
                     ({{ krstenje.ime_oca|markiraj:upit|safe }}&nbsp;{{ krstenje.prezime_oca|markiraj:upit|safe }}&nbsp;
                     и&nbsp;{{ krstenje.ime_majke|markiraj:upit|safe }}&nbsp;{{ krstenje.prezime_majke|markiraj:upit|safe }})
                 </a>
-                <a href="{% url 'krstenje_pdf' uid=krstenje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
-                    <button class="dugme-crveno" type="button">Штампа</button>
-                </a>
+                    <a href="{% url 'krstenje_pdf' uid=krstenje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
+                        <button class="dugme-crveno" type="button">Штампај</button>
+                    </a>
             </li>
         {% empty %}
             <li>Нема уноса крштења у бази.</li>

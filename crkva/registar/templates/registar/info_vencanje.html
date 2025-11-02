@@ -3,13 +3,13 @@
 
 {% block content %}
 
-<div style='position: relative;'>
-    <div class="vencanica-row" style='display: flex; margin-bottom: 10px; align-items: center;'>
-        <h1 style="margin-right: auto;">Венчаница</h1>
-        <a href="{% url 'vencanje_pdf' vencanje.uid %}" target="_blank" style="text-decoration: none;">
-            <button class="dugme-crveno" type="button">Штампа</button>
-        </a>
-    </div>
+<div class="page-header">
+    <h1 class="page-title">Венчаница</h1>
+    <a href="{% url 'vencanje_pdf' vencanje.uid %}" target="_blank" style="text-decoration: none;">
+        <button class="dugme-crveno" type="button" title="Штампај">
+          <i class="bi bi-printer" style="margin-right: 6px;"></i> Штампај
+        </button>
+    </a>
 </div>
 
 <div class="vencanica">
