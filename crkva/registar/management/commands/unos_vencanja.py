@@ -1,82 +1,98 @@
-"""
-Модул за попуњавање базе података насумичним венчањима.
-"""
+"""Модул за попуњавање базе података насумичним венчањима."""
 
 import random
-from datetime import date, timedelta
+import uuid
+from datetime import date
 
 from django.core.management.base import BaseCommand
+from registar.models import Vencanje, Hram, Svestenik
 from registar.management.commands.random_utils import RandomUtils
-from registar.models import Parohija, Parohijan, Svestenik, Vencanje
-
 from .unos_adresa import unesi_adresu
 
 
 class Command(BaseCommand):
-    """
-    Класа Ђанго команде за попуњавање базе података насумичним венчањима.
-    """
-
     help = "Попуњава базу података насумичним венчањима"
 
-    def random_parohijan(self, gender, min_age=0):
-        """Креира насумично парохијана."""
-        eligible_parohijan = Parohijan.objects.filter(
-            pol=gender,
-            datum_rodjenja__lte=date.today() - timedelta(days=min_age * 365.25),
-        )
-        if eligible_parohijan.exists():
-            return random.choice(eligible_parohijan)
-        else:
-            return RandomUtils.create_random_parohijan(unesi_adresu, gender, min_age)
+    def get_or_create_svestenik(self) -> Svestenik:
+        """Враћа постојећег или креира насумичног свештеника."""
+        svestenici = list(Svestenik.objects.all())
+        if svestenici:
+            return random.choice(svestenici)
 
-    def get_or_create_parohija(self, naziv):
-        """Креира насумично парохију."""
-        parohija, _ = Parohija.objects.get_or_create(naziv=naziv)
-        return parohija
-
-    def create_random_svestenik(self) -> Svestenik:
-        """Креира насумично свештеника."""
-        parohije = [
-            self.get_or_create_parohija("Парохија 1"),
-            self.get_or_create_parohija("Парохија 2"),
-            self.get_or_create_parohija("Парохија 3"),
-            self.get_or_create_parohija("Парохија 4"),
-        ]
-
-        svestenik = Svestenik(
+        # ако нема свештеника, направи једног
+        return Svestenik.objects.create(
+            uid=uuid.uuid4(),
             zvanje=random.choice(RandomUtils.zvanja),
-            parohija=random.choice(parohije),
+            parohija=None,
             ime=random.choice(RandomUtils.male_names),
             prezime=random.choice(RandomUtils.surnames),
             mesto_rodjenja="Насумично место",
-            datum_rodjenja=RandomUtils.random_date_of_birth(25),
+            datum_rodjenja=RandomUtils.random_date_of_birth(30),
         )
-        svestenik.save()
-        return svestenik
+
+    def get_or_create_hram(self):
+        """Враћа постојећи или креира насумични храм."""
+        hramovi = list(Hram.objects.all())
+        if hramovi:
+            return random.choice(hramovi)
+        return RandomUtils.create_random_hram(unesi_adresu)
 
     def create_random_vencanje(self):
-        """Креира насумично венчање."""
-        vencanje = Vencanje(
-            knjiga=random.randint(1, 100),
+        """Креира једно насумично венчање."""
+        today = date.today()
+        svestenik = self.get_or_create_svestenik()
+        hram = self.get_or_create_hram()
+
+        vencanje = Vencanje.objects.create(
+            uid=uuid.uuid4(),
+            redni_broj_vencanja_tekuca_godina=random.randint(1, 100),
+            vencanje_tekuca_godina=today.year,
+            knjiga=random.randint(1, 10),
             strana=random.randint(1, 500),
             tekuci_broj=random.randint(1, 1000),
             datum=RandomUtils.random_datetime().date(),
-            zenik=self.random_parohijan("М", 18),
-            zenik_rb_brak=random.randint(1, 3),
-            nevesta=self.random_parohijan("Ж", 18),
-            nevesta_rb_brak=random.randint(1, 3),
-            hram=RandomUtils.create_random_hram(unesi_adresu),
-            svestenik=self.create_random_svestenik(),
+            ime_zenika=random.choice(RandomUtils.male_names),
+            prezime_zenika=random.choice(RandomUtils.surnames),
+            zanimanje_zenika=random.choice(RandomUtils.sample_occupations_text()),
+            mesto_zenika="Београд",
+            veroispovest_zenika="Православна",
+            narodnost_zenika="Србин",
+            adresa_zenika="Насумична адреса",
+
+            ime_neveste=random.choice(RandomUtils.female_names),
+            prezime_neveste=random.choice(RandomUtils.surnames),
+            zanimanje_neveste=random.choice(RandomUtils.sample_occupations_text()),
+            mesto_neveste="Нови Сад",
+            veroispovest_neveste="Православна",
+            narodnost_neveste="Српкиња",
+            adresa_neveste="Насумична адреса",
+
+            svekar=random.choice(RandomUtils.male_names),
+            svekrva=random.choice(RandomUtils.female_names),
+            tast=random.choice(RandomUtils.male_names),
+            tasta=random.choice(RandomUtils.female_names),
+
+            datum_rodjenja_zenika=RandomUtils.random_date_of_birth(25),
+            mesto_rodjenja_zenika="Београд",
+            datum_rodjenja_neveste=RandomUtils.random_date_of_birth(23),
+            mesto_rodjenja_neveste="Нови Сад",
+
+            zenik_rb_brak="1",
+            nevesta_rb_brak="1",
             datum_ispita=RandomUtils.random_datetime().date(),
-            primedba="Насумична примедба...",
+            hram=hram,
+            svestenik=svestenik,
+            kum=random.choice(RandomUtils.male_names),
+            stari_svat=random.choice(RandomUtils.male_names),
+            razresenje="Да",
+            razresenje_primedba="",
+            primedba="Нема примедби",
         )
-        vencanje.save()
+
+        return vencanje
 
     def handle(self, *args, **kwargs):
         for _ in range(10):
             self.create_random_vencanje()
 
-        self.stdout.write(
-            self.style.SUCCESS("Успешно попуњена база података са насумичним подацима")
-        )
+        self.stdout.write(self.style.SUCCESS("Успешно попуњена база података венчањима"))
