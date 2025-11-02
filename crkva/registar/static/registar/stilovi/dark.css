@@ -1,0 +1,82 @@
+/* Dark theme overrides using CSS variables and scoped selectors */
+
+/* Override base color tokens when [data-theme="dark"] is set on <html> */
+:root[data-theme="dark"] {
+  --color-primary: #A21514; /* keep brand color */
+  --color-primary-700: #9c1818;
+  --color-text: #e5e7eb;
+  --color-text-muted: #cbd5e1;
+  --color-surface: #0b0f14;    /* page background */
+  --color-surface-2: #111827;  /* panels/cards */
+  --color-border: #334155;     /* borders */
+}
+
+/* Page background and text */
+[data-theme="dark"] body {
+  background-color: var(--color-surface);
+  color: var(--color-text);
+}
+
+/* Footer */
+[data-theme="dark"] body > footer {
+  background-color: #0f172a;
+  color: var(--color-text);
+}
+
+/* Forms */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="time"],
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: #94a3b8;
+}
+
+/* Header dropdown and search overlay */
+[data-theme="dark"] #search-overlay {
+  background: var(--color-surface-2);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Tables/list panels if any use light surfaces */
+[data-theme="dark"] .panel,
+[data-theme="dark"] .card,
+[data-theme="dark"] .container-panel {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+
+/* Lists */
+[data-theme="dark"] .stavka { border-bottom-color: var(--color-border); }
+[data-theme="dark"] .stavka:hover { background-color: var(--color-surface-2); }
+[data-theme="dark"] .stavka-veza { color: var(--color-text); }
+[data-theme="dark"] .search-input {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+  border-color: var(--color-border);
+}
+[data-theme="dark"] .pagination { border-top-color: var(--color-border); }
+
+/* Slava reminders on the homepage */
+[data-theme="dark"] .slava-reminders {
+  background-color: var(--color-surface-2);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Buttons using existing classes (dugme-crveno stays brand); add neutral button if needed */
+[data-theme="dark"] .dugme-crveno {
+  /* keep default styles; ensure text contrast */
+  color: #fff;
+}

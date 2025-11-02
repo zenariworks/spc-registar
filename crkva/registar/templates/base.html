@@ -6,6 +6,19 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+      // Apply saved theme as early as possible to avoid flash
+      (function() {
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved) {
+            document.documentElement.setAttribute('data-theme', saved);
+          }
+        } catch (e) {
+          // ignore
+        }
+      })();
+    </script>
 
     <link rel="stylesheet" href="{% static 'registar/stilovi.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/themify-icons/0.1.2/css/themify-icons.css">

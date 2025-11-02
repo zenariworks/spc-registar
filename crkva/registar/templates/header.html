@@ -28,6 +28,9 @@
                <li><a href="{{ unos_parohijana_url }}" class="{% if request.path == unos_parohijana_url %}active{% endif %}">Парохијан</a></li>
             </ul>
          </li>
+           <li class="theme-icon">
+              <a href="#" id="theme-toggle" class="fusion-main-menu-icon" aria-label="Промени тему">🌓</a>
+           </li>
            <li class="search-icon">
               <a href="#" id="search-trigger" class="fusion-main-menu-icon">
               <i class="ti-search"></i>
@@ -76,13 +79,32 @@
          }
        }
      });
-   function toggleMenu() {
-     var menu = document.getElementById("menu");
-     if (menu.classList.contains("open")) {
-         menu.classList.remove("open");
-     } else {
-         menu.classList.add("open");
+
+     // Theme toggle
+     (function() {
+       var toggle = document.getElementById('theme-toggle');
+       function setTheme(t) {
+         document.documentElement.setAttribute('data-theme', t);
+         try { localStorage.setItem('theme', t); } catch(e){}
+       }
+       function getTheme() {
+         return document.documentElement.getAttribute('data-theme') || 'light';
+       }
+       if (toggle) {
+         toggle.addEventListener('click', function(event) {
+           event.preventDefault();
+           var next = getTheme() === 'dark' ? 'light' : 'dark';
+           setTheme(next);
+         });
+       }
+     })();
+     function toggleMenu() {
+       var menu = document.getElementById("menu");
+       if (menu.classList.contains("open")) {
+           menu.classList.remove("open");
+       } else {
+           menu.classList.add("open");
+       }
      }
-   }
   </script>
 </header>
