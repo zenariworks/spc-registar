@@ -1,21 +1,30 @@
 .spisak {
+    list-style: none;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .stavka {
     list-style-type: none;
-    margin-bottom: 0;
+    margin: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid var(--color-border);
-    transition: background-color 0.15s ease;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    background: var(--color-surface);
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
 }
 
 .stavka:hover {
     background-color: var(--color-surface-2);
+    border-color: color-mix(in oklab, var(--color-primary) 30%, var(--color-border));
+    box-shadow: 0 8px 14px -6px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
     cursor: pointer;
 }
 
@@ -29,7 +38,8 @@
     display: flex;
     flex-grow: 1;
     align-items: center;
-    padding: 6px 0;
+    gap: 10px;
+    padding: 4px 0;
     cursor: pointer;
 }
 
@@ -101,9 +111,8 @@
 }
 
 /* Diskretno prugasto pozadinsko isticanje parnih redova */
-.spisak .stavka:nth-child(even) {
-    background-color: var(--color-surface);
-}
+/* Remove zebra striping with card rows */
+.spisak .stavka:nth-child(even) { background-color: var(--color-surface); }
 
 /* Mobile-friendly list and filters */
 @media (max-width: 640px) {

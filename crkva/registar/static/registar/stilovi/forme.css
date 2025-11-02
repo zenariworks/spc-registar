@@ -29,3 +29,192 @@ input:focus, select:focus, textarea:focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
+
+/* Organizacija i raspored za UNOSI */
+fieldset.form-section {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+fieldset.form-section legend {
+  padding: 0 8px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.form-field {
+  display: block;
+  position: relative;
+}
+.form-field label { margin-bottom: 6px; }
+.form-field input,
+.form-field select,
+.form-field textarea { width: 100%; }
+
+/* Make the save button sticky on mobile for better UX */
+@media (max-width: 640px) {
+  .page-header .dugme-crveno {
+    position: sticky;
+    top: 8px;
+    z-index: 10;
+  }
+}
+
+/* Subtle highlight for mandatory (required) fields */
+/* Fallback: slightly tint the input/select/textarea border when required */
+.form-field input:required,
+.form-field select:required,
+.form-field textarea:required {
+  border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
+}
+/* Preferred: add a thin left accent and an asterisk on the label when the field is required */
+.form-field:has(input:required),
+.form-field:has(select:required),
+.form-field:has(textarea:required) {
+  border-left: 2px solid color-mix(in oklab, var(--color-primary) 65%, transparent);
+  padding-left: 10px;
+}
+.form-field:has(input:required) label::after,
+.form-field:has(select:required) label::after,
+.form-field:has(textarea:required) label::after {
+  content: "*";
+  margin-left: 4px;
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Toggle group for 'pol' selection */
+.toggle-group {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--color-surface-1);
+}
+.toggle-button {
+  padding: 8px 14px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  background: transparent;
+  border: none;
+}
+.toggle-button + .toggle-button { border-left: 1px solid var(--color-border); }
+.toggle-button.active {
+  color: var(--color-text);
+  background: var(--color-surface-2);
+}
+.toggle-wrapper { display: flex; align-items: center; gap: 10px; }
+.toggle-label { font-weight: 600; color: var(--color-text-muted); }
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Nicer date and time pickers */
+input[type="date"],
+input[type="time"],
+input[name="datum_rodjenja"],
+input[name="vreme_rodjenja"] {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-1);
+  color: var(--color-text);
+  outline: none;
+}
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[name="datum_rodjenja"]:focus,
+input[name="vreme_rodjenja"]:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 25%, transparent);
+}
+
+/* Toggle slider style for checkboxes */
+.form-field input[type="checkbox"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 46px;
+  height: 26px;
+  border: 1px solid var(--color-border);
+  border-radius: 13px;
+  background: var(--color-surface-2);
+  position: relative;
+  cursor: pointer;
+  vertical-align: middle;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.form-field input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
+}
+.form-field input[type="checkbox"]:hover { border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border)); }
+.form-field input[type="checkbox"]:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent); }
+.form-field input[type="checkbox"]:checked {
+  background: color-mix(in oklab, var(--color-success, #22c55e) 60%, var(--color-surface-2));
+  border-color: var(--color-success, #22c55e);
+}
+.form-field input[type="checkbox"]:checked::after { transform: translateX(20px); }
+/* Greenish check mark when true */
+.form-field input[type="checkbox"]::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 6px;
+  width: 8px;
+  height: 14px;
+  border-right: 3px solid var(--color-success, #22c55e);
+  border-bottom: 3px solid var(--color-success, #22c55e);
+  transform: rotate(45deg) scale(0.8);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.form-field input[type="checkbox"]:checked::before { opacity: 1; }
+.form-field input[type="checkbox"][disabled] { opacity: 0.6; cursor: not-allowed; }
+
+/* Stack boolean toggles inline to save vertical space */
+.form-field:has(input[type="checkbox"]) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.form-field:has(input[type="checkbox"]) label {
+  margin: 0;
+  display: inline-block;
+}
+.form-field:has(input[type="checkbox"]) input[type="checkbox"] {
+  width: 46px; /* keep slider size */
+}
+/* Shrink gaps for rows that contain boolean toggles */
+.form-row:has(.form-field input[type="checkbox"]) {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+  margin-bottom: 8px;
+}

@@ -20,115 +20,115 @@
       </div>
     {% endif %}
 
-    <fieldset>
+    <fieldset class="form-section">
       <legend>Регистар</legend>
       <div class="form-row">
-        {{ form.redni_broj_krstenja_tekuca_godina.label_tag }} {{ form.redni_broj_krstenja_tekuca_godina }}
-        {{ form.krstenje_tekuca_godina.label_tag }} {{ form.krstenje_tekuca_godina }}
+        <div class="form-field">{{ form.redni_broj_krstenja_tekuca_godina.label_tag }} {{ form.redni_broj_krstenja_tekuca_godina }}</div>
+        <div class="form-field">{{ form.krstenje_tekuca_godina.label_tag }} {{ form.krstenje_tekuca_godina }}</div>
       </div>
       <div class="form-row">
-        {{ form.knjiga.label_tag }} {{ form.knjiga }}
-        {{ form.strana.label_tag }} {{ form.strana }}
-        {{ form.broj.label_tag }} {{ form.broj }}
+        <div class="form-field">{{ form.knjiga.label_tag }} {{ form.knjiga }}</div>
+        <div class="form-field">{{ form.strana.label_tag }} {{ form.strana }}</div>
+        <div class="form-field">{{ form.broj.label_tag }} {{ form.broj }}</div>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="form-section">
       <legend>Детаљи крштења</legend>
       <div class="form-row">
-        {{ form.datum.label_tag }} {{ form.datum }}
-        {{ form.vreme.label_tag }} {{ form.vreme }}
+        <div class="form-field">{{ form.datum.label_tag }} {{ form.datum }}</div>
+        <div class="form-field">{{ form.vreme.label_tag }} {{ form.vreme }}</div>
       </div>
       <div class="form-row">
-        {{ form.mesto.label_tag }} {{ form.mesto }}
-        {{ form.hram.label_tag }} {{ form.hram }}
-        {{ form.svestenik.label_tag }} {{ form.svestenik }}
+        <div class="form-field">{{ form.mesto.label_tag }} {{ form.mesto }}</div>
+        <div class="form-field">{{ form.hram.label_tag }} {{ form.hram }}</div>
+        <div class="form-field">{{ form.svestenik.label_tag }} {{ form.svestenik }}</div>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="form-section">
       <legend>Дете</legend>
       <div class="form-row">
-        {{ form.ime_deteta.label_tag }} {{ form.ime_deteta }}
-        {{ form.gradjansko_ime_deteta.label_tag }} {{ form.gradjansko_ime_deteta }}
-        {{ form.pol_deteta.label_tag }} {{ form.pol_deteta }}
+        <div class="form-field">{{ form.ime_deteta.label_tag }} {{ form.ime_deteta }}</div>
+        <div class="form-field">{{ form.gradjansko_ime_deteta.label_tag }} {{ form.gradjansko_ime_deteta }}</div>
+        <div class="form-field">{{ form.pol_deteta.label_tag }} {{ form.pol_deteta }}</div>
       </div>
       <div class="form-row">
-        {{ form.datum_rodjenja.label_tag }} {{ form.datum_rodjenja }}
-        {{ form.vreme_rodjenja.label_tag }} {{ form.vreme_rodjenja }}
-        {{ form.mesto_rodjenja.label_tag }} {{ form.mesto_rodjenja }}
+        <div class="form-field">{{ form.datum_rodjenja.label_tag }} {{ form.datum_rodjenja }}</div>
+        <div class="form-field">{{ form.vreme_rodjenja.label_tag }} {{ form.vreme_rodjenja }}</div>
+        <div class="form-field">{{ form.mesto_rodjenja.label_tag }} {{ form.mesto_rodjenja }}</div>
       </div>
       <div class="form-row">
-        {{ form.adresa_deteta_grad.label_tag }} {{ form.adresa_deteta_grad }}
-        {{ form.adresa_deteta_ulica.label_tag }} {{ form.adresa_deteta_ulica }}
-        {{ form.adresa_deteta_broj.label_tag }} {{ form.adresa_deteta_broj }}
+        <div class="form-field">{{ form.adresa_deteta_grad.label_tag }} {{ form.adresa_deteta_grad }}</div>
+        <div class="form-field">{{ form.adresa_deteta_ulica.label_tag }} {{ form.adresa_deteta_ulica }}</div>
+        <div class="form-field">{{ form.adresa_deteta_broj.label_tag }} {{ form.adresa_deteta_broj }}</div>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="form-section">
       <legend>Родитељи</legend>
       <div class="form-row">
-        {{ form.ime_oca.label_tag }} {{ form.ime_oca }}
-        {{ form.prezime_oca.label_tag }} {{ form.prezime_oca }}
-        {{ form.zanimanje_oca.label_tag }} {{ form.zanimanje_oca }}
+        <div class="form-field">{{ form.ime_oca.label_tag }} {{ form.ime_oca }}</div>
+        <div class="form-field">{{ form.prezime_oca.label_tag }} {{ form.prezime_oca }}</div>
+        <div class="form-field">{{ form.zanimanje_oca.label_tag }} {{ form.zanimanje_oca }}</div>
       </div>
       <div class="form-row">
-        {{ form.adresa_oca_mesto.label_tag }} {{ form.adresa_oca_mesto }}
-        {{ form.veroispovest_oca.label_tag }} {{ form.veroispovest_oca }}
-        {{ form.narodnost_oca.label_tag }} {{ form.narodnost_oca }}
+        <div class="form-field">{{ form.adresa_oca_mesto.label_tag }} {{ form.adresa_oca_mesto }}</div>
+        <div class="form-field">{{ form.veroispovest_oca.label_tag }} {{ form.veroispovest_oca }}</div>
+        <div class="form-field">{{ form.narodnost_oca.label_tag }} {{ form.narodnost_oca }}</div>
       </div>
       <div class="form-row">
-        {{ form.ime_majke.label_tag }} {{ form.ime_majke }}
-        {{ form.prezime_majke.label_tag }} {{ form.prezime_majke }}
-        {{ form.zanimanje_majke.label_tag }} {{ form.zanimanje_majke }}
+        <div class="form-field">{{ form.ime_majke.label_tag }} {{ form.ime_majke }}</div>
+        <div class="form-field">{{ form.prezime_majke.label_tag }} {{ form.prezime_majke }}</div>
+        <div class="form-field">{{ form.zanimanje_majke.label_tag }} {{ form.zanimanje_majke }}</div>
       </div>
       <div class="form-row">
-        {{ form.adresa_majke_mesto.label_tag }} {{ form.adresa_majke_mesto }}
-        {{ form.veroispovest_majke.label_tag }} {{ form.veroispovest_majke }}
+        <div class="form-field">{{ form.adresa_majke_mesto.label_tag }} {{ form.adresa_majke_mesto }}</div>
+        <div class="form-field">{{ form.veroispovest_majke.label_tag }} {{ form.veroispovest_majke }}</div>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="form-section">
       <legend>Податци о детету</legend>
       <div class="form-row">
-        {{ form.dete_rodjeno_zivo.label_tag }} {{ form.dete_rodjeno_zivo }}
-        {{ form.dete_po_redu_po_majci.label_tag }} {{ form.dete_po_redu_po_majci }}
+        <div class="form-field">{{ form.dete_rodjeno_zivo.label_tag }} {{ form.dete_rodjeno_zivo }}</div>
+        <div class="form-field">{{ form.dete_po_redu_po_majci.label_tag }} {{ form.dete_po_redu_po_majci }}</div>
       </div>
       <div class="form-row">
-        {{ form.dete_vanbracno.label_tag }} {{ form.dete_vanbracno }}
-        {{ form.dete_blizanac.label_tag }} {{ form.dete_blizanac }}
-        {{ form.drugo_dete_blizanac_ime.label_tag }} {{ form.drugo_dete_blizanac_ime }}
-        {{ form.dete_sa_telesnom_manom.label_tag }} {{ form.dete_sa_telesnom_manom }}
+        <div class="form-field">{{ form.dete_vanbracno.label_tag }} {{ form.dete_vanbracno }}</div>
+        <div class="form-field">{{ form.dete_blizanac.label_tag }} {{ form.dete_blizanac }}</div>
+        <div class="form-field">{{ form.drugo_dete_blizanac_ime.label_tag }} {{ form.drugo_dete_blizanac_ime }}</div>
+        <div class="form-field">{{ form.dete_sa_telesnom_manom.label_tag }} {{ form.dete_sa_telesnom_manom }}</div>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="form-section">
       <legend>Свештеник и Кум</legend>
       <div class="form-row">
-        {{ form.svestenik.label_tag }} {{ form.svestenik }}
-        {{ form.ime_kuma.label_tag }} {{ form.ime_kuma }}
-        {{ form.prezime_kuma.label_tag }} {{ form.prezime_kuma }}
+        <div class="form-field">{{ form.svestenik.label_tag }} {{ form.svestenik }}</div>
+        <div class="form-field">{{ form.ime_kuma.label_tag }} {{ form.ime_kuma }}</div>
+        <div class="form-field">{{ form.prezime_kuma.label_tag }} {{ form.prezime_kuma }}</div>
       </div>
       <div class="form-row">
-        {{ form.zanimanje_kuma.label_tag }} {{ form.zanimanje_kuma }}
-        {{ form.adresa_kuma_mesto.label_tag }} {{ form.adresa_kuma_mesto }}
+        <div class="form-field">{{ form.zanimanje_kuma.label_tag }} {{ form.zanimanje_kuma }}</div>
+        <div class="form-field">{{ form.adresa_kuma_mesto.label_tag }} {{ form.adresa_kuma_mesto }}</div>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="form-section">
       <legend>Матична књига – анаграф</legend>
       <div class="form-row">
-        {{ form.mesto_registracije.label_tag }} {{ form.mesto_registracije }}
-        {{ form.datum_registracije.label_tag }} {{ form.datum_registracije }}
-        {{ form.maticni_broj.label_tag }} {{ form.maticni_broj }}
-        {{ form.strana_registracije.label_tag }} {{ form.strana_registracije }}
+        <div class="form-field">{{ form.mesto_registracije.label_tag }} {{ form.mesto_registracije }}</div>
+        <div class="form-field">{{ form.datum_registracije.label_tag }} {{ form.datum_registracije }}</div>
+        <div class="form-field">{{ form.maticni_broj.label_tag }} {{ form.maticni_broj }}</div>
+        <div class="form-field">{{ form.strana_registracije.label_tag }} {{ form.strana_registracije }}</div>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="form-section">
       <legend>Напомена</legend>
       <div class="form-row">
-        {{ form.primedba.label_tag }} {{ form.primedba }}
+        <div class="form-field">{{ form.primedba.label_tag }} {{ form.primedba }}</div>
       </div>
     </fieldset>
 

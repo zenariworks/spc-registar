@@ -12,39 +12,65 @@
         <i class="bi bi-save" style="margin-right: 6px;"></i> Сачувај
       </button>
     </div>
-    <div class="form-row">
-      {{ form.pol.label_tag }} {{ form.pol }}
-    </div>
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {{ form.ime.label_tag }} {{ form.prezime.label_tag }}
+    
+    <fieldset class="form-section">
+      <legend>Основни подаци</legend>
+      <div class="form-row">
+        <div class="form-field">
+          <div class="toggle-wrapper">
+            <span class="toggle-label">{{ form.pol.label }}</span>
+            <div class="toggle-group" id="pol-toggle">
+              {% for value, label in form.pol.field.choices %}
+                <button type="button" class="toggle-button{% if form.pol.value == value %} active{% endif %}" data-value="{{ value }}">{{ label }}</button>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="visually-hidden">{{ form.pol }}</div>
+        </div>
+        <div class="form-field">{{ form.ime.label_tag }} {{ form.ime }}</div>
+        <div class="form-field">{{ form.prezime.label_tag }} {{ form.prezime }}</div>
+        <div class="form-field">{{ form.devojacko_prezime.label_tag }} {{ form.devojacko_prezime }}</div>
       </div>
-      <div class="form-group col-md-6">
-        {{ form.ime }} {{ form.prezime }}
-      </br>{{ form.devojacko_prezime.label_tag }} {{ form.devojacko_prezime }}
+      <div class="form-row">
+        <div class="form-field">{{ form.datum_rodjenja.label_tag }} {{ form.datum_rodjenja }}</div>
+        <div class="form-field">{{ form.vreme_rodjenja.label_tag }} {{ form.vreme_rodjenja }}</div>
       </div>
-    </div>
+    </fieldset>
 
-    <div class="form-row">
-      <div class="form-group col-md-6">
-        {{ form.datum_rodjenja.label_tag }} {{ form.vreme_rodjenja.label_tag }}
+    <fieldset class="form-section">
+      <legend>Детаљи</legend>
+      <div class="form-row">
+        <div class="form-field">{{ form.zanimanje.label_tag }} {{ form.zanimanje }}</div>
+        <div class="form-field">{{ form.veroispovest.label_tag }} {{ form.veroispovest }}</div>
+        <div class="form-field">{{ form.narodnost.label_tag }} {{ form.narodnost }}</div>
       </div>
-      <div class="form-group col-md-6">
-        {{ form.datum_rodjenja }} {{ form.vreme_rodjenja }}
+      <div class="form-row">
+        <div class="form-field" style="grid-column: 1 / -1;">{{ form.adresa.label_tag }} {{ form.adresa }}</div>
       </div>
-    </div>
-
-    <!-- Renderujte ostala polja -->
-    <div class="form-row">
-    {{ form.zanimanje.label_tag }} {{ form.zanimanje }}
-    </div>
-    <div class="form-row">
-    {{ form.veroispovest.label_tag }} {{ form.veroispovest }}
-    </div>
-    <div class="form-row">
-    {{ form.narodnost.label_tag }} {{ form.narodnost }}
-    {{ form.adresa.label_tag }} {{ form.adresa }}
-    </div>
+    </fieldset>
     <!-- Bottom save removed as per request: action button is now at the top -->
+    <script>
+      (function() {
+        var toggle = document.getElementById('pol-toggle');
+        if (toggle) {
+          var buttons = toggle.querySelectorAll('.toggle-button');
+          var select = document.querySelector('[name="{{ form.pol.name }}"]');
+          function setActive(val) {
+            buttons.forEach(function(btn){ btn.classList.toggle('active', btn.dataset.value == val); });
+            if (select) select.value = val;
+          }
+          buttons.forEach(function(btn){
+            btn.addEventListener('click', function(){ setActive(btn.dataset.value); });
+          });
+          if (select) setActive(select.value || (buttons[0] && buttons[0].dataset.value));
+        }
+
+        // Enhance date/time inputs if possible
+        var dateInput = document.querySelector('[name="{{ form.datum_rodjenja.name }}"]');
+        var timeInput = document.querySelector('[name="{{ form.vreme_rodjenja.name }}"]');
+        try { if (dateInput) dateInput.type = 'date'; } catch(e) {}
+        try { if (timeInput) timeInput.type = 'time'; } catch(e) {}
+      })();
+    </script>
   </form>
 {% endblock %}
