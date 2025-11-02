@@ -1,4 +1,11 @@
 /* Венчаница */
+@font-face {
+    font-family: 'Miroslavljeva Cirilica';
+    src: url('../fontovi/Miroslavljeva-Cirilica.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 .vencanica {
     border: 1px solid #ccc;
     margin: 2mm;
@@ -11,6 +18,7 @@
     border: 2px solid red;
     background-size: cover;
     background-image: url("../slike/vencanica-nova.jpg");
+    font-family: 'Miroslavljeva Cirilica', serif;
 }
 
 .vencanica-frame {
@@ -23,6 +31,6 @@
 }
 
 .vencanica-row {
-    border: 2px solid orange;
     display: flex;
+    font-family: 'Miroslavljeva Cirilica', serif;
 }

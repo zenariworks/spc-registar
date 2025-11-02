@@ -4,13 +4,37 @@
 <div class="container">
   </br>
   <div class="slava-reminders">
-    {% for slava in naredne_slave %}
-    <div class="slava-reminder">
-      {% comment %} <a class="slava-link" href="{% url 'prikazi_domacinstva' slava.uid %}">{{ slava }}</a> {% endcomment %}
-    </div>
-    {% empty %}
-    <p>Нема наступајућих слава.</p>
-    {% endfor %}
+    <h4>Јуче</h4>
+    {% if juce_slave %}
+      {% for slava in juce_slave %}
+      <div class="slava-reminder">{{ slava }}</div>
+      {% endfor %}
+    {% else %}
+      <p>Нема јучерашњих слава.</p>
+    {% endif %}
+
+    <h4>Данас</h4>
+    {% if danas_slave %}
+      {% for slava in danas_slave %}
+      <div class="slava-reminder">{{ slava }}</div>
+      {% endfor %}
+    {% else %}
+      <p>Данас нема слава.</p>
+    {% endif %}
+
+    <h4>Наредних 7 дана</h4>
+    {% if narednih_slave %}
+      {% for dan in narednih_slave %}
+        <div class="slava-reminder">
+          <strong>{{ dan.datum|date:"d.m." }}</strong>
+          {% for slava in dan.slave %}
+            <div>{{ slava }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>Нема наступајућих слава.</p>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

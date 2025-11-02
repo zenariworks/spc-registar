@@ -1,15 +1,24 @@
 /* Крштеница */
+@font-face {
+    font-family: 'Miroslavljeva Cirilica';
+    src: url('../fontovi/Miroslavljeva-Cirilica.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
 .krstenica {
-    border: none;
+    border: 1px solid #ccc;
     margin: 2mm;
     margin-top: 6mm;
     margin-left: 6mm;
     height: 297mm;
     width: 210mm;
     padding: 0mm;
-    box-shadow: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 2px solid red;
     background-size: cover;
     background-image: url("../slike/krstenica-nova.jpg");
+    font-family: 'Miroslavljeva Cirilica', serif;
 }
 
 .krstenica-frame {
@@ -22,6 +31,6 @@
 }
 
 .krstenica-row {
-    border: none;
     display: flex;
+    font-family: 'Miroslavljeva Cirilica', serif;
 }
