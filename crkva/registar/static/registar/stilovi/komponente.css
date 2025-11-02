@@ -40,3 +40,111 @@
     color: var(--color-primary-700);
     text-decoration: underline;
 }
+
+/* Nicer slava panel styles */
+.slava-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.slava-section { margin-bottom: 16px; }
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+.badge {
+    display: inline-block;
+    font-size: 12px;
+    line-height: 1;
+    padding: 4px 8px;
+    border-radius: 12px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+}
+.badge-red {
+    background: #A21514;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.slava-list { margin-top: 8px; }
+.slava-list.compact .slava-row { padding: 4px 6px; }
+.slava-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 8px;
+    margin-bottom: 6px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2);
+}
+.slava-date {
+    font-weight: 600;
+    color: var(--color-muted);
+    min-width: 56px;
+}
+.slava-title {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.slava-row .badge { margin-left: 8px; }
+.slava-empty {
+    margin: 8px 0;
+    color: var(--color-muted);
+}
+.slava-upcoming {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.slava-date-card {
+    padding: 8px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2);
+}
+.slava-date-card.post {
+    background: rgba(162, 21, 20, 0.08);
+    border-color: rgba(162, 21, 20, 0.3);
+}
+.slava-date-card.yesterday {
+    background: var(--color-surface-2);
+    color: var(--color-muted);
+}
+.slava-date-card.today {
+    position: relative;
+    border-color: var(--color-primary-700);
+    box-shadow: 0 0 0 2px rgba(162, 21, 20, 0.12);
+}
+.slava-date-card.today::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: var(--color-primary-700);
+    border-top-left-radius: var(--radius-2);
+    border-bottom-left-radius: var(--radius-2);
+}
+.date-line {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+@media (max-width: 768px) {
+    .slava-reminders {
+        float: none;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 16px;
+    }
+}
