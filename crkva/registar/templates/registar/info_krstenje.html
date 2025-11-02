@@ -16,19 +16,20 @@
     <div class="krstenica-frame">
         <div class="krstenica-row" style="height: 35mm">
           <div style="width: 23%;">
-            <div class="krstenica-row" style="height: 9mm"></div>
+            <!-- Spacer increased slightly to move knjiga/strana/broj lower for better alignment -->
+            <div class="krstenica-row" style="height: 12mm"></div>
             <div class="krstenica-row" style="height: 7mm">
-              <div class="krstenica-row" style="width: 100%; justify-content: flex-end; padding-right: 5.5%; height: 7mm">
+              <div class="krstenica-row" style="width: 100%; justify-content: flex-end; align-items: center; padding-right: 5.5%; height: 7mm">
                 {{ krstenje.knjiga }}
               </div>
             </div>
             <div class="krstenica-row" style="height: 7mm">
-              <div class="krstenica-row" style="width: 100%; justify-content: flex-end; padding-right: 6%; height: 7mm">
+              <div class="krstenica-row" style="width: 100%; justify-content: flex-end; align-items: center; padding-right: 6%; height: 7mm">
                 {{ krstenje.strana }}
               </div>
             </div>
-            <div class="krstenica-row" style="height: 8mm">
-              <div class="krstenica-row" style="width: 100%; justify-content: flex-end; padding-right: 5.5%; height: 7mm">
+            <div class="krstenica-row" style="height: 7mm">
+              <div class="krstenica-row" style="width: 100%; justify-content: flex-end; align-items: center; padding-right: 5.5%; height: 7mm">
                 {{ krstenje.broj }}
               </div>
             </div>
@@ -66,8 +67,8 @@
           <div style="width: 1%"></div>
           <!-- 2. Место и општина рођења -->
           <div style="width: 46%"></div>
-          <div class="visible-div" style="width: 53%">
-            {{ krstenje.mesto }}
+          <div class="visible-div" style="width: 53%; display: flex; align-items: center;">
+            {{ krstenje.mesto_rodjenja }}
           </div>
         </div>
         <div class="krstenica-row" style="height: 10mm">
@@ -91,7 +92,7 @@
           <!-- 5. Име и пол детета -->
           <div style="width: 46%"></div>
           <div style="width: 53%">
-            {{ krstenje.ime_deteta }}, {{ krstenje.pol_deteta }}
+            {{ krstenje.ime_deteta }}{% if krstenje.gradjansko_ime_deteta %} ({{ krstenje.gradjansko_ime_deteta }}){% endif %}, {{ krstenje.get_pol_deteta_display }}
           </div>
         </div>
         <div class="krstenica-row" style="height: 25mm">
@@ -118,7 +119,7 @@
           <!-- 8. Је ли дете црквено брачно -->
           <div style="width: 55.5%"></div>
           <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">
-            {{ krstenje.dete_vanbracno|yesno:"јесте,није,непознато" }}
+            {{ krstenje.dete_vanbracno|yesno:"није,јесте" }}
           </div>
         </div>
         <div class="krstenica-row" style="height: 9mm">
@@ -126,7 +127,7 @@
           <!-- 9. Је ли дете близанац -->
           <div style="width: 55.5%"></div>
           <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">
-            {{ krstenje.blizanac|yesno:"јесте,није,непознато" }}
+            {{ krstenje.dete_blizanac|yesno:"јесте,није" }}
           </div>
         </div>
         <div class="krstenica-row" style="height: 9mm">

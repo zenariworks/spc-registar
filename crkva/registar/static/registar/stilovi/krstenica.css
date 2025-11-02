@@ -1,14 +1,13 @@
 /* Крштеница */
 .krstenica {
-    border: 1px solid #ccc;
+    border: none;
     margin: 2mm;
     margin-top: 6mm;
     margin-left: 6mm;
     height: 297mm;
     width: 210mm;
     padding: 0mm;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 2px solid red;
+    box-shadow: none;
     background-size: cover;
     background-image: url("../slike/krstenica-nova.jpg");
 }
@@ -23,6 +22,6 @@
 }
 
 .krstenica-row {
-    border: 2px solid orange;
+    border: none;
     display: flex;
 }
