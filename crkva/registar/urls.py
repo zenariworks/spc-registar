@@ -10,12 +10,12 @@ urlpatterns = [
     path("select2/", include("django_select2.urls")),
     path("parohijani/", views.SpisakParohijana.as_view(), name="parohijani"),
     path(
-        "parohijan/<uuid:uid>/",
+        "parohijan/<int:uid>/",
         views.PrikazParohijana.as_view(),
         name="parohijan_detail",
     ),
     path(
-        "parohijan/print/<uuid:uid>/",
+        "parohijan/print/<int:uid>/",
         views.ParohijanPDF.as_view(),
         name="parohijan_pdf",
     ),
@@ -35,12 +35,12 @@ urlpatterns = [
     ),
     path("svestenici/", views.SpisakSvestenika.as_view(), name="svestenici"),
     path(
-        "svestenik/<uuid:uid>/",
+        "svestenik/<int:uid>/",
         views.PrikazSvestenika.as_view(),
         name="svestenik_detail",
     ),
     path(
-        "svestenik/print/<uuid:uid>/",
+        "svestenik/print/<int:uid>/",
         views.SvestenikPDF.as_view(),
         name="svestenik_pdf",
     ),
