@@ -1,0 +1,31 @@
+/* Lagani i dosledni stilovi za forme */
+.form-group { margin-bottom: 12px; }
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+input[type="text"], input[type="number"], input[type="date"],
+input[type="email"], select, textarea {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+input::placeholder { color: #94a3b8; }
+
+.form-actions { display: flex; gap: 8px; }
+
+.help-text { color: #475569; font-size: 14px; margin-top: 6px; }
+.error-text { color: #b91c1c; font-size: 14px; margin-top: 6px; }
+
+/* Vidljiv fokus */
+input:focus, select:focus, textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
