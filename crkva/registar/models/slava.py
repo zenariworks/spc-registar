@@ -1,9 +1,7 @@
 """Модул модела славе у бази података."""
 
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-
-from .dan import Dan
-from .mesec import Mesec
 
 
 class Slava(models.Model):
@@ -14,19 +12,24 @@ class Slava(models.Model):
     naziv = models.CharField(verbose_name="назив")
     opsti_naziv = models.CharField(verbose_name="општи назив")
 
-    dan = models.ForeignKey(
-        Dan, verbose_name="дан", on_delete=models.SET_NULL, null=True
-    )
-    mesec = models.ForeignKey(
-        Mesec,
-        verbose_name="месец",
-        on_delete=models.SET_NULL,
+    dan = models.IntegerField(
+        verbose_name="дан",
+        validators=[MinValueValidator(1), MaxValueValidator(31)],
         null=True,
-        to_field="mesec",
+        blank=True,
+    )
+    mesec = models.IntegerField(
+        verbose_name="месец",
+        validators=[MinValueValidator(1), MaxValueValidator(12)],
+        null=True,
+        blank=True,
     )
 
-    # def __str__(self):
-    #     return f"{self.dan}. {self.mesec}: {self.naziv}"
+    def get_mesec_naziv(self):
+        """Враћа назив месеца."""
+        from registar.utils import MESECI
+        return MESECI.get(self.mesec, "") if self.mesec else ""
+
     def __str__(self):
         return f"{self.naziv}"
 
