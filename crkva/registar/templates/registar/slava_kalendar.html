@@ -8,13 +8,22 @@
     <i class="bi bi-arrow-left"></i>
   </a>
   <h1 class="page-title">Календар слава</h1>
-  <form class="form-container" action="" method="get">
-    <div>
-      <a class="page-link" href="{% url 'slava_kalendar_mesec' prev_year prev_month %}">&laquo; претходни</a>
-      <span style="font-weight:600;">{{ month_name }} / {{ year }}</span>
-      <a class="page-link" href="{% url 'slava_kalendar_mesec' next_year next_month %}">следеђи &raquo;</a>
-    </div>
-  </form>
+</div>
+
+<!-- Single, centered navigation -->
+<div class="calendar-navigation" style="display: flex; align-items: center; justify-content: center; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+  <a href="{% url 'slava_kalendar_mesec' prev_year prev_month %}" class="nav-arrow" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #fff; border: 1px solid #ddd; border-radius: 50%; text-decoration: none; color: #495057; transition: all 0.2s; margin-right: 20px;" onmouseover="this.style.background='#e9ecef'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='#fff'; this.style.transform='scale(1)'">
+    <i class="bi bi-chevron-left"></i>
+  </a>
+  
+  <div class="current-month" style="text-align: center; min-width: 200px;">
+    <div style="font-size: 18px; font-weight: 600; color: #212529;">{{ month_name }}</div>
+    <div style="font-size: 14px; color: #6c757d;">{{ year }}</div>
+  </div>
+  
+  <a href="{% url 'slava_kalendar_mesec' next_year next_month %}" class="nav-arrow" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #fff; border: 1px solid #ddd; border-radius: 50%; text-decoration: none; color: #495057; transition: all 0.2s; margin-left: 20px;" onmouseover="this.style.background='#e9ecef'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='#fff'; this.style.transform='scale(1)'">
+    <i class="bi bi-chevron-right"></i>
+  </a>
 </div>
 
 <div class="calendar-grid" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:8px;">
@@ -69,12 +78,6 @@
 }
 </style>
 
-<div class="pagination" style="margin-top: 12px;">
-  <span class="step-links">
-    <a href="{% url 'slava_kalendar_mesec' prev_year prev_month %}" class="page-link">&laquo; претходни</a>
-    <span class="current">{{ month_name }} {{ year }}</span>
-    <a href="{% url 'slava_kalendar_mesec' next_year next_month %}" class="page-link">следеђи &raquo;</a>
-  </span>
-  </div>
+
 
 {% endblock %}
