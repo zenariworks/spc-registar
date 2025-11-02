@@ -9,7 +9,7 @@
     </div>
     <div class="menu-search-wrapper">
        <button class="hamburger-menu" onclick="toggleMenu()" aria-label="Отвори мени">
-       <i class="ti-menu"></i>
+       <i class="bi bi-list"></i>
        </button>
        <nav id="menu" aria-label="Главни мени">
          <ul>
@@ -29,11 +29,13 @@
             </ul>
          </li>
            <li class="theme-icon">
-              <a href="#" id="theme-toggle" class="fusion-main-menu-icon" aria-label="Промени тему">🌓</a>
+              <a href="#" id="theme-toggle" class="fusion-main-menu-icon" aria-label="Промени тему" title="Промени тему">
+                <i class="bi bi-sun"></i>
+              </a>
            </li>
            <li class="search-icon">
               <a href="#" id="search-trigger" class="fusion-main-menu-icon">
-              <i class="ti-search"></i>
+              <i class="bi bi-search"></i>
               </a>
            </li>
         </ul>
@@ -41,9 +43,9 @@
        <div id="search-overlay" style="display: none;">
          <form method="get" action="{% url 'search_view' %}" class="search-form">
             <div class="search-box">
-               <button type="submit" class="search-icon-button"><i class="ti-search"></i></button>
+               <button type="submit" class="search-icon-button"><i class="bi bi-search"></i></button>
                <input type="text" name="query" placeholder="Претрага..." autofocus>
-               <a href="#" id="close-search" class="close-search"><i class="ti-close"></i></a>
+               <a href="#" id="close-search" class="close-search"><i class="bi bi-x-lg"></i></a>
             </div>
          </form>
        </div>
@@ -83,6 +85,8 @@
      // Theme toggle
      (function() {
        var toggle = document.getElementById('theme-toggle');
+       var iconEl = toggle ? toggle.querySelector('i') : null;
+
        function setTheme(t) {
          document.documentElement.setAttribute('data-theme', t);
          try { localStorage.setItem('theme', t); } catch(e){}
@@ -90,11 +94,31 @@
        function getTheme() {
          return document.documentElement.getAttribute('data-theme') || 'light';
        }
+       function updateThemeIcon() {
+         var current = getTheme();
+         if (!iconEl) return;
+         // Swap Bootstrap Icons based on theme
+         if (current === 'dark') {
+           iconEl.className = 'bi bi-moon';
+           toggle.setAttribute('aria-label', 'Промени тему: светла');
+           toggle.setAttribute('title', 'Промени на светлу тему');
+           toggle.setAttribute('aria-pressed', 'true');
+         } else {
+           iconEl.className = 'bi bi-sun';
+           toggle.setAttribute('aria-label', 'Промени тему: тамна');
+           toggle.setAttribute('title', 'Промени на тамну тему');
+           toggle.setAttribute('aria-pressed', 'false');
+         }
+       }
+
+       // Initialize icon on load
        if (toggle) {
+         updateThemeIcon();
          toggle.addEventListener('click', function(event) {
            event.preventDefault();
            var next = getTheme() === 'dark' ? 'light' : 'dark';
            setTheme(next);
+           updateThemeIcon();
          });
        }
      })();
