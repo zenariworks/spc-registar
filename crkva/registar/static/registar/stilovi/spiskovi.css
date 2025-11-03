@@ -115,17 +115,81 @@
 .spisak .stavka:nth-child(even) { background-color: var(--color-surface); }
 
 /* Mobile-friendly list and filters */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+
+    .page-title {
+        font-size: 1.5rem;
+    }
+
     .stavka {
         flex-direction: column;
         align-items: flex-start;
-        gap: 6px;
+        gap: 10px;
+        padding: 16px;
     }
+
+    .stavka-veza {
+        width: 100%;
+        font-size: 1rem;
+        line-height: 1.5;
+    }
+
+    /* Make buttons full-width on mobile for better touch targets */
+    .stavka .dugme-crveno {
+        width: 100%;
+        padding: 12px 15px;
+        font-size: 16px;
+        text-align: center;
+        min-height: 44px; /* Minimum touch target */
+        display: block;
+    }
+
     .search-input {
         max-width: 100%;
         margin-right: 0;
+        font-size: 16px; /* Prevent zoom on iOS */
+        padding: 12px;
+        min-height: 44px;
     }
+
     .form-container {
         width: 100%;
+    }
+
+    /* Better pagination on mobile */
+    .pagination {
+        margin-top: 20px;
+    }
+
+    .pagination .page-link,
+    .pagination .current {
+        padding: 10px 12px;
+        font-size: 14px;
+        margin: 4px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .stavka {
+        padding: 12px;
+    }
+
+    .page-title {
+        font-size: 1.25rem;
+    }
+
+    .pagination .page-link,
+    .pagination .current {
+        font-size: 13px;
+        padding: 8px 10px;
     }
 }

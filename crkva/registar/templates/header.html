@@ -2,15 +2,15 @@
 {% load static %}
 <header>
   <div class="container header-bar">
+    <button class="hamburger-menu" onclick="toggleMenu()" aria-label="Отвори мени">
+      <i class="bi bi-list"></i>
+    </button>
     <div class="fusion-logo">
        <a href="{% url 'pocetna' %}">
        <img src="https://spc.rs/wp-content/uploads/2022/03/spc-logo.png" alt="Logo СПЦ">
        </a>
     </div>
     <div class="menu-search-wrapper">
-       <button class="hamburger-menu" onclick="toggleMenu()" aria-label="Отвори мени">
-       <i class="bi bi-list"></i>
-       </button>
        <nav id="menu" aria-label="Главни мени">
          <ul>
          {% url 'parohijani' as parohijani_url %}
@@ -66,6 +66,7 @@
        </div>
     </div>
   </div>
+  <div id="menu-backdrop"></div>
   <script>
      document.getElementById('search-trigger').addEventListener('click', function(event) {
        event.preventDefault();
@@ -138,12 +139,27 @@
      })();
      function toggleMenu() {
        var menu = document.getElementById("menu");
+       var backdrop = document.getElementById("menu-backdrop");
        if (menu.classList.contains("open")) {
            menu.classList.remove("open");
+           backdrop.classList.remove("active");
        } else {
            menu.classList.add("open");
+           backdrop.classList.add("active");
        }
      }
+
+     // Close menu when clicking backdrop
+     document.addEventListener('DOMContentLoaded', function() {
+       var backdrop = document.getElementById("menu-backdrop");
+       if (backdrop) {
+         backdrop.addEventListener('click', function() {
+           var menu = document.getElementById("menu");
+           menu.classList.remove("open");
+           backdrop.classList.remove("active");
+         });
+       }
+     });
 
      // Mobile-friendly dropdown toggles
      (function(){
