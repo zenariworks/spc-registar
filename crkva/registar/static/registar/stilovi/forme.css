@@ -61,8 +61,43 @@ fieldset.form-section legend {
 .form-field select,
 .form-field textarea { width: 100%; }
 
-/* Make the save button sticky on mobile for better UX */
+/* Mobile form enhancements */
+@media (max-width: 768px) {
+  /* Better spacing for form sections */
+  fieldset.form-section {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* Stack form rows on smaller screens */
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  /* Better input sizing for mobile */
+  input[type="text"], input[type="number"], input[type="date"],
+  input[type="email"], select, textarea {
+    font-size: 16px; /* Prevent zoom on iOS */
+    padding: 12px;
+    min-height: 44px;
+  }
+
+  /* Make action buttons full width and better touch targets */
+  .form-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-actions button,
+  .form-actions .dugme-crveno {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
 @media (max-width: 640px) {
+  /* Make the save button sticky on mobile for better UX */
   .page-header .dugme-crveno {
     position: sticky;
     top: 8px;

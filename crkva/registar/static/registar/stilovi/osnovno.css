@@ -179,6 +179,8 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     justify-content: center;
     width: 36px;
     height: 36px;
+    min-width: 36px;
+    min-height: 36px;
     border-radius: var(--radius-2);
     border: 1px solid var(--color-border);
     background-color: var(--color-surface-2);
@@ -197,4 +199,47 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 
 .back-button i {
     font-size: 18px;
+}
+
+/* Mobile enhancements */
+@media (max-width: 768px) {
+    /* Better touch targets on mobile */
+    .back-button {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    /* Better text sizing on mobile */
+    body {
+        font-size: 16px;
+        line-height: 1.5;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    h2 {
+        font-size: 1.25rem;
+    }
+
+    h3 {
+        font-size: 1.125rem;
+    }
 }

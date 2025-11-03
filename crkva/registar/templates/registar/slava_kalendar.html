@@ -11,46 +11,46 @@
 </div>
 
 <!-- Single, centered navigation -->
-<div class="calendar-navigation" style="display: flex; align-items: center; justify-content: center; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-  <a href="{% url 'slava_kalendar_mesec' prev_year prev_month %}" class="nav-arrow" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #fff; border: 1px solid #ddd; border-radius: 50%; text-decoration: none; color: #495057; transition: all 0.2s; margin-right: 20px;" onmouseover="this.style.background='#e9ecef'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='#fff'; this.style.transform='scale(1)'">
+<div class="calendar-navigation">
+  <a href="{% url 'slava_kalendar_mesec' prev_year prev_month %}" class="nav-arrow">
     <i class="bi bi-chevron-left"></i>
   </a>
-  
-  <div class="current-month" style="text-align: center; min-width: 200px;">
-    <div style="font-size: 18px; font-weight: 600; color: #212529;">{{ month_name }}</div>
-    <div style="font-size: 14px; color: #6c757d;">{{ year }}</div>
+
+  <div class="current-month">
+    <div class="month-name">{{ month_name }}</div>
+    <div class="year-label">{{ year }}</div>
   </div>
-  
-  <a href="{% url 'slava_kalendar_mesec' next_year next_month %}" class="nav-arrow" style="display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #fff; border: 1px solid #ddd; border-radius: 50%; text-decoration: none; color: #495057; transition: all 0.2s; margin-left: 20px;" onmouseover="this.style.background='#e9ecef'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='#fff'; this.style.transform='scale(1)'">
+
+  <a href="{% url 'slava_kalendar_mesec' next_year next_month %}" class="nav-arrow">
     <i class="bi bi-chevron-right"></i>
   </a>
 </div>
 
-<div class="calendar-grid" style="display:grid; grid-template-columns: repeat(7, 1fr); gap:8px;">
+<div class="calendar-grid">
   <!-- Weekday headers (desktop) -->
   {% for w in weekday_labels %}
-    <div class="weekday-header" style="font-weight:600; text-align:center;">
+    <div class="weekday-header">
       {{ w }}
     </div>
   {% endfor %}
 
   {% for day in cells %}
     {% if day.is_placeholder %}
-      <div class="calendar-cell placeholder" style="border:1px solid transparent; border-radius:8px; padding:10px; background:transparent;"></div>
+      <div class="calendar-cell placeholder"></div>
     {% else %}
-      <div class="calendar-cell {% if day.is_fasting %}fasting{% endif %}" style="border:1px solid #ddd; border-radius:8px; padding:10px; background:{% if day.is_fasting %}#A21514{% else %}#fff{% endif %}; color:{% if day.is_fasting %}#fff{% else %}inherit{% endif %};">
-        <div class="cell-header" style="display:flex; justify-content:space-between; align-items:center;">
-          <div class="date" style="font-weight:700;">{{ day.date.day }}.</div>
-          <div class="weekday" style="font-size:12px; opacity:0.9;">{{ day.weekday_label }}</div>
+      <div class="calendar-cell {% if day.is_fasting %}fasting{% endif %}">
+        <div class="cell-header">
+          <div class="date">{{ day.date.day }}.</div>
+          <div class="weekday">{{ day.weekday_label }}</div>
         </div>
         {% if day.slave %}
-          <div class="slavas" style="margin-top:6px;">
+          <div class="slavas">
             {% for s in day.slave %}
               <div>{{ s.naziv }}</div>
             {% endfor %}
           </div>
         {% else %}
-          <div style="margin-top:6px; font-size:12px; opacity:0.85;">Нема уписаних слава</div>
+          <div class="no-slavas-text">Нема уписаних слава</div>
         {% endif %}
       </div>
     {% endif %}
@@ -58,23 +58,188 @@
 </div>
 
 <style>
-@media (max-width: 768px) {
-  .calendar-grid { grid-template-columns: repeat(2, 1fr); }
-  .weekday-header { display: none; }
+/* Calendar responsive styles */
+.calendar-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Make all cards the same size */
+.nav-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  text-decoration: none;
+  color: #495057;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.nav-arrow:hover {
+  background: #e9ecef;
+  transform: scale(1.05);
+}
+
+.nav-arrow:first-of-type {
+  margin-right: 20px;
+}
+
+.nav-arrow:last-of-type {
+  margin-left: 20px;
+}
+
+.current-month {
+  text-align: center;
+  min-width: 200px;
+}
+
+.month-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+}
+
+.year-label {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+/* Calendar grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.weekday-header {
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Calendar cells */
 .calendar-cell {
   height: 140px;
   display: flex;
   flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
 }
-.calendar-cell.placeholder { height: 140px; }
-.calendar-cell .slavas { flex: 1; overflow: auto; }
 
+.calendar-cell.placeholder {
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.calendar-cell.fasting {
+  background: #A21514;
+  color: #fff;
+}
+
+.cell-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calendar-cell .date {
+  font-weight: 700;
+}
+
+.calendar-cell .weekday {
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.calendar-cell .slavas {
+  flex: 1;
+  overflow: auto;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+.calendar-cell .no-slavas-text {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* Tablet and mobile optimizations */
 @media (max-width: 768px) {
-  .calendar-cell { height: 120px; }
-  .calendar-cell.placeholder { height: 120px; }
+  .calendar-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .weekday-header { display: none; }
+  .calendar-cell {
+    height: 130px;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  .calendar-cell.placeholder { height: 130px; }
+  .calendar-cell .date {
+    font-size: 1rem;
+  }
+  .calendar-navigation {
+    padding: 12px;
+    margin: 15px 0;
+  }
+  .current-month {
+    min-width: 150px;
+  }
+  .month-name {
+    font-size: 1rem;
+  }
+  .year-label {
+    font-size: 0.875rem;
+  }
+}
+
+/* Small mobile - single column for better readability */
+@media (max-width: 480px) {
+  .calendar-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .calendar-cell {
+    height: auto;
+    min-height: 80px;
+    padding: 12px;
+  }
+  .calendar-cell.placeholder { display: none; }
+  .calendar-cell .cell-header {
+    margin-bottom: 8px;
+  }
+  .calendar-cell .slavas {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  .calendar-navigation {
+    padding: 10px;
+    margin: 10px 0;
+  }
+  .nav-arrow:first-of-type {
+    margin-right: 12px;
+  }
+  .nav-arrow:last-of-type {
+    margin-left: 12px;
+  }
+  .current-month {
+    min-width: 120px;
+  }
 }
 </style>
 
