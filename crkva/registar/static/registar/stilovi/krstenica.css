@@ -6,6 +6,35 @@
     font-style: normal;
     font-display: swap;
 }
+
+/* CSS Variables for easy positioning adjustments */
+:root {
+    /* Vertical positions (percentage from top) - fine-tuned based on background image */
+    --krst-knjiga-top: 6%;     /* Knjiga/Strana/Broj section */
+    --krst-eparhija-top: 16%;  /* БЕОГРАДСКО - КАРЛОВАЧКЕ line */
+    --krst-hram-top: 19.5%;    /* Hram/mesto/godina line */
+    --krst-field1-top: 27.5%;  /* 1. Godina, mesec, dan i vreme rodjenja */
+    --krst-field2-top: 30.5%;  /* 2. Mesto i opstina rodjenja */
+    --krst-field3-top: 35%;    /* 3. Godina, mesec, dan i vreme krstenja */
+    --krst-field4-top: 40%;    /* 4. Mesto i hram krstenja */
+    --krst-field5-top: 43.5%;  /* 5. Ime i pol deteta */
+    --krst-field6-top: 45.5%;  /* 6. Roditelji (multi-line field) */
+    --krst-field7-top: 56.5%;  /* 7. Koje je dete po redjenju materi */
+    --krst-field8-top: 59.5%;  /* 8. Je li dete crkveno bracno */
+    --krst-field9-top: 62.5%;  /* 9. Je li dete blizanac */
+    --krst-field10-top: 65.5%; /* 10. Je li dete rodjeno sa telesnim nedostatkom */
+    --krst-field11-top: 69%;   /* 11. Ime i prezime svestenika */
+    --krst-field12-top: 73%;   /* 12. Ime i prezime kuma */
+    --krst-field13-top: 78%;   /* 13. Strana domovnika - anagrafa */
+    --krst-field14-top: 81.5%; /* 14. PRIMEDBA */
+    --krst-bottom-top: 89%;    /* Bottom section (datum/mesto/parok) */
+
+    /* Horizontal positions */
+    --krst-left-label: 5%;
+    --krst-left-value: 47%;    /* Left side of value fields (fields 1-6, 11-14) */
+    --krst-right-value: 56%;   /* Right side values (fields 7-10) */
+}
+
 .krstenica {
     border: 1px solid #ccc;
     margin: 2mm;
@@ -19,6 +48,7 @@
     background-size: cover;
     background-image: url("../slike/krstenica-nova.jpg");
     font-family: 'Miroslavljeva Cirilica', serif;
+    position: relative;
 }
 
 .krstenica-frame {
@@ -28,9 +58,24 @@
     height: 286mm;
     width: 200mm;
     padding: 0mm;
+    position: relative;
 }
 
 .krstenica-row {
     display: flex;
     font-family: 'Miroslavljeva Cirilica', serif;
+}
+
+/* Absolute positioning for dynamic layout */
+.krst-absolute-field {
+    position: absolute;
+    left: var(--krst-left-value);
+    right: 5%;
+    font-family: 'Miroslavljeva Cirilica', serif;
+}
+
+.krst-absolute-right {
+    position: absolute;
+    left: var(--krst-right-value);
+    right: 5%;
 }
