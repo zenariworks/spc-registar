@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load marker_filter %}
 {% block content %}
 <div class="container">
   <div class="page-header">
@@ -11,7 +12,7 @@
   <h2>Вероисповести</h2>
   <ul>
     {% for item in veroisposvest_results %}
-    <li>{{ item.naziv }}</li>
+    <li>{{ item.naziv|markiraj:query }}</li>
     {% empty %}
     <li>Нема резултата</li>
     {% endfor %}
@@ -19,7 +20,7 @@
   <h2>Парохијани</h2>
   <ul>
     {% for item in parohijan_results %}
-    <li>{{ item.ime }} {{ item.prezime }}</li>
+    <li>{{ item.ime|markiraj:query }} {{ item.prezime|markiraj:query }}</li>
     {% empty %}
     <li>Нема резултата</li>
     {% endfor %}

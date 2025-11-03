@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView, ListView
 from registar.forms import SearchForm
+from registar.utils import get_query_variants
+from django.db.models import Q
 from registar.models.svestenik import Svestenik
 from weasyprint import HTML
 
@@ -22,13 +24,20 @@ class SpisakSvestenika(ListView):
         form = SearchForm(self.request.GET)
         if form.is_valid():
             query = form.cleaned_data["query"]
-            return Svestenik.objects.filter(dete__ime__icontains=query)
+            if not query:
+                return Svestenik.objects.all()
+            q = None
+            for v in get_query_variants(query):
+                clause = Q(ime__icontains=v) | Q(prezime__icontains=v) | Q(zvanje__icontains=v)
+                q = clause if q is None else (q | clause)
+            return Svestenik.objects.filter(q) if q is not None else Svestenik.objects.all()
         return Svestenik.objects.all()
 
     def get_context_data(self, **kwargs):
         """Додаје формулар за претрагу у контекст шаблона."""
         context = super().get_context_data(**kwargs)
         context["form"] = SearchForm(self.request.GET)
+        context["upit"] = self.request.GET.get("query", "")
         return context
 
 

@@ -21,10 +21,10 @@
         {% for vencanje in vencanja %}
             <li class="stavka">
                 <a href="{% url 'vencanje_detail' uid=vencanje.uid %}" class="stavka-veza">
-                    {{ vencanje.datum }}:&nbsp;
-                    {{ vencanje.ime_zenika|markiraj:upit|safe }}&nbsp;
-                    и&nbsp;
-                    {{ vencanje.ime_neveste|markiraj:upit|safe }}&nbsp;{{ vencanje.prezime_zenika|markiraj:upit|safe }}
+                    {{ vencanje.datum }}: 
+                    {{ vencanje.ime_zenika|markiraj:upit|safe }} 
+                    и 
+                    {{ vencanje.ime_neveste|markiraj:upit|safe }} {{ vencanje.prezime_zenika|markiraj:upit|safe }}
                 </a>
                         <a href="{% url 'vencanje_pdf' uid=vencanje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
                             <button class="dugme-crveno" type="button">Штампај</button>

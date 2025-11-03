@@ -7,6 +7,7 @@ from django.db import models
 from django.db.models.functions import Cast
 
 from registar.models import Vencanje
+from registar.utils import get_query_variants
 
 
 class VencanjeFilter(django_filters.FilterSet):
@@ -27,14 +28,17 @@ class VencanjeFilter(django_filters.FilterSet):
 
         query = models.Q()
         for rec in termini_pretrage:
-            query &= (
-                models.Q(ime_zenika__icontains=rec)
-                | models.Q(prezime_zenika__icontains=rec)
-                | models.Q(ime_neveste__icontains=rec)
-                | models.Q(prezime_neveste__icontains=rec)
-                | models.Q(kum__icontains=rec)
-                | models.Q(stari_svat__icontains=rec)
-                | models.Q(hram__naziv__icontains=rec)
-                | models.Q(datum_str__icontains=rec)
-            )
+            inner = models.Q()
+            for v in get_query_variants(rec):
+                inner |= (
+                    models.Q(ime_zenika__icontains=v)
+                    | models.Q(prezime_zenika__icontains=v)
+                    | models.Q(ime_neveste__icontains=v)
+                    | models.Q(prezime_neveste__icontains=v)
+                    | models.Q(kum__icontains=v)
+                    | models.Q(stari_svat__icontains=v)
+                    | models.Q(hram__naziv__icontains=v)
+                    | models.Q(datum_str__icontains=v)
+                )
+            query &= inner
         return queryset.filter(query)
