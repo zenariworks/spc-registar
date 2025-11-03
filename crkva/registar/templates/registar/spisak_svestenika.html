@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load marker_filter %}
 
 {% block content %}
     <div class="page-header">
@@ -19,7 +20,7 @@
         {% for svestenik in svestenici %}
             <li class="stavka">
                 <a href="{% url 'svestenik_detail' uid=svestenik.uid %}" class="stavka-veza" onmouseover="this.parentNode.style.backgroundColor='#f0f0f0'" onmouseout="this.parentNode.style.backgroundColor='transparent'">
-                    {{ svestenik.ime }} {{ svestenik.prezime }}, {{ svestenik.zvanje }}
+                    {{ svestenik.ime|markiraj:upit }} {{ svestenik.prezime|markiraj:upit }}, {{ svestenik.zvanje|markiraj:upit }}
                 </a>
                 <a href="{% url 'svestenik_pdf' uid=svestenik.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
                     <button class="dugme-crveno" type="button">Штампај</button>

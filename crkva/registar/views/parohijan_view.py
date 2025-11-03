@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from registar.forms import ParohijanForm, SearchForm
+from registar.utils import get_query_variants
 from registar.models.parohijan import Parohijan
 from weasyprint import HTML
 
@@ -37,13 +38,22 @@ class SpisakParohijana(ListView):
         form = SearchForm(data=self.request.GET)
         if form.is_valid():
             query = form.cleaned_data["query"]
-            return Parohijan.objects.filter(dete__ime__icontains=query)
+            if not query:
+                return Parohijan.objects.all()
+            variants = get_query_variants(query)
+            from django.db.models import Q
+            q = None
+            for v in variants:
+                clause = Q(ime__icontains=v) | Q(prezime__icontains=v)
+                q = clause if q is None else (q | clause)
+            return Parohijan.objects.filter(q) if q is not None else Parohijan.objects.all()
         return Parohijan.objects.all()
 
     def get_context_data(self, **kwargs):
         """Додаје форму за претрагу у контекст шаблона."""
         context = super().get_context_data(**kwargs)
         context["form"] = SearchForm(data=self.request.GET)
+        context["upit"] = self.request.GET.get("query", "")
         return context
 
 

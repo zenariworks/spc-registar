@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from registar.models import Parohijan, Veroispovest
+from registar.utils import get_query_variants
 
 from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja, unos_krstenja
 from .parohijan_view import (
@@ -30,19 +31,32 @@ def search_view(request) -> HttpResponse:
     Претрага вероисповести, парохијана и домаћинстава.
     """
     query = request.GET.get("query", "")
+    variants = get_query_variants(query) if query else []
+    # Build Q for Veroисповест
+    q_vero = None
+    if variants:
+        for v in variants:
+            clause = Q(naziv__icontains=v)
+            q_vero = clause if q_vero is None else (q_vero | clause)
+    elif query:
+        q_vero = Q(naziv__icontains=query)
+
+    # Build Q for Парохијан
+    q_par = None
+    if variants:
+        for v in variants:
+            clause = Q(ime__icontains=v) | Q(prezime__icontains=v)
+            q_par = clause if q_par is None else (q_par | clause)
+    elif query:
+        q_par = Q(ime__icontains=query) | Q(prezime__icontains=query)
+
     context = {
         "query": query,
         "veroisposvest_results": (
-            Veroispovest.objects.filter(naziv__icontains=query)
-            if query
-            else Veroispovest.objects.none()
+            Veroispovest.objects.filter(q_vero) if q_vero else Veroispovest.objects.none()
         ),
         "parohijan_results": (
-            Parohijan.objects.filter(
-                Q(ime__icontains=query) | Q(prezime__icontains=query)
-            )
-            if query
-            else Parohijan.objects.none()
+            Parohijan.objects.filter(q_par) if q_par else Parohijan.objects.none()
         ),
     }
 
