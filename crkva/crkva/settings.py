@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "compressor",
     "registar",
     "import_export",
     "django_select2",
@@ -148,6 +149,23 @@ MEDIA_URL = "static/media/"
 
 STATIC_ROOT = "/vol/web/static/"
 MEDIA_ROOT = "/vol/web/media/"
+
+# Staticfiles finders (include compressor)
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",
+]
+
+# Django Compressor settings
+COMPRESS_ENABLED = True
+# In development, keep offline compression disabled. For production, set to True
+# and run `python manage.py compress` during build/deploy.
+COMPRESS_OFFLINE = False
+COMPRESS_CSS_FILTERS = [
+    "compressor.filters.css_default.CssAbsoluteFilter",
+    "compressor.filters.cssmin.rCSSMinFilter",
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

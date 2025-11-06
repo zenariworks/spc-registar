@@ -1,5 +1,6 @@
 <!-- base.html -->
 {% load static %}
+{% load compress %}
 {% comment %} {% load django_select2 %} {% endcomment %}
 <!DOCTYPE html>
 <html lang="{{ settings.LANGUAGE_CODE }}">
@@ -22,13 +23,24 @@
       })();
     </script>
 
-    <link rel="stylesheet" href="{% static 'registar/stilovi.css' %}">
-    <!-- Removed Themify Icons; using Bootstrap Icons instead -->
-    <!-- Modern icon set for crisp sun/moon toggle -->
+    <!-- Core styles split into separate files for parallel loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+
+    {% compress css %}
+      <link rel="stylesheet" href="{% static 'registar/stilovi/osnovno.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/stilovi/header.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/stilovi/komponente.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/stilovi/spiskovi.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/stilovi/forme.css' %}">
+      <!-- Dark theme overrides (loaded last for correct specificity) -->
+      <link rel="stylesheet" href="{% static 'registar/stilovi/dark.css' %}">
+    {% endcompress %}
+    {% block extra_css %}{% endblock %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
     <link rel="icon" href="{% static 'registar/favicon.png' %}" type="image/x-icon">
-    {% comment %} {% django_select2_media %} {% endcomment %}
     <title>Црквени регистар</title>
   </head>
   <body>
