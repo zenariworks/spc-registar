@@ -4,6 +4,7 @@ LABEL maintainer="zenari.io"
 
 # Подешавање променљивих окружења
 ENV PYTHONBUFFERED=1
+ENV PIP_NO_BINARY=pillow
 ENV PATH="/scripts:/py/bin:${PATH}"
 
 # Копирање неопходних фајлова
@@ -28,7 +29,15 @@ RUN apk add --update --no-cache \
         cairo-dev \
         pango-dev \
         gdk-pixbuf-dev \
-        libffi-dev
+        libffi-dev \
+        # Runtime libraries required by Pillow
+        zlib \
+        libjpeg-turbo \
+        libpng \
+        lcms2 \
+        libwebp \
+        tiff \
+        openjpeg
 
 # Привремене библиотеке потребне за инсталирање Пајтон пакета
 RUN apk add --update --no-cache --virtual .tmp-deps \
@@ -36,7 +45,15 @@ RUN apk add --update --no-cache --virtual .tmp-deps \
         linux-headers \
         git \
         postgresql-dev \
-        musl-dev && \
+        musl-dev \
+        # Dev headers for compiling Pillow from source (avoid glibc wheels)
+        zlib-dev \
+        libjpeg-turbo-dev \
+        libpng-dev \
+        lcms2-dev \
+        libwebp-dev \
+        tiff-dev \
+        openjpeg-dev && \
     /py/bin/pip install -r /requirements.txt && \
     apk del .tmp-deps
 

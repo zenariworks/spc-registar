@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'registar/stilovi/krstenica.css' %}">
+{% endblock %}
 {% load julian_dates %}
 
 {% block content %}
