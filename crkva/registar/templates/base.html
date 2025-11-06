@@ -29,13 +29,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
 
     {% compress css %}
-      <link rel="stylesheet" href="{% static 'registar/stilovi/osnovno.css' %}">
-      <link rel="stylesheet" href="{% static 'registar/stilovi/header.css' %}">
-      <link rel="stylesheet" href="{% static 'registar/stilovi/komponente.css' %}">
-      <link rel="stylesheet" href="{% static 'registar/stilovi/spiskovi.css' %}">
-      <link rel="stylesheet" href="{% static 'registar/stilovi/forme.css' %}">
+      <!-- Centralized local fonts (must be loaded before components for correct metrics) -->
+      <link rel="stylesheet" href="{% static 'registar/base/fonts.css' %}">
+      <!-- Base tokens and globals -->
+      <link rel="stylesheet" href="{% static 'registar/base/tokens.css' %}">
+      <!-- Utilities -->
+      <link rel="stylesheet" href="{% static 'registar/utilities/utilities.css' %}">
+      <!-- Layout and components -->
+      <link rel="stylesheet" href="{% static 'registar/layout/header.css' %}">
+      <!-- Split component styles -->
+      <link rel="stylesheet" href="{% static 'registar/components/buttons.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/hero.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/grid.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/cards.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/actions.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/reminders.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/timeline.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/lists.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/forms.css' %}">
       <!-- Dark theme overrides (loaded last for correct specificity) -->
-      <link rel="stylesheet" href="{% static 'registar/stilovi/dark.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/themes/dark.css' %}">
     {% endcompress %}
     {% block extra_css %}{% endblock %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
@@ -46,7 +59,7 @@
   <body>
     {% include 'header.html' %}
     <!-- Главни садржај странице биће додат овде -->
-    <main class="container">
+    <main class="u-container">
       {% block content %}{% endblock %}
     </main>
     {% include 'footer.html' %}

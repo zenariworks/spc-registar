@@ -2,37 +2,9 @@
 <html>
 <head>
     <title>A4 Test Page</title>
-    <style>
-        body {
-            width: 210mm;
-            height: 297mm;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            box-sizing: border-box;
-            position: relative;
-        }
-        .absolute-text {
-            position: fixed;
-            font-size: 12pt;
-        }
-        #text1 {
-            top: 50mm;
-            left: 30mm;
-        }
-        #text2 {
-            top: 100mm;
-            left: 100mm;
-        }
-        #text3 {
-            top: 150mm;
-            right: 30mm;
-        }
-        @page {
-            size: A4;
-            margin: 0;
-        }
-    </style>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'registar/base/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'registar/pages/print.css' %}">
 </head>
 <body>
     <div id="text1" class="absolute-text">{{ object.zvanje }} (50mm, 30mm)</div>

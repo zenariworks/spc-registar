@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'registar/stilovi/krstenica.css' %}">
+<link rel="stylesheet" href="{% static 'registar/pages/krstenica.css' %}">
 {% endblock %}
 {% load julian_dates %}
 
 {% block content %}
 
-<div class="page-header">
+<div class="u-page-header">
     <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
         <i class="bi bi-arrow-left"></i>
     </a>
-    <h1 class="page-title">Крштеница</h1>
+    <h1 class="u-page-title">Крштеница</h1>
     <a href="{% url 'krstenje_pdf' krstenje.uid %}" target="_blank" style="text-decoration: none;">
-        <button class="dugme-crveno" type="button" title="Штампај">
+        <button class="button button--primary" type="button" title="Штампај">
           <i class="bi bi-printer" style="margin-right: 6px;"></i> Штампај
         </button>
     </a>

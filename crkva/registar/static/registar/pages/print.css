@@ -1,0 +1,48 @@
+/* Unified print styles for all PDF pages */
+
+/* Page size */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+/* Base body for A4 layout */
+body {
+  width: 210mm;
+  height: 297mm;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
+  /* Certificate-friendly typography */
+  font-family: 'Miroslav', 'Times New Roman', Times, serif;
+  font-size: 12pt;
+  letter-spacing: 0.5px;
+  color: black;
+  background-size: cover;
+  font-weight: 600;
+}
+
+/* A4 test helpers */
+.absolute-text {
+  position: fixed;
+  font-size: 12pt;
+}
+
+/* Certificate layout helpers */
+.frame {
+  margin: 2mm;
+  margin-top: 6mm;
+  margin-left: 6mm;
+  height: 286mm;
+  width: 200mm;
+  padding: 0mm;
+}
+
+.row {
+  border: 2px solid transparent; /* enable for debug borders as needed */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+

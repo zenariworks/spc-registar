@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="page-header">
+<div class="u-page-header">
         <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
             <i class="bi bi-arrow-left"></i>
         </a>
-        <h1 class="page-title">Свештеник</h1>
+<h1 class="u-page-title">Свештеник</h1>
         <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank" style="text-decoration: none;">
-            <button class="dugme-crveno" type="button" title="Штампај">
+<button class="button button--primary" type="button" title="Штампај">
               <i class="bi bi-printer" style="margin-right: 6px;"></i> Штампај
             </button>
         </a>

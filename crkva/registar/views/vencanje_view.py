@@ -9,7 +9,7 @@ from django_filters.views import FilterView
 from registar.filters import VencanjeFilter
 from registar.models.vencanje import Vencanje
 from weasyprint import HTML
-from registar.forms import VencanjeForm
+from registar.forms import VencanjeForm, SearchForm
 
 
 class SpisakVencanja(FilterView, ListView):
@@ -33,6 +33,8 @@ class SpisakVencanja(FilterView, ListView):
         context["filter"] = self.filterset_class(
             self.request.GET, queryset=self.get_queryset()
         )
+        # Uniform search form used across list pages
+        context["form"] = SearchForm(self.request.GET)
         context["upit"] = self.request.GET.get("search", "")
         return context
 

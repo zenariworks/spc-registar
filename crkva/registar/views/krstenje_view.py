@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from django_filters.views import FilterView
 from registar.filters import KrstenjeFilter
-from registar.forms import KrstenjeForm
+from registar.forms import KrstenjeForm, SearchForm
 from registar.models import Krstenje
 from weasyprint import HTML
 
@@ -48,6 +48,8 @@ class SpisakKrstenja(FilterView, ListView):
         context["filter"] = self.filterset_class(
             self.request.GET, queryset=self.get_queryset()
         )
+        # Uniform search form used across list pages
+        context["form"] = SearchForm(self.request.GET)
         context["upit"] = self.request.GET.get("search", "")
         return context
 

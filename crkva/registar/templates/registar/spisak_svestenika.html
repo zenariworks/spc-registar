@@ -2,11 +2,11 @@
 {% load marker_filter %}
 
 {% block content %}
-    <div class="page-header">
+<div class="u-page-header">
         <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
             <i class="bi bi-arrow-left"></i>
         </a>
-        <h1 class="page-title">Свештеници</h1>
+<h1 class="u-page-title">Свештеници</h1>
         <form method="get" action="" class="form-container">
             <div>
                 {% for field in form.visible_fields %}
@@ -23,7 +23,7 @@
                     {{ svestenik.ime|markiraj:upit }} {{ svestenik.prezime|markiraj:upit }}, {{ svestenik.zvanje|markiraj:upit }}
                 </a>
                 <a href="{% url 'svestenik_pdf' uid=svestenik.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
-                    <button class="dugme-crveno" type="button">Штампај</button>
+<button class="button button--primary" type="button">Штампај</button>
                 </a>
             </li>
         {% empty %}
