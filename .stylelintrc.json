@@ -1,0 +1,20 @@
+{
+  "extends": [
+    "stylelint-config-standard"
+  ],
+  "rules": {
+    "color-hex-length": "short",
+    "color-hex-case": "lower",
+    "selector-class-pattern": [
+      "^(u-|[a-z]+(?:-[a-z]+)*)(?:__(?:[a-z]+(?:-[a-z]+)*))?(?:--(?:[a-z]+(?:-[a-z]+)*))?$",
+      {
+        "message": "Expected BEM or utility class naming (block__element--modifier or u-utility)"
+      }
+    ],
+    "declaration-block-no-duplicate-properties": true,
+    "no-duplicate-selectors": true,
+    "property-no-unknown": true,
+    "block-no-empty": true,
+    "string-no-newline": true
+  }
+}

@@ -1,0 +1,186 @@
+/* Calendar responsive styles (extracted from slava_kalendar.html) */
+.calendar-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 15px;
+  background: var(--color-surface-2);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.nav-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  text-decoration: none;
+  color: var(--color-text);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.nav-arrow:hover {
+  background: var(--color-surface-1);
+  transform: scale(1.05);
+}
+
+.nav-arrow:first-of-type {
+  margin-right: 20px;
+}
+
+.nav-arrow:last-of-type {
+  margin-left: 20px;
+}
+
+.current-month {
+  text-align: center;
+  min-width: 200px;
+}
+
+.month-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.year-label {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* Calendar grid */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.weekday-header {
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Calendar cells */
+.calendar-cell {
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--color-surface-2);
+}
+
+.calendar-cell.placeholder {
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.calendar-cell.fasting {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.cell-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calendar-cell .date {
+  font-weight: 700;
+}
+
+.calendar-cell .weekday {
+  font-size: 12px;
+  opacity: 0.9;
+  color: var(--color-text-muted);
+}
+
+.calendar-cell .slavas {
+  flex: 1;
+  overflow: auto;
+  font-size: 0.9rem;
+  margin-top: 6px;
+}
+
+.calendar-cell .no-slavas-text {
+  margin-top: 6px;
+  font-size: 12px;
+  opacity: 0.85;
+  color: var(--color-text-muted);
+}
+
+/* Tablet and mobile optimizations */
+@media (max-width: 768px) {
+  .calendar-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .weekday-header { display: none; }
+  .calendar-cell {
+    height: 130px;
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  .calendar-cell.placeholder { height: 130px; }
+  .calendar-cell .date {
+    font-size: 1rem;
+  }
+  .calendar-navigation {
+    padding: 12px;
+    margin: 15px 0;
+  }
+  .current-month {
+    min-width: 150px;
+  }
+  .month-name {
+    font-size: 1rem;
+  }
+  .year-label {
+    font-size: 0.875rem;
+  }
+}
+
+/* Small mobile - single column for better readability */
+@media (max-width: 480px) {
+  .calendar-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .calendar-cell {
+    height: auto;
+    min-height: 80px;
+    padding: 12px;
+  }
+  .calendar-cell.placeholder { display: none; }
+  .calendar-cell .cell-header {
+    margin-bottom: 8px;
+  }
+  .calendar-cell .slavas {
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  .calendar-navigation {
+    padding: 10px;
+    margin: 10px 0;
+  }
+  .nav-arrow:first-of-type {
+    margin-right: 12px;
+  }
+  .nav-arrow:last-of-type {
+    margin-left: 12px;
+  }
+  .current-month {
+    min-width: 120px;
+  }
+}
+

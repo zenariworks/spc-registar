@@ -4,10 +4,15 @@
 :root[data-theme="dark"] {
   --color-primary: #A21514; /* keep brand color */
   --color-primary-700: #9c1818;
+  /* Dark theme variants for primary shades to maintain contrast */
+  --color-primary-50: color-mix(in oklab, var(--color-primary) 14%, black);
+  --color-primary-100: color-mix(in oklab, var(--color-primary) 22%, black);
+  --color-primary-200: color-mix(in oklab, var(--color-primary) 32%, black);
   --color-text: #e5e7eb;
   --color-text-muted: #cbd5e1;
   --color-surface: #0b0f14;    /* page background */
   --color-surface-2: #111827;  /* panels/cards */
+  --color-surface-1: #1f2937;  /* intermediate surface for controls */
   --color-border: #334155;     /* borders */
 }
 
@@ -25,6 +30,7 @@
 
 /* Forms */
 [data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="search"],
 [data-theme="dark"] input[type="number"],
 [data-theme="dark"] input[type="date"],
 [data-theme="dark"] input[type="email"],
@@ -46,6 +52,24 @@
 [data-theme="dark"] #search-overlay {
   background: var(--color-surface-2);
   box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+}
+
+/* Mobile search overlay and box in dark theme */
+@media (max-width: 768px) {
+  [data-theme="dark"] #search-overlay {
+    background: color-mix(in oklab, var(--color-surface-2) 92%, transparent);
+  }
+  [data-theme="dark"] .search-box {
+    background: var(--color-surface-2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  }
+  [data-theme="dark"] .close-search {
+    color: var(--color-text);
+    background: #1f2937;
+  }
+  [data-theme="dark"] .close-search:hover {
+    background: #374151;
+  }
 }
 
 /* Tables/list panels if any use light surfaces */
@@ -75,8 +99,40 @@
   color: var(--color-text);
 }
 
+/* Improve contrast for the current-day section in the Slava timeline */
+[data-theme="dark"] .timeline__day--today {
+  background: color-mix(in oklab, var(--color-primary) 20%, var(--color-surface-2));
+  border-color: color-mix(in oklab, var(--color-primary) 35%, var(--color-border));
+}
+[data-theme="dark"] .timeline__day--today .timeline__date,
+[data-theme="dark"] .timeline__day--today .timeline__label,
+[data-theme="dark"] .timeline__day--today .timeline__name {
+  color: var(--color-text);
+}
+[data-theme="dark"] .timeline__day--today .timeline__item {
+  background: color-mix(in oklab, var(--color-surface-2) 88%, var(--color-primary) 12%);
+}
+
 /* Buttons using existing classes (dugme-crveno stays brand); add neutral button if needed */
 [data-theme="dark"] .dugme-crveno {
   /* keep default styles; ensure text contrast */
   color: #fff;
+}
+
+/* Calendar page overrides for dark theme */
+[data-theme="dark"] .calendar-navigation {
+  background: var(--color-surface-2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+[data-theme="dark"] .nav-arrow:hover {
+  background: color-mix(in oklab, var(--color-surface-2) 85%, transparent);
+}
+[data-theme="dark"] .calendar-cell {
+  background: var(--color-surface-2);
+  border-color: var(--color-border);
+}
+[data-theme="dark"] .calendar-cell .weekday,
+[data-theme="dark"] .calendar-cell .no-slavas-text {
+  opacity: 1;
+  color: var(--color-text-muted);
 }

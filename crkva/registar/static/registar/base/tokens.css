@@ -1,16 +1,20 @@
-@font-face {
-    font-family: 'Miroslav';
-    src: url("../fontovi/_MIROSLB.TTF") format('truetype');
-}
-
 /* CSS promenljive za lagani i dosledni dizajn */
 :root {
     --color-primary: #A21514;
     --color-primary-700: #9c1818;
+    /* Additional primary shades used by components */
+    --color-primary-50: #fde8e8;
+    --color-primary-100: #fbd5d5;
+    --color-primary-200: #f8b4b4;
+
     --color-text: #1e293b;
     --color-text-muted: #475569;
+    /* Alias for muted text used in some components */
+    --color-muted: #475569;
     --color-surface: #ffffff;
     --color-surface-2: #f8fafc;
+    /* Intermediate surface tone used by some form controls */
+    --color-surface-1: #f1f5f9;
     --color-border: #e2e8f0;
 
     --space-1: 4px;
@@ -34,10 +38,6 @@ body {
     color: var(--color-text);
     background-color: var(--color-surface);
 }
-
-/* img {
-    margin-right: 10px;
-} */
 
 body > main {
     flex: 1;
@@ -98,13 +98,6 @@ body > main::before {
     .footer-links { flex-wrap: wrap; }
 }
 
-/* Lagani layout kontejner za bolju čitljivost */
-.container {
-    width: 100%;
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 0 var(--space-5);
-}
 
 /* Tipografske sitnice i razmaci */
 h1, h2, h3 {
@@ -123,27 +116,6 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
 
 /* Sekundarni tekst */
 .muted { color: var(--color-text-muted); }
-
-/* Unified page header (title left, actions right) */
-.page-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
-    margin: var(--space-5) 0 var(--space-3);
-    flex-wrap: nowrap; /* Keep actions on the same row */
-    width: 100%;
-}
-.page-title {
-    margin: 0;
-    line-height: 1.25;
-    font-weight: 600;
-    flex: 1 1 auto; /* Allow title to take remaining space */
-    min-width: 0;    /* Enable ellipsis */
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis; /* Truncate long titles so the button stays to the right */
-}
 
 /* Ensure action buttons stay visible and don't shrink */
 .page-header a,

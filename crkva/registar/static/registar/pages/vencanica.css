@@ -1,11 +1,4 @@
 /* Венчаница */
-@font-face {
-    font-family: 'Miroslavljeva Cirilica';
-    src: url('../fontovi/Miroslavljeva-Cirilica.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
 
 /* CSS Variables for easy positioning adjustments */
 :root {
@@ -50,8 +43,11 @@
     border: 2px solid red;
     background-size: cover;
     background-image: url("../slike/vencanica-nova.jpg");
-    font-family: 'Miroslavljeva Cirilica', serif;
+    /* Use the bundled Miroslav font for better legibility and consistency */
+    font-family: 'Miroslav', serif;
     position: relative;
+    /* Ensure text over light certificate background stays dark in all themes */
+    color: #111;
 }
 
 .vencanica-frame {
@@ -66,7 +62,7 @@
 
 .vencanica-row {
     display: flex;
-    font-family: 'Miroslavljeva Cirilica', serif;
+    font-family: 'Miroslav', serif;
 }
 
 /* Absolute positioning for dynamic layout */
@@ -74,6 +70,7 @@
     position: absolute;
     left: var(--venc-left-value);
     right: 5%;
-    font-family: 'Miroslavljeva Cirilica', serif;
+    font-family: 'Miroslav', serif;
     text-align: center;
+    color: #111;
 }

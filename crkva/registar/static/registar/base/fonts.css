@@ -1,0 +1,30 @@
+/* Local font-face declarations centralized */
+@font-face {
+  font-family: 'Miroslav';
+  src: url('../fontovi/Miroslavljeva-Cirilica.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Miroslav';
+  src: url('../fontovi/Miroslavljeva-Cirilica-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Miroslavljeva Cirilica';
+  src: url('../fontovi/Miroslavljeva-Cirilica.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Miroslavljeva Cirilica';
+  src: url('../fontovi/Miroslavljeva-Cirilica-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}

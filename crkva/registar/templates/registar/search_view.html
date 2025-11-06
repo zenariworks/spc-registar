@@ -2,11 +2,11 @@
 {% load marker_filter %}
 {% block content %}
 <div class="container">
-  <div class="page-header">
+<div class="u-page-header">
     <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
       <i class="bi bi-arrow-left"></i>
     </a>
-    <h1 class="page-title">Резултати претраге за "{{ query }}"</h1>
+<h1 class="u-page-title">Резултати претраге за "{{ query }}"</h1>
   </div>
   {% if veroisposvest_results or parohijan_results or domacinstvo_results %}
   <h2>Вероисповести</h2>

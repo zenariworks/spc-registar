@@ -1,11 +1,4 @@
 /* Крштеница */
-@font-face {
-    font-family: 'Miroslavljeva Cirilica';
-    src: url('../fontovi/Miroslavljeva-Cirilica.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
 
 /* CSS Variables for easy positioning adjustments */
 :root {
@@ -49,6 +42,7 @@
     background-image: url("../slike/krstenica-nova.jpg");
     font-family: 'Miroslavljeva Cirilica', serif;
     position: relative;
+    color: #111;
 }
 
 .krstenica-frame {
@@ -72,10 +66,12 @@
     left: var(--krst-left-value);
     right: 5%;
     font-family: 'Miroslavljeva Cirilica', serif;
+    color: #111;
 }
 
 .krst-absolute-right {
     position: absolute;
     left: var(--krst-right-value);
     right: 5%;
+    color: #111;
 }

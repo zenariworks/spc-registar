@@ -43,6 +43,29 @@
     cursor: pointer;
 }
 
+/* BEM aliases for lists and items */
+.list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
+.list__item {
+  list-style-type: none;
+  margin: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+.list__item:hover {
+  background-color: var(--color-surface-2);
+  border-color: color-mix(in oklab, var(--color-primary) 30%, var(--color-border));
+  box-shadow: 0 8px 14px -6px rgba(0,0,0,0.15);
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+.list__link { text-decoration: none; color: var(--color-text); display: flex; flex-grow: 1; align-items: center; gap: 10px; padding: 4px 0; cursor: pointer; }
+
 /* Спискови */
 .header-container {
     display: flex;

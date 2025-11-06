@@ -3,66 +3,66 @@
 {% block content %}
 
 <!-- Main Content Grid -->
-<div class="main-grid">
+<div class="grid">
   
   <!-- Quick Actions -->
-  <div class="quick-actions-card">
-    <div class="card-header">
+  <div class="card">
+    <div class="card__header">
       <h3><i class="bi bi-lightning-charge"></i> Брзе акције</h3>
     </div>
-    <div class="action-grid">
-      <a href="{% url 'unos_krstenja' %}" class="action-item">
-        <div class="action-icon"><i class="bi bi-plus-circle"></i></div>
-        <div class="action-text">
-          <div class="action-title">Унос крштења</div>
-          <div class="action-desc">Додај ново крштење</div>
+    <div class="actions">
+      <a href="{% url 'unos_krstenja' %}" class="actions__item">
+        <div class="actions__icon"><i class="bi bi-plus-circle"></i></div>
+        <div class="actions__text">
+          <div class="actions__title">Унос крштења</div>
+          <div class="actions__desc">Додај ново крштење</div>
         </div>
       </a>
-      <a href="{% url 'unos_vencanja' %}" class="action-item">
-        <div class="action-icon"><i class="bi bi-heart"></i></div>
-        <div class="action-text">
-          <div class="action-title">Унос венчања</div>
-          <div class="action-desc">Додај ново венчање</div>
+      <a href="{% url 'unos_vencanja' %}" class="actions__item">
+        <div class="actions__icon"><i class="bi bi-heart"></i></div>
+        <div class="actions__text">
+          <div class="actions__title">Унос венчања</div>
+          <div class="actions__desc">Додај ново венчање</div>
         </div>
       </a>
-      <a href="{% url 'unos_parohijana' %}" class="action-item">
-        <div class="action-icon"><i class="bi bi-person-plus"></i></div>
-        <div class="action-text">
-          <div class="action-title">Унос парохијана</div>
-          <div class="action-desc">Додај новог парохијана</div>
+      <a href="{% url 'unos_parohijana' %}" class="actions__item">
+        <div class="actions__icon"><i class="bi bi-person-plus"></i></div>
+        <div class="actions__text">
+          <div class="actions__title">Унос парохијана</div>
+          <div class="actions__desc">Додај новог парохијана</div>
         </div>
       </a>
-      <a href="{% url 'slava_kalendar' %}" class="action-item">
-        <div class="action-icon"><i class="bi bi-calendar3"></i></div>
-        <div class="action-text">
-          <div class="action-title">Календар слава</div>
-          <div class="action-desc">Прегледај славе</div>
+      <a href="{% url 'slava_kalendar' %}" class="actions__item">
+        <div class="actions__icon"><i class="bi bi-calendar3"></i></div>
+        <div class="actions__text">
+          <div class="actions__title">Календар слава</div>
+          <div class="actions__desc">Прегледај славе</div>
         </div>
       </a>
     </div>
   </div>
 
   <!-- Slava Calendar Widget -->
-  <div class="slava-widget">
-    <div class="card-header">
+  <div class="card">
+    <div class="card__header">
       <h3><i class="bi bi-calendar-event"></i> Актуелне славе</h3>
-      <a href="{% url 'slava_kalendar' %}" class="view-all-link">
+      <a href="{% url 'slava_kalendar' %}" class="card__link">
         <i class="bi bi-arrow-right"></i> Календар
       </a>
     </div>
     
-    <div class="slava-timeline">
+    <div class="timeline">
       {% if juce_slave %}
-        <div class="slava-day yesterday">
-          <div class="day-header">
-            <span class="day-date">{{ juce_datum|date:"d.m." }}</span>
-            <span class="day-label">јуче</span>
+        <div class="timeline__day timeline__day--yesterday">
+          <div class="timeline__day-header">
+            <span class="timeline__date">{{ juce_datum|date:"d.m." }}</span>
+            <span class="timeline__label">јуче</span>
           </div>
-          <div class="slava-items">
+          <div class="timeline__items">
             {% for slava in juce_slave %}
-              <div class="slava-item">
-                <span class="slava-name">{{ slava }}</span>
-                {% if juce_post %}<span class="fasting-badge">Пост</span>{% endif %}
+              <div class="timeline__item">
+                <span class="timeline__name">{{ slava }}</span>
+                {% if juce_post %}<span class="timeline__badge">Пост</span>{% endif %}
               </div>
             {% endfor %}
           </div>
@@ -70,16 +70,16 @@
       {% endif %}
 
       {% if danas_slave %}
-        <div class="slava-day today">
-          <div class="day-header">
-            <span class="day-date">{{ danas_datum|date:"d.m." }}</span>
-            <span class="day-label">данас</span>
+        <div class="timeline__day timeline__day--today">
+          <div class="timeline__day-header">
+            <span class="timeline__date">{{ danas_datum|date:"d.m." }}</span>
+            <span class="timeline__label">данас</span>
           </div>
-          <div class="slava-items">
+          <div class="timeline__items">
             {% for slava in danas_slave %}
-              <div class="slava-item">
-                <span class="slava-name">{{ slava }}</span>
-                {% if danas_post %}<span class="fasting-badge">Пост</span>{% endif %}
+              <div class="timeline__item">
+                <span class="timeline__name">{{ slava }}</span>
+                {% if danas_post %}<span class="timeline__badge">Пост</span>{% endif %}
               </div>
             {% endfor %}
           </div>
@@ -87,16 +87,16 @@
       {% endif %}
 
       {% for dan in narednih_slave|slice:":3" %}
-        <div class="slava-day upcoming">
-          <div class="day-header">
-            <span class="day-date">{{ dan.datum|date:"d.m." }}</span>
-            <span class="day-label">{{ dan.datum|date:"l"|lower }}</span>
+        <div class="timeline__day timeline__day--upcoming">
+          <div class="timeline__day-header">
+            <span class="timeline__date">{{ dan.datum|date:"d.m." }}</span>
+            <span class="timeline__label">{{ dan.datum|date:"l"|lower }}</span>
           </div>
-          <div class="slava-items">
+          <div class="timeline__items">
             {% for slava in dan.slave %}
-              <div class="slava-item">
-                <span class="slava-name">{{ slava }}</span>
-                {% if dan.post %}<span class="fasting-badge">Пост</span>{% endif %}
+              <div class="timeline__item">
+                <span class="timeline__name">{{ slava }}</span>
+                {% if dan.post %}<span class="timeline__badge">Пост</span>{% endif %}
               </div>
             {% endfor %}
           </div>
@@ -104,7 +104,7 @@
       {% endfor %}
 
       {% if not juce_slave and not danas_slave and not narednih_slave %}
-        <div class="no-slavas">
+        <div class="timeline__empty">
           <i class="bi bi-calendar-x"></i>
           <p>Нема актуелних слава</p>
         </div>
@@ -113,37 +113,37 @@
   </div>
 
   <!-- Registry Overview -->
-  <div class="registry-overview">
-    <div class="card-header">
+  <div class="registry">
+    <div class="card__header">
       <h3><i class="bi bi-archive"></i> Регистри</h3>
     </div>
-    <div class="registry-grid">
-      <a href="{% url 'parohijani' %}" class="registry-card">
-        <div class="registry-icon"><i class="bi bi-people"></i></div>
-        <div class="registry-info">
-          <div class="registry-title">Парохијани</div>
-          <div class="registry-desc">Евиденција парохијана</div>
+    <div class="registry__grid">
+      <a href="{% url 'parohijani' %}" class="registry__card">
+        <div class="registry__icon"><i class="bi bi-people"></i></div>
+        <div class="registry__info">
+          <div class="registry__title">Парохијани</div>
+          <div class="registry__desc">Евиденција парохијана</div>
         </div>
       </a>
-      <a href="{% url 'krstenja' %}" class="registry-card">
-        <div class="registry-icon"><i class="bi bi-droplet"></i></div>
-        <div class="registry-info">
-          <div class="registry-title">Крштења</div>
-          <div class="registry-desc">Књига крштених</div>
+      <a href="{% url 'krstenja' %}" class="registry__card">
+        <div class="registry__icon"><i class="bi bi-droplet"></i></div>
+        <div class="registry__info">
+          <div class="registry__title">Крштења</div>
+          <div class="registry__desc">Књига крштених</div>
         </div>
       </a>
-      <a href="{% url 'vencanja' %}" class="registry-card">
-        <div class="registry-icon"><i class="bi bi-heart"></i></div>
-        <div class="registry-info">
-          <div class="registry-title">Венчања</div>
-          <div class="registry-desc">Књига венчаних</div>
+      <a href="{% url 'vencanja' %}" class="registry__card">
+        <div class="registry__icon"><i class="bi bi-heart"></i></div>
+        <div class="registry__info">
+          <div class="registry__title">Венчања</div>
+          <div class="registry__desc">Књига венчаних</div>
         </div>
       </a>
-      <a href="{% url 'svestenici' %}" class="registry-card">
-        <div class="registry-icon"><i class="bi bi-person-badge"></i></div>
-        <div class="registry-info">
-          <div class="registry-title">Свештеници</div>
-          <div class="registry-desc">Евиденција свештеника</div>
+      <a href="{% url 'svestenici' %}" class="registry__card">
+        <div class="registry__icon"><i class="bi bi-person-badge"></i></div>
+        <div class="registry__info">
+          <div class="registry__title">Свештеници</div>
+          <div class="registry__desc">Евиденција свештеника</div>
         </div>
       </a>
     </div>

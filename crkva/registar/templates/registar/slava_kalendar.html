@@ -1,13 +1,17 @@
 {% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'registar/pages/slava_kalendar.css' %}">
+{% endblock %}
 
 {% block title %}Календар слава{% endblock %}
 
 {% block content %}
-<div class="page-header">
+<div class="u-page-header">
   <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
     <i class="bi bi-arrow-left"></i>
   </a>
-  <h1 class="page-title">Календар слава</h1>
+<h1 class="u-page-title">Календар слава</h1>
 </div>
 
 <!-- Single, centered navigation -->
@@ -57,191 +61,7 @@
   {% endfor %}
 </div>
 
-<style>
-/* Calendar responsive styles */
-.calendar-navigation {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.nav-arrow {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 50%;
-  text-decoration: none;
-  color: #495057;
-  transition: all 0.2s;
-  cursor: pointer;
-}
-
-.nav-arrow:hover {
-  background: #e9ecef;
-  transform: scale(1.05);
-}
-
-.nav-arrow:first-of-type {
-  margin-right: 20px;
-}
-
-.nav-arrow:last-of-type {
-  margin-left: 20px;
-}
-
-.current-month {
-  text-align: center;
-  min-width: 200px;
-}
-
-.month-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #212529;
-}
-
-.year-label {
-  font-size: 14px;
-  color: #6c757d;
-}
-
-/* Calendar grid */
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-}
-
-.weekday-header {
-  font-weight: 600;
-  text-align: center;
-}
-
-/* Calendar cells */
-.calendar-cell {
-  height: 140px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px;
-  background: #fff;
-}
-
-.calendar-cell.placeholder {
-  border: 1px solid transparent;
-  background: transparent;
-}
-
-.calendar-cell.fasting {
-  background: #A21514;
-  color: #fff;
-}
-
-.cell-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.calendar-cell .date {
-  font-weight: 700;
-}
-
-.calendar-cell .weekday {
-  font-size: 12px;
-  opacity: 0.9;
-}
-
-.calendar-cell .slavas {
-  flex: 1;
-  overflow: auto;
-  font-size: 0.9rem;
-  margin-top: 6px;
-}
-
-.calendar-cell .no-slavas-text {
-  margin-top: 6px;
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-/* Tablet and mobile optimizations */
-@media (max-width: 768px) {
-  .calendar-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-  .weekday-header { display: none; }
-  .calendar-cell {
-    height: 130px;
-    padding: 8px;
-    font-size: 0.9rem;
-  }
-  .calendar-cell.placeholder { height: 130px; }
-  .calendar-cell .date {
-    font-size: 1rem;
-  }
-  .calendar-navigation {
-    padding: 12px;
-    margin: 15px 0;
-  }
-  .current-month {
-    min-width: 150px;
-  }
-  .month-name {
-    font-size: 1rem;
-  }
-  .year-label {
-    font-size: 0.875rem;
-  }
-}
-
-/* Small mobile - single column for better readability */
-@media (max-width: 480px) {
-  .calendar-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  .calendar-cell {
-    height: auto;
-    min-height: 80px;
-    padding: 12px;
-  }
-  .calendar-cell.placeholder { display: none; }
-  .calendar-cell .cell-header {
-    margin-bottom: 8px;
-  }
-  .calendar-cell .slavas {
-    font-size: 0.95rem;
-    line-height: 1.4;
-  }
-  .calendar-navigation {
-    padding: 10px;
-    margin: 10px 0;
-  }
-  .nav-arrow:first-of-type {
-    margin-right: 12px;
-  }
-  .nav-arrow:last-of-type {
-    margin-left: 12px;
-  }
-  .current-month {
-    min-width: 120px;
-  }
-}
-</style>
+<!-- Styles moved to static/registar/pages/slava_kalendar.css -->
 
 
 

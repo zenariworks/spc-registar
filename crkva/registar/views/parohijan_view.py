@@ -37,7 +37,7 @@ class SpisakParohijana(ListView):
         """Филтрира парохијане на основу унетог појма у форми за претрагу."""
         form = SearchForm(data=self.request.GET)
         if form.is_valid():
-            query = form.cleaned_data["query"]
+            query = form.cleaned_data.get("search", "")
             if not query:
                 return Parohijan.objects.all()
             variants = get_query_variants(query)
@@ -53,7 +53,7 @@ class SpisakParohijana(ListView):
         """Додаје форму за претрагу у контекст шаблона."""
         context = super().get_context_data(**kwargs)
         context["form"] = SearchForm(data=self.request.GET)
-        context["upit"] = self.request.GET.get("query", "")
+        context["upit"] = self.request.GET.get("search", "")
         return context
 
 

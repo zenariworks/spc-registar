@@ -23,7 +23,7 @@ class SpisakSvestenika(ListView):
         """Филтрира податке на основу унетог појма у форми за претрагу."""
         form = SearchForm(self.request.GET)
         if form.is_valid():
-            query = form.cleaned_data["query"]
+            query = form.cleaned_data.get("search", "")
             if not query:
                 return Svestenik.objects.all()
             q = None
@@ -37,7 +37,7 @@ class SpisakSvestenika(ListView):
         """Додаје формулар за претрагу у контекст шаблона."""
         context = super().get_context_data(**kwargs)
         context["form"] = SearchForm(self.request.GET)
-        context["upit"] = self.request.GET.get("query", "")
+        context["upit"] = self.request.GET.get("search", "")
         return context
 
 
