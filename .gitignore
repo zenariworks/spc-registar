@@ -1,5 +1,6 @@
 # virtual environment
 venv
+*.pem
 
 # data files
 data/interim/*
