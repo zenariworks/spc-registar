@@ -590,6 +590,36 @@ body.sidebar-collapsed {
   pointer-events: none;
 }
 
+/* Custom wedding rings icon - two linked rings */
+.icon-rings {
+  position: relative;
+  display: inline-block;
+  width: 24px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.icon-rings::before,
+.icon-rings::after {
+  content: '';
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.icon-rings::before {
+  left: 2px;
+  z-index: 1;
+}
+
+.icon-rings::after {
+  left: 9px;
+}
+
 /* Hide tooltips on mobile */
 @media (max-width: 768px) {
   .sidebar.collapsed .sidebar-section-toggle:hover::after,
