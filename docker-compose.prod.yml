@@ -1,0 +1,25 @@
+# Production environment overrides
+# Run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# Or use: make prod-up
+
+services:
+  app:
+    restart: always
+    # Production uses external database, no local db service
+    command: >
+      sh -c "python manage.py wait_for_db &&
+            python manage.py migrate --database=${DATABASE:-default} &&
+            python manage.py collectstatic --noinput &&
+            gunicorn --bind 0.0.0.0:8000 --workers 4 app.wsgi:application"
+    environment:
+      - DEBUG=0
+
+  proxy:
+    build: ./proxy
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - 80:8000
+    volumes:
+      - static_data:/vol/static

@@ -2,34 +2,19 @@ services:
   app:
     build: .
     image: zenfiric/app:latest
-    command: >
-      sh -c "python manage.py wait_for_db &&
-            python manage.py makemigrations &&
-            python manage.py migrate --database=${DATABASE:-default} &&
-            python manage.py collectstatic --noinput &&
-            python manage.py runserver 0.0.0.0:8000"
-    ports:
-      - 8000:8000
     volumes:
-      - ./crkva:/app
-      - ./data/web:/vol/web
+      - static_data:/vol/web
     environment:
-      - SECRET_KEY=devsecretkey
-      - DEBUG=1
-      - DB_HOST=${DB_HOST:-db}
+      - SECRET_KEY=${SECRET_KEY}
+      - DEBUG=${DEBUG:-0}
+      - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT:-5432}
-      - DB_NAME=${DB_NAME:-devdb}
+      - DB_NAME=${DB_NAME}
       - DB_SCHEMA=${DB_SCHEMA:-public}
-      - DB_USER=${DB_USER:-devuser}
-      - DB_PASS=${DB_PASS:-changeme}
-    depends_on:
-      - db
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
 
-  db:
-    image: postgres:13-alpine
-    ports:
-      - "8001:5432"
-    environment:
-      - POSTGRES_DB=${DB_NAME:-devdb}
-      - POSTGRES_USER=${DB_USER:-devuser}
-      - POSTGRES_PASSWORD=${DB_PASS:-changeme}
+volumes:
+  static_data:
+  postgres_data:
