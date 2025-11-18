@@ -1,0 +1,242 @@
+<!-- sidebar.html -->
+{% load static %}
+<aside id="sidebar" class="sidebar">
+  <!-- Logo Section -->
+  <div class="sidebar-logo">
+    <a href="{% url 'pocetna' %}">
+      <img src="{% static 'registar/logo.png' %}" alt="СПЦ Грб" class="sidebar-logo-img sidebar-logo-full">
+      <img src="{% static 'registar/logo-icon.png' %}" alt="СПЦ Грб" class="sidebar-logo-img sidebar-logo-icon">
+    </a>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav" aria-label="Главни мени">
+    {% url 'parohijani' as parohijani_url %}
+    {% url 'krstenja' as krstenja_url %}
+    {% url 'vencanja' as vencanja_url %}
+    {% url 'svestenici' as svestenici_url %}
+    {% url 'slava_kalendar' as slava_kalendar_url %}
+    {% url 'unos_krstenja' as unos_krstenja_url %}
+    {% url 'unos_vencanja' as unos_vencanja_url %}
+    {% url 'unos_parohijana' as unos_parohijana_url %}
+
+    <div class="sidebar-menu-item">
+      <a href="{{ parohijani_url }}" class="{% if request.path == parohijani_url %}active{% endif %}" title="Парохијани">
+        <i class="bi bi-people"></i>
+        <span class="sidebar-text">Парохијани</span>
+      </a>
+      <a href="{{ unos_parohijana_url }}" class="sidebar-add-btn {% if request.path == unos_parohijana_url %}active{% endif %}" title="Додај парохијана" aria-label="Додај парохијана">
+        <i class="bi bi-plus-circle"></i>
+      </a>
+    </div>
+
+    <div class="sidebar-menu-item">
+      <a href="{{ krstenja_url }}" class="{% if request.path == krstenja_url %}active{% endif %}" title="Крштења">
+        <i class="bi bi-droplet"></i>
+        <span class="sidebar-text">Крштења</span>
+      </a>
+      <a href="{{ unos_krstenja_url }}" class="sidebar-add-btn {% if request.path == unos_krstenja_url %}active{% endif %}" title="Додај крштење" aria-label="Додај крштење">
+        <i class="bi bi-plus-circle"></i>
+      </a>
+    </div>
+
+    <div class="sidebar-menu-item">
+      <a href="{{ vencanja_url }}" class="{% if request.path == vencanja_url %}active{% endif %}" title="Венчања">
+        <i class="bi bi-heart"></i>
+        <span class="sidebar-text">Венчања</span>
+      </a>
+      <a href="{{ unos_vencanja_url }}" class="sidebar-add-btn {% if request.path == unos_vencanja_url %}active{% endif %}" title="Додај венчање" aria-label="Додај венчање">
+        <i class="bi bi-plus-circle"></i>
+      </a>
+    </div>
+
+    <div class="sidebar-menu-item">
+      <a href="{{ svestenici_url }}" class="{% if request.path == svestenici_url %}active{% endif %}" title="Свештеници">
+        <i class="bi bi-person-badge"></i>
+        <span class="sidebar-text">Свештеници</span>
+      </a>
+    </div>
+
+    <div class="sidebar-menu-item">
+      <a href="{{ slava_kalendar_url }}" class="{% if request.path == slava_kalendar_url %}active{% endif %}" title="Календар слава">
+        <i class="bi bi-calendar-event"></i>
+        <span class="sidebar-text">Календар слава</span>
+      </a>
+    </div>
+  </nav>
+
+  <!-- Bottom Actions -->
+  <div class="sidebar-actions">
+    <!-- Search -->
+    <button class="sidebar-action-btn" id="search-trigger" aria-label="Претрага">
+      <i class="bi bi-search"></i>
+      <span class="sidebar-text">Претрага</span>
+    </button>
+
+    <!-- Theme Toggle -->
+    <button class="sidebar-action-btn" id="theme-toggle" aria-label="Промени тему">
+      <i class="bi bi-sun"></i>
+      <span class="sidebar-text">Тема</span>
+    </button>
+
+    <!-- Toggle Button -->
+    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+      <i class="bi bi-list"></i>
+    </button>
+  </div>
+</aside>
+
+<!-- Search Overlay -->
+<div id="search-overlay" class="search-overlay" style="display: none;">
+  <div class="search-overlay-content">
+    <form method="get" action="{% url 'search_view' %}" class="search-form">
+      <div class="search-box">
+        <button type="submit" class="search-icon-button">
+          <i class="bi bi-search"></i>
+        </button>
+        <input type="text" name="query" placeholder="Претрага..." autofocus>
+        <button type="button" id="close-search" class="close-search">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Sidebar Backdrop (for mobile) -->
+<div id="sidebar-backdrop" class="sidebar-backdrop"></div>
+
+<!-- Mobile Toggle Button -->
+<button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle" aria-label="Toggle sidebar">
+  <i class="bi bi-list"></i>
+</button>
+
+<script>
+// Sidebar Toggle
+(function() {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebar-toggle');
+  const mobileToggle = document.getElementById('mobile-sidebar-toggle');
+  const backdrop = document.getElementById('sidebar-backdrop');
+
+  // Check if mobile
+  function isMobile() {
+    return window.innerWidth <= 768;
+  }
+
+  // Load saved state on desktop only
+  if (!isMobile()) {
+    const savedState = localStorage.getItem('sidebarCollapsed');
+    if (savedState === 'true') {
+      sidebar.classList.add('collapsed');
+    }
+  }
+
+  // Desktop toggle (inside sidebar)
+  toggle.addEventListener('click', function() {
+    if (isMobile()) {
+      // On mobile, close sidebar
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('active');
+    } else {
+      // On desktop, toggle collapsed class
+      const isCollapsed = sidebar.classList.toggle('collapsed');
+      localStorage.setItem('sidebarCollapsed', isCollapsed);
+    }
+  });
+
+  // Mobile toggle (fixed button)
+  mobileToggle.addEventListener('click', function() {
+    const isOpen = sidebar.classList.toggle('open');
+    backdrop.classList.toggle('active', isOpen);
+  });
+
+  // Close sidebar when clicking backdrop (mobile)
+  backdrop.addEventListener('click', function() {
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('active');
+  });
+
+  // Handle window resize
+  window.addEventListener('resize', function() {
+    if (!isMobile()) {
+      sidebar.classList.remove('open');
+      backdrop.classList.remove('active');
+    }
+  });
+})();
+
+
+// Search Overlay
+(function() {
+  const searchTrigger = document.getElementById('search-trigger');
+  const searchOverlay = document.getElementById('search-overlay');
+  const closeSearch = document.getElementById('close-search');
+
+  searchTrigger.addEventListener('click', function(e) {
+    e.preventDefault();
+    searchOverlay.style.display = 'flex';
+    const input = searchOverlay.querySelector('input');
+    if (input) input.focus();
+  });
+
+  closeSearch.addEventListener('click', function(e) {
+    e.preventDefault();
+    searchOverlay.style.display = 'none';
+  });
+
+  // ESC key closes search
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && searchOverlay.style.display === 'flex') {
+      searchOverlay.style.display = 'none';
+    }
+  });
+
+  // Click outside closes search
+  searchOverlay.addEventListener('click', function(e) {
+    if (e.target === searchOverlay) {
+      searchOverlay.style.display = 'none';
+    }
+  });
+})();
+
+// Theme Toggle
+(function() {
+  const toggle = document.getElementById('theme-toggle');
+  const iconEl = toggle ? toggle.querySelector('i') : null;
+
+  function setTheme(t) {
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem('theme', t); } catch(e) {}
+  }
+
+  function getTheme() {
+    return document.documentElement.getAttribute('data-theme') || 'light';
+  }
+
+  function updateThemeIcon() {
+    const current = getTheme();
+    if (!iconEl) return;
+
+    if (current === 'dark') {
+      iconEl.className = 'bi bi-moon';
+      toggle.setAttribute('aria-label', 'Промени тему: светла');
+      toggle.setAttribute('aria-pressed', 'true');
+    } else {
+      iconEl.className = 'bi bi-sun';
+      toggle.setAttribute('aria-label', 'Промени тему: тамна');
+      toggle.setAttribute('aria-pressed', 'false');
+    }
+  }
+
+  if (toggle) {
+    updateThemeIcon();
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      const next = getTheme() === 'dark' ? 'light' : 'dark';
+      setTheme(next);
+      updateThemeIcon();
+    });
+  }
+})();
+</script>

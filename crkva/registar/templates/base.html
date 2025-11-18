@@ -36,7 +36,7 @@
       <!-- Utilities -->
       <link rel="stylesheet" href="{% static 'registar/utilities/utilities.css' %}">
       <!-- Layout and components -->
-      <link rel="stylesheet" href="{% static 'registar/layout/header.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/layout/sidebar.css' %}">
       <!-- Split component styles -->
       <link rel="stylesheet" href="{% static 'registar/components/buttons.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/hero.css' %}">
@@ -57,11 +57,37 @@
     <title>Црквени регистар</title>
   </head>
   <body>
-    {% include 'header.html' %}
+    {% include 'sidebar.html' %}
     <!-- Главни садржај странице биће додат овде -->
     <main class="u-container">
       {% block content %}{% endblock %}
     </main>
-    {% include 'footer.html' %}
+    <script>
+      // Update body class based on sidebar state
+      (function() {
+        const sidebar = document.getElementById('sidebar');
+        if (sidebar) {
+          // Initial check
+          if (sidebar.classList.contains('collapsed')) {
+            document.body.classList.add('sidebar-collapsed');
+          }
+
+          // Observer for sidebar class changes
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              if (mutation.attributeName === 'class') {
+                if (sidebar.classList.contains('collapsed')) {
+                  document.body.classList.add('sidebar-collapsed');
+                } else {
+                  document.body.classList.remove('sidebar-collapsed');
+                }
+              }
+            });
+          });
+
+          observer.observe(sidebar, { attributes: true });
+        }
+      })();
+    </script>
   </body>
 </html>
