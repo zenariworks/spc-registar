@@ -44,15 +44,6 @@ body > main {
     position: relative;
 }
 
-body > footer {
-    background-color: #333;
-    color: white;
-    padding: var(--space-4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 body > main::before {
     content: "";
     position: absolute;
