@@ -59,31 +59,34 @@
 
 /* Toggle Button */
 .sidebar-toggle {
-  width: 100%;
+  position: absolute;
+  top: 50%;
+  right: -18px;
+  transform: translateY(-50%);
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  background: transparent;
-  border: none;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: center;
+  background: var(--sidebar-bg);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
   color: var(--sidebar-text-color);
   cursor: pointer;
-  font-size: 20px;
-  transition: background 0.2s;
-  text-align: left;
-  margin-top: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  z-index: 1001;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-toggle:hover {
-  background: var(--sidebar-hover-bg);
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-50%) scale(1.1);
 }
 
 .sidebar-toggle i {
-  font-size: 20px;
+  font-size: 16px;
   flex-shrink: 0;
-  width: 24px;
-  text-align: center;
 }
 
 /* Logo Section */
@@ -518,6 +521,11 @@
   .sidebar.open ~ .mobile-sidebar-toggle {
     left: calc(var(--sidebar-width-expanded) - 50px);
   }
+
+  /* Hide desktop toggle button on mobile */
+  .sidebar-toggle {
+    display: none;
+  }
 }
 
 /* Content Area Adjustment */
@@ -588,36 +596,6 @@ body.sidebar-collapsed {
   font-size: 14px;
   z-index: 1001;
   pointer-events: none;
-}
-
-/* Custom wedding rings icon - two linked rings */
-.icon-rings {
-  position: relative;
-  display: inline-block;
-  width: 24px;
-  height: 20px;
-  flex-shrink: 0;
-}
-
-.icon-rings::before,
-.icon-rings::after {
-  content: '';
-  position: absolute;
-  width: 11px;
-  height: 11px;
-  border: 2px solid currentColor;
-  border-radius: 50%;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.icon-rings::before {
-  left: 2px;
-  z-index: 1;
-}
-
-.icon-rings::after {
-  left: 9px;
 }
 
 /* Hide tooltips on mobile */
