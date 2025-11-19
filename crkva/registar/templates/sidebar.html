@@ -42,7 +42,7 @@
 
     <div class="sidebar-menu-item">
       <a href="{{ vencanja_url }}" class="{% if request.path == vencanja_url %}active{% endif %}" title="Венчања">
-        <i class="icon-rings"></i>
+        <i class="fa-solid fa-rings-wedding"></i>
         <span class="sidebar-text">Венчања</span>
       </a>
       <a href="{{ unos_vencanja_url }}" class="sidebar-add-btn {% if request.path == unos_vencanja_url %}active{% endif %}" title="Додај венчање" aria-label="Додај венчање">
@@ -81,7 +81,7 @@
 
     <!-- Toggle Button -->
     <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-      <i class="fa-solid fa-bars"></i>
+      <i class="fa-solid fa-arrow-left"></i>
     </button>
   </div>
 </aside>
@@ -132,6 +132,16 @@
     }
   }
 
+  // Function to update toggle icon
+  function updateToggleIcon() {
+    const toggleIcon = toggle.querySelector('i');
+    if (sidebar.classList.contains('collapsed')) {
+      toggleIcon.className = 'fa-solid fa-arrow-right';
+    } else {
+      toggleIcon.className = 'fa-solid fa-arrow-left';
+    }
+  }
+
   // Desktop toggle (inside sidebar)
   toggle.addEventListener('click', function() {
     if (isMobile()) {
@@ -142,8 +152,12 @@
       // On desktop, toggle collapsed class
       const isCollapsed = sidebar.classList.toggle('collapsed');
       localStorage.setItem('sidebarCollapsed', isCollapsed);
+      updateToggleIcon();
     }
   });
+
+  // Update icon on initial load
+  updateToggleIcon();
 
   // Mobile toggle (fixed button)
   mobileToggle.addEventListener('click', function() {
