@@ -8,32 +8,32 @@
   <!-- Quick Actions -->
   <div class="card">
     <div class="card__header">
-      <h3><i class="fa-solid fa-bolt"></i> Брзе акције</h3>
+      <h3><i class="ri-flashlight-line"></i> Брзе акције</h3>
     </div>
     <div class="actions">
       <a href="{% url 'unos_krstenja' %}" class="actions__item">
-        <div class="actions__icon"><i class="fa-solid fa-circle-plus"></i></div>
+        <div class="actions__icon"><i class="ri-add-circle-line"></i></div>
         <div class="actions__text">
           <div class="actions__title">Унос крштења</div>
           <div class="actions__desc">Додај ново крштење</div>
         </div>
       </a>
       <a href="{% url 'unos_vencanja' %}" class="actions__item">
-        <div class="actions__icon"><i class="fa-solid fa-rings-wedding"></i></div>
+        <div class="actions__icon"><i class="icon-rings"></i></div>
         <div class="actions__text">
           <div class="actions__title">Унос венчања</div>
           <div class="actions__desc">Додај ново венчање</div>
         </div>
       </a>
       <a href="{% url 'unos_parohijana' %}" class="actions__item">
-        <div class="actions__icon"><i class="fa-solid fa-user-plus"></i></div>
+        <div class="actions__icon"><i class="ri-user-add-line"></i></div>
         <div class="actions__text">
           <div class="actions__title">Унос парохијана</div>
           <div class="actions__desc">Додај новог парохијана</div>
         </div>
       </a>
       <a href="{% url 'slava_kalendar' %}" class="actions__item">
-        <div class="actions__icon"><i class="fa-solid fa-calendar-days"></i></div>
+        <div class="actions__icon"><i class="ri-calendar-2-line"></i></div>
         <div class="actions__text">
           <div class="actions__title">Календар слава</div>
           <div class="actions__desc">Прегледај славе</div>
@@ -45,9 +45,9 @@
   <!-- Slava Calendar Widget -->
   <div class="card">
     <div class="card__header">
-      <h3><i class="fa-solid fa-calendar"></i> Актуелне славе</h3>
+      <h3><i class="ri-calendar-line"></i> Актуелне славе</h3>
       <a href="{% url 'slava_kalendar' %}" class="card__link">
-        <i class="fa-solid fa-arrow-right"></i> Календар
+        <i class="ri-arrow-right-line"></i> Календар
       </a>
     </div>
     
@@ -105,7 +105,7 @@
 
       {% if not juce_slave and not danas_slave and not narednih_slave %}
         <div class="timeline__empty">
-          <i class="fa-solid fa-calendar-xmark"></i>
+          <i class="ri-calendar-close-line"></i>
           <p>Нема актуелних слава</p>
         </div>
       {% endif %}
@@ -115,32 +115,32 @@
   <!-- Registry Overview -->
   <div class="registry">
     <div class="card__header">
-      <h3><i class="fa-solid fa-box-archive"></i> Регистри</h3>
+      <h3><i class="ri-archive-line"></i> Регистри</h3>
     </div>
     <div class="registry__grid">
       <a href="{% url 'parohijani' %}" class="registry__card">
-        <div class="registry__icon"><i class="fa-solid fa-users"></i></div>
+        <div class="registry__icon"><i class="ri-group-line"></i></div>
         <div class="registry__info">
           <div class="registry__title">Парохијани</div>
           <div class="registry__desc">Евиденција парохијана</div>
         </div>
       </a>
       <a href="{% url 'krstenja' %}" class="registry__card">
-        <div class="registry__icon"><i class="fa-solid fa-droplet"></i></div>
+        <div class="registry__icon"><i class="ri-drop-line"></i></div>
         <div class="registry__info">
           <div class="registry__title">Крштења</div>
           <div class="registry__desc">Књига крштених</div>
         </div>
       </a>
       <a href="{% url 'vencanja' %}" class="registry__card">
-        <div class="registry__icon"><i class="fa-solid fa-rings-wedding"></i></div>
+        <div class="registry__icon"><i class="icon-rings"></i></div>
         <div class="registry__info">
           <div class="registry__title">Венчања</div>
           <div class="registry__desc">Књига венчаних</div>
         </div>
       </a>
       <a href="{% url 'svestenici' %}" class="registry__card">
-        <div class="registry__icon"><i class="fa-solid fa-id-badge"></i></div>
+        <div class="registry__icon"><i class="ri-account-box-line"></i></div>
         <div class="registry__info">
           <div class="registry__title">Свештеници</div>
           <div class="registry__desc">Евиденција свештеника</div>
