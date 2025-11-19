@@ -22,21 +22,21 @@
 
     <div class="sidebar-menu-item">
       <a href="{{ parohijani_url }}" class="{% if request.path == parohijani_url %}active{% endif %}" title="Парохијани">
-        <i class="bi bi-people"></i>
+        <i class="fa-solid fa-users"></i>
         <span class="sidebar-text">Парохијани</span>
       </a>
       <a href="{{ unos_parohijana_url }}" class="sidebar-add-btn {% if request.path == unos_parohijana_url %}active{% endif %}" title="Додај парохијана" aria-label="Додај парохијана">
-        <i class="bi bi-plus-circle"></i>
+        <i class="fa-solid fa-circle-plus"></i>
       </a>
     </div>
 
     <div class="sidebar-menu-item">
       <a href="{{ krstenja_url }}" class="{% if request.path == krstenja_url %}active{% endif %}" title="Крштења">
-        <i class="bi bi-droplet"></i>
+        <i class="fa-solid fa-droplet"></i>
         <span class="sidebar-text">Крштења</span>
       </a>
       <a href="{{ unos_krstenja_url }}" class="sidebar-add-btn {% if request.path == unos_krstenja_url %}active{% endif %}" title="Додај крштење" aria-label="Додај крштење">
-        <i class="bi bi-plus-circle"></i>
+        <i class="fa-solid fa-circle-plus"></i>
       </a>
     </div>
 
@@ -46,20 +46,20 @@
         <span class="sidebar-text">Венчања</span>
       </a>
       <a href="{{ unos_vencanja_url }}" class="sidebar-add-btn {% if request.path == unos_vencanja_url %}active{% endif %}" title="Додај венчање" aria-label="Додај венчање">
-        <i class="bi bi-plus-circle"></i>
+        <i class="fa-solid fa-circle-plus"></i>
       </a>
     </div>
 
     <div class="sidebar-menu-item">
       <a href="{{ svestenici_url }}" class="{% if request.path == svestenici_url %}active{% endif %}" title="Свештеници">
-        <i class="bi bi-person-badge"></i>
+        <i class="fa-solid fa-id-badge"></i>
         <span class="sidebar-text">Свештеници</span>
       </a>
     </div>
 
     <div class="sidebar-menu-item">
       <a href="{{ slava_kalendar_url }}" class="{% if request.path == slava_kalendar_url %}active{% endif %}" title="Календар слава">
-        <i class="bi bi-calendar-event"></i>
+        <i class="fa-solid fa-calendar"></i>
         <span class="sidebar-text">Календар слава</span>
       </a>
     </div>
@@ -69,19 +69,19 @@
   <div class="sidebar-actions">
     <!-- Search -->
     <button class="sidebar-action-btn" id="search-trigger" aria-label="Претрага">
-      <i class="bi bi-search"></i>
+      <i class="fa-solid fa-magnifying-glass"></i>
       <span class="sidebar-text">Претрага</span>
     </button>
 
     <!-- Theme Toggle -->
     <button class="sidebar-action-btn" id="theme-toggle" aria-label="Промени тему">
-      <i class="bi bi-sun"></i>
+      <i class="fa-solid fa-sun"></i>
       <span class="sidebar-text">Тема</span>
     </button>
 
     <!-- Toggle Button -->
     <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-      <i class="bi bi-list"></i>
+      <i class="fa-solid fa-bars"></i>
     </button>
   </div>
 </aside>
@@ -92,11 +92,11 @@
     <form method="get" action="{% url 'search_view' %}" class="search-form">
       <div class="search-box">
         <button type="submit" class="search-icon-button">
-          <i class="bi bi-search"></i>
+          <i class="fa-solid fa-magnifying-glass"></i>
         </button>
         <input type="text" name="query" placeholder="Претрага..." autofocus>
         <button type="button" id="close-search" class="close-search">
-          <i class="bi bi-x-lg"></i>
+          <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
     </form>
@@ -108,7 +108,7 @@
 
 <!-- Mobile Toggle Button -->
 <button class="mobile-sidebar-toggle" id="mobile-sidebar-toggle" aria-label="Toggle sidebar">
-  <i class="bi bi-list"></i>
+  <i class="fa-solid fa-bars"></i>
 </button>
 
 <script>
@@ -219,11 +219,11 @@
     if (!iconEl) return;
 
     if (current === 'dark') {
-      iconEl.className = 'bi bi-moon';
+      iconEl.className = 'fa-moon';
       toggle.setAttribute('aria-label', 'Промени тему: светла');
       toggle.setAttribute('aria-pressed', 'true');
     } else {
-      iconEl.className = 'bi bi-sun';
+      iconEl.className = 'fa-solid fa-sun';
       toggle.setAttribute('aria-label', 'Промени тему: тамна');
       toggle.setAttribute('aria-pressed', 'false');
     }
