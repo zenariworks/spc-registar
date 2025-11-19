@@ -25,20 +25,35 @@
 
 ## Први кораци
 
-### 1. Инсталација и подешавање
+### 1. Подешавање окружења
+
+Копирајте template фајл за развојно окружење:
+
+   ```bash
+   cp .env.dev.example .env
+   ```
+
+Ажурирајте вредности у `.env` по потреби (опционално).
+
+### 2. Инсталација и подешавање
 
    ```bash
    docker compose build
+   # или
+   make build
    ```
 
    У случају проблема са дозволама, погледајте [додатне белешке](#додатне-белешке).
 
-### 2. Миграције базе података и учитавање тест података
+### 3. Миграције базе података и учитавање тест података
 
 - Креирање и примена миграција:
 
    ```bash
    docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
+   # или
+   make dev-makemigrations
+   make dev-migrate
    ```
 
 - Унос основних података у базу:
@@ -57,7 +72,7 @@
    Након овог корака, у базу је унет пример података.
    Након покретања, могућ је и приказ ових података на [localhost:8000/](http://localhost:8000/).
 
-### 3. Креирање суперкорисника и покретање апликације
+### 4. Креирање суперкорисника и покретање апликације
 
 - Креирајте суперкорисника:
 
@@ -69,6 +84,20 @@
 
    ```bash
    docker compose up
+   # или
+   make dev-up
+   ```
+
+- Преглед логова:
+
+   ```bash
+   make dev-logs
+   ```
+
+- Заустављање апликације:
+
+   ```bash
+   make dev-down
    ```
 
    Сада можете приступити регистру на [localhost:8000](http://localhost:8000), а админ панелу на [localhost:8000/admin](http://localhost:8000/admin).
@@ -78,25 +107,93 @@
 ### 1. Подешавање конфигурационог фајла
 
    ```bash
-   mv .example.env .acc.env
+   cp .env.prod.example .env.prod
    ```
 
-   Ажурирајте вредности променљивих у `.acc.env`.
+   Ажурирајте вредности променљивих у `.env.prod` (SECRET_KEY, DB_HOST, DB_PASS, ALLOWED_HOSTS, итд.).
 
 ### 2. Изградња и покретање апликације
 
    ```bash
-   docker compose -f docker-compose-acc.yml build
-   docker compose -f docker-compose-acc.yml up
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml build
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+   # или
+   make prod-up
    ```
 
-   Приступите админ панелу на [127.0.0.1/admin](http://127.0.0.1/admin).
+   Приступите апликацији на [http://localhost](http://localhost) или [http://127.0.0.1](http://127.0.0.1).
 
 ### 3. Креирање суперкорисника
 
    ```bash
-   docker compose -f docker-compose-acc.yml run --rm app sh -c "python manage.py createsuperuser"
+   docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm app sh -c "python manage.py createsuperuser"
    ```
+
+### 4. Преглед логова и управљање
+
+   ```bash
+   # Преглед логова
+   make prod-logs
+
+   # Покретање миграција
+   make prod-migrate
+
+   # Заустављање апликације
+   make prod-down
+   ```
+
+## Docker конфигурација
+
+Пројекат користи модуларну Docker Compose конфигурацију која олакшава пребацивање између развојног и производног окружења:
+
+- **docker-compose.yml** - Основна конфигурација (дељена између окружења)
+- **docker-compose.override.yml** - Развојно окружење (аутоматски се учитава)
+- **docker-compose.prod.yml** - Производно окружење (експлицитно се учитава)
+
+### Makefile команде
+
+За брзо управљање окружењима користите `make` команде:
+
+```bash
+# Помоћ
+make help
+
+# Развојно окружење
+make dev-up              # Покретање развојног окружења
+make dev-down            # Заустављање развојног окружења
+make dev-logs            # Преглед логова
+make dev-shell           # Приступ Django shell-у
+make dev-migrate         # Покретање миграција
+make dev-makemigrations  # Креирање нових миграција
+
+# Производно окружење
+make prod-up             # Покретање производног окружења
+make prod-down           # Заустављање производног окружења
+make prod-logs           # Преглед логова
+make prod-migrate        # Покретање миграција
+
+# Опште
+make build               # Изградња Docker слика
+make clean               # Уклањање свих контејнера, волумена и слика
+```
+
+### Разлике између окружења
+
+**Развојно:**
+- Django development server (`runserver`)
+- DEBUG режим укључен
+- Изворни код монтиран као volume (live reload)
+- Локална PostgreSQL база података
+- Порт 8000 директно изложен
+
+**Производно:**
+- Gunicorn WSGI server
+- DEBUG режим искључен
+- Користи екстерну базу података
+- Nginx proxy
+- Порт 80 изложен кроз proxy
+- Аутоматско рестартовање
+- Оптимизовано за перформансе и безбедност
 
 ## Развој и тестирање
 

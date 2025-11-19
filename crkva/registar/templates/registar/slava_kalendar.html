@@ -9,7 +9,7 @@
 {% block content %}
 <div class="u-page-header">
   <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
-    <i class="bi bi-arrow-left"></i>
+    <i class="fa-solid fa-arrow-left"></i>
   </a>
 <h1 class="u-page-title">Календар слава</h1>
 </div>
@@ -17,7 +17,7 @@
 <!-- Single, centered navigation -->
 <div class="calendar-navigation">
   <a href="{% url 'slava_kalendar_mesec' prev_year prev_month %}" class="nav-arrow">
-    <i class="bi bi-chevron-left"></i>
+    <i class="fa-solid fa-chevron-left"></i>
   </a>
 
   <div class="current-month">
@@ -26,7 +26,7 @@
   </div>
 
   <a href="{% url 'slava_kalendar_mesec' next_year next_month %}" class="nav-arrow">
-    <i class="bi bi-chevron-right"></i>
+    <i class="fa-solid fa-chevron-right"></i>
   </a>
 </div>
 
@@ -42,10 +42,26 @@
     {% if day.is_placeholder %}
       <div class="calendar-cell placeholder"></div>
     {% else %}
-      <div class="calendar-cell {% if day.is_fasting %}fasting{% endif %}">
+      <div class="calendar-cell {% if day.is_fasting %}fasting{% endif %} {% if day.fasting_type %}fasting-{{ day.fasting_type }}{% endif %}">
+        {% if day.is_fasting %}
+          <div class="fasting-info">
+            {% if day.fasting_type == 'вода' %}
+              <i class="fa-solid fa-droplet fasting-icon"></i>
+            {% elif day.fasting_type == 'уље' %}
+              <i class="fa-solid fa-oil-can fasting-icon"></i>
+            {% elif day.fasting_type == 'риба' %}
+              <i class="fa-solid fa-fish fasting-icon"></i>
+            {% elif day.fasting_type == 'бели_мрс' %}
+              <i class="fa-solid fa-cheese fasting-icon"></i>
+            {% endif %}
+            <span class="fasting-tooltip">{{ day.fasting_display }}: {{ day.fasting_description }}</span>
+          </div>
+        {% endif %}
         <div class="cell-header">
-          <div class="date">{{ day.date.day }}.</div>
-          <div class="weekday">{{ day.weekday_label }}</div>
+          <div class="date-wrapper">
+            <div class="date">{{ day.date.day }}.</div>
+            <div class="weekday">{{ day.weekday_label }}</div>
+          </div>
         </div>
         {% if day.slave %}
           <div class="slavas">

@@ -3,7 +3,7 @@
 <header>
   <div class="container header-bar">
     <button class="hamburger-menu" onclick="toggleMenu()" aria-label="Отвори мени">
-      <i class="bi bi-list"></i>
+      <i class="fa-solid fa-bars"></i>
     </button>
     <div class="fusion-logo">
        <a href="{% url 'pocetna' %}">
@@ -23,7 +23,7 @@
          {% url 'unos_parohijana' as unos_parohijana_url %}
          <li class="has-dropdown">
             <button type="button" class="menu-item-toggle" aria-expanded="false" aria-controls="dropdown-lists">
-              Спискови <i class="bi bi-chevron-down" aria-hidden="true"></i>
+              Спискови <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </button>
             <ul class="dropdown" id="dropdown-lists">
                <li><a href="{{ parohijani_url }}" class="{% if request.path == parohijani_url %}active{% endif %}">Парохијани</a></li>
@@ -35,7 +35,7 @@
          </li>
          <li class="has-dropdown">
             <button type="button" class="menu-item-toggle" aria-expanded="false" aria-controls="dropdown-entries">
-              Уноси <i class="bi bi-chevron-down" aria-hidden="true"></i>
+              Уноси <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </button>
             <ul class="dropdown" id="dropdown-entries">
                <li><a href="{{ unos_krstenja_url }}" class="{% if request.path == unos_krstenja_url %}active{% endif %}">Крштење</a></li>
@@ -45,12 +45,12 @@
          </li>
            <li class="theme-icon">
               <a href="#" id="theme-toggle" class="fusion-main-menu-icon" aria-label="Промени тему" title="Промени тему">
-                <i class="bi bi-sun"></i>
+                <i class="fa-solid fa-sun"></i>
               </a>
            </li>
            <li class="search-icon">
               <a href="#" id="search-trigger" class="fusion-main-menu-icon">
-              <i class="bi bi-search"></i>
+              <i class="fa-solid fa-magnifying-glass"></i>
               </a>
            </li>
         </ul>
@@ -58,9 +58,9 @@
        <div id="search-overlay" style="display: none;">
          <form method="get" action="{% url 'search_view' %}" class="search-form">
             <div class="search-box">
-               <button type="submit" class="search-icon-button"><i class="bi bi-search"></i></button>
+               <button type="submit" class="search-icon-button"><i class="fa-solid fa-magnifying-glass"></i></button>
                <input type="text" name="query" placeholder="Претрага..." autofocus>
-               <a href="#" id="close-search" class="close-search"><i class="bi bi-x-lg"></i></a>
+               <a href="#" id="close-search" class="close-search"><i class="fa-solid fa-xmark"></i></a>
             </div>
          </form>
        </div>
@@ -114,12 +114,12 @@
          var current = getTheme();
          if (!iconEl) return;
          if (current === 'dark') {
-           iconEl.className = 'bi bi-moon';
+           iconEl.className = 'fa-moon';
            toggle.setAttribute('aria-label', 'Промени тему: светла');
            toggle.setAttribute('title', 'Промени на светлу тему');
            toggle.setAttribute('aria-pressed', 'true');
          } else {
-           iconEl.className = 'bi bi-sun';
+           iconEl.className = 'fa-solid fa-sun';
            toggle.setAttribute('aria-label', 'Промени тему: тамна');
            toggle.setAttribute('title', 'Промени на тамну тему');
            toggle.setAttribute('aria-pressed', 'false');
