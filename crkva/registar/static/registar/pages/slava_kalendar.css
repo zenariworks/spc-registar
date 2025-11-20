@@ -291,26 +291,29 @@
   border-bottom-color: rgba(0, 0, 0, 0.9);
 }
 
-/* Different colors for different fasting types - red shades palette */
+/* Different colors for different fasting types - base color shades */
 .calendar-cell.fasting-вода {
-  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); /* Dark red for strictest fast */
-  border-color: #7f1d1d;
-  color: #fff;
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%); /* Base primary color for strictest fast */
+  border-color: var(--color-primary);
+  color: var(--color-surface);
 }
 
 .calendar-cell.fasting-уље {
-  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); /* Light red for oil allowed */
-  border-color: #f87171;
+  background: linear-gradient(135deg, var(--color-primary-200) 0%, var(--color-primary-100) 100%); /* Medium shade for oil allowed */
+  border-color: var(--color-primary-200);
+  color: var(--color-text);
 }
 
 .calendar-cell.fasting-риба {
-  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); /* Very light red for fish allowed */
-  border-color: #fca5a5;
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%); /* Light shade for fish allowed */
+  border-color: var(--color-primary-100);
+  color: var(--color-text);
 }
 
 .calendar-cell.fasting-бели_мрс {
-  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); /* Palest red for white fast */
-  border-color: #fecaca;
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-surface) 100%); /* Lightest shade for white fast */
+  border-color: var(--color-primary-50);
+  color: var(--color-text);
 }
 
 /* Text visibility for dark water fasting */
@@ -318,15 +321,15 @@
 .calendar-cell.fasting-вода .slavas,
 .calendar-cell.fasting-вода .no-slavas-text,
 .calendar-cell.fasting-вода .date {
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--color-surface);
 }
 
 .calendar-cell.fasting-вода .weekday {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .calendar-cell.fasting-вода .fasting-icon {
-  color: #fff;
+  color: var(--color-surface);
 }
 
 /* Ensure weekday text is visible on lighter fasting days */
@@ -404,4 +407,37 @@
     font-size: 0.8rem;
     padding: 7px 11px;
   }
+}
+
+/* Dark mode adjustments - defined in dark.css but need fasting-specific overrides */
+[data-theme="dark"] .calendar-cell.fasting-вода {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+  border-color: var(--color-primary);
+  color: var(--color-surface);
+}
+
+[data-theme="dark"] .calendar-cell.fasting-уље {
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); /* Darker red for dark mode */
+  border-color: #7f1d1d;
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .calendar-cell.fasting-риба {
+  background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%); /* Medium dark red */
+  border-color: #991b1b;
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .calendar-cell.fasting-бели_мрс {
+  background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%); /* Darkest red shade */
+  border-color: #450a0a;
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .calendar-cell.fasting .fasting-icon {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .calendar-cell.fasting-вода .fasting-icon {
+  color: var(--color-surface);
 }
