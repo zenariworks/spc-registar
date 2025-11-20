@@ -42,17 +42,17 @@
     {% if day.is_placeholder %}
       <div class="calendar-cell placeholder"></div>
     {% else %}
-      <div class="calendar-cell {% if day.is_fasting %}fasting{% endif %} {% if day.fasting_type %}fasting-{{ day.fasting_type }}{% endif %}">
+      <div class="calendar-cell {% if day.is_important %}important{% endif %} {% if day.is_fasting %}fasting{% endif %} {% if day.fasting_type %}fasting-{{ day.fasting_type }}{% endif %}">
         {% if day.is_fasting %}
           <div class="fasting-info">
             {% if day.fasting_type == 'вода' %}
               <i class="fa-solid fa-droplet fasting-icon"></i>
             {% elif day.fasting_type == 'уље' %}
-              <i class="fa-solid fa-oil-can fasting-icon"></i>
+              <i class="fa-solid fa-droplet fasting-icon icon-oil"></i>
             {% elif day.fasting_type == 'риба' %}
               <i class="fa-solid fa-fish fasting-icon"></i>
             {% elif day.fasting_type == 'бели_мрс' %}
-              <i class="fa-solid fa-cake-candles2-line fasting-icon"></i>
+              <i class="fa-solid fa-cheese fasting-icon"></i>
             {% endif %}
             <span class="fasting-tooltip">{{ day.fasting_display }}: {{ day.fasting_description }}</span>
           </div>
