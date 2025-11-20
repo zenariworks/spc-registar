@@ -77,11 +77,21 @@
               <div class="weekday">{{ day.day_label }}</div>
             </div>
           </div>
-          {% if day.slave %}
+          {% if day.fixed_slavas or day.moveable_slavas %}
             <div class="slavas">
-              {% for slava in day.slave %}
-                <div>{{ slava.naziv }}</div>
-              {% endfor %}
+              {% if day.moveable_slavas %}
+                {% for s in day.moveable_slavas %}
+                  <div class="slava-moveable">{{ s.naziv }}</div>
+                {% endfor %}
+              {% endif %}
+              {% if day.fixed_slavas and day.moveable_slavas %}
+                <div class="slavas-separator"></div>
+              {% endif %}
+              {% if day.fixed_slavas %}
+                {% for s in day.fixed_slavas %}
+                  <div class="slava-fixed">{{ s.naziv }}</div>
+                {% endfor %}
+              {% endif %}
             </div>
           {% else %}
             <div class="no-slavas-text">Нема слава</div>

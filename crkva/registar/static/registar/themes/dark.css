@@ -163,6 +163,22 @@
   color: var(--color-text-muted);
 }
 
+/* Slavas separator in dark mode */
+[data-theme="dark"] .slavas-separator {
+  background: var(--color-border);
+  opacity: 0.5;
+}
+
+/* Moveable and fixed slavas in dark mode */
+[data-theme="dark"] .slava-moveable {
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .slava-fixed {
+  color: var(--color-text-muted);
+  opacity: 0.7;
+}
+
 /* Buttons using existing classes (dugme-crveno stays brand); add neutral button if needed */
 [data-theme="dark"] .dugme-crveno {
   /* keep default styles; ensure text contrast */

@@ -268,6 +268,24 @@
   margin-top: 6px;
 }
 
+.slavas-separator {
+  height: 1px;
+  background: var(--color-border);
+  margin: 8px 0;
+  opacity: 0.6;
+}
+
+.slava-moveable {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.slava-fixed {
+  font-size: 0.75rem;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
 .calendar-cell .no-slavas-text {
   margin-top: 6px;
   font-size: 12px;
