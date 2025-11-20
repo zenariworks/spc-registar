@@ -169,12 +169,12 @@ class Command(BaseCommand):
             )
         )
 
-    def _get_marriage_str(self, marriage_num):
+    def _get_marriage_str(self, _marriage_num):
         """
         process `marriage_num` string to return a str object.
 
         Args:
-            marriage_num (int): 1, 2, 3
+            _marriage_num (int): 1, 2, 3 (currently unused)
 
         Returns:
             str: A str object: 'прво', 'друго', 'треће', 'четврто', 'пето', 'шесто', 'седмо', 'осмо', 'девето', 'десето'
@@ -194,11 +194,11 @@ class Command(BaseCommand):
             "десето",  # 10
         ]
 
-        # Check if child_num is within the valid range
-        if 1 <= child_num <= 10:
-            return ordinal_numbers[child_num - 1]  # Indexing starts from 0
-        else:
-            raise ValueError("child_num must be an integer between 1 and 10.")
+        # Check if marriage_num is within the valid range
+        if 1 <= _marriage_num <= 10:
+            return ordinal_numbers[_marriage_num - 1]  # Indexing starts from 0
+
+        raise ValueError("marriage_num must be an integer between 1 and 10.")
 
     def _parse_data(self):
         """

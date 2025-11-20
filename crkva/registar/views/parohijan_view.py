@@ -2,6 +2,7 @@
 Модул за приказ, додавање и генерисање PDF докумената за парохијане.
 """
 
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
@@ -41,7 +42,6 @@ class SpisakParohijana(ListView):
             if not query:
                 return Parohijan.objects.all()
             variants = get_query_variants(query)
-            from django.db.models import Q
             q = None
             for v in variants:
                 clause = Q(ime__icontains=v) | Q(prezime__icontains=v)
@@ -80,7 +80,7 @@ class ParohijanPDF(DetailView):
 
     def get(self, request, *args, **kwargs):
         """Обрађује GET захтев за генерисање PDF документа за парохијана."""
-        self.object = self.get_object()
+        self.object = self.get_object()  # pylint: disable=attribute-defined-outside-init
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 

@@ -1,3 +1,4 @@
+"""Модул за администрацију Django модела у апликацији регистар."""
 
 from .adresa_admin import AdresaAdmin
 from .crkvena_opstina_admin import CrkvenaOpstinaAdmin

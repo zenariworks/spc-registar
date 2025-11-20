@@ -1,6 +1,9 @@
+"""Context processors за приказ слава и поста."""
+
 from datetime import timedelta
-from django.utils import timezone
 from typing import Any
+
+from django.utils import timezone
 
 from .models import Slava
 from .utils_fasting import is_fasting_day

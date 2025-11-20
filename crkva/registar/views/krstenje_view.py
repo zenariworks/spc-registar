@@ -77,7 +77,7 @@ class KrstenjePDF(DetailView):
 
     def get(self, request, *args, **kwargs):
         """Обрађује GET захтеве за генерисање PDF-а."""
-        self.object = self.get_object()
+        self.object = self.get_object()  # pylint: disable=attribute-defined-outside-init
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 

@@ -1,3 +1,5 @@
+"""Django форме за унос и претрагу података."""
+
 from .forms import SearchForm
 from .krstenje_form import KrstenjeForm
 from .parohijan_form import ParohijanForm

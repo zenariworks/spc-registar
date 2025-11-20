@@ -55,7 +55,7 @@ class Command(BaseCommand):
         svestenik.save()
         return svestenik
 
-    def create_random_krstenje(self, parohijan):
+    def create_random_krstenje(self, _parohijan):
         """Креира насумично крштење."""
         dete_pol = "М" if random.choice([True, False]) else "Ж"
         dete_ime = random.choice(RandomUtils.male_names if dete_pol == "М" else RandomUtils.female_names)

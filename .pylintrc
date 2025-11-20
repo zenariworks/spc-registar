@@ -18,5 +18,9 @@ disable =
     ; arguments-differ,
     ; attribute-defined-outside-init
 
-; [DJANGO]
-; settings-module = crkva.settings
+[DJANGO]
+django-settings-module = crkva.settings
+
+[TOOL:pylint]
+ignore-paths=
+    ^.*/migrations/.*$

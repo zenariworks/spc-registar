@@ -1,3 +1,5 @@
+"""Django форма за унос венчања."""
+
 from django import forms
 from registar.models import Vencanje
 
