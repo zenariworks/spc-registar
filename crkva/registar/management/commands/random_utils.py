@@ -111,7 +111,7 @@ class RandomUtils:
         return adresa
 
     @staticmethod
-    def create_random_hram(unesi_adresu=None):
+    def create_random_hram(_unesi_adresu=None):
         """Креира насумичан објекат Hram."""
         from registar.models import Hram
         hram = Hram(

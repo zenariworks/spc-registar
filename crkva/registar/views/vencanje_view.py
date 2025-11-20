@@ -5,11 +5,14 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
+
 from django_filters.views import FilterView
+
 from registar.filters import VencanjeFilter
+from registar.forms import SearchForm, VencanjeForm
 from registar.models.vencanje import Vencanje
+
 from weasyprint import HTML
-from registar.forms import VencanjeForm, SearchForm
 
 
 class SpisakVencanja(FilterView, ListView):
@@ -62,7 +65,7 @@ class VencanjePDF(DetailView):
 
     def get(self, request, *args, **kwargs):
         """Обрађује GET захтеве за генерисање PDF-а."""
-        self.object = self.get_object()
+        self.object = self.get_object()  # pylint: disable=attribute-defined-outside-init
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 

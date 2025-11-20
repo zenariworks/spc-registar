@@ -66,7 +66,7 @@ class Command(BaseCommand):
     help = "Унос држава, ако већ нису у бази података"
 
     def handle(self, *args, **kwargs):
-        for naziv, _ in drzave.keys():
+        for naziv, _ in drzave:
             drzava, uneto = unesi_drzavu(naziv)
             if uneto:
                 info = f"Додата држава `{drzava}`"

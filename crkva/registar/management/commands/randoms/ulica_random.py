@@ -1,9 +1,12 @@
+"""Модул за генерисање насумичних улица."""
+
 import random
 
 from registar.models import Ulica
 
 
 def dodaj_ili_dobavi_ulicu(svestenik_id):
+    """Додаје или враћа насумичну улицу."""
     ulice_nazivi = [
         "Булевар Краља Александра",
         "Змаја од Ноћаја",
@@ -29,7 +32,7 @@ def dodaj_ili_dobavi_ulicu(svestenik_id):
 
     naziv = random.choice(ulice_nazivi)
 
-    ulica, created = Ulica.objects.get_or_create(
+    ulica, _created = Ulica.objects.get_or_create(
         naziv=naziv, defaults={"svestenik": svestenik_id}
     )
 

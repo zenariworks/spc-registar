@@ -40,9 +40,9 @@ class Command(BaseCommand):
             napomena,
         ) in parsed_data:
             try:
-                if ulica_uid == None or ulica_uid == 0:
+                if ulica_uid is None or ulica_uid == 0:
                     continue
-                
+
                 adresa_instance = Adresa(
                     broj=broj_ulice,
                     sprat=None,

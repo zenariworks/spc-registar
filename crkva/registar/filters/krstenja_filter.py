@@ -19,7 +19,7 @@ class KrstenjeFilter(django_filters.FilterSet):
         model = Krstenje
         fields = []
 
-    def filter_search(self, queryset, name, value):
+    def filter_search(self, queryset, _name, value):
         """Претражује уносе на основу више текстуалних поља, укључујући датум."""
         termini_pretrage = value.split()
         queryset = queryset.annotate(

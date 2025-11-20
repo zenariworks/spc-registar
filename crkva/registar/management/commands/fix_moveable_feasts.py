@@ -78,16 +78,18 @@ class Command(BaseCommand):
             try:
                 slava = Slava.objects.get(naziv=feast['name'])
                 old_date = f"{slava.mesec}/{slava.dan}" if slava.mesec and slava.dan else "moveable"
-                
+
                 slava.pokretni = True
                 slava.offset_dani = feast['offset_days']
                 slava.offset_nedelje = feast['offset_weeks']
                 slava.dan = None
                 slava.mesec = None
                 slava.save()
-                
+
                 self.stdout.write(
-                    self.style.SUCCESS(f'✓ Updated {feast["name"]} (was {old_date}) to moveable feast')
+                    self.style.SUCCESS(
+                        f'✓ Updated {feast["name"]} (was {old_date}) to moveable feast'
+                    )
                 )
                 updated_count += 1
             except Slava.DoesNotExist:
@@ -102,7 +104,7 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(f'\nUpdated {updated_count} feast(s) to moveable dates')
         )
-        
+
         # Verify the changes
         self.stdout.write('\n' + '='*70)
         self.stdout.write('Verification - Dates for 2025 and 2026:')

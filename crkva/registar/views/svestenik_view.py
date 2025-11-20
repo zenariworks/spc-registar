@@ -2,13 +2,15 @@
 Модул за приказ, претрагу и генерисање PDF докумената за свештенике.
 """
 
+from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView, ListView
+
 from registar.forms import SearchForm
-from registar.utils import get_query_variants
-from django.db.models import Q
 from registar.models.svestenik import Svestenik
+from registar.utils import get_query_variants
+
 from weasyprint import HTML
 
 
@@ -62,7 +64,7 @@ class SvestenikPDF(DetailView):
 
     def get(self, request, *args, **kwargs):
         """Обрађује GET захтеве за генерисање PDF-а."""
-        self.object = self.get_object()
+        self.object = self.get_object()  # pylint: disable=attribute-defined-outside-init
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)
 

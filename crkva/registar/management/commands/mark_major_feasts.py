@@ -24,7 +24,7 @@ class Command(BaseCommand):
             'Велика Госпојина',  # Dormition
             'Мала Госпојина',  # Nativity of Theotokos
             'Ваведење',  # Presentation of Mary
-            
+
             # Велики светитељски празници (Great Feasts of Saints)
             'Свети Сава',
             'Свети Никола',
@@ -36,12 +36,12 @@ class Command(BaseCommand):
             try:
                 # Try exact match first
                 slava = Slava.objects.filter(naziv__icontains=feast_name).first()
-                
+
                 if slava:
                     old_value = slava.crveno_slovo
                     slava.crveno_slovo = True
                     slava.save()
-                    
+
                     status = "already marked" if old_value else "marked"
                     self.stdout.write(
                         self.style.SUCCESS(f'✓ {slava.naziv} - {status} as crveno slovo')
@@ -60,7 +60,7 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(f'\nMarked {updated_count} new feast(s) as crveno slovo')
         )
-        
+
         # Show all red letter days
         self.stdout.write('\n' + '='*70)
         self.stdout.write('All Red Letter Days (Црвено слово):')
@@ -69,6 +69,7 @@ class Command(BaseCommand):
         for slava in red_letter_days:
             if slava.pokretni:
                 date_2025 = slava.get_datum(2025)
-                self.stdout.write(f'  {slava.naziv} (moveable, 2025: {date_2025.strftime("%B %d")})')
+                date_str = date_2025.strftime("%B %d")
+                self.stdout.write(f'  {slava.naziv} (moveable, 2025: {date_str})')
             else:
                 self.stdout.write(f'  {slava.naziv} ({slava.mesec}/{slava.dan})')

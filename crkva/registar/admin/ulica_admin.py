@@ -12,7 +12,7 @@ class DrzavaFilter(admin.SimpleListFilter):
     parameter_name = "drzava"
 
     def lookups(self, request, model_admin):
-        drzave = set([m.opstina.drzava for m in Mesto.objects.all()])
+        drzave = {m.opstina.drzava for m in Mesto.objects.all()}
         return [(d.uid, d.naziv) for d in drzave]
 
     def queryset(self, request, queryset):
@@ -28,7 +28,7 @@ class OpstinaFilter(admin.SimpleListFilter):
     parameter_name = "opstina"
 
     def lookups(self, request, model_admin):
-        opstine = set([m.opstina for m in Mesto.objects.all()])
+        opstine = {m.opstina for m in Mesto.objects.all()}
         return [(o.uid, o.naziv) for o in opstine]
 
     def queryset(self, request, queryset):

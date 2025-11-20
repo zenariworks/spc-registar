@@ -11,10 +11,12 @@ from django.shortcuts import render
 
 from registar.models import Slava
 from registar.utils import MESECI
-from registar.utils_fasting import is_fasting_day, get_fasting_type
+from registar.utils_fasting import get_fasting_type
 
 
-def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | None = None) -> HttpResponse:
+def slava_kalendar(
+    request: HttpRequest, year: int | None = None, month: int | None = None
+) -> HttpResponse:
     """Приказ месеца са славама и обележеним данима поста.
 
     Подразумевана година је текућа година,
@@ -37,7 +39,9 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
             by_day[s.dan].append(s)
 
     # Покретне славе - рачунамо за сваку и проверавамо да ли пада у тражени месец
-    pokretne_slave = Slava.objects.filter(pokretni=True).order_by("offset_nedelje", "offset_dani", "naziv")
+    pokretne_slave = Slava.objects.filter(pokretni=True).order_by(
+        "offset_nedelje", "offset_dani", "naziv"
+    )
     for s in pokretne_slave:
         datum = s.get_datum(year)
         if datum and datum.month == month:
@@ -48,7 +52,7 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
     weekday_labels = ["Пон", "Уто", "Сре", "Чет", "Пет", "Суб", "Нед"]
 
     # Major feast days (important observances)
-    MAJOR_FEASTS = {
+    major_feasts = {
         (1, 7): "Божић",  # Christmas
         (1, 19): "Богојављење",  # Epiphany
         (8, 28): "Велика Госпојина",  # Dormition
@@ -75,12 +79,13 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
         is_crveno_slovo = any(s.crveno_slovo for s in day_slavas)
 
         # Check if this is a major feast day
-        is_important = (d.month, d.day) in MAJOR_FEASTS
+        is_important = (d.month, d.day) in major_feasts
         # Also check if any slava name contains major keywords
         if day_slavas and not is_important:
             for slava in day_slavas:
                 slava_lower = slava.naziv.lower()
-                if any(keyword in slava_lower for keyword in ['васкрс', 'спасовдан', 'тројице', 'духови', 'вазнесењ']):
+                keywords = ['васкрс', 'спасовдан', 'тројице', 'духови', 'вазнесењ']
+                if any(keyword in slava_lower for keyword in keywords):
                     is_important = True
                     break
 

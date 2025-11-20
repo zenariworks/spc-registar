@@ -1,3 +1,5 @@
+"""Django форма за унос крштења."""
+
 from django import forms
 from registar.models import Krstenje
 

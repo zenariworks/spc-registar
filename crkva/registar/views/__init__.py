@@ -60,7 +60,7 @@ def index(request) -> HttpResponse:
     weekday_labels = ["Пон", "Уто", "Сре", "Чет", "Пет", "Суб", "Нед"]
 
     # Major feast days
-    MAJOR_FEASTS = {
+    major_feasts = {
         (1, 7): "Божић",
         (1, 19): "Богојављење",
         (8, 28): "Велика Госпојина",
@@ -84,7 +84,7 @@ def index(request) -> HttpResponse:
         is_crveno_slovo = any(s.crveno_slovo for s in day_slavas)
 
         # Check if major feast
-        is_important = (d.month, d.day) in MAJOR_FEASTS
+        is_important = (d.month, d.day) in major_feasts
         if day_slavas and not is_important:
             for slava in day_slavas:
                 slava_lower = slava.naziv.lower()
