@@ -56,7 +56,7 @@
 
     <div class="dashboard-calendar">
       {% for day in calendar_cells %}
-        <div class="calendar-cell {% if day.is_today %}today{% endif %} {% if day.is_important %}important{% endif %} {% if day.is_fasting %}fasting fasting-{{ day.fasting_type }}{% endif %}">
+        <div class="calendar-cell {% if day.is_today %}today{% endif %} {% if day.is_crveno_slovo %}crveno-slovo{% elif day.is_important %}important{% elif day.is_fasting %}fasting fasting-{{ day.fasting_type }}{% endif %}">
           {% if day.is_fasting %}
             <div class="fasting-info">
               {% if day.fasting_type == 'вода' %}
