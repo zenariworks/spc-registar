@@ -78,6 +78,12 @@
   padding: 10px;
   background: var(--color-surface-2);
   position: relative;
+  transition: all 0.2s ease;
+}
+
+.calendar-cell:not(.placeholder):hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-1px);
 }
 
 .calendar-cell.placeholder {
@@ -86,8 +92,40 @@
 }
 
 .calendar-cell.fasting {
-  background: var(--color-primary);
-  color: #fff;
+  background: var(--color-surface-1);
+  color: var(--color-text);
+}
+
+/* Important observances - red border */
+.calendar-cell.important {
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-200);
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, #fff 100%);
+}
+
+.calendar-cell.important:hover {
+  box-shadow: 0 0 0 2px var(--color-primary-200), 0 4px 12px rgba(162, 21, 20, 0.15);
+}
+
+/* Important + fasting combination */
+.calendar-cell.important.fasting-вода {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-200);
+}
+
+.calendar-cell.important.fasting-уље {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-200);
+}
+
+.calendar-cell.important.fasting-риба {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-200);
+}
+
+.calendar-cell.important.fasting-бели_мрс {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-200);
 }
 
 .cell-header {
@@ -198,7 +236,7 @@
   top: 8px;
   right: 8px;
   padding: 4px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -210,16 +248,12 @@
 }
 
 .fasting-info:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .fasting-icon {
   font-size: 1.1rem;
-  color: #fff;
-}
-
-.calendar-cell.fasting-бели_мрс .fasting-icon {
-  color: #333;
+  color: var(--color-text);
 }
 
 /* Tooltip styles */
@@ -257,52 +291,75 @@
   border-bottom-color: rgba(0, 0, 0, 0.9);
 }
 
-/* Different colors for different fasting types */
+/* Different colors for different fasting types - red shades palette */
 .calendar-cell.fasting-вода {
-  background: #5865F2; /* Dark blue for strictest fast */
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); /* Dark red for strictest fast */
+  border-color: #7f1d1d;
   color: #fff;
 }
 
 .calendar-cell.fasting-уље {
-  background: #FFA500; /* Orange for oil allowed */
-  color: #fff;
+  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); /* Light red for oil allowed */
+  border-color: #f87171;
 }
 
 .calendar-cell.fasting-риба {
-  background: #3498db; /* Light blue for fish allowed */
-  color: #fff;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); /* Very light red for fish allowed */
+  border-color: #fca5a5;
 }
 
 .calendar-cell.fasting-бели_мрс {
-  background: #E8E8E8; /* Light grey for white fast */
-  color: #333;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%); /* Palest red for white fast */
+  border-color: #fecaca;
 }
 
-/* Ensure weekday text is visible on fasting days */
+/* Text visibility for dark water fasting */
+.calendar-cell.fasting-вода .weekday,
+.calendar-cell.fasting-вода .slavas,
+.calendar-cell.fasting-вода .no-slavas-text,
+.calendar-cell.fasting-вода .date {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.calendar-cell.fasting-вода .weekday {
+  opacity: 0.8;
+}
+
+.calendar-cell.fasting-вода .fasting-icon {
+  color: #fff;
+}
+
+/* Ensure weekday text is visible on lighter fasting days */
 .calendar-cell.fasting .weekday {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.calendar-cell.fasting-бели_мрс .weekday {
-  color: rgba(0, 0, 0, 0.6);
+  color: var(--color-text-muted);
 }
 
 /* Ensure slavas text is visible on fasting days */
 .calendar-cell.fasting .slavas {
-  color: #fff;
-}
-
-.calendar-cell.fasting-бели_мрс .slavas {
-  color: #333;
+  color: var(--color-text);
+  font-weight: 500;
 }
 
 /* No slavas text on fasting days */
 .calendar-cell.fasting .no-slavas-text {
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--color-text-muted);
 }
 
-.calendar-cell.fasting-бели_мрс .no-slavas-text {
-  color: rgba(0, 0, 0, 0.5);
+/* Oil droplet - half-filled effect */
+.icon-oil {
+  opacity: 0.6;
+  position: relative;
+}
+
+.icon-oil::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: currentColor;
+  opacity: 0.4;
 }
 
 /* Mobile adjustments for fasting info */

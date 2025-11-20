@@ -47,12 +47,36 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
     # Weekday labels (Mon..Sun) in Serbian abbreviations
     weekday_labels = ["Пон", "Уто", "Сре", "Чет", "Пет", "Суб", "Нед"]
 
+    # Major feast days (important observances)
+    MAJOR_FEASTS = {
+        (1, 7): "Божић",  # Christmas
+        (1, 19): "Богојављење",  # Epiphany
+        (8, 28): "Велика Госпојина",  # Dormition
+        (9, 21): "Мала Госпојина",  # Nativity of Theotokos
+        (11, 21): "Ваведење",  # Presentation of Mary
+        (1, 27): "Свети Сава",  # Saint Sava
+        (12, 19): "Свети Никола",  # Saint Nicholas
+        (5, 19): "Ђурђевдан",  # Saint George
+    }
+
     # Build cells with leading placeholders to align under weekday headers
     cells = []
     for _ in range(first_weekday):
         cells.append({"is_placeholder": True})
     for d in days:
         fasting_info = get_fasting_type(d)
+        day_slavas = by_day.get(d.day, [])
+
+        # Check if this is a major feast day
+        is_important = (d.month, d.day) in MAJOR_FEASTS
+        # Also check if any slava name contains major keywords
+        if day_slavas and not is_important:
+            for slava in day_slavas:
+                slava_lower = slava.naziv.lower()
+                if any(keyword in slava_lower for keyword in ['васкрс', 'спасовдан', 'тројице', 'духови', 'вазнесењ']):
+                    is_important = True
+                    break
+
         cells.append(
             {
                 "is_placeholder": False,
@@ -62,7 +86,8 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
                 "fasting_type": fasting_info['type'],
                 "fasting_display": fasting_info['display'],
                 "fasting_description": fasting_info['description'],
-                "slave": by_day.get(d.day, []),
+                "slave": day_slavas,
+                "is_important": is_important,
             }
         )
 
