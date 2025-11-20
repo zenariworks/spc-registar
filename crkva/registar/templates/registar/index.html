@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'registar/pages/slava_kalendar.css' %}">
+{% endblock %}
 {% block content %}
 
 <!-- Main Content Grid -->
@@ -50,65 +53,41 @@
         <i class="fa-solid fa-arrow-right"></i> Календар
       </a>
     </div>
-    
-    <div class="timeline">
-      {% if juce_slave %}
-        <div class="timeline__day timeline__day--yesterday">
-          <div class="timeline__day-header">
-            <span class="timeline__date">{{ juce_datum|date:"d.m." }}</span>
-            <span class="timeline__label">јуче</span>
-          </div>
-          <div class="timeline__items">
-            {% for slava in juce_slave %}
-              <div class="timeline__item">
-                <span class="timeline__name">{{ slava }}</span>
-                {% if juce_post %}<span class="timeline__badge">Пост</span>{% endif %}
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
 
-      {% if danas_slave %}
-        <div class="timeline__day timeline__day--today">
-          <div class="timeline__day-header">
-            <span class="timeline__date">{{ danas_datum|date:"d.m." }}</span>
-            <span class="timeline__label">данас</span>
+    <div class="dashboard-calendar">
+      {% for day in calendar_cells %}
+        <div class="calendar-cell {% if day.is_today %}today{% endif %} {% if day.is_important %}important{% endif %} {% if day.is_fasting %}fasting fasting-{{ day.fasting_type }}{% endif %}">
+          {% if day.is_fasting %}
+            <div class="fasting-info">
+              {% if day.fasting_type == 'вода' %}
+                <i class="fa-solid fa-droplet fasting-icon"></i>
+              {% elif day.fasting_type == 'уље' %}
+                <i class="fa-solid fa-droplet fasting-icon icon-oil"></i>
+              {% elif day.fasting_type == 'риба' %}
+                <i class="fa-solid fa-fish fasting-icon"></i>
+              {% elif day.fasting_type == 'бели_мрс' %}
+                <i class="fa-solid fa-cheese fasting-icon"></i>
+              {% endif %}
+              <span class="fasting-tooltip">{{ day.fasting_display }}: {{ day.fasting_description }}</span>
+            </div>
+          {% endif %}
+          <div class="cell-header">
+            <div class="date-wrapper">
+              <div class="date">{{ day.date.day }}.</div>
+              <div class="weekday">{{ day.day_label }}</div>
+            </div>
           </div>
-          <div class="timeline__items">
-            {% for slava in danas_slave %}
-              <div class="timeline__item">
-                <span class="timeline__name">{{ slava }}</span>
-                {% if danas_post %}<span class="timeline__badge">Пост</span>{% endif %}
-              </div>
-            {% endfor %}
-          </div>
-        </div>
-      {% endif %}
-
-      {% for dan in narednih_slave|slice:":3" %}
-        <div class="timeline__day timeline__day--upcoming">
-          <div class="timeline__day-header">
-            <span class="timeline__date">{{ dan.datum|date:"d.m." }}</span>
-            <span class="timeline__label">{{ dan.datum|date:"l"|lower }}</span>
-          </div>
-          <div class="timeline__items">
-            {% for slava in dan.slave %}
-              <div class="timeline__item">
-                <span class="timeline__name">{{ slava }}</span>
-                {% if dan.post %}<span class="timeline__badge">Пост</span>{% endif %}
-              </div>
-            {% endfor %}
-          </div>
+          {% if day.slave %}
+            <div class="slavas">
+              {% for slava in day.slave %}
+                <div>{{ slava.naziv }}</div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="no-slavas-text">Нема слава</div>
+          {% endif %}
         </div>
       {% endfor %}
-
-      {% if not juce_slave and not danas_slave and not narednih_slave %}
-        <div class="timeline__empty">
-          <i class="fa-solid fa-calendar-xmark"></i>
-          <p>Нема актуелних слава</p>
-        </div>
-      {% endif %}
     </div>
   </div>
 
