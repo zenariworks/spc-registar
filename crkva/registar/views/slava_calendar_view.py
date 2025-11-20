@@ -67,6 +67,10 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
         fasting_info = get_fasting_type(d)
         day_slavas = by_day.get(d.day, [])
 
+        # Separate fixed and moveable feasts
+        fixed_slavas = [s for s in day_slavas if not s.pokretni]
+        moveable_slavas = [s for s in day_slavas if s.pokretni]
+
         # Check if this is a major feast day
         is_important = (d.month, d.day) in MAJOR_FEASTS
         # Also check if any slava name contains major keywords
@@ -87,6 +91,8 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
                 "fasting_display": fasting_info['display'],
                 "fasting_description": fasting_info['description'],
                 "slave": day_slavas,
+                "fixed_slavas": fixed_slavas,
+                "moveable_slavas": moveable_slavas,
                 "is_important": is_important,
                 "is_today": d == today,
             }

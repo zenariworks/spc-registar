@@ -76,6 +76,10 @@ def index(request) -> HttpResponse:
         fasting_info = get_fasting_type(d)
         day_slavas = by_day.get((d.month, d.day), [])
 
+        # Separate fixed and moveable feasts
+        fixed_slavas = [s for s in day_slavas if not s.pokretni]
+        moveable_slavas = [s for s in day_slavas if s.pokretni]
+
         # Check if major feast
         is_important = (d.month, d.day) in MAJOR_FEASTS
         if day_slavas and not is_important:
@@ -104,6 +108,8 @@ def index(request) -> HttpResponse:
             "fasting_display": fasting_info['display'],
             "fasting_description": fasting_info['description'],
             "slave": day_slavas,
+            "fixed_slavas": fixed_slavas,
+            "moveable_slavas": moveable_slavas,
             "is_important": is_important,
             "is_today": d == today,
             "is_yesterday": d == today - dt.timedelta(days=1),
