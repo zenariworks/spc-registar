@@ -9,7 +9,7 @@
 {% block content %}
 <div class="u-page-header">
   <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
-    <i class="ri-arrow-left-line"></i>
+    <i class="fa-solid fa-arrow-left"></i>
   </a>
 <h1 class="u-page-title">Календар слава</h1>
 </div>
@@ -17,7 +17,7 @@
 <!-- Single, centered navigation -->
 <div class="calendar-navigation">
   <a href="{% url 'slava_kalendar_mesec' prev_year prev_month %}" class="nav-arrow">
-    <i class="ri-arrow-left-s-line"></i>
+    <i class="fa-solid fa-chevron-left"></i>
   </a>
 
   <div class="current-month">
@@ -26,7 +26,7 @@
   </div>
 
   <a href="{% url 'slava_kalendar_mesec' next_year next_month %}" class="nav-arrow">
-    <i class="ri-arrow-right-s-line"></i>
+    <i class="fa-solid fa-chevron-right"></i>
   </a>
 </div>
 
@@ -46,13 +46,13 @@
         {% if day.is_fasting %}
           <div class="fasting-info">
             {% if day.fasting_type == 'вода' %}
-              <i class="ri-drop-line fasting-icon"></i>
+              <i class="fa-solid fa-droplet fasting-icon"></i>
             {% elif day.fasting_type == 'уље' %}
-              <i class="ri-oil-line fasting-icon"></i>
+              <i class="fa-solid fa-oil-can fasting-icon"></i>
             {% elif day.fasting_type == 'риба' %}
-              <i class="ri-fish-line fasting-icon"></i>
+              <i class="fa-solid fa-fish fasting-icon"></i>
             {% elif day.fasting_type == 'бели_мрс' %}
-              <i class="ri-cake-2-line fasting-icon"></i>
+              <i class="fa-solid fa-cake-candles2-line fasting-icon"></i>
             {% endif %}
             <span class="fasting-tooltip">{{ day.fasting_display }}: {{ day.fasting_description }}</span>
           </div>
