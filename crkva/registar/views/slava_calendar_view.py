@@ -88,6 +88,7 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
                 "fasting_description": fasting_info['description'],
                 "slave": day_slavas,
                 "is_important": is_important,
+                "is_today": d == today,
             }
         )
 

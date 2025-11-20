@@ -1,3 +1,70 @@
+/* Dashboard calendar - always single column mobile view */
+.dashboard-calendar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.dashboard-calendar .calendar-cell {
+  height: auto;
+  min-height: 90px;
+  padding: 14px;
+}
+
+.dashboard-calendar .calendar-cell .cell-header {
+  margin-bottom: 10px;
+}
+
+.dashboard-calendar .calendar-cell .date {
+  font-size: 1.375rem;
+  font-weight: 700;
+}
+
+.dashboard-calendar .calendar-cell .weekday {
+  font-size: 0.875rem;
+  margin-top: 2px;
+}
+
+.dashboard-calendar .calendar-cell .slavas {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-top: 8px;
+}
+
+.dashboard-calendar .calendar-cell .no-slavas-text {
+  font-size: 0.875rem;
+}
+
+.dashboard-calendar .fasting-info {
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-calendar .fasting-icon {
+  font-size: 1.2rem;
+}
+
+.dashboard-calendar .date-wrapper {
+  gap: 4px;
+}
+
+.dashboard-calendar .fasting-tooltip {
+  font-size: 0.8rem;
+  white-space: normal;
+  max-width: 200px;
+  right: 0;
+  left: auto;
+}
+
+/* Show tooltip on tap for mobile - using active state */
+.dashboard-calendar .fasting-info:active .fasting-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* Calendar responsive styles (extracted from slava_kalendar.html) */
 .calendar-navigation {
   display: flex;
@@ -27,10 +94,6 @@
   cursor: pointer;
 }
 
-.nav-arrow:hover {
-  background: var(--color-surface-1);
-  transform: scale(1.05);
-}
 
 .nav-arrow:first-of-type {
   margin-right: 20px;
@@ -56,10 +119,10 @@
   color: var(--color-text-muted);
 }
 
-/* Calendar grid */
+/* Calendar grid - fluid responsive */
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 8px;
 }
 
@@ -81,9 +144,42 @@
   transition: all 0.2s ease;
 }
 
-.calendar-cell:not(.placeholder):hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  transform: translateY(-1px);
+/* Only apply hover effects on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+  .calendar-cell:not(.placeholder):hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .calendar-cell.important:hover {
+    box-shadow: 0 0 0 2px var(--color-primary-200), 0 4px 12px rgba(162, 21, 20, 0.15);
+  }
+
+  .nav-arrow:hover {
+    background: var(--color-surface-1);
+    transform: scale(1.05);
+  }
+
+  .fasting-info:hover {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .fasting-info:hover .fasting-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+/* Touch-friendly active states for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .calendar-cell:active {
+    opacity: 0.9;
+  }
+
+  .nav-arrow:active {
+    background: var(--color-surface-1);
+    transform: scale(0.95);
+  }
 }
 
 .calendar-cell.placeholder {
@@ -96,15 +192,29 @@
   color: var(--color-text);
 }
 
+/* Today - golden highlight */
+.calendar-cell.today {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid #f59e0b;
+  box-shadow: 0 0 0 1px #fbbf24, 0 2px 8px rgba(245, 158, 11, 0.2);
+  font-weight: 600;
+}
+
+.calendar-cell.today .date {
+  color: #92400e;
+  font-weight: 800;
+}
+
+.calendar-cell.today .weekday {
+  color: #b45309;
+  font-weight: 600;
+}
+
 /* Important observances - red border */
 .calendar-cell.important {
   border: 2px solid var(--color-primary);
   box-shadow: 0 0 0 1px var(--color-primary-200);
-  background: linear-gradient(135deg, var(--color-primary-50) 0%, #fff 100%);
-}
-
-.calendar-cell.important:hover {
-  box-shadow: 0 0 0 2px var(--color-primary-200), 0 4px 12px rgba(162, 21, 20, 0.15);
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-surface) 100%);
 }
 
 /* Important + fasting combination */
@@ -166,20 +276,36 @@
 }
 
 /* Tablet and mobile optimizations */
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .calendar-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 8px;
   }
   .weekday-header { display: none; }
+  .calendar-cell.placeholder { display: none; }
+}
+
+@media (max-width: 768px) {
+  .calendar-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
   .calendar-cell {
-    height: 130px;
-    padding: 8px;
+    height: auto;
+    min-height: 110px;
+    padding: 10px;
     font-size: 0.9rem;
   }
-  .calendar-cell.placeholder { height: 130px; }
   .calendar-cell .date {
-    font-size: 1rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+  .calendar-cell .weekday {
+    font-size: 0.75rem;
+  }
+  .calendar-cell .slavas {
+    font-size: 0.85rem;
+    line-height: 1.3;
+    margin-top: 8px;
   }
   .calendar-navigation {
     padding: 12px;
@@ -189,44 +315,113 @@
     min-width: 150px;
   }
   .month-name {
-    font-size: 1rem;
+    font-size: 1.125rem;
   }
   .year-label {
     font-size: 0.875rem;
+  }
+  .nav-arrow {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 600px) {
+  .calendar-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 }
 
 /* Small mobile - single column for better readability */
 @media (max-width: 480px) {
   .calendar-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
   }
   .calendar-cell {
     height: auto;
-    min-height: 80px;
-    padding: 12px;
+    min-height: 90px;
+    padding: 14px;
   }
   .calendar-cell.placeholder { display: none; }
   .calendar-cell .cell-header {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  .calendar-cell .date {
+    font-size: 1.375rem;
+    font-weight: 700;
+  }
+  .calendar-cell .weekday {
+    font-size: 0.875rem;
+    margin-top: 2px;
   }
   .calendar-cell .slavas {
-    font-size: 0.95rem;
-    line-height: 1.4;
+    font-size: 1rem;
+    line-height: 1.5;
+    margin-top: 8px;
+  }
+  .calendar-cell .no-slavas-text {
+    font-size: 0.875rem;
   }
   .calendar-navigation {
-    padding: 10px;
-    margin: 10px 0;
+    padding: 14px 10px;
+    margin: 12px 0;
+  }
+  .nav-arrow {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
   }
   .nav-arrow:first-of-type {
-    margin-right: 12px;
+    margin-right: 16px;
   }
   .nav-arrow:last-of-type {
-    margin-left: 12px;
+    margin-left: 16px;
   }
   .current-month {
-    min-width: 120px;
+    min-width: 140px;
+  }
+  .month-name {
+    font-size: 1.25rem;
+  }
+  .year-label {
+    font-size: 1rem;
+  }
+
+  /* Better fasting info visibility on mobile */
+  .fasting-info {
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  .fasting-icon {
+    font-size: 1.2rem;
+  }
+
+  /* Improved date wrapper layout */
+  .date-wrapper {
+    gap: 4px;
+  }
+
+  /* Show tooltip on tap for mobile - using active state */
+  .fasting-info:active .fasting-tooltip {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Make tooltip more mobile-friendly */
+  .fasting-tooltip {
+    font-size: 0.8rem;
+    white-space: normal;
+    max-width: 200px;
+    right: 0;
+    left: auto;
   }
 }
 
@@ -247,9 +442,6 @@
   height: 28px;
 }
 
-.fasting-info:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
 
 .fasting-icon {
   font-size: 1.1rem;
@@ -276,10 +468,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.fasting-info:hover .fasting-tooltip {
-  opacity: 1;
-  visibility: visible;
-}
 
 /* Arrow for tooltip */
 .fasting-tooltip::before {
@@ -295,7 +483,7 @@
 .calendar-cell.fasting-вода {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%); /* Base primary color for strictest fast */
   border-color: var(--color-primary);
-  color: var(--color-surface);
+  color: var(--color-surface) !important;
 }
 
 .calendar-cell.fasting-уље {
@@ -321,15 +509,20 @@
 .calendar-cell.fasting-вода .slavas,
 .calendar-cell.fasting-вода .no-slavas-text,
 .calendar-cell.fasting-вода .date {
-  color: var(--color-surface);
+  color: var(--color-surface) !important;
 }
 
 .calendar-cell.fasting-вода .weekday {
   opacity: 0.9;
+  color: var(--color-surface) !important;
+}
+
+.calendar-cell.fasting-вода .slavas div {
+  color: var(--color-surface) !important;
 }
 
 .calendar-cell.fasting-вода .fasting-icon {
-  color: var(--color-surface);
+  color: var(--color-surface) !important;
 }
 
 /* Ensure weekday text is visible on lighter fasting days */
@@ -413,7 +606,15 @@
 [data-theme="dark"] .calendar-cell.fasting-вода {
   background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
   border-color: var(--color-primary);
-  color: var(--color-surface);
+  color: var(--color-surface) !important;
+}
+
+[data-theme="dark"] .calendar-cell.fasting-вода .weekday,
+[data-theme="dark"] .calendar-cell.fasting-вода .slavas,
+[data-theme="dark"] .calendar-cell.fasting-вода .slavas div,
+[data-theme="dark"] .calendar-cell.fasting-вода .no-slavas-text,
+[data-theme="dark"] .calendar-cell.fasting-вода .date {
+  color: var(--color-surface) !important;
 }
 
 [data-theme="dark"] .calendar-cell.fasting-уље {
@@ -439,7 +640,30 @@
 }
 
 [data-theme="dark"] .calendar-cell.fasting-вода .fasting-icon {
-  color: var(--color-surface);
+  color: var(--color-surface) !important;
+}
+
+/* Today in dark mode - golden glow */
+[data-theme="dark"] .calendar-cell.today {
+  background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 1px #f59e0b, 0 2px 12px rgba(245, 158, 11, 0.3);
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .calendar-cell.today .date {
+  color: #fde68a;
+  font-weight: 800;
+}
+
+[data-theme="dark"] .calendar-cell.today .weekday {
+  color: #fcd34d;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .calendar-cell.today .slavas,
+[data-theme="dark"] .calendar-cell.today .slavas div {
+  color: #fef3c7 !important;
 }
 
 /* Important observances in dark mode */

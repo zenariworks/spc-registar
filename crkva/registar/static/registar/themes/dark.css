@@ -99,18 +99,68 @@
   color: var(--color-text);
 }
 
-/* Improve contrast for the current-day section in the Slava timeline */
+/* Golden highlight for the current-day section in the Slava timeline - using variables */
 [data-theme="dark"] .timeline__day--today {
-  background: color-mix(in oklab, var(--color-primary) 20%, var(--color-surface-2));
-  border-color: color-mix(in oklab, var(--color-primary) 35%, var(--color-border));
+  background: var(--color-surface-1);
+  border: 2px solid var(--color-border);
+  border-left: 4px solid var(--color-primary);
 }
-[data-theme="dark"] .timeline__day--today .timeline__date,
-[data-theme="dark"] .timeline__day--today .timeline__label,
+[data-theme="dark"] .timeline__day--today .timeline__date {
+  color: var(--color-text);
+  font-weight: 800;
+}
+[data-theme="dark"] .timeline__day--today .timeline__label {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
 [data-theme="dark"] .timeline__day--today .timeline__name {
   color: var(--color-text);
 }
 [data-theme="dark"] .timeline__day--today .timeline__item {
-  background: color-mix(in oklab, var(--color-surface-2) 88%, var(--color-primary) 12%);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+}
+
+/* Fasting colors in dark mode */
+[data-theme="dark"] .timeline__day--fasting.fasting-вода {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+}
+
+[data-theme="dark"] .timeline__day--fasting.fasting-вода .timeline__date,
+[data-theme="dark"] .timeline__day--fasting.fasting-вода .timeline__label,
+[data-theme="dark"] .timeline__day--fasting.fasting-вода .timeline__name,
+[data-theme="dark"] .timeline__day--fasting.fasting-вода .timeline__empty-day {
+  color: var(--color-surface) !important;
+}
+
+[data-theme="dark"] .timeline__day--fasting.fasting-уље {
+  background: linear-gradient(135deg, var(--color-primary-200) 0%, var(--color-primary-100) 100%);
+}
+
+[data-theme="dark"] .timeline__day--fasting.fasting-риба {
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%);
+}
+
+[data-theme="dark"] .timeline__day--fasting.fasting-бели_мрс {
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, color-mix(in oklab, var(--color-primary) 5%, var(--color-surface-2)) 100%);
+}
+
+/* Important observances in dark mode */
+[data-theme="dark"] .timeline__day--important {
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary-700), 0 2px 8px color-mix(in oklab, var(--color-primary) 20%, transparent);
+}
+
+/* Fasting tooltips in dark mode */
+[data-theme="dark"] .fasting-tooltip {
+  background: var(--color-surface-2);
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+/* Empty day text in dark mode */
+[data-theme="dark"] .timeline__empty-day {
+  color: var(--color-text-muted);
 }
 
 /* Buttons using existing classes (dugme-crveno stays brand); add neutral button if needed */
