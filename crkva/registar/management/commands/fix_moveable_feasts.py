@@ -17,28 +17,48 @@ class Command(BaseCommand):
                 'offset_weeks': 0,
             },
             {
+                'name': 'Улазак Господа Исуса Христа у Јерусалим',
+                'offset_days': -7,  # Palm Sunday (Sunday before Easter)
+                'offset_weeks': 0,
+            },
+            {
+                'name': 'Велики четвртак (Велико бденије)',
+                'offset_days': -3,  # Holy Thursday (Maundy Thursday)
+                'offset_weeks': 0,
+            },
+            {
+                'name': 'Велики петак',
+                'offset_days': -2,  # Good Friday
+                'offset_weeks': 0,
+            },
+            {
+                'name': 'Велика субота',
+                'offset_days': -1,  # Holy Saturday
+                'offset_weeks': 0,
+            },
+            {
                 'name': 'Васкрсење Господа исуса Христа',
                 'offset_days': 0,  # Easter Sunday
                 'offset_weeks': 0,
             },
             {
                 'name': 'Васкрски понедељак',
-                'offset_days': 1,  # Easter Monday
+                'offset_days': 1,  # Easter Monday (Bright Monday)
                 'offset_weeks': 0,
             },
             {
                 'name': 'Васкрсни уторак',
-                'offset_days': 2,  # Easter Tuesday
+                'offset_days': 2,  # Easter Tuesday (Bright Tuesday)
                 'offset_weeks': 0,
             },
             {
                 'name': 'Вазнесење Господње',
-                'offset_days': 39,  # Ascension (40th day, counting from day 1)
+                'offset_days': 39,  # Ascension (40th day from Easter)
                 'offset_weeks': 0,
             },
             {
                 'name': 'Силазак Светог Духа на апостоле-Педесетница-Тројице',
-                'offset_days': 49,  # Pentecost/Trinity (50th day, counting from day 1)
+                'offset_days': 49,  # Pentecost/Trinity (50th day from Easter)
                 'offset_weeks': 0,
             },
             {
