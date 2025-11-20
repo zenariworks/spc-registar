@@ -441,3 +441,23 @@
 [data-theme="dark"] .calendar-cell.fasting-вода .fasting-icon {
   color: var(--color-surface);
 }
+
+/* Important observances in dark mode */
+[data-theme="dark"] .calendar-cell.important {
+  background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 1px var(--color-primary);
+  color: var(--color-text);
+}
+
+[data-theme="dark"] .calendar-cell.important .weekday,
+[data-theme="dark"] .calendar-cell.important .date,
+[data-theme="dark"] .calendar-cell.important .slavas {
+  color: var(--color-text);
+}
+
+/* Important + fasting combinations in dark mode */
+[data-theme="dark"] .calendar-cell.important.fasting {
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(162, 21, 20, 0.5);
+}
