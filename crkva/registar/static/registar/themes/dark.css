@@ -202,3 +202,46 @@
   opacity: 1;
   color: var(--color-text-muted);
 }
+
+/* Today in dark mode - golden border only */
+[data-theme="dark"] .calendar-cell.today {
+  border: 3px solid #f59e0b;
+  box-shadow: 0 0 0 1px #fbbf24, 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+/* Црвено слово in dark mode - dark red */
+[data-theme="dark"] .calendar-cell.crveno-slovo {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+  border-color: var(--color-primary);
+  color: var(--color-surface) !important;
+}
+
+[data-theme="dark"] .calendar-cell.crveno-slovo .weekday,
+[data-theme="dark"] .calendar-cell.crveno-slovo .slavas,
+[data-theme="dark"] .calendar-cell.crveno-slovo .slavas div,
+[data-theme="dark"] .calendar-cell.crveno-slovo .no-slavas-text,
+[data-theme="dark"] .calendar-cell.crveno-slovo .date,
+[data-theme="dark"] .calendar-cell.crveno-slovo .fasting-icon {
+  color: var(--color-surface) !important;
+}
+
+/* Regular fasting days in dark mode - milder shades */
+[data-theme="dark"] .calendar-cell.fasting-вода {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--color-primary) 35%, var(--color-surface-2)) 0%, color-mix(in oklab, var(--color-primary) 25%, var(--color-surface-2)) 100%);
+  border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-surface-2));
+}
+
+[data-theme="dark"] .calendar-cell.fasting-уље {
+  background: linear-gradient(135deg, #7f1d1d 0%, #6b1515 100%);
+  border-color: #7f1d1d;
+}
+
+[data-theme="dark"] .calendar-cell.fasting-риба {
+  background: linear-gradient(135deg, #6b1515 0%, #5a1111 100%);
+  border-color: #6b1515;
+}
+
+[data-theme="dark"] .calendar-cell.fasting-бели_мрс {
+  background: linear-gradient(135deg, #5a1111 0%, color-mix(in oklab, var(--color-primary) 10%, var(--color-surface-2)) 100%);
+  border-color: #5a1111;
+}

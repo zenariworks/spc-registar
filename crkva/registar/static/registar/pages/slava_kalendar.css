@@ -192,22 +192,10 @@
   color: var(--color-text);
 }
 
-/* Today - golden highlight */
+/* Today - golden border only, background preserved */
 .calendar-cell.today {
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  border: 2px solid #f59e0b;
-  box-shadow: 0 0 0 1px #fbbf24, 0 2px 8px rgba(245, 158, 11, 0.2);
-  font-weight: 600;
-}
-
-.calendar-cell.today .date {
-  color: #92400e;
-  font-weight: 800;
-}
-
-.calendar-cell.today .weekday {
-  color: #b45309;
-  font-weight: 600;
+  border: 3px solid #f59e0b;
+  box-shadow: 0 0 0 1px #fbbf24, 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
 /* Important observances - red border */
@@ -497,51 +485,59 @@
   border-bottom-color: rgba(0, 0, 0, 0.9);
 }
 
-/* Different colors for different fasting types - base color shades */
-.calendar-cell.fasting-вода {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%); /* Base primary color for strictest fast */
+/* Црвено слово (red letter days) - dark red like water fasting */
+.calendar-cell.crveno-slovo {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
   border-color: var(--color-primary);
   color: var(--color-surface) !important;
 }
 
-.calendar-cell.fasting-уље {
-  background: linear-gradient(135deg, var(--color-primary-200) 0%, var(--color-primary-100) 100%); /* Medium shade for oil allowed */
-  border-color: var(--color-primary-200);
-  color: var(--color-text);
-}
-
-.calendar-cell.fasting-риба {
-  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%); /* Light shade for fish allowed */
-  border-color: var(--color-primary-100);
-  color: var(--color-text);
-}
-
-.calendar-cell.fasting-бели_мрс {
-  background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-surface) 100%); /* Lightest shade for white fast */
-  border-color: var(--color-primary-50);
-  color: var(--color-text);
-}
-
-/* Text visibility for dark water fasting */
-.calendar-cell.fasting-вода .weekday,
-.calendar-cell.fasting-вода .slavas,
-.calendar-cell.fasting-вода .no-slavas-text,
-.calendar-cell.fasting-вода .date {
+.calendar-cell.crveno-slovo .weekday,
+.calendar-cell.crveno-slovo .slavas,
+.calendar-cell.crveno-slovo .no-slavas-text,
+.calendar-cell.crveno-slovo .date {
   color: var(--color-surface) !important;
 }
 
-.calendar-cell.fasting-вода .weekday {
+.calendar-cell.crveno-slovo .weekday {
   opacity: 0.9;
   color: var(--color-surface) !important;
 }
 
-.calendar-cell.fasting-вода .slavas div {
+.calendar-cell.crveno-slovo .slavas div {
   color: var(--color-surface) !important;
 }
 
-.calendar-cell.fasting-вода .fasting-icon {
+.calendar-cell.crveno-slovo .fasting-icon {
   color: var(--color-surface) !important;
 }
+
+/* Regular fasting days - milder shades */
+.calendar-cell.fasting-вода {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--color-primary) 40%, var(--color-surface-2)) 0%, color-mix(in oklab, var(--color-primary) 30%, var(--color-surface-2)) 100%);
+  border-color: color-mix(in oklab, var(--color-primary) 50%, var(--color-surface-2));
+  color: var(--color-text);
+}
+
+.calendar-cell.fasting-уље {
+  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%);
+  border-color: var(--color-primary-100);
+  color: var(--color-text);
+}
+
+.calendar-cell.fasting-риба {
+  background: linear-gradient(135deg, var(--color-primary-50) 0%, color-mix(in oklab, var(--color-primary) 8%, var(--color-surface-2)) 100%);
+  border-color: var(--color-primary-50);
+  color: var(--color-text);
+}
+
+.calendar-cell.fasting-бели_мрс {
+  background: linear-gradient(135deg, color-mix(in oklab, var(--color-primary) 8%, var(--color-surface-2)) 0%, var(--color-surface-2) 100%);
+  border-color: color-mix(in oklab, var(--color-primary) 15%, var(--color-surface-2));
+  color: var(--color-text);
+}
+
+/* Regular fasting days have normal text color now (lighter backgrounds) */
 
 /* Ensure weekday text is visible on lighter fasting days */
 .calendar-cell.fasting .weekday {

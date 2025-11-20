@@ -71,6 +71,9 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
         fixed_slavas = [s for s in day_slavas if not s.pokretni]
         moveable_slavas = [s for s in day_slavas if s.pokretni]
 
+        # Check if this day has a "crveno slovo" (red letter day) observance
+        is_crveno_slovo = any(s.crveno_slovo for s in day_slavas)
+
         # Check if this is a major feast day
         is_important = (d.month, d.day) in MAJOR_FEASTS
         # Also check if any slava name contains major keywords
@@ -94,6 +97,7 @@ def slava_kalendar(request: HttpRequest, year: int | None = None, month: int | N
                 "fixed_slavas": fixed_slavas,
                 "moveable_slavas": moveable_slavas,
                 "is_important": is_important,
+                "is_crveno_slovo": is_crveno_slovo,
                 "is_today": d == today,
             }
         )

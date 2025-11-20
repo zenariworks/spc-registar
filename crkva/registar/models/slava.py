@@ -68,6 +68,13 @@ class Slava(models.Model):
         help_text="Крај поста у данима од Васкрса"
     )
 
+    # Црвено слово - велики празници
+    crveno_slovo = models.BooleanField(
+        verbose_name="црвено слово",
+        default=False,
+        help_text="Велики празник (црвено слово у календару)"
+    )
+
     @staticmethod
     def calc_vaskrs(year):
         """Рачуна православни Васкрс за дату годину користећи Гаусов алгоритам."""
