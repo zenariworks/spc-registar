@@ -15,7 +15,7 @@
     {% url 'krstenja' as krstenja_url %}
     {% url 'vencanja' as vencanja_url %}
     {% url 'svestenici' as svestenici_url %}
-    {% url 'slava_kalendar' as slava_kalendar_url %}
+    {% url 'kalendar' as kalendar_url %}
     {% url 'unos_krstenja' as unos_krstenja_url %}
     {% url 'unos_vencanja' as unos_vencanja_url %}
     {% url 'unos_parohijana' as unos_parohijana_url %}
@@ -58,7 +58,7 @@
     </div>
 
     <div class="sidebar-menu-item">
-      <a href="{{ slava_kalendar_url }}" class="{% if request.path == slava_kalendar_url %}active{% endif %}" title="Календар слава">
+      <a href="{{ kalendar_url }}" class="{% if request.path == kalendar_url %}active{% endif %}" title="Календар слава">
         <i class="fa-solid fa-calendar-days"></i>
         <span class="sidebar-text">Календар слава</span>
       </a>

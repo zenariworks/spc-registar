@@ -14,7 +14,7 @@ from registar.utils import MESECI
 from registar.utils_fasting import get_fasting_type
 
 
-def slava_kalendar(
+def kalendar(
     request: HttpRequest, year: int | None = None, month: int | None = None
 ) -> HttpResponse:
     """Приказ месеца са славама и обележеним данима поста.
@@ -125,4 +125,4 @@ def slava_kalendar(
         "next_month": next_month,
     }
 
-    return render(request, "registar/slava_kalendar.html", context)
+    return render(request, "registar/kalendar.html", context)

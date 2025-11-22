@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'registar/pages/slava_kalendar.css' %}">
+<link rel="stylesheet" href="{% static 'registar/pages/kalendar.css' %}">
 {% endblock %}
 {% block content %}
 
@@ -35,7 +35,7 @@
           <div class="actions__desc">Додај новог парохијана</div>
         </div>
       </a>
-      <a href="{% url 'slava_kalendar' %}" class="actions__item">
+      <a href="{% url 'kalendar' %}" class="actions__item">
         <div class="actions__icon"><i class="fa-solid fa-calendar-days"></i></div>
         <div class="actions__text">
           <div class="actions__title">Календар слава</div>
@@ -49,7 +49,7 @@
   <div class="card">
     <div class="card__header">
       <h3><i class="fa-solid fa-calendar-days"></i> Актуелне славе</h3>
-      <a href="{% url 'slava_kalendar' %}" class="card__link">
+      <a href="{% url 'kalendar' %}" class="card__link">
         <i class="fa-solid fa-arrow-right"></i> Календар
       </a>
     </div>

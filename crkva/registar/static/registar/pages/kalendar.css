@@ -65,7 +65,7 @@
   visibility: visible;
 }
 
-/* Calendar responsive styles (extracted from slava_kalendar.html) */
+/* Calendar responsive styles (extracted from kalendar.html) */
 .calendar-navigation {
   display: flex;
   align-items: center;
@@ -553,23 +553,6 @@
 /* No slavas text on fasting days */
 .calendar-cell.fasting .no-slavas-text {
   color: var(--color-text-muted);
-}
-
-/* Oil droplet - half-filled effect */
-.icon-oil {
-  opacity: 0.6;
-  position: relative;
-}
-
-.icon-oil::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: currentColor;
-  opacity: 0.4;
 }
 
 /* Mobile adjustments for fasting info */
