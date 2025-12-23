@@ -14,6 +14,28 @@
   --color-surface-2: #111827;  /* panels/cards */
   --color-surface-1: #1f2937;  /* intermediate surface for controls */
   --color-border: #334155;     /* borders */
+
+  /* Fasting colors for dark mode - slightly brighter for visibility */
+  --fasting-water-bg: rgba(96, 165, 250, 0.25);
+  --fasting-oil-bg: rgba(251, 191, 36, 0.3);
+  --fasting-fish-bg: rgba(45, 212, 191, 0.25);
+  --fasting-dairy-bg: rgba(252, 211, 77, 0.2);
+
+  --fasting-water-cell: var(--color-primary);
+  --fasting-water-cell-end: var(--color-primary-700);
+  --fasting-water-border: var(--color-primary);
+
+  --fasting-oil-cell: #7f1d1d;
+  --fasting-oil-cell-end: #991b1b;
+  --fasting-oil-border: #7f1d1d;
+
+  --fasting-fish-cell: #991b1b;
+  --fasting-fish-cell-end: #7f1d1d;
+  --fasting-fish-border: #991b1b;
+
+  --fasting-dairy-cell: #450a0a;
+  --fasting-dairy-cell-end: #7f1d1d;
+  --fasting-dairy-border: #450a0a;
 }
 
 /* Page background and text */
