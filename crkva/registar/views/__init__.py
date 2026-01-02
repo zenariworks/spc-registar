@@ -20,7 +20,7 @@ from .parohijan_view import (
 from .svestenik_view import PrikazSvestenika, SpisakSvestenika, SvestenikPDF
 from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF, unos_vencanja
 from .view_404 import custom_404
-from .slava_calendar_view import slava_kalendar
+from .kalendar_view import kalendar
 
 
 def index(request) -> HttpResponse:
@@ -167,7 +167,7 @@ def search_view(request) -> HttpResponse:
 __all__ = [
     "index",
     "search_view",
-    "slava_kalendar",
+    "kalendar",
     "custom_404",
     "unos_krstenja",
     "unos_parohijana",

@@ -8,11 +8,11 @@ handler404 = "registar.views.custom_404"
 urlpatterns = [
     path("", views.index, name="pocetna"),
     path("select2/", include("django_select2.urls")),
-    path("slava-kalendar/", views.slava_kalendar, name="slava_kalendar"),
+    path("slava-kalendar/", views.kalendar, name="kalendar"),
     path(
         "slava-kalendar/<int:year>/<int:month>/",
-        views.slava_kalendar,
-        name="slava_kalendar_mesec",
+        views.kalendar,
+        name="kalendar_mesec",
     ),
     path("parohijani/", views.SpisakParohijana.as_view(), name="parohijani"),
     path(

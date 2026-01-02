@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_css %}
-<link rel="stylesheet" href="{% static 'registar/pages/slava_kalendar.css' %}">
+<link rel="stylesheet" href="{% static 'registar/pages/kalendar.css' %}">
 {% endblock %}
 
 {% block title %}Календар слава{% endblock %}
@@ -16,7 +16,7 @@
 
 <!-- Single, centered navigation -->
 <div class="calendar-navigation">
-  <a href="{% url 'slava_kalendar_mesec' prev_year prev_month %}" class="nav-arrow">
+  <a href="{% url 'kalendar_mesec' prev_year prev_month %}" class="nav-arrow">
     <i class="fa-solid fa-chevron-left"></i>
   </a>
 
@@ -25,7 +25,7 @@
     <div class="year-label">{{ year }}</div>
   </div>
 
-  <a href="{% url 'slava_kalendar_mesec' next_year next_month %}" class="nav-arrow">
+  <a href="{% url 'kalendar_mesec' next_year next_month %}" class="nav-arrow">
     <i class="fa-solid fa-chevron-right"></i>
   </a>
 </div>
@@ -46,9 +46,9 @@
         {% if day.is_fasting %}
           <div class="fasting-info">
             {% if day.fasting_type == 'вода' %}
-              <i class="fa-solid fa-droplet fasting-icon"></i>
+              <i class="fa-solid fa-water fasting-icon"></i>
             {% elif day.fasting_type == 'уље' %}
-              <i class="fa-solid fa-droplet fasting-icon icon-oil"></i>
+              <i class="fa-solid fa-droplet fasting-icon"></i>
             {% elif day.fasting_type == 'риба' %}
               <i class="fa-solid fa-fish fasting-icon"></i>
             {% elif day.fasting_type == 'бели_мрс' %}
@@ -87,7 +87,7 @@
   {% endfor %}
 </div>
 
-<!-- Styles moved to static/registar/pages/slava_kalendar.css -->
+<!-- Styles moved to static/registar/pages/kalendar.css -->
 
 
 

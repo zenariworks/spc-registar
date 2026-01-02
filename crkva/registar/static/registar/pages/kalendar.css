@@ -65,7 +65,7 @@
   visibility: visible;
 }
 
-/* Calendar responsive styles (extracted from slava_kalendar.html) */
+/* Calendar responsive styles (extracted from kalendar.html) */
 .calendar-navigation {
   display: flex;
   align-items: center;
@@ -187,10 +187,6 @@
   background: transparent;
 }
 
-.calendar-cell.fasting {
-  background: var(--color-surface-1);
-  color: var(--color-text);
-}
 
 /* Today - golden border only, background preserved */
 .calendar-cell.today {
@@ -198,33 +194,6 @@
   box-shadow: 0 0 0 1px #fbbf24, 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
-/* Important observances - red border */
-.calendar-cell.important {
-  border: 2px solid var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary-200);
-  background: linear-gradient(135deg, var(--color-primary-50) 0%, var(--color-surface) 100%);
-}
-
-/* Important + fasting combination */
-.calendar-cell.important.fasting-вода {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary-200);
-}
-
-.calendar-cell.important.fasting-уље {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary-200);
-}
-
-.calendar-cell.important.fasting-риба {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary-200);
-}
-
-.calendar-cell.important.fasting-бели_мрс {
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary-200);
-}
 
 .cell-header {
   display: flex;
@@ -448,6 +417,29 @@
   height: 28px;
 }
 
+/* Water fasting - light blue background */
+.fasting-water .fasting-info,
+.fasting-вода .fasting-info {
+  background: var(--fasting-water-bg);
+}
+
+/* Oil fasting - amber/golden background */
+.fasting-oil .fasting-info,
+.fasting-уље .fasting-info {
+  background: var(--fasting-oil-bg);
+}
+
+/* Fish fasting - teal background */
+.fasting-fish .fasting-info,
+.fasting-риба .fasting-info {
+  background: var(--fasting-fish-bg);
+}
+
+/* Dairy fasting - cream background */
+.fasting-dairy .fasting-info,
+.fasting-бели_мрс .fasting-info {
+  background: var(--fasting-dairy-bg);
+}
 
 .fasting-icon {
   font-size: 1.1rem;
@@ -512,65 +504,6 @@
   color: var(--color-surface) !important;
 }
 
-/* Regular fasting days - milder shades */
-.calendar-cell.fasting-вода {
-  background: linear-gradient(135deg, color-mix(in oklab, var(--color-primary) 40%, var(--color-surface-2)) 0%, color-mix(in oklab, var(--color-primary) 30%, var(--color-surface-2)) 100%);
-  border-color: color-mix(in oklab, var(--color-primary) 50%, var(--color-surface-2));
-  color: var(--color-text);
-}
-
-.calendar-cell.fasting-уље {
-  background: linear-gradient(135deg, var(--color-primary-100) 0%, var(--color-primary-50) 100%);
-  border-color: var(--color-primary-100);
-  color: var(--color-text);
-}
-
-.calendar-cell.fasting-риба {
-  background: linear-gradient(135deg, var(--color-primary-50) 0%, color-mix(in oklab, var(--color-primary) 8%, var(--color-surface-2)) 100%);
-  border-color: var(--color-primary-50);
-  color: var(--color-text);
-}
-
-.calendar-cell.fasting-бели_мрс {
-  background: linear-gradient(135deg, color-mix(in oklab, var(--color-primary) 8%, var(--color-surface-2)) 0%, var(--color-surface-2) 100%);
-  border-color: color-mix(in oklab, var(--color-primary) 15%, var(--color-surface-2));
-  color: var(--color-text);
-}
-
-/* Regular fasting days have normal text color now (lighter backgrounds) */
-
-/* Ensure weekday text is visible on lighter fasting days */
-.calendar-cell.fasting .weekday {
-  color: var(--color-text-muted);
-}
-
-/* Ensure slavas text is visible on fasting days */
-.calendar-cell.fasting .slavas {
-  color: var(--color-text);
-  font-weight: 500;
-}
-
-/* No slavas text on fasting days */
-.calendar-cell.fasting .no-slavas-text {
-  color: var(--color-text-muted);
-}
-
-/* Oil droplet - half-filled effect */
-.icon-oil {
-  opacity: 0.6;
-  position: relative;
-}
-
-.icon-oil::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 50%;
-  background: currentColor;
-  opacity: 0.4;
-}
 
 /* Mobile adjustments for fasting info */
 @media (max-width: 480px) {
@@ -616,46 +549,6 @@
   }
 }
 
-/* Dark mode adjustments - defined in dark.css but need fasting-specific overrides */
-[data-theme="dark"] .calendar-cell.fasting-вода {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
-  border-color: var(--color-primary);
-  color: var(--color-surface) !important;
-}
-
-[data-theme="dark"] .calendar-cell.fasting-вода .weekday,
-[data-theme="dark"] .calendar-cell.fasting-вода .slavas,
-[data-theme="dark"] .calendar-cell.fasting-вода .slavas div,
-[data-theme="dark"] .calendar-cell.fasting-вода .no-slavas-text,
-[data-theme="dark"] .calendar-cell.fasting-вода .date {
-  color: var(--color-surface) !important;
-}
-
-[data-theme="dark"] .calendar-cell.fasting-уље {
-  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); /* Darker red for dark mode */
-  border-color: #7f1d1d;
-  color: var(--color-text);
-}
-
-[data-theme="dark"] .calendar-cell.fasting-риба {
-  background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%); /* Medium dark red */
-  border-color: #991b1b;
-  color: var(--color-text);
-}
-
-[data-theme="dark"] .calendar-cell.fasting-бели_мрс {
-  background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%); /* Darkest red shade */
-  border-color: #450a0a;
-  color: var(--color-text);
-}
-
-[data-theme="dark"] .calendar-cell.fasting .fasting-icon {
-  color: var(--color-text);
-}
-
-[data-theme="dark"] .calendar-cell.fasting-вода .fasting-icon {
-  color: var(--color-surface) !important;
-}
 
 /* Today in dark mode - golden glow */
 [data-theme="dark"] .calendar-cell.today {
@@ -680,22 +573,3 @@
   color: #fef3c7 !important;
 }
 
-/* Important observances in dark mode */
-[data-theme="dark"] .calendar-cell.important {
-  background: linear-gradient(135deg, #450a0a 0%, #7f1d1d 100%);
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 1px var(--color-primary);
-  color: var(--color-text);
-}
-
-[data-theme="dark"] .calendar-cell.important .weekday,
-[data-theme="dark"] .calendar-cell.important .date,
-[data-theme="dark"] .calendar-cell.important .slavas {
-  color: var(--color-text);
-}
-
-/* Important + fasting combinations in dark mode */
-[data-theme="dark"] .calendar-cell.important.fasting {
-  border: 2px solid var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(162, 21, 20, 0.5);
-}

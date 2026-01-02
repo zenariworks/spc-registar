@@ -1,11 +1,11 @@
 /* CSS promenljive za lagani i dosledni dizajn */
 :root {
     --color-primary: #A21514;
-    --color-primary-700: #9c1818;
     /* Additional primary shades used by components */
-    --color-primary-50: #fde8e8;
-    --color-primary-100: #fbd5d5;
+    --color-primary-700: #9c1818;
     --color-primary-200: #f8b4b4;
+    --color-primary-100: #fbd5d5;
+    --color-primary-50: #fde8e8;
 
     --color-text: #1e293b;
     --color-text-muted: #475569;
@@ -16,6 +16,28 @@
     /* Intermediate surface tone used by some form controls */
     --color-surface-1: #f1f5f9;
     --color-border: #e2e8f0;
+
+    /* Fasting type colors */
+    --fasting-dairy-bg: rgba(251, 191, 36, 0.15);
+    --fasting-fish-bg: rgba(20, 184, 166, 0.2);
+    --fasting-oil-bg: rgba(245, 158, 11, 0.25);
+    --fasting-water-bg: rgba(59, 130, 246, 0.2);
+
+    --fasting-oil-cell: var(--color-primary-100);
+    --fasting-oil-cell-end: var(--color-primary-50);
+    --fasting-oil-border: var(--color-primary-100);
+
+    --fasting-dairy-cell: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface-2));
+    --fasting-dairy-cell-end: var(--color-surface-2);
+    --fasting-dairy-border: color-mix(in oklab, var(--color-primary) 15%, var(--color-surface-2));
+
+    --fasting-fish-cell: var(--color-primary-50);
+    --fasting-fish-cell-end: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface-2));
+    --fasting-fish-border: var(--color-primary-50);
+
+    --fasting-water-cell: color-mix(in oklab, var(--color-primary) 40%, var(--color-surface-2));
+    --fasting-water-cell-end: color-mix(in oklab, var(--color-primary) 30%, var(--color-surface-2));
+    --fasting-water-border: color-mix(in oklab, var(--color-primary) 50%, var(--color-surface-2));
 
     --space-1: 4px;
     --space-2: 8px;
