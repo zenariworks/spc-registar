@@ -84,10 +84,10 @@ function recreate_database(){
 
     if [ "$LOCATION" = "h" ]; then
         # WSL setup (home)
-        python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf" --dest_dir "crkva/fixtures"
+        python scripts/migration/migrate-dbf-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf" --dest_dir "crkva/fixtures"
     else
         # WSL setup (crkva)
-        python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
+        python scripts/migration/migrate-dbf-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
     fi
 
     # remove migration files
