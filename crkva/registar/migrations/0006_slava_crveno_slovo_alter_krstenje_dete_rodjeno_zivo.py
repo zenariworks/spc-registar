@@ -4,20 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('registar', '0005_slava_offset_dani_slava_offset_nedelje_and_more'),
+        ("registar", "0005_slava_offset_dani_slava_offset_nedelje_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='slava',
-            name='crveno_slovo',
-            field=models.BooleanField(default=False, help_text='Велики празник (црвено слово у календару)', verbose_name='црвено слово'),
+            model_name="slava",
+            name="crveno_slovo",
+            field=models.BooleanField(
+                default=False,
+                help_text="Велики празник (црвено слово у календару)",
+                verbose_name="црвено слово",
+            ),
         ),
         migrations.AlterField(
-            model_name='krstenje',
-            name='dete_rodjeno_zivo',
-            field=models.BooleanField(default=True, verbose_name='дете рођено живо'),
+            model_name="krstenje",
+            name="dete_rodjeno_zivo",
+            field=models.BooleanField(default=True, verbose_name="дете рођено живо"),
         ),
     ]

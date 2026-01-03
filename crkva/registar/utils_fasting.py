@@ -128,25 +128,22 @@ def get_trapave_weeks(year: int) -> set[dt.date]:
     trapave = set()
 
     # Светла седмица (недеља после Васкрса)
-    trapave.update(_date_range(
-        vaskrs + dt.timedelta(days=1),
-        vaskrs + dt.timedelta(days=7)
-    ))
+    trapave.update(
+        _date_range(vaskrs + dt.timedelta(days=1), vaskrs + dt.timedelta(days=7))
+    )
 
     # Седмица после Духова (50 дана после Васкрса + 7 дана)
     duhovi = vaskrs + dt.timedelta(days=50)
-    trapave.update(_date_range(
-        duhovi + dt.timedelta(days=1),
-        duhovi + dt.timedelta(days=7)
-    ))
+    trapave.update(
+        _date_range(duhovi + dt.timedelta(days=1), duhovi + dt.timedelta(days=7))
+    )
 
     # Митар и Фарисеј (3 недеље пре Чистог понедељка)
     cisti_ponedeljak = vaskrs - dt.timedelta(days=48)
     mitar_i_farisej_start = cisti_ponedeljak - dt.timedelta(days=21)
-    trapave.update(_date_range(
-        mitar_i_farisej_start,
-        mitar_i_farisej_start + dt.timedelta(days=6)
-    ))
+    trapave.update(
+        _date_range(mitar_i_farisej_start, mitar_i_farisej_start + dt.timedelta(days=6))
+    )
 
     # После Божића до Крстовдана (7-17. јануар)
     trapave.update(_date_range(dt.date(year, 1, 7), dt.date(year, 1, 17)))
@@ -174,7 +171,13 @@ def is_fasting_day(date: dt.date) -> bool:
     cheesefare = get_cheesefare_week(year)
 
     # Ако је дан у било ком посту
-    if date in fasting_from_db or date in fixed_fasting or date in great_lent or date in apostles_fast or date in cheesefare:
+    if (
+        date in fasting_from_db
+        or date in fixed_fasting
+        or date in great_lent
+        or date in apostles_fast
+        or date in cheesefare
+    ):
         return True
 
     # Провери да ли је среда или петак (општи пост)
@@ -204,12 +207,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
     # Провери да ли је у трапавој седмици (без поста)
     trapave = get_trapave_weeks(year)
     if date in trapave:
-        return {
-            'is_fasting': False,
-            'type': None,
-            'display': None,
-            'description': None
-        }
+        return {"is_fasting": False, "type": None, "display": None, "description": None}
 
     # Велики пост (Great Lent)
     great_lent = get_great_lent(year)
@@ -219,103 +217,107 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
         # Проверa за Благовести (25. март) у Великом посту
         if date.month == 3 and date.day == 25:
             return {
-                'is_fasting': True,
-                'type': 'риба',
-                'display': 'Риба',
-                'description': 'Дозвољени: уље, вино и риба'
+                "is_fasting": True,
+                "type": "риба",
+                "display": "Риба",
+                "description": "Дозвољени: уље, вино и риба",
             }
 
         # Лазарева субота (дан пре Цвети)
         lazareva_subota = vaskrs - dt.timedelta(days=8)
         if date == lazareva_subota:
             return {
-                'is_fasting': True,
-                'type': 'риба',
-                'display': 'Риба',
-                'description': 'Дозвољени: уље, вино и риба'
+                "is_fasting": True,
+                "type": "риба",
+                "display": "Риба",
+                "description": "Дозвољени: уље, вино и риба",
             }
 
         # Цвети (Вrbica, недеља пре Васкрса)
         cveti = vaskrs - dt.timedelta(days=7)
         if date == cveti:
             return {
-                'is_fasting': True,
-                'type': 'риба',
-                'display': 'Риба',
-                'description': 'Дозвољени: уље, вино и риба'
+                "is_fasting": True,
+                "type": "риба",
+                "display": "Риба",
+                "description": "Дозвољени: уље, вино и риба",
             }
 
         # Субота и недеља у Великом посту - уље и вино
         if weekday in (5, 6):  # субота или недеља
             return {
-                'is_fasting': True,
-                'type': 'уље',
-                'display': 'Уље',
-                'description': 'Дозвољени: уље и вино'
+                "is_fasting": True,
+                "type": "уље",
+                "display": "Уље",
+                "description": "Дозвољени: уље и вино",
             }
 
         # Други дани Великог поста - вода
         return {
-            'is_fasting': True,
-            'type': 'вода',
-            'display': 'Вода',
-            'description': 'Пост без уља и рибе'
+            "is_fasting": True,
+            "type": "вода",
+            "display": "Вода",
+            "description": "Пост без уља и рибе",
         }
 
     # Бели мрс (Cheesefare week - недеља пре Великог поста)
     cheesefare = get_cheesefare_week(year)
     if date in cheesefare:
         return {
-            'is_fasting': True,
-            'type': 'бели_мрс',
-            'display': 'Бели мрс',
-            'description': 'Дозвољено све осим меса'
+            "is_fasting": True,
+            "type": "бели_мрс",
+            "display": "Бели мрс",
+            "description": "Дозвољено све осим меса",
         }
 
     # Божићни пост (Christmas Fast) - 28. новембар до 6. јануар
-    if (date.month == 11 and date.day >= 28) or (date.month == 12) or (date.month == 1 and date.day <= 6):
+    if (
+        (date.month == 11 and date.day >= 28)
+        or (date.month == 12)
+        or (date.month == 1 and date.day <= 6)
+    ):
         # Провери изузетке (Божић 25.12 по Јулијанском = 7.1 по Грегоријанском)
         if date.month == 1 and date.day == 7:
             return {
-                'is_fasting': False,
-                'type': None,
-                'display': None,
-                'description': None
+                "is_fasting": False,
+                "type": None,
+                "display": None,
+                "description": None,
             }
 
         # Сочи дан (6. јануар) - строг пост
         if date.month == 1 and date.day == 6:
             return {
-                'is_fasting': True,
-                'type': 'вода',
-                'display': 'Вода',
-                'description': 'Пост без уља и рибе'
+                "is_fasting": True,
+                "type": "вода",
+                "display": "Вода",
+                "description": "Пост без уља и рибе",
             }
 
         # Субота и недеља - риба
         if weekday in (5, 6):
             return {
-                'is_fasting': True,
-                'type': 'риба',
-                'display': 'Риба',
-                'description': 'Дозвољени: уље, вино и риба'
+                "is_fasting": True,
+                "type": "риба",
+                "display": "Риба",
+                "description": "Дозвољени: уље, вино и риба",
             }
 
         # Уторак и четвртак - уље
         if weekday in (1, 3):
             return {
-                'is_fasting': True,
-                'type': 'уље',
-                'display': 'Уље',
-                'description': 'Дозвољени: уље и вино'
+                "is_fasting": True,
+                "type": "уље",
+                "display": "Уље",
+                "description": "Дозвољени: уље и вино",
             }
 
         # Понедељак, среда, петак - вода
         return {
-            'is_fasting': True,
-            'type': 'вода',
-            'display': 'Вода',
-            'description': 'Пост без уља и рибе'
+            "is_fasting": True,
+            "type": "вода",
+            "display": "Вода",
+            "description": "Пост без уља и рибе",
         }
 
     # Успенски пост (Dormition Fast) - 1-14. август
@@ -323,36 +325,36 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
         # Преображење (6. август) - риба
         if date.day == 6:
             return {
-                'is_fasting': True,
-                'type': 'риба',
-                'display': 'Риба',
-                'description': 'Дозвољени: уље, вино и риба'
+                "is_fasting": True,
+                "type": "риба",
+                "display": "Риба",
+                "description": "Дозвољени: уље, вино и риба",
             }
 
         # Субота и недеља - риба
         if weekday in (5, 6):
             return {
-                'is_fasting': True,
-                'type': 'риба',
-                'display': 'Риба',
-                'description': 'Дозвољени: уље, вино и риба'
+                "is_fasting": True,
+                "type": "риба",
+                "display": "Риба",
+                "description": "Дозвољени: уље, вино и риба",
             }
 
         # Среда и петак - вода
         if weekday in (2, 4):
             return {
-                'is_fasting': True,
-                'type': 'вода',
-                'display': 'Вода',
-                'description': 'Пост без уља и рибе'
+                "is_fasting": True,
+                "type": "вода",
+                "display": "Вода",
+                "description": "Пост без уља и рибе",
             }
 
         # Други дани - уље
         return {
-            'is_fasting': True,
-            'type': 'уље',
-            'display': 'Уље',
-            'description': 'Дозвољени: уље и вино'
+            "is_fasting": True,
+            "type": "уље",
+            "display": "Уље",
+            "description": "Дозвољени: уље и вино",
         }
 
     # Апостолски пост (Apostles' Fast)
@@ -361,60 +363,55 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
         # Субота и недеља - риба
         if weekday in (5, 6):
             return {
-                'is_fasting': True,
-                'type': 'риба',
-                'display': 'Риба',
-                'description': 'Дозвољени: уље, вино и риба'
+                "is_fasting": True,
+                "type": "риба",
+                "display": "Риба",
+                "description": "Дозвољени: уље, вино и риба",
             }
 
         # Уторак и четвртак - риба
         if weekday in (1, 3):
             return {
-                'is_fasting': True,
-                'type': 'риба',
-                'display': 'Риба',
-                'description': 'Дозвољени: уље, вино и риба'
+                "is_fasting": True,
+                "type": "риба",
+                "display": "Риба",
+                "description": "Дозвољени: уље, вино и риба",
             }
 
         # Понедељак - уље
         if weekday == 0:
             return {
-                'is_fasting': True,
-                'type': 'уље',
-                'display': 'Уље',
-                'description': 'Дозвољени: уље и вино'
+                "is_fasting": True,
+                "type": "уље",
+                "display": "Уље",
+                "description": "Дозвољени: уље и вино",
             }
 
         # Среда и петак - вода
         return {
-            'is_fasting': True,
-            'type': 'вода',
-            'display': 'Вода',
-            'description': 'Пост без уља и рибе'
+            "is_fasting": True,
+            "type": "вода",
+            "display": "Вода",
+            "description": "Пост без уља и рибе",
         }
 
     # Крстовдан (18. јануар) - вода
     if date.month == 1 and date.day == 18:
         return {
-            'is_fasting': True,
-            'type': 'вода',
-            'display': 'Вода',
-            'description': 'Пост без уља и рибе'
+            "is_fasting": True,
+            "type": "вода",
+            "display": "Вода",
+            "description": "Пост без уља и рибе",
         }
 
     # Општи пост (среда и петак)
     if weekday in (2, 4):
         return {
-            'is_fasting': True,
-            'type': 'вода',
-            'display': 'Вода',
-            'description': 'Пост без уља и рибе'
+            "is_fasting": True,
+            "type": "вода",
+            "display": "Вода",
+            "description": "Пост без уља и рибе",
         }
 
     # Није постни дан
-    return {
-        'is_fasting': False,
-        'type': None,
-        'display': None,
-        'description': None
-    }
+    return {"is_fasting": False, "type": None, "display": None, "description": None}

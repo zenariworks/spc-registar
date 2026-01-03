@@ -22,7 +22,6 @@ class Command(BaseCommand):
     help = "Migracija tabele `HSPVENC.sqlite` (tabele vencanja) u tabelu 'vencanja'"
 
     def handle(self, *args, **kwargs):
-
         # clear the table before migrating the data
         Vencanje.objects.all().delete()
 

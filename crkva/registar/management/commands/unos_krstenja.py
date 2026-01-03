@@ -58,7 +58,9 @@ class Command(BaseCommand):
     def create_random_krstenje(self, _parohijan):
         """Креира насумично крштење."""
         dete_pol = "М" if random.choice([True, False]) else "Ж"
-        dete_ime = random.choice(RandomUtils.male_names if dete_pol == "М" else RandomUtils.female_names)
+        dete_ime = random.choice(
+            RandomUtils.male_names if dete_pol == "М" else RandomUtils.female_names
+        )
         otac = self.random_parohijan("М", min_age=20)
         majka = self.random_parohijan("Ж", min_age=20)
         kum = self.random_parohijan(

@@ -13,15 +13,12 @@ class VencanjeForm(forms.ModelForm):
             # Текућа година и редни број
             "redni_broj_vencanja_tekuca_godina",
             "vencanje_tekuca_godina",
-
             # Регистар
             "knjiga",
             "strana",
             "tekuci_broj",
-
             # Датум венчања
             "datum",
-
             # Женик
             "ime_zenika",
             "prezime_zenika",
@@ -30,7 +27,6 @@ class VencanjeForm(forms.ModelForm):
             "veroispovest_zenika",
             "narodnost_zenika",
             "adresa_zenika",
-
             # Невеста
             "ime_neveste",
             "prezime_neveste",
@@ -39,34 +35,27 @@ class VencanjeForm(forms.ModelForm):
             "veroispovest_neveste",
             "narodnost_neveste",
             "adresa_neveste",
-
             # Родитељи
             "svekar",
             "svekrva",
             "tast",
             "tasta",
-
             # Рођење женика и невесте
             "datum_rodjenja_zenika",
             "mesto_rodjenja_zenika",
             "datum_rodjenja_neveste",
             "mesto_rodjenja_neveste",
-
             # Брак по реду
             "zenik_rb_brak",
             "nevesta_rb_brak",
-
             # Испитивање
             "datum_ispita",
-
             # Место венчања и свештеник
             "hram",
             "svestenik",
-
             # Кум и стари сват
             "kum",
             "stari_svat",
-
             # Разрешење и напомене
             "razresenje",
             "razresenje_primedba",

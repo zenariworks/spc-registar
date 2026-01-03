@@ -92,7 +92,9 @@ class Krstenje(models.Model):
     )
 
     # ostali podaci o detetu
-    dete_rodjeno_zivo = models.BooleanField(verbose_name="дете рођено живо", default=True)
+    dete_rodjeno_zivo = models.BooleanField(
+        verbose_name="дете рођено живо", default=True
+    )
     dete_po_redu_po_majci = models.CharField(
         verbose_name="дете по реду (по мајци)", null=True, blank=True
     )

@@ -1,6 +1,7 @@
 """Модул модела славе у бази података."""
 
 from datetime import date, timedelta
+
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -31,48 +32,45 @@ class Slava(models.Model):
     pokretni = models.BooleanField(
         verbose_name="покретни празник",
         default=False,
-        help_text="Празник који се рачуна у односу на Васкрс"
+        help_text="Празник који се рачуна у односу на Васкрс",
     )
 
     offset_dani = models.IntegerField(
         verbose_name="помак у данима",
         null=True,
         blank=True,
-        help_text="Број дана у односу на Васкрс"
+        help_text="Број дана у односу на Васкрс",
     )
 
     offset_nedelje = models.IntegerField(
         verbose_name="помак у недељама",
         null=True,
         blank=True,
-        help_text="Број недеља у односу на Васкрс"
+        help_text="Број недеља у односу на Васкрс",
     )
 
     # Постови
-    post = models.BooleanField(
-        verbose_name="пост",
-        default=False
-    )
+    post = models.BooleanField(verbose_name="пост", default=False)
 
     post_od = models.IntegerField(
         verbose_name="почетак поста (дани)",
         null=True,
         blank=True,
-        help_text="Почетак поста у данима од Васкрса"
+        help_text="Почетак поста у данима од Васкрса",
     )
 
     post_do = models.IntegerField(
         verbose_name="крај поста (дани)",
         null=True,
         blank=True,
-        help_text="Крај поста у данима од Васкрса"
+        help_text="Крај поста у данима од Васкрса",
     )
 
     # Црвено слово - велики празници
     crveno_slovo = models.BooleanField(
         verbose_name="црвено слово",
         default=False,
-        help_text="Велики празник (црвено слово у календару)"
+        help_text="Велики празник (црвено слово у календару)",
     )
 
     @staticmethod
@@ -86,7 +84,7 @@ class Slava(models.Model):
         c = year % 7
 
         M = 15  # За Јулијански календар
-        N = 6   # За Јулијански календар
+        N = 6  # За Јулијански календар
 
         d = (19 * a + M) % 30
         e = (2 * b + 4 * c + 6 * d + N) % 7
@@ -159,6 +157,7 @@ class Slava(models.Model):
     def get_mesec_naziv(self):
         """Враћа назив месеца."""
         from registar.utils import MESECI
+
         return MESECI.get(self.mesec, "") if self.mesec else ""
 
     def __str__(self):

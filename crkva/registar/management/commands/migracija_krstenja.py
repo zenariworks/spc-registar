@@ -2,8 +2,8 @@
 Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
 """
 
-import sqlite3
 import re
+import sqlite3
 from datetime import date, time
 
 from django.core.management.base import BaseCommand
@@ -33,7 +33,6 @@ class Command(BaseCommand):
     help = "Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'"
 
     def handle(self, *args, **kwargs):
-
         # clear the table before migrating the data
         Krstenje.objects.all().delete()
 
@@ -99,7 +98,7 @@ class Command(BaseCommand):
                 vreme_rodjenja = self._process_time_values(vreme_rodjenja)
 
                 # # tabela 'hramovi'
-                hram_samo_naziv = re.sub(r'(?i)\bhram\b', '', hram).strip()
+                hram_samo_naziv = re.sub(r"(?i)\bhram\b", "", hram).strip()
                 hram_instance, _ = Hram.objects.get_or_create(
                     naziv=Konvertor.string(hram_samo_naziv)
                 )
@@ -109,7 +108,9 @@ class Command(BaseCommand):
 
                 # ako je gradjansko ime deteta definisano, npr. 'Хана' upisi '(грађанско Хана)
                 if gradjansko_ime_deteta:
-                    gradjansko_ime_deteta_ = f" (грађанско {Konvertor.string(gradjansko_ime_deteta)})"
+                    gradjansko_ime_deteta_ = (
+                        f" (грађанско {Konvertor.string(gradjansko_ime_deteta)})"
+                    )
                 else:
                     gradjansko_ime_deteta_ = ""
 

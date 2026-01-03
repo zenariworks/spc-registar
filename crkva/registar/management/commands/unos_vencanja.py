@@ -5,8 +5,9 @@ import uuid
 from datetime import date
 
 from django.core.management.base import BaseCommand
-from registar.models import Vencanje, Hram, Svestenik
 from registar.management.commands.random_utils import RandomUtils
+from registar.models import Hram, Svestenik, Vencanje
+
 from .unos_adresa import unesi_adresu
 
 
@@ -58,7 +59,6 @@ class Command(BaseCommand):
             veroispovest_zenika="Православна",
             narodnost_zenika="Србин",
             adresa_zenika="Насумична адреса",
-
             ime_neveste=random.choice(RandomUtils.female_names),
             prezime_neveste=random.choice(RandomUtils.surnames),
             zanimanje_neveste=random.choice(RandomUtils.sample_occupations_text()),
@@ -66,17 +66,14 @@ class Command(BaseCommand):
             veroispovest_neveste="Православна",
             narodnost_neveste="Српкиња",
             adresa_neveste="Насумична адреса",
-
             svekar=random.choice(RandomUtils.male_names),
             svekrva=random.choice(RandomUtils.female_names),
             tast=random.choice(RandomUtils.male_names),
             tasta=random.choice(RandomUtils.female_names),
-
             datum_rodjenja_zenika=RandomUtils.random_date_of_birth(25),
             mesto_rodjenja_zenika="Београд",
             datum_rodjenja_neveste=RandomUtils.random_date_of_birth(23),
             mesto_rodjenja_neveste="Нови Сад",
-
             zenik_rb_brak="1",
             nevesta_rb_brak="1",
             datum_ispita=RandomUtils.random_datetime().date(),
@@ -95,4 +92,6 @@ class Command(BaseCommand):
         for _ in range(10):
             self.create_random_vencanje()
 
-        self.stdout.write(self.style.SUCCESS("Успешно попуњена база података венчањима"))
+        self.stdout.write(
+            self.style.SUCCESS("Успешно попуњена база података венчањима")
+        )

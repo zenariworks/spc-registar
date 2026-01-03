@@ -15,7 +15,7 @@ function show_usage() {
 APP_FLAG=false
 DB_FLAG=false
 # Default location is church 'c'. Use '--home' for my home setup in WSL
-LOCATION="c" 
+LOCATION="c"
 
 # Parse arguments
 while [[ "$#" -gt 0 ]]; do
@@ -84,7 +84,7 @@ function recreate_database(){
 
     if [ "$LOCATION" = "h" ]; then
         # WSL setup (home)
-        python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf" --dest_dir "crkva/fixtures" 
+        python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf" --dest_dir "crkva/fixtures"
     else
         # WSL setup (crkva)
         python migrate-original-dbf-files-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
@@ -145,5 +145,3 @@ if [ "$DB_FLAG" = true ]; then
     echo "Building the database container 'crkva-db-1'..."
     recreate_database
 fi
-
-

@@ -4,25 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('registar', '0002_alter_slava_uid'),
+        ("registar", "0002_alter_slava_uid"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='parohijan',
-            name='uid',
-            field=models.AutoField(editable=False, primary_key=True, serialize=False, unique=True),
+            model_name="parohijan",
+            name="uid",
+            field=models.AutoField(
+                editable=False, primary_key=True, serialize=False, unique=True
+            ),
         ),
         migrations.AlterField(
-            model_name='svestenik',
-            name='uid',
-            field=models.AutoField(editable=False, primary_key=True, serialize=False, unique=True, verbose_name='свестеник ид'),
+            model_name="svestenik",
+            name="uid",
+            field=models.AutoField(
+                editable=False,
+                primary_key=True,
+                serialize=False,
+                unique=True,
+                verbose_name="свестеник ид",
+            ),
         ),
         migrations.AlterField(
-            model_name='ulica',
-            name='uid',
-            field=models.AutoField(editable=False, primary_key=True, serialize=False, unique=True),
+            model_name="ulica",
+            name="uid",
+            field=models.AutoField(
+                editable=False, primary_key=True, serialize=False, unique=True
+            ),
         ),
     ]

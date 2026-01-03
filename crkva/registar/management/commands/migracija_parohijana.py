@@ -21,7 +21,6 @@ class Command(BaseCommand):
     help = "Migracija tabele `HSPDOMACINI.sqlite` (tabela domacina) u tabele: 'adrese', 'parohijani'"
 
     def handle(self, *args, **kwargs):
-
         parsed_data = self._parse_data()
         created_count = 0
 

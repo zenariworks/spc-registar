@@ -6,16 +6,15 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView, ListView
-
 from registar.forms import SearchForm
 from registar.models.svestenik import Svestenik
 from registar.utils import get_query_variants
-
 from weasyprint import HTML
 
 
 class SpisakSvestenika(ListView):
     """Приказује списак свештеника са могућностима претраге и пагинације."""
+
     model = Svestenik
     template_name = "registar/spisak_svestenika.html"
     context_object_name = "svestenici"
@@ -30,9 +29,17 @@ class SpisakSvestenika(ListView):
                 return Svestenik.objects.all()
             q = None
             for v in get_query_variants(query):
-                clause = Q(ime__icontains=v) | Q(prezime__icontains=v) | Q(zvanje__icontains=v)
+                clause = (
+                    Q(ime__icontains=v)
+                    | Q(prezime__icontains=v)
+                    | Q(zvanje__icontains=v)
+                )
                 q = clause if q is None else (q | clause)
-            return Svestenik.objects.filter(q) if q is not None else Svestenik.objects.all()
+            return (
+                Svestenik.objects.filter(q)
+                if q is not None
+                else Svestenik.objects.all()
+            )
         return Svestenik.objects.all()
 
     def get_context_data(self, **kwargs):
@@ -45,6 +52,7 @@ class SpisakSvestenika(ListView):
 
 class SvestenikPDF(DetailView):
     """Генерише PDF документ за одређеног свештеника."""
+
     model = Svestenik
     template_name = "registar/pdf_svestenik.html"
 
@@ -71,6 +79,7 @@ class SvestenikPDF(DetailView):
 
 class PrikazSvestenika(DetailView):
     """Приказује детаљне информације о одређеном свештенику."""
+
     model = Svestenik
     template_name = "registar/info_svestenik.html"
     context_object_name = "svestenik"

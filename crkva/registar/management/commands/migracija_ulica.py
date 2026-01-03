@@ -6,7 +6,6 @@ import sqlite3
 
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-
 from registar.management.commands.convert_utils import Konvertor
 from registar.models import Mesto, Ulica
 from registar.models.opstina import Opstina
@@ -34,7 +33,9 @@ class Command(BaseCommand):
         broj_unetih = self._unos_ulica(podaci, drzava, mesto, opstina)
 
         self.stdout.write(
-            self.style.SUCCESS(f"Успешно попуњена табела 'ulice': {broj_unetih} нових уноса.")
+            self.style.SUCCESS(
+                f"Успешно попуњена табела 'ulice': {broj_unetih} нових уноса."
+            )
         )
 
     def _get_or_create_opstina(self, naziv):
@@ -80,6 +81,8 @@ class Command(BaseCommand):
             return 1
         except IntegrityError as e:
             self.stdout.write(
-                self.style.ERROR(f"Грешка при креирању уноса за улицу '{naziv.strip()}': {e}")
+                self.style.ERROR(
+                    f"Грешка при креирању уноса за улицу '{naziv.strip()}': {e}"
+                )
             )
             return 0

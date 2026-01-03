@@ -111,7 +111,6 @@ def remove_matching_files(pattern):
 
 
 def main():
-
     parser = argparse.ArgumentParser(
         description="Copy .dbf files from source to destination."
     )

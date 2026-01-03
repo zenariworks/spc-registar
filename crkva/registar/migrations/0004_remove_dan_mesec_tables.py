@@ -5,26 +5,41 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('registar', '0003_alter_parohijan_uid_alter_svestenik_uid_and_more'),
+        ("registar", "0003_alter_parohijan_uid_alter_svestenik_uid_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='slava',
-            name='dan',
-            field=models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(31)], verbose_name='дан'),
+            model_name="slava",
+            name="dan",
+            field=models.IntegerField(
+                blank=True,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(1),
+                    django.core.validators.MaxValueValidator(31),
+                ],
+                verbose_name="дан",
+            ),
         ),
         migrations.AlterField(
-            model_name='slava',
-            name='mesec',
-            field=models.IntegerField(blank=True, null=True, validators=[django.core.validators.MinValueValidator(1), django.core.validators.MaxValueValidator(12)], verbose_name='месец'),
+            model_name="slava",
+            name="mesec",
+            field=models.IntegerField(
+                blank=True,
+                null=True,
+                validators=[
+                    django.core.validators.MinValueValidator(1),
+                    django.core.validators.MaxValueValidator(12),
+                ],
+                verbose_name="месец",
+            ),
         ),
         migrations.DeleteModel(
-            name='Dan',
+            name="Dan",
         ),
         migrations.DeleteModel(
-            name='Mesec',
+            name="Mesec",
         ),
     ]

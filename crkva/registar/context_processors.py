@@ -33,11 +33,13 @@ def processor_narednih_slava(request) -> dict[str, Any]:
     for datum in narednih_dani:
         slave_na_datum = list(Slava.objects.filter(dan=datum.day, mesec=datum.month))
         if slave_na_datum:
-            narednih_slave.append({
-                "datum": datum,
-                "slave": slave_na_datum,
-                "post": is_fasting_day(datum.date()),
-            })
+            narednih_slave.append(
+                {
+                    "datum": datum,
+                    "slave": slave_na_datum,
+                    "post": is_fasting_day(datum.date()),
+                }
+            )
 
     return {
         "juce_slave": juce_slave,

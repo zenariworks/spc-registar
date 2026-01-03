@@ -1,31 +1,43 @@
 default_stages: [pre-commit, manual]
 repos:
+  # General file checks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
         - id: trailing-whitespace
         - id: end-of-file-fixer
-        # - id: check-yaml
         - id: check-json
         - id: check-added-large-files
+          args: ['--maxkb=1000']
         - id: check-case-conflict
         - id: check-merge-conflict
-        # - id: debug-statements
         - id: requirements-txt-fixer
 
+  # Python code formatting and linting
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.4
+    hooks:
+      # Linter
+      - id: ruff
+        args: ["--fix", "--unsafe-fixes", "--exit-non-zero-on-fix"]
+      # Formatter
+      - id: ruff-format
+
+  # Import sorting
   - repo: https://github.com/PyCQA/isort
     rev: 5.13.2
     hooks:
       - id: isort
+        args: ["--profile", "black"]
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.4
+  # Remove unused imports and variables
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.3.1
     hooks:
-      - id: ruff
-        args: ["--fix", "--exit-non-zero-on-fix"]
-
-  - repo: https://github.com/psf/black
-    rev: 24.4.2
-    hooks:
-      - id: black
-        language_version: python3.12
+      - id: autoflake
+        args:
+          - --in-place
+          - --remove-all-unused-imports
+          - --remove-unused-variables
+          - --expand-star-imports
+          - --ignore-init-module-imports

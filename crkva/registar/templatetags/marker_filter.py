@@ -3,10 +3,10 @@
 """
 
 import re
-from django.utils.safestring import mark_safe
-from registar.utils import get_query_variants
 
 from django import template
+from django.utils.safestring import mark_safe
+from registar.utils import get_query_variants
 
 register = template.Library()
 
@@ -25,7 +25,7 @@ def markiraj(value, upit):
     if not all_terms:
         return value
     termini = [re.escape(termin) for termin in set(all_terms)]
-    pattern = re.compile(r'({})'.format('|'.join(termini)), re.IGNORECASE)
+    pattern = re.compile(r"({})".format("|".join(termini)), re.IGNORECASE)
 
     def replace(match):
         return f'<span style="background-color: peachpuff;">{match.group()}</span>'

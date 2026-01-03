@@ -20,13 +20,11 @@ class KrstenjeForm(forms.ModelForm):
             "knjiga",
             "broj",
             "strana",
-
             # Детаљи крштења
             "datum",
             "vreme",
             "mesto",
             "hram",
-
             # Дете
             "adresa_deteta_grad",
             "adresa_deteta_ulica",
@@ -37,7 +35,6 @@ class KrstenjeForm(forms.ModelForm):
             "ime_deteta",
             "gradjansko_ime_deteta",
             "pol_deteta",
-
             # Родитељи
             "ime_oca",
             "prezime_oca",
@@ -50,7 +47,6 @@ class KrstenjeForm(forms.ModelForm):
             "zanimanje_majke",
             "adresa_majke_mesto",
             "veroispovest_majke",
-
             # Податци о детету
             "dete_rodjeno_zivo",
             "dete_po_redu_po_majci",
@@ -58,20 +54,17 @@ class KrstenjeForm(forms.ModelForm):
             "dete_blizanac",
             "drugo_dete_blizanac_ime",
             "dete_sa_telesnom_manom",
-
             # Свештеник и Кум
             "svestenik",
             "ime_kuma",
             "prezime_kuma",
             "zanimanje_kuma",
             "adresa_kuma_mesto",
-
             # Матична књига – анаграф
             "mesto_registracije",
             "datum_registracije",
             "maticni_broj",
             "strana_registracije",
-
             # Напомена
             "primedba",
         ]

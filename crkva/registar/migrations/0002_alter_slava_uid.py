@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('registar', '0001_initial'),
+        ("registar", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='slava',
-            name='uid',
-            field=models.AutoField(editable=False, primary_key=True, serialize=False, unique=True),
+            model_name="slava",
+            name="uid",
+            field=models.AutoField(
+                editable=False, primary_key=True, serialize=False, unique=True
+            ),
         ),
     ]

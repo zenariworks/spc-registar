@@ -3,6 +3,7 @@
 from django.contrib import admin
 from registar.models import Narodnost
 
+
 @admin.register(Narodnost)
 class NarodnostAdmin(admin.ModelAdmin):
     """Класа админ интерфејса модела Народност."""

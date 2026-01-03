@@ -251,7 +251,7 @@ make clean               # Уклањање свих контејнера, во�
    # wsl - instalira default Ubuntu 24.04 distribuciju
    wsl --install
    wsl -l -v
-   
+
    # python
    sudo apt update
    sudo apt upgrade -y
@@ -265,23 +265,23 @@ make clean               # Уклањање свих контејнера, во�
    sudo groupadd docker
    sudo usermod -aG docker $USER
    sudo service docker restart
-   
+
    # git
    sudo apt install git
    git --version
 
    # python virtual environment
-   cd /home/sasa 
+   cd /home/sasa
    sudo apt install python3 -y
    sudo apt install python3-pip -y
    python3 --version
    pip3 --version
    sudo apt install python3-dev -y
-   
+
    # kreiranje virtual environment-a u folderu '/home/sasa' i aktivacija
    sudo apt install python3.12-venv
    python3 -m venv .python_venv
-   
+
    # paketi
    pip install pandas dbfread
    pip install --upgrade -r requirements.txt
@@ -301,11 +301,11 @@ make clean               # Уклањање свих контејнера, во�
 
    ```bash
    cd /home/sasa/crkva
-   
+
    # rebuild kontejnera aplikacije (samo ako je nesto menjano)
    ~/crkva$ ./build.sh --app
 
-   # rebuild kontejnera base 
+   # rebuild kontejnera base
    ~/crkva$ ./build.sh --db
 
    # NAPOMENA:
@@ -317,11 +317,11 @@ make clean               # Уклањање свих контејнера, во�
 
    # pokretanje aplikacije iz terminala na WSL linux-u
    # ova cmd svaki put migrira .dbf fajlove u sqlite, uradi brisanje tabele
-   # krstenja i vencanja i ponovi import. 
-   # Putanja do .dbf fajlova je podesena za crkveni laptop 
+   # krstenja i vencanja i ponovi import.
+   # Putanja do .dbf fajlova je podesena za crkveni laptop
    ~/crkva$ ./start.sh
 
    # pokretanje aplikacije iz terminala na windows-u
    ./start-registar.bat
-  
+
    ```

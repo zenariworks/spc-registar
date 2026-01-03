@@ -16,3 +16,22 @@ from .ulica_admin import UlicaAdmin
 from .vencanje_admin import VencanjeAdmin
 from .veroispovest_admin import VeroispovestAdmin
 from .zanimanje_admin import ZanimanjeAdmin
+
+__all__ = [
+    "AdresaAdmin",
+    "CrkvenaOpstinaAdmin",
+    "DrzavaAdmin",
+    "EparhijaAdmin",
+    "HramAdmin",
+    "KrstenjeAdmin",
+    "NarodnostAdmin",
+    "ParohijaAdmin",
+    "ParohijanAdmin",
+    "SlavaAdmin",
+    "SvestenikAdmin",
+    "UkucaninAdmin",
+    "UlicaAdmin",
+    "VencanjeAdmin",
+    "VeroispovestAdmin",
+    "ZanimanjeAdmin",
+]
