@@ -82,14 +82,6 @@ function recreate_database(){
 
     pip install --upgrade -r requirements.txt
 
-    if [ "$LOCATION" = "h" ]; then
-        # WSL setup (home)
-        python scripts/migration/migrate-dbf-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf" --dest_dir "crkva/fixtures"
-    else
-        # WSL setup (crkva)
-        python scripts/migration/migrate-dbf-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
-    fi
-
     # remove migration files
     delete_migrations
 
@@ -102,6 +94,15 @@ function recreate_database(){
 
     # create database image: postgres:13-alpine
     docker compose run --rm app sh -c "python manage.py makemigrations && python manage.py migrate"
+
+    # Load DBF files directly into PostgreSQL staging tables
+    if [ "$LOCATION" = "h" ]; then
+        # WSL setup (home)
+        docker compose run --rm app sh -c "python manage.py load_dbf --src_dir '/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf'"
+    else
+        # WSL setup (crkva)
+        docker compose run --rm app sh -c "python manage.py load_dbf --src_dir '/mnt/c/HramSP/dbf'"
+    fi
 
     docker compose run --rm app sh -c "python manage.py unosi"
     docker compose run --rm app sh -c "python manage.py unos_meseci"

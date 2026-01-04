@@ -1,12 +1,12 @@
 """
-Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'
+Migracija tabele krstenja iz PostgreSQL staging tabele 'hsp_krstenja' u tabelu 'krstenja'
 """
 
 import re
-import sqlite3
 from datetime import date, time
 
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.db.utils import IntegrityError
 from registar.management.commands.convert_utils import Konvertor
 from registar.models import Hram, Krstenje, Svestenik
@@ -30,7 +30,7 @@ class Command(BaseCommand):
     k_rodjopst -->
     """
 
-    help = "Migracija tabele `HSPKRST.sqlite` (tabele krstenja) u tabelu 'krstenja'"
+    help = "Migracija tabele krstenja iz PostgreSQL staging tabele 'hsp_krstenja'"
 
     def handle(self, *args, **kwargs):
         # clear the table before migrating the data
@@ -168,9 +168,13 @@ class Command(BaseCommand):
                     adresa_kuma_mesto=Konvertor.string(adresa_kuma_mesto),
                     # podaci iz matične knjige
                     mesto_registracije=Konvertor.string(mesto_registracije),
-                    datum_registracije=datum_registracije,
-                    maticni_broj=maticni_broj,
-                    strana_registracije=strana_registracije,
+                    datum_registracije=datum_registracije
+                    if datum_registracije
+                    else None,
+                    maticni_broj=maticni_broj if maticni_broj else None,
+                    strana_registracije=strana_registracije
+                    if strana_registracije
+                    else None,
                     primedba="",
                 )
                 krstenje.save()
@@ -270,105 +274,29 @@ class Command(BaseCommand):
 
     def _parse_data(self):
         """
-        Migracija tabele 'HSPKRST.sqlite'
-            k_sifra         - redni_broj_krstenja_tekuca_godina
-            k_aktgod        - godina krstenja
-            k_datum         - datum krstenja
-
-            // registar(protokol) krstenih
-            k_proknj        - knjiga krstenja
-            k_probr         - broj krstenja
-            k_protst        - strana krstenja
-
-            // podaci o detetu (adresa, mesto rodjenja)
-            k_iz            - adresa deteta - grad
-            k_ulica         - adresa detata - ulica
-            k_broj          - adresa deteta - broj
-            k_rodjgod       - godina rodjenja
-            k_rodmese       - mesec rodjenja
-            k_rodjdan       - dan rodjenja
-            k_rodjvre       - vreme rodjenja
-            k_rodjmest      - mesto rodjenja
-
-            // podaci o krstenju
-            k_krsgode       - godina krstenja
-            k_krsmese       - mesec krstenja
-            k_krsdan        - dan krstenja
-            k_krsvre        - vreme krstenja
-            k_krsmest       - mesto krstenja
-            k_krshram       - hram krstenja
-
-            // podaci o detetu
-            k_detime        - ime deteta
-            k_detimeg       - gradjansko ime deteta
-            k_detpol        - pol deteta
-
-            // podaci o roditeljima
-            // otac
-            k_rodime        - ime oca
-            k_rodprez       - prezime oca
-            k_rodzanim      - zanimanje oca
-            k_rodmest       - adresa oca - mesto
-            k_rodvera       - veroispovest roditelja - tu pise 'Pravoslavni, Srbi', to popunjava polje 'Veroispovest'
-            k_rodnarod      - narodnost roditelja - ovo polje je prazno
-
-            // majka
-            k_rod2ime       - ime majke
-            k_rod2prez      - prezime majke
-            k_rod2zan       - zanimanje majke
-            k_rod2mest      - adresa majke - mesto
-            k_rod2vera      - veroispovest majke - tu pise 'Pravoslavni, Srbi', to popunjava polje 'Veroispovest'
-
-            // ostali podaci o detetu
-            k_detzivo       - da li je dete rodjeno zivo - stoji '1'
-            k_detkoje       - koje je dete po redu (po majci)
-            k_detbrac       - da li je dete vanbracno
-            k_detbliz       - da li je dete blizanac
-            k_detbliz2      - ako je blizanac, ko je drugo dete
-            k_detmana       - da li dete sa telesnom manom
-
-            // podaci o svesteniku
-            k_rbrsve        - svestenik_id
-            k_sveime        - ime i prezime svestenika
-            k_svezvan       - zvanje svestenika
-            k_svepar        - parohija_id svestenika (tu stoje i rimski brojevi, treba ih konvertovati u arapske)
-
-            // podaci o kumovima
-            k_kumime       - ime kuma
-            k_kumprez      - prezime kuma
-            k_kumzanim     - zanimanje kuma
-            k_kummest      - adresa kuma - mesto
-
-            // maticna knjiga
-            k_regmesto     - mesto registracije (vrv opstinskog vencanja)
-            k_regkada      - datum registracije
-            k_regbroj      - maticni broj
-            k_regstr       - strana registracije
-
-        :return: Листа парсираних података ( ... )
+        Čita podatke iz PostgreSQL staging tabele 'hsp_krstenja'.
+        :return: Lista parsiranih podataka
         """
         parsed_data = []
-        with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
-            cursor = conn.cursor()
+        with connection.cursor() as cursor:
             cursor.execute(
                 """
                 SELECT
-                    k_sifra,
-                    k_proknj, k_protbr, k_protst,
-                    k_iz, k_ulica, k_broj, k_rodjgod, k_rodjmese, k_rodjdan, k_rodjvre, k_rodjmest,
-                    k_krsgod, k_krsmese, k_krsdan, k_krsvre, k_krsmest, k_krshram,
-                    k_detime, k_detimeg, k_detpol,
-                    k_rodime, k_rodprez, k_rodzanim, k_rodmest, k_rodvera, k_rodnarod,
-                    k_rod2ime, k_rod2prez, k_rod2zan, k_rod2mest, k_rod2vera,
-                    k_detzivo, k_detkoje, k_detbrac, k_detbliz, k_detbliz2, k_detmana,
-                    k_rbrsve,
-                    k_kumime, k_kumprez, k_kumzanim, k_kummest,
-                    k_regmesto, k_regkada, k_regbroj, k_regstr
-                FROM HSPKRST
+                    "K_SIFRA",
+                    "K_PROKNJ", "K_PROTBR", "K_PROTST",
+                    "K_IZ", "K_ULICA", "K_BROJ", "K_RODJGOD", "K_RODJMESE", "K_RODJDAN", "K_RODJVRE", "K_RODJMEST",
+                    "K_KRSGOD", "K_KRSMESE", "K_KRSDAN", "K_KRSVRE", "K_KRSMEST", "K_KRSHRAM",
+                    "K_DETIME", "K_DETIMEG", "K_DETPOL",
+                    "K_RODIME", "K_RODPREZ", "K_RODZANIM", "K_RODMEST", "K_RODVERA", "K_RODNAROD",
+                    "K_ROD2IME", "K_ROD2PREZ", "K_ROD2ZAN", "K_ROD2MEST", "K_ROD2VERA",
+                    "K_DETZIVO", "K_DETKOJE", "K_DETBRAC", "K_DETBLIZ", "K_DETBLIZ2", "K_DETMANA",
+                    "K_RBRSVE",
+                    "K_KUMIME", "K_KUMPREZ", "K_KUMZANIM", "K_KUMMEST",
+                    "K_REGMESTO", "K_REGKADA", "K_REGBROJ", "K_REGSTR"
+                FROM hsp_krstenja
             """
             )
             krstenja = cursor.fetchall()
-            # print(f"Number of rows fetched: {len(krstenja)}")
 
             for krstenje in krstenja:
                 (
@@ -421,55 +349,58 @@ class Command(BaseCommand):
                     strana_registracije,
                 ) = krstenje
 
+                # Convert string values to appropriate types
                 parsed_data.append(
                     (
-                        redni_broj_krstenja_tekuca_godina,
-                        knjiga,
-                        broj,
-                        strana,
-                        adresa_deteta_grad,
-                        adresa_deteta_ulica,
-                        adresa_deteta_broj,
-                        godina_rodjenja,
-                        mesec_rodjenja,
-                        dan_rodjenja,
-                        vreme_rodjenja,
-                        mesto_rodjenja,
-                        godina_krstenja,
-                        mesec_krstenja,
-                        dan_krstenja,
-                        vreme_krstenja,
-                        mesto_krstenja,
-                        hram,
-                        ime_deteta,
-                        gradjansko_ime_deteta,
-                        pol_deteta,
-                        ime_oca,
-                        prezime_oca,
-                        zanimanje_oca,
-                        adresa_oca_mesto,
-                        veroispovest_oca,
-                        narodnost_oca,
-                        ime_majke,
-                        prezime_majke,
-                        zanimanje_majke,
-                        adresa_majke_mesto,
-                        veroispovest_majke,
-                        dete_rodjeno_zivo,
-                        dete_po_redu_po_majci,
-                        dete_vanbracno,
-                        dete_blizanac,
-                        drugo_dete_blizanac_ime,
-                        dete_sa_telesnom_manom,
-                        svestenik_id,
-                        ime_kuma,
-                        prezime_kuma,
-                        zanimanje_kuma,
-                        adresa_kuma_mesto,
-                        mesto_registracije,
-                        datum_registracije,
-                        maticni_broj,
-                        strana_registracije,
+                        int(redni_broj_krstenja_tekuca_godina)
+                        if redni_broj_krstenja_tekuca_godina
+                        else 0,
+                        knjiga or "",
+                        broj or "",
+                        int(strana) if strana else 0,
+                        adresa_deteta_grad or "",
+                        adresa_deteta_ulica or "",
+                        adresa_deteta_broj or "",
+                        int(godina_rodjenja) if godina_rodjenja else 1900,
+                        int(mesec_rodjenja) if mesec_rodjenja else 1,
+                        int(dan_rodjenja) if dan_rodjenja else 1,
+                        vreme_rodjenja or "",
+                        mesto_rodjenja or "",
+                        int(godina_krstenja) if godina_krstenja else 1900,
+                        int(mesec_krstenja) if mesec_krstenja else 1,
+                        int(dan_krstenja) if dan_krstenja else 1,
+                        vreme_krstenja or "",
+                        mesto_krstenja or "",
+                        hram or "",
+                        ime_deteta or "",
+                        gradjansko_ime_deteta or "",
+                        pol_deteta or "",
+                        ime_oca or "",
+                        prezime_oca or "",
+                        zanimanje_oca or "",
+                        adresa_oca_mesto or "",
+                        veroispovest_oca or "",
+                        narodnost_oca or "",
+                        ime_majke or "",
+                        prezime_majke or "",
+                        zanimanje_majke or "",
+                        adresa_majke_mesto or "",
+                        veroispovest_majke or "",
+                        dete_rodjeno_zivo or "",
+                        int(dete_po_redu_po_majci) if dete_po_redu_po_majci else 1,
+                        dete_vanbracno or "",
+                        dete_blizanac or "",
+                        drugo_dete_blizanac_ime or "",
+                        dete_sa_telesnom_manom or "",
+                        int(svestenik_id) if svestenik_id else 0,
+                        ime_kuma or "",
+                        prezime_kuma or "",
+                        zanimanje_kuma or "",
+                        adresa_kuma_mesto or "",
+                        mesto_registracije or "",
+                        datum_registracije or "",
+                        maticni_broj or "",
+                        strana_registracije or "",
                     )
                 )
 

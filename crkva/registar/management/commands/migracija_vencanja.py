@@ -1,11 +1,11 @@
 """
-Migracija tabele `HSPVENC.sqlite` (tabele vencanja) u tabelu 'vencanja'
+Migracija tabele vencanja iz PostgreSQL staging tabele 'hsp_vencanja' u tabelu 'vencanja'
 """
 
-import sqlite3
 from datetime import date
 
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.db.utils import IntegrityError
 from registar.management.commands.convert_utils import Konvertor
 from registar.models import Hram, Svestenik, Vencanje
@@ -19,7 +19,7 @@ class Command(BaseCommand):
     docker compose run --rm app sh -c "python manage.py migracija_vencanja"
     """
 
-    help = "Migracija tabele `HSPVENC.sqlite` (tabele vencanja) u tabelu 'vencanja'"
+    help = "Migracija tabele vencanja iz PostgreSQL staging tabele 'hsp_vencanja'"
 
     def handle(self, *args, **kwargs):
         # clear the table before migrating the data
@@ -76,9 +76,10 @@ class Command(BaseCommand):
             razresenje_primedba,
         ) in parsed_data:
             try:
-                hram_instance, _ = Hram.objects.get_or_create(
-                    naziv=Konvertor.string(naziv_hrama)
-                )
+                hram_naziv = Konvertor.string(naziv_hrama)
+                hram_instance = Hram.objects.filter(naziv=hram_naziv).first()
+                if not hram_instance:
+                    hram_instance = Hram.objects.create(naziv=hram_naziv)
                 svestenik_instance, _ = Svestenik.objects.get_or_create(
                     uid=svestenik_id
                 )
@@ -112,7 +113,7 @@ class Command(BaseCommand):
                     knjiga=Konvertor.int(knjiga, 0),
                     strana=Konvertor.int(strana, 0),
                     tekuci_broj=Konvertor.int(broj, 0),
-                    datum=datum,
+                    datum=datum if datum else None,
                     ime_zenika=Konvertor.string(ime_zenika),
                     prezime_zenika=Konvertor.string(prezime_zenika),
                     zanimanje_zenika=Konvertor.string(zanimanje_zenika),
@@ -201,96 +202,28 @@ class Command(BaseCommand):
 
     def _parse_data(self):
         """
-        Migracija tabele 'HSPVENC.sqlite'
-            v_sifra         - redni_broj_vencanja_tekuca_godina
-            v_aktgod        - godina vencanja
-
-            // registar(protokol) vencanih
-            v_knjiga        - knjiga vencanja
-            k_strana        - strana vencanja
-            k_tekbroj       - broj vencanja
-
-            // podaci o vencanima (zenik, tj. mladozenja)
-            v_datum         - datum vencanja
-            v_z_ime         - ime zenika
-            v_z_prez        - prezime zenika
-            v_z_zanim       - zanimanje zenika
-            v_z_mesto       - mesto zenika
-            v_z_verois      - veroispovest zenika
-            v_z_narodn      - narodnost zenika
-            v_z_adresa      - adresa zenika
-
-            // podaci o vencanima (nevesta)
-            v_n_ime         - ime neveste
-            v_n_prez        - prezime neveste
-            v_n_zanim       - zanimanje neveste
-            v_n_mesto       - mesto neveste
-            v_n_verois      - veroispopvest neveste
-            v_n_narodn      - narodnost neveste
-            v_n_adresa      - adresa neveste
-
-            // podaci o roditeljima mladozenje i neveste
-            v_zr_otac       - ime i zanimanje oca mladozenje
-            v_zr_majka      - ime i zanimanje majke mladozenje
-            v_nr_otac       - ime i zanimanje oca neveste
-            v_nr_majka      - ime i zanimanje majke neveste
-
-            // podaci o rodjenju mladozenje i neveste
-            v_z_rodjg       - godina rodjenja mladozenje
-            v_z_rodjm       - mesec rodjenja mladozenje
-            v_z_rodjd       - dan rodjenja mladozenje
-            v_z_rodjme      - mesto rodjenja mladozenje
-            v_n_rodjg       - godina rodjenja neveste
-            v_n_rodjm       - mesec rodjenja neveste
-            v_n_rodjd       - dan rodjenja neveste
-            v_n_rodjme      - mesto rodjenja neveste
-
-            // podaci o prethodnim brakovima (ako ih je bilo)
-            v_z_brak        - u koji brak po redu stupa mladozenja
-            v_n_brak        - u koji brak po redu stupa nevesta
-
-            // oglasenje (podaci o predbracnom ispitu i datumu vencanja)
-            v_ispitgod      - godina ispitivanja
-            v_ispitmes      - mesec ispitivanja
-            v_ispitdan      - dan ispitivanja
-            v_godina        - godina vencanja
-            v_mesec         - mesec vencanja
-            v_dan           - dan vencanja
-            v_hrmesto       - mesto hrama, tj. mesto vencanja
-            v_hrime         - naziv hrama
-            v_rbrsvesti     - svestenik_id
-
-            // podaci svedocima (kum i stari svat)
-            v_kumime        - ime kuma, zanimanje i mesto
-            v_ssvat         - ime starog svata, zanimanje i mesto
-
-            // podaci o razresenju
-            v_razrdn        - supruznici su imali potrebu razresenja (Da/Ne)
-            v_razrtxt       - ako jesu, ko je dao razresenje
-
-        :return: Листа парсираних података ( ... )
+        Čita podatke iz PostgreSQL staging tabele 'hsp_vencanja'.
+        :return: Lista parsiranih podataka
         """
         parsed_data = []
-        with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
-            cursor = conn.cursor()
+        with connection.cursor() as cursor:
             cursor.execute(
                 """
                 SELECT
-                    v_sifra, v_aktgod,
-                    v_knjiga, v_strana, v_tekbroj,
-                    v_datum, v_z_ime, v_z_prez, v_z_zanim, v_z_mesto, v_z_verois, v_z_narodn, v_z_adresa,
-                    v_n_ime, v_n_prez, v_n_zanim, v_n_mesto, v_n_verois, v_n_narodn, v_n_adresa,
-                    v_zr_otac, v_zr_majka, v_nr_otac, v_nr_majka,
-                    v_z_rodjg, v_z_rodjm, v_z_rodjd, v_z_rodjme, v_n_rodjg, v_n_rodjm, v_n_rodjd, v_n_rodjme,
-                    v_z_brak, v_n_brak,
-                    v_ispitgod, v_ispitmes, v_ispitdan, v_hrime, v_rbrsvest,
-                    v_kum, v_ssvat,
-                    v_razrdn, v_razrtxt
-                FROM HSPVENC
+                    "V_SIFRA", "V_AKTGOD",
+                    "V_KNJIGA", "V_STRANA", "V_TEKBROJ",
+                    "V_DATUM", "V_Z_IME", "V_Z_PREZ", "V_Z_ZANIM", "V_Z_MESTO", "V_Z_VEROIS", "V_Z_NARODN", "V_Z_ADRESA",
+                    "V_N_IME", "V_N_PREZ", "V_N_ZANIM", "V_N_MESTO", "V_N_VEROIS", "V_N_NARODN", "V_N_ADRESA",
+                    "V_ZR_OTAC", "V_ZR_MAJKA", "V_NR_OTAC", "V_NR_MAJKA",
+                    "V_Z_RODJG", "V_Z_RODJM", "V_Z_RODJD", "V_Z_RODJME", "V_N_RODJG", "V_N_RODJM", "V_N_RODJD", "V_N_RODJME",
+                    "V_Z_BRAK", "V_N_BRAK",
+                    "V_ISPITGOD", "V_ISPITMES", "V_ISPITDAN", "V_HRIME", "V_RBRSVEST",
+                    "V_KUM", "V_SSVAT",
+                    "V_RAZRDN", "V_RAZRTXT"
+                FROM hsp_vencanja
             """
             )
             vencanja = cursor.fetchall()
-            # print(f"Number of rows fetched: {len(vencanja)}")
 
             for vencanje in vencanja:
                 (
@@ -341,49 +274,51 @@ class Command(BaseCommand):
 
                 parsed_data.append(
                     (
-                        redni_broj_vencanja_tekuca_godina,
-                        vencanje_tekuca_godina,
-                        knjiga,
-                        strana,
-                        broj,
-                        datum,
-                        ime_zenika,
-                        prezime_zenika,
-                        zanimanje_zenika,
-                        mesto_zenika,
-                        veroispovest_zenika,
-                        narodnost_zenika,
-                        adresa_zenika,
-                        ime_neveste,
-                        prezime_neveste,
-                        zanimanje_neveste,
-                        mesto_neveste,
-                        veroispovest_neveste,
-                        narodnost_neveste,
-                        adresa_neveste,
-                        ime_oca_zenika,
-                        ime_majke_zenika,
-                        ime_oca_neveste,
-                        ime_majke_neveste,
-                        godina_rodjenja_zenika,
-                        mesec_rodjenja_zenika,
-                        dan_rodjenja_zenika,
-                        mesto_rodjenja_zenika,
-                        godina_rodjenja_neveste,
-                        mesec_rodjenja_neveste,
-                        dan_rodjenja_neveste,
-                        mesto_rodjenja_neveste,
-                        brak_po_redu_zenika,
-                        brak_po_redu_neveste,
-                        godina_ispitivanja,
-                        mesec_ispitivanja,
-                        dan_ispitivanja,
-                        naziv_hrama,
-                        svestenik_id,
-                        ime_kuma,
-                        ime_svedoka,
-                        razresenje,
-                        razresenje_primedba,
+                        int(redni_broj_vencanja_tekuca_godina)
+                        if redni_broj_vencanja_tekuca_godina
+                        else 0,
+                        int(vencanje_tekuca_godina) if vencanje_tekuca_godina else 1900,
+                        knjiga or "",
+                        strana or "",
+                        broj or "",
+                        datum or "",
+                        ime_zenika or "",
+                        prezime_zenika or "",
+                        zanimanje_zenika or "",
+                        mesto_zenika or "",
+                        veroispovest_zenika or "",
+                        narodnost_zenika or "",
+                        adresa_zenika or "",
+                        ime_neveste or "",
+                        prezime_neveste or "",
+                        zanimanje_neveste or "",
+                        mesto_neveste or "",
+                        veroispovest_neveste or "",
+                        narodnost_neveste or "",
+                        adresa_neveste or "",
+                        ime_oca_zenika or "",
+                        ime_majke_zenika or "",
+                        ime_oca_neveste or "",
+                        ime_majke_neveste or "",
+                        int(godina_rodjenja_zenika) if godina_rodjenja_zenika else 0,
+                        int(mesec_rodjenja_zenika) if mesec_rodjenja_zenika else 0,
+                        int(dan_rodjenja_zenika) if dan_rodjenja_zenika else 0,
+                        mesto_rodjenja_zenika or "",
+                        int(godina_rodjenja_neveste) if godina_rodjenja_neveste else 0,
+                        int(mesec_rodjenja_neveste) if mesec_rodjenja_neveste else 0,
+                        int(dan_rodjenja_neveste) if dan_rodjenja_neveste else 0,
+                        mesto_rodjenja_neveste or "",
+                        int(brak_po_redu_zenika) if brak_po_redu_zenika else 1,
+                        int(brak_po_redu_neveste) if brak_po_redu_neveste else 1,
+                        int(godina_ispitivanja) if godina_ispitivanja else 0,
+                        int(mesec_ispitivanja) if mesec_ispitivanja else 0,
+                        int(dan_ispitivanja) if dan_ispitivanja else 0,
+                        naziv_hrama or "",
+                        int(svestenik_id) if svestenik_id else 0,
+                        ime_kuma or "",
+                        ime_svedoka or "",
+                        razresenje or "",
+                        razresenje_primedba or "",
                     )
                 )
 

@@ -1,3 +1,6 @@
+
+# Utilities
+dbfread~=2.0.7
 # Django and related packages
 django~=5.1.2
 django-admin-searchable-dropdown~=1.2
@@ -13,8 +16,6 @@ pillow==12.0.0
 
 # Database
 psycopg2-binary~=2.9.10
-
-# Utilities
 python-dateutil~=2.8.2
 rcssmin~=1.1.0
 

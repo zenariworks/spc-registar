@@ -1,10 +1,9 @@
 """
-Migracija tabele 'HSPSVEST.sqlite' u tabelu 'svestenici' (tabela svestenika)
+Migracija tabele svestenika iz PostgreSQL staging tabele 'hsp_svestenici' u tabelu 'svestenici'
 """
 
-import sqlite3
-
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.db.utils import IntegrityError
 from registar.management.commands.convert_utils import Konvertor
 from registar.models import Parohija, Svestenik
@@ -18,7 +17,7 @@ class Command(BaseCommand):
     docker compose run --rm app sh -c "python manage.py migracija_svestenika"
     """
 
-    help = "'HSPSVEST.sqlite' u tabelu 'svestenici'"
+    help = "Migracija tabele svestenika iz PostgreSQL staging tabele 'hsp_svestenici'"
 
     def handle(self, *args, **kwargs):
         parsed_data = self._parse_data()
@@ -58,27 +57,32 @@ class Command(BaseCommand):
     def _convert_roman_to_integer(self, parohija):
         # Define a mapping from Roman numerals to integers
         roman_to_int = {"I": "1", "II": "2", "III": "3", "1": "1", "2": "2", "3": "3"}
-        parohija = parohija.rstrip()
+        parohija = parohija.rstrip() if parohija else ""
         converted_value = roman_to_int.get(parohija, 0)
         return converted_value
 
     def _parse_data(self):
         """
-        Migrira tabelu HSPSVEST.sqlite
-        :return: Листа парсираних података (ime_prezime, zvanje, parohija, datum_rodjenja)
+        Čita podatke iz PostgreSQL staging tabele 'hsp_svestenici'.
+        :return: Lista parsiranih podataka (svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja)
         """
         parsed_data = []
-        with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
-            cursor = conn.cursor()
+        with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT sv_rbr, sv_ime, sv_zvanje, sv_paroh, sv_datrod FROM HSPSVEST"
+                'SELECT "SV_RBR", "SV_IME", "SV_ZVANJE", "SV_PAROH", "SV_DATROD" FROM hsp_svestenici'
             )
             rows = cursor.fetchall()
 
             for row in rows:
                 svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja = row
                 parsed_data.append(
-                    (svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja)
+                    (
+                        int(svestenik_id) if svestenik_id else 0,
+                        ime_prezime or "",
+                        zvanje or "",
+                        parohija or "",
+                        datum_rodjenja or "",
+                    )
                 )
 
         return parsed_data

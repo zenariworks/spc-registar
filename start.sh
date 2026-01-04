@@ -19,14 +19,14 @@ while getopts "hc" opt; do
  esac
 done
 
+# Load DBF files directly into PostgreSQL staging tables
 if [ "$location" = "h" ]; then
   # WSL setup (home) - use .dbf files in old-app (HramSP) on my home machine
-  python scripts/migration/migrate-dbf-to-sqlite.py --src_dir "/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf" --dest_dir "crkva/fixtures"
+  docker compose run --rm app sh -c "python manage.py load_dbf --src_dir '/mnt/e/projects/hram-svete-petke/old-app/HramSP/dbf'"
 else
   # WSL setup (crkva)  - use .dbf files in old-app (HramSP) on church laptop
-  python scripts/migration/migrate-dbf-to-sqlite.py --src_dir "/mnt/c/HramSP/dbf" --dest_dir "crkva/fixtures"
+  docker compose run --rm app sh -c "python manage.py load_dbf --src_dir '/mnt/c/HramSP/dbf'"
 fi
-
 
 docker compose run --rm app sh -c "python manage.py migracija_krstenja"
 docker compose run --rm app sh -c "python manage.py migracija_vencanja"

@@ -1,10 +1,9 @@
 """
-Migracija tabele `HSPDOMACINI.sqlite` (tabele domacina) u tabele: 'adresa', 'parohijani'
+Migracija tabele domacina iz PostgreSQL staging tabele 'hsp_domacini' u tabele: 'adresa', 'parohijani'
 """
 
-import sqlite3
-
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.db.utils import IntegrityError
 from registar.management.commands.convert_utils import Konvertor
 from registar.models import Adresa, Parohijan, Slava, Ulica
@@ -18,7 +17,7 @@ class Command(BaseCommand):
     docker compose run --rm app sh -c "python manage.py migracija_parohijana"
     """
 
-    help = "Migracija tabele `HSPDOMACINI.sqlite` (tabela domacina) u tabele: 'adrese', 'parohijani'"
+    help = "Migracija tabele domacina iz PostgreSQL staging tabele 'hsp_domacini'"
 
     def handle(self, *args, **kwargs):
         parsed_data = self._parse_data()
@@ -88,28 +87,15 @@ class Command(BaseCommand):
 
     def _parse_data(self):
         """
-        Migracija tabele 'HSPDOMACINI.sqlite'
-            dom_sifra       - parohijan_uid,
-            dom_ime         - ime i prezime
-            dom_rbrul       - ulica_id  (npr. Radnicka je 22)
-            dom_broj        - broj ulice (npr. 42)
-            dom_oznaka      - oznaka ulice (npr. A, B, C)
-            dom_stan        - broj stana (npr. 12)
-            dom_teldir      - telefon fiksni
-            dom_telmob      - telefon mobilni
-            dom_rbrsl       - slava_id (npr. Sveti Jovan Krstitelj je 20)
-            dom_slavod      - slavska vodica (true/false - da li svestenik dolazi da sveti slavsku vodicu)
-            dom_uskvod      - uskrsnja vodica (true/false - da li svestenik dolazi da sveti vodicu uoci Uskrsa)
-            dom_napom       - napomena (opciono)
-
-        :return: Листа парсираних података ( parohijan_uid, ime_prezime, ulica_uid, broj_ulice, oznaka_ulice, broj_stana, telefon_fiksni, telefon_mobilni, slava_uid, slavska_vodica, uskrsnja_vodica, napomena)
+        Čita podatke iz PostgreSQL staging tabele 'hsp_domacini'.
+        :return: Lista parsiranih podataka
         """
         parsed_data = []
-        with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
-            cursor = conn.cursor()
+        with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT dom_rbr, dom_ime, dom_rbrul, dom_broj, dom_oznaka, dom_stan, \
-                           dom_teldir, dom_telmob, dom_rbrsl, dom_slavod, dom_uskvod, dom_napom FROM HSPDOMACINI"
+                """SELECT "DOM_RBR", "DOM_IME", "DOM_RBRUL", "DOM_BROJ", "DOM_OZNAKA", "DOM_STAN",
+                          "DOM_TELDIR", "DOM_TELMOB", "DOM_RBRSL", "DOM_SLAVOD", "DOM_USKVOD", "DOM_NAPOM"
+                   FROM hsp_domacini"""
             )
             rows = cursor.fetchall()
 
@@ -130,18 +116,18 @@ class Command(BaseCommand):
                 ) = row
                 parsed_data.append(
                     (
-                        parohijan_uid,
-                        ime_prezime,
-                        ulica_uid,
-                        broj_ulice,
-                        oznaka_ulice,
-                        broj_stana,
-                        telefon_fiksni,
-                        telefon_mobilni,
-                        slava_uid,
-                        slavska_vodica,
-                        uskrsnja_vodica,
-                        napomena,
+                        int(parohijan_uid) if parohijan_uid else 0,
+                        ime_prezime or "",
+                        int(ulica_uid) if ulica_uid else 0,
+                        int(broj_ulice) if broj_ulice else 0,
+                        oznaka_ulice or "",
+                        int(broj_stana) if broj_stana else 0,
+                        telefon_fiksni or "",
+                        telefon_mobilni or "",
+                        int(slava_uid) if slava_uid else 0,
+                        slavska_vodica or "",
+                        uskrsnja_vodica or "",
+                        napomena or "",
                     )
                 )
 
