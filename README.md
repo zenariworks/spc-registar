@@ -12,6 +12,7 @@
 - [Први кораци](#први-кораци)
 - [Производно окружење](#производно-окружење)
 - [Развој и тестирање](#развој-и-тестирање)
+- [Миграција података из HramSP](#миграција-података-из-hramsp)
 - [Додатне белешке](#додатне-белешке)
 
 ## Предуслови
@@ -203,6 +204,28 @@ make clean               # Уклањање свих контејнера, во�
    docker compose run --rm app sh -c "python manage.py test"
    ```
 
+## Миграција података из HramSP
+
+За миграцију података из старе HramSP апликације (DBF фајлови) у нову базу података, погледајте детаљну документацију: **[docs/MIGRACIJA.md](docs/MIGRACIJA.md)**
+
+Кратак преглед:
+
+```bash
+# Учитавање DBF фајлова у PostgreSQL staging табеле
+docker compose run --rm app sh -c "python manage.py load_dbf --src_dir '/mnt/c/HramSP/dbf'"
+
+# Миграција крштења и венчања
+docker compose run --rm app sh -c "python manage.py migracija_krstenja"
+docker compose run --rm app sh -c "python manage.py migracija_vencanja"
+```
+
+Или користите скрипту за аутоматску миграцију:
+
+```bash
+./start.sh      # за црквени лаптоп
+./start.sh -h   # за кућну конфигурацију
+```
+
 ## Додатне белешке
 
 ### Проблем са дозволама код Докера
@@ -316,9 +339,9 @@ make clean               # Уклањање свих контејнера, во�
    # sudo chown sasa:sasa data -R
 
    # pokretanje aplikacije iz terminala na WSL linux-u
-   # ova cmd svaki put migrira .dbf fajlove u sqlite, uradi brisanje tabele
-   # krstenja i vencanja i ponovi import.
-   # Putanja do .dbf fajlova je podesena za crkveni laptop
+   # ova komanda učitava DBF fajlove u PostgreSQL staging tabele,
+   # migrira krstenja i vencanja, i pokreće aplikaciju.
+   # Putanja do .dbf fajlova je podešena za crkveni laptop
    ~/crkva$ ./start.sh
 
    # pokretanje aplikacije iz terminala na windows-u
