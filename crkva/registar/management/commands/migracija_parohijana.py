@@ -85,6 +85,15 @@ class Command(BaseCommand):
             )
         )
 
+        # Drop staging table after successful migration
+        self._drop_staging_table()
+
+    def _drop_staging_table(self):
+        """Брише staging табелу 'hsp_domacini' након успешне миграције."""
+        with connection.cursor() as cursor:
+            cursor.execute("DROP TABLE IF EXISTS hsp_domacini")
+        self.stdout.write(self.style.SUCCESS("Обрисана staging табела 'hsp_domacini'."))
+
     def _parse_data(self):
         """
         Čita podatke iz PostgreSQL staging tabele 'hsp_domacini'.
@@ -121,7 +130,7 @@ class Command(BaseCommand):
                         int(ulica_uid) if ulica_uid else 0,
                         int(broj_ulice) if broj_ulice else 0,
                         oznaka_ulice or "",
-                        int(broj_stana) if broj_stana else 0,
+                        str(broj_stana).strip() if broj_stana else "",
                         telefon_fiksni or "",
                         telefon_mobilni or "",
                         int(slava_uid) if slava_uid else 0,

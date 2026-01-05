@@ -169,6 +169,15 @@ class Command(BaseCommand):
             )
         )
 
+        # Drop staging table after successful migration
+        self._drop_staging_table()
+
+    def _drop_staging_table(self):
+        """Брише staging табелу 'hsp_vencanja' након успешне миграције."""
+        with connection.cursor() as cursor:
+            cursor.execute("DROP TABLE IF EXISTS hsp_vencanja")
+        self.stdout.write(self.style.SUCCESS("Обрисана staging табела 'hsp_vencanja'."))
+
     def _get_marriage_str(self, _marriage_num):
         """
         process `marriage_num` string to return a str object.

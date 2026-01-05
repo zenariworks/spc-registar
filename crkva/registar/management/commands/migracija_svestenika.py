@@ -25,6 +25,10 @@ class Command(BaseCommand):
 
         print(f"Number of parsed_data: {len(parsed_data)}")
         for svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja in parsed_data:
+            # Skip blank priests (uid=0 or empty name)
+            if svestenik_id == 0 or not ime_prezime.strip():
+                continue
+
             try:
                 broj_parohije = self._convert_roman_to_integer(parohija)
                 parohija_instance, _ = Parohija.objects.get_or_create(
@@ -37,7 +41,7 @@ class Command(BaseCommand):
                     ime=Konvertor.string(ime),
                     prezime=Konvertor.string(prezime),
                     mesto_rodjenja="",
-                    datum_rodjenja=datum_rodjenja,
+                    datum_rodjenja=datum_rodjenja if datum_rodjenja else None,
                     zvanje=Konvertor.string(zvanje),
                     parohija=parohija_instance,
                 )
@@ -52,6 +56,17 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 f"Успешно попуњена табела 'svestenici': {created_count} нових уноса."
             )
+        )
+
+        # Drop staging table after successful migration
+        self._drop_staging_table()
+
+    def _drop_staging_table(self):
+        """Брише staging табелу 'hsp_svestenici' након успешне миграције."""
+        with connection.cursor() as cursor:
+            cursor.execute("DROP TABLE IF EXISTS hsp_svestenici")
+        self.stdout.write(
+            self.style.SUCCESS("Обрисана staging табела 'hsp_svestenici'.")
         )
 
     def _convert_roman_to_integer(self, parohija):

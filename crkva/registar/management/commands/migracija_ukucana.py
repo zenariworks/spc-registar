@@ -48,6 +48,15 @@ class Command(BaseCommand):
             )
         )
 
+        # Drop staging table after successful migration
+        self._drop_staging_table()
+
+    def _drop_staging_table(self):
+        """Брише staging табелу 'hsp_ukucani' након успешне миграције."""
+        with connection.cursor() as cursor:
+            cursor.execute("DROP TABLE IF EXISTS hsp_ukucani")
+        self.stdout.write(self.style.SUCCESS("Обрисана staging табела 'hsp_ukucani'."))
+
     def _parse_data(self):
         """
         Čita podatke iz PostgreSQL staging tabele 'hsp_ukucani'.

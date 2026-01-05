@@ -37,6 +37,15 @@ class Command(BaseCommand):
             )
         )
 
+        # Drop staging table after successful migration
+        self._drop_staging_table()
+
+    def _drop_staging_table(self):
+        """Брише staging табелу 'hsp_ulice' након успешне миграције."""
+        with connection.cursor() as cursor:
+            cursor.execute("DROP TABLE IF EXISTS hsp_ulice")
+        self.stdout.write(self.style.SUCCESS("Обрисана staging табела 'hsp_ulice'."))
+
     def _get_or_create_opstina(self, naziv):
         """Враћа инстанцу 'Opstina', креира је ако не постоји."""
         return Opstina.objects.get_or_create(naziv=naziv)[0]

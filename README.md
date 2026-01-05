@@ -223,8 +223,12 @@ docker compose run --rm app sh -c "python manage.py migracija_vencanja"
 Или користите скрипту за аутоматску миграцију:
 
 ```bash
-./start.sh      # за црквени лаптоп
-./start.sh -h   # за кућну конфигурацију
+./start.sh                    # Комплетна изградња (app + db + run)
+./start.sh --app              # Само rebuild app контејнера
+./start.sh --db               # Само rebuild базе (миграције + load_dbf + миграција података)
+./start.sh --run              # Брзо покретање (load_dbf + krstenja/vencanja + up)
+./start.sh --home             # Користи home WSL путању за DBF фајлове
+./start.sh --zip /путања.zip  # Користи ZIP архиву за DBF фајлове
 ```
 
 ## Додатне белешке
@@ -327,23 +331,26 @@ docker compose run --rm app sh -c "python manage.py migracija_vencanja"
    cd /home/sasa/crkva
 
    # rebuild kontejnera aplikacije (samo ako je nesto menjano)
-   ~/crkva$ ./build.sh --app
+   ~/crkva$ ./start.sh --app
 
-   # rebuild kontejnera base
-   ~/crkva$ ./build.sh --db
+   # rebuild kontejnera baze
+   ~/crkva$ ./start.sh --db
 
-   # NAPOMENA:
-   # moguce je pozvati i ovako
-   # ~/crkva$ ./build.sh --app --db
-   #
+   # kompletna izgradnja (app + db + run)
+   ~/crkva$ ./start.sh
+   ~/crkva$ ./start.sh --app --db --run
+
+   # brzo pokretanje (samo load_dbf + krstenja/vencanja + up)
+   ~/crkva$ ./start.sh --run
+
+   # korišćenje home WSL putanje za DBF fajlove
+   ~/crkva$ ./start.sh --home
+
+   # korišćenje ZIP arhive za DBF fajlove
+   ~/crkva$ ./start.sh --zip /putanja/do/crkva.zip
+
    # za slucaj da app kontejner ne moze da se podigne, staticki web fajlovi se nalaze u 'data'
    # sudo chown sasa:sasa data -R
-
-   # pokretanje aplikacije iz terminala na WSL linux-u
-   # ova komanda učitava DBF fajlove u PostgreSQL staging tabele,
-   # migrira krstenja i vencanja, i pokreće aplikaciju.
-   # Putanja do .dbf fajlova je podešena za crkveni laptop
-   ~/crkva$ ./start.sh
 
    # pokretanje aplikacije iz terminala na windows-u
    ./start-registar.bat
