@@ -211,8 +211,9 @@ make clean               # Уклањање свих контејнера, во�
 Кратак преглед:
 
 ```bash
-# Учитавање DBF фајлова у PostgreSQL staging табеле
+# Учитавање DBF фајлова у PostgreSQL staging табеле (из директоријума или ZIP архиве)
 docker compose run --rm app sh -c "python manage.py load_dbf --src_dir '/mnt/c/HramSP/dbf'"
+docker compose run --rm app sh -c "python manage.py load_dbf --src_zip '/путања/до/crkva.zip'"
 
 # Миграција крштења и венчања
 docker compose run --rm app sh -c "python manage.py migracija_krstenja"

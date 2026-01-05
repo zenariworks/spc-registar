@@ -25,20 +25,28 @@
 
 ### 1. Учитавање DBF фајлова (`load_dbf`)
 
-Ова команда чита DBF фајлове и креира staging табеле у PostgreSQL:
+Ова команда чита DBF фајлове и креира staging табеле у PostgreSQL. Подржава читање из директоријума или директно из ZIP архиве.
 
 ```bash
-# У Docker окружењу
+# Из директоријума (Docker)
 docker compose run --rm app sh -c "python manage.py load_dbf --src_dir '/путања/до/dbf'"
+
+# Из ZIP архиве (Docker)
+docker compose run --rm app sh -c "python manage.py load_dbf --src_zip '/путања/до/crkva.zip'"
 
 # Локално (ван Docker-а)
 python manage.py load_dbf --src_dir /путања/до/dbf
+python manage.py load_dbf --src_zip /путања/до/crkva.zip
 ```
 
 **Параметри:**
-- `--src_dir` - Путања до директоријума са DBF фајловима (подразумевано: `/mnt/c/HramSP/dbf`)
+- `--src_dir` - Путања до директоријума са DBF фајловима
+- `--src_zip` - Путања до ZIP архиве са DBF фајловима
 
-**Напомена:** Команда ће пробати и велика и мала слова за имена фајлова (нпр. `HSPKRST.DBF` и `hspkrst.dbf`).
+**Напомене:**
+- Ако није наведен ни један параметар, подразумевана путања је `/mnt/c/HramSP/dbf`
+- Команда ће пробати и велика и мала слова за имена фајлова (нпр. `HSPKRST.DBF` и `hspkrst.dbf`)
+- ZIP архива може имати DBF фајлове у поддиректоријуму
 
 ### 2. Миграција појединачних табела
 
