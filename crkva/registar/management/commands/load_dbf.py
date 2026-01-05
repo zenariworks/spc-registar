@@ -19,8 +19,8 @@ Usage:
 
 import tempfile
 import zipfile
-from itertools import batched
 from pathlib import Path
+from typing import Iterator, Sequence
 
 from dbfread import DBF
 from django.core.management.base import BaseCommand
@@ -28,12 +28,9 @@ from django.db import connection
 
 
 class Command(BaseCommand):
-    """Django management command to load DBF files into PostgreSQL staging tables."""
-
     help = "Load DBF files into PostgreSQL staging tables"
 
-    # Mapping of DBF files to staging table names
-    DBF_FILES = {
+    DBF_MAPPING = {
         "HSPDOMACINI.DBF": "hsp_domacini",
         "HSPKRST.DBF": "hsp_krstenja",
         "HSPSLAVE.DBF": "hsp_slave",
@@ -44,18 +41,18 @@ class Command(BaseCommand):
     }
 
     BATCH_SIZE = 1000
+    DEFAULT_SOURCE = Path("/mnt/c/HramSP/dbf")
 
     def add_arguments(self, parser):
-        parser.add_argument(
+        group = parser.add_mutually_exclusive_group()
+        group.add_argument(
             "--src_dir",
             type=Path,
-            default=None,
             help="Source directory containing .dbf files",
         )
-        parser.add_argument(
+        group.add_argument(
             "--src_zip",
             type=Path,
-            default=None,
             help="Source ZIP file containing .dbf files",
         )
 
@@ -63,147 +60,137 @@ class Command(BaseCommand):
         src_dir = options["src_dir"]
         src_zip = options["src_zip"]
 
-        if src_zip:
-            self._load_from_zip(src_zip)
-        elif src_dir:
-            self._load_from_directory(src_dir)
-        else:
-            # Default to directory if neither specified
-            self._load_from_directory(Path("/mnt/c/HramSP/dbf"))
+        source = src_zip or src_dir or self.DEFAULT_SOURCE
 
-    def _load_from_directory(self, src_dir: Path):
-        """Load DBF files from a directory."""
-        if not src_dir.exists():
-            self.stderr.write(
-                self.style.ERROR(f"Source directory does not exist: {src_dir}")
-            )
+        if src_zip:
+            loader = self.load_from_zip
+        elif src_dir or source.is_dir():
+            loader = self.load_from_directory
+        else:
+            self.stderr.write(self.style.ERROR(f"Invalid source: {source}"))
             return
 
-        total_loaded = 0
-        for dbf_filename, table_name in self.DBF_FILES.items():
-            # Try exact match first
-            dbf_path = src_dir / dbf_filename
+        total_loaded = loader(source)
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"\nTotal: {total_loaded} rows loaded into staging tables"
+            )
+        )
 
-            # Try lowercase if not found
-            if not dbf_path.exists():
-                dbf_path = src_dir / dbf_filename.lower()
+    def load_from_directory(self, src_dir: Path) -> int:
+        if not src_dir.exists():
+            self.stderr.write(self.style.ERROR(f"Directory not found: {src_dir}"))
+            return 0
 
-            if not dbf_path.exists():
+        return self._process_files(
+            (src_dir / expected for expected in self.DBF_MAPPING),
+            self.DBF_MAPPING.values(),
+        )
+
+    def load_from_zip(self, src_zip: Path) -> int:
+        if not src_zip.exists():
+            self.stderr.write(self.style.ERROR(f"ZIP file not found: {src_zip}"))
+            return 0
+
+        total = 0
+        with zipfile.ZipFile(src_zip) as zf:
+            zip_contents = {Path(name).name.lower(): name for name in zf.namelist()}
+
+            for expected_filename, table_name in self.DBF_MAPPING.items():
+                expected_lower = expected_filename.lower()
+                archive_name = zip_contents.get(expected_lower)
+
+                if not archive_name:
+                    self.stdout.write(
+                        self.style.WARNING(f"Not found in ZIP: {expected_filename}")
+                    )
+                    continue
+
+                with zf.open(archive_name) as dbf_file:
+                    with tempfile.NamedTemporaryFile(
+                        suffix=".dbf", delete=False
+                    ) as tmp:
+                        tmp.write(dbf_file.read())
+                        tmp_path = Path(tmp.name)
+
+                    try:
+                        count = self._load_dbf_file(tmp_path, table_name)
+                    finally:
+                        tmp_path.unlink(missing_ok=True)
+
+                    total += count
+                    self.stdout.write(
+                        self.style.SUCCESS(f"Loaded {count} rows into {table_name}")
+                    )
+
+        return total
+
+    def _process_files(self, paths: Iterator[Path], table_names: Sequence[str]) -> int:
+        total = 0
+        for path, table_name in zip(paths, table_names):
+            candidates = list(path.parent.glob(f"{path.name}*"))  # case-insensitive-ish
+            if not candidates:
                 self.stdout.write(
-                    self.style.WARNING(f"DBF file not found: {dbf_filename}")
+                    self.style.WARNING(f"DBF file not found: {path.name}")
                 )
                 continue
 
-            count = self._load_dbf_to_postgres(dbf_path, table_name)
-            total_loaded += count
+            # Pick first match (prefer exact case, then any)
+            dbf_path = next(
+                (p for p in candidates if p.name.lower() == path.name.lower()),
+                candidates[0],
+            )
+
+            count = self._load_dbf_file(dbf_path, table_name)
+            total += count
             self.stdout.write(
                 self.style.SUCCESS(f"Loaded {count} rows into {table_name}")
             )
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"\nTotal: {total_loaded} rows loaded into staging tables"
-            )
-        )
+        return total
 
-    def _load_from_zip(self, src: Path):
-        """Load DBF files from a ZIP archive."""
-        if not src.exists():
-            self.stderr.write(self.style.ERROR(f"ZIP file does not exist: {src}"))
-            return
-
-        total_loaded = 0
-        with zipfile.ZipFile(src, "r") as zf:
-            # Build a mapping of lowercase names to actual names in the archive
-            zip_files = {name.lower(): name for name in zf.namelist()}
-
-            for dbf_filename, table_name in self.DBF_FILES.items():
-                # Find the file in the ZIP (case-insensitive)
-                # We check if the lowercased filename ends with the lowercased dbf filename
-                # to handle potential subdirectories in the ZIP
-                target_lower = dbf_filename.lower()
-                actual_name = next(
-                    (
-                        name
-                        for lower, name in zip_files.items()
-                        if lower.endswith(target_lower)
-                    ),
-                    None,
-                )
-
-                if not actual_name:
-                    self.stdout.write(
-                        self.style.WARNING(f"DBF file not found in ZIP: {dbf_filename}")
-                    )
-                    continue
-
-                # Read DBF from ZIP into memory
-                dbf_data = zf.read(actual_name)
-                count = self._load_dbf_bytes_to_postgres(dbf_data, table_name)
-                total_loaded += count
-                self.stdout.write(
-                    self.style.SUCCESS(f"Loaded {count} rows into {table_name}")
-                )
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"\nTotal: {total_loaded} rows loaded into staging tables"
-            )
-        )
-
-    def _load_dbf_to_postgres(self, dbf_path: Path, table_name: str) -> int:
-        """Load a single DBF file into a PostgreSQL staging table."""
-        # load=False is default, but explicit is better.
-        # It means records are streamed from disk.
-        table = DBF(dbf_path, encoding="cp1250", load=False)
-        return self._load_records_to_postgres(table, table_name)
-
-    def _load_dbf_bytes_to_postgres(self, dbf_bytes: bytes, table_name: str) -> int:
-        """Load DBF data from bytes into a PostgreSQL staging table."""
-        # We need to write to a temp file since dbfread doesn't support BytesIO directly
-        with tempfile.NamedTemporaryFile(suffix=".dbf", delete=False) as tmp:
-            tmp.write(dbf_bytes)
-            tmp_path = Path(tmp.name)
-
+    def _load_dbf_file(self, dbf_path: Path, table_name: str) -> int:
         try:
-            table = DBF(tmp_path, encoding="cp1250", load=False)
-            return self._load_records_to_postgres(table, table_name)
-        finally:
-            tmp_path.unlink(missing_ok=True)
+            table = DBF(str(dbf_path), encoding="cp1250", load=False)
+            return self._load_records(table, table_name)
+        except Exception as e:
+            self.stderr.write(self.style.ERROR(f"Failed to read {dbf_path.name}: {e}"))
+            return 0
 
-    def _load_records_to_postgres(self, table: DBF, table_name: str) -> int:
-        """Load DBF records into a PostgreSQL staging table efficiently."""
+    def _load_records(self, table: DBF, table_name: str) -> int:
         columns = table.field_names
         if not columns:
             return 0
 
-        # Prepare SQL for table creation and insertion
-        columns_def = ", ".join([f'"{col}" TEXT' for col in columns])
-        placeholders = ", ".join(["%s"] * len(columns))
-        columns_quoted = ", ".join([f'"{col}"' for col in columns])
+        column_defs = ", ".join(f'"{col}" TEXT' for col in columns)
+        column_list = ", ".join(f'"{col}"' for col in columns)
+        placeholders = ", ".join("%s" for _ in columns)
 
-        create_sql = f"CREATE TABLE {table_name} ({columns_def})"
-        insert_sql = (
-            f"INSERT INTO {table_name} ({columns_quoted}) VALUES ({placeholders})"
-        )
+        create_sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({column_defs})"
+        insert_sql = f"INSERT INTO {table_name} ({column_list}) VALUES ({placeholders})"
 
         total_inserted = 0
 
         with connection.cursor() as cursor:
-            # Drop and recreate the staging table
             cursor.execute(f"DROP TABLE IF EXISTS {table_name}")
             cursor.execute(create_sql)
 
-            # Generator to yield formatted rows
-            def row_generator():
+            def rows():
                 for record in table:
                     yield tuple(
-                        str(record[col]) if record[col] is not None else None
-                        for col in columns
+                        None if value is None else str(value)
+                        for value in record.values()
                     )
 
-            # Batch insert using itertools.batched (Python 3.12+)
-            for batch in batched(row_generator(), self.BATCH_SIZE):
+            batch = []
+            for row in rows():
+                batch.append(row)
+                if len(batch) >= self.BATCH_SIZE:
+                    cursor.executemany(insert_sql, batch)
+                    total_inserted += len(batch)
+                    batch.clear()
+
+            if batch:
                 cursor.executemany(insert_sql, batch)
                 total_inserted += len(batch)
 
