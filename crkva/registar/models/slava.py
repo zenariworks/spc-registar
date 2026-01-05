@@ -112,11 +112,11 @@ class Slava(models.Model):
         julian_date = date(year, month, day)
 
         # Конверзија у Грегоријански календар
-        if year >= 1900 and year < 2100:
+        if 1900 <= year < 2100:
             offset = 13
-        elif year >= 2100 and year < 2200:
+        elif 2100 <= year < 2200:
             offset = 14
-        elif year >= 1800 and year < 1900:
+        elif 1800 <= year < 1900:
             offset = 12
         else:
             offset = year // 100 - year // 400 - 2
@@ -133,10 +133,10 @@ class Slava(models.Model):
             if self.offset_nedelje:
                 offset += self.offset_nedelje * 7
             return vaskrs + timedelta(days=offset)
-        else:
-            if self.dan and self.mesec:
-                return date(year, self.mesec, self.dan)
-            return None
+
+        if self.dan and self.mesec:
+            return date(year, self.mesec, self.dan)
+        return None
 
     def get_post(self, year):
         """Враћа период поста за дату годину (почетак, крај)."""

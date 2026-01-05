@@ -27,8 +27,7 @@ class Command(BaseCommand):
         )
         if eligible_parohijan.exists():
             return random.choice(eligible_parohijan)
-        else:
-            return RandomUtils.create_random_parohijan(unesi_adresu, gender, min_age)
+        return RandomUtils.create_random_parohijan(unesi_adresu, gender, min_age)
 
     def get_or_create_parohija(self, naziv):
         """Креира насумично парохију."""
