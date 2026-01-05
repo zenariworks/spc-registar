@@ -41,3 +41,16 @@ repos:
           - --remove-unused-variables
           - --expand-star-imports
           - --ignore-init-module-imports
+
+  # Pylint for Pythonic code checks
+  - repo: local
+    hooks:
+      - id: pylint
+        name: pylint
+        entry: pylint
+        language: system
+        types: [python]
+        args:
+          - --rcfile=.pylintrc
+          - --django-settings-module=crkva.settings
+        exclude: ^.*/migrations/.*$
