@@ -1,4 +1,5 @@
 from .adresa import Adresa
+from .base import TimestampedModel
 from .crkvena_opstina import CrkvenaOpstina
 
 # from .domacinstvo import Domacinstvo
@@ -10,7 +11,7 @@ from .mesto import Mesto
 from .narodnost import Narodnost
 from .opstina import Opstina
 from .parohija import Parohija
-from .parohijan import Parohijan
+from .parohijan import Osoba, Parohijan
 from .slava import Slava
 from .svestenik import Svestenik
 from .ukucanin import Ukucanin
@@ -20,6 +21,7 @@ from .veroispovest import Veroispovest
 from .zanimanje import Zanimanje
 
 __all__ = [
+    "TimestampedModel",
     "Adresa",
     "Opstina",
     "Mesto",
@@ -31,6 +33,7 @@ __all__ = [
     "Krstenje",
     "Narodnost",
     "Parohija",
+    "Osoba",
     "Parohijan",
     "Slava",
     "Svestenik",

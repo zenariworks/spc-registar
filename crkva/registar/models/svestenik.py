@@ -2,6 +2,7 @@
 
 from django.db import models
 
+from .base import TimestampedModel
 from .parohija import Parohija
 
 zvanja = [
@@ -15,7 +16,7 @@ zvanja = [
 ]
 
 
-class Svestenik(models.Model):
+class Svestenik(TimestampedModel):
     """Класа која представља свештеника."""
 
     uid = models.AutoField(

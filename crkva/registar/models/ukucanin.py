@@ -2,10 +2,11 @@
 
 from django.db import models
 
+from .base import TimestampedModel
 from .parohijan import Parohijan
 
 
-class Ukucanin(models.Model):
+class Ukucanin(TimestampedModel):
     """Класа која представља укућана."""
 
     parohijan = models.ForeignKey(

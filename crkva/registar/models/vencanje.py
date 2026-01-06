@@ -2,27 +2,65 @@
 
 import uuid
 
+from django.core.validators import MinValueValidator
 from django.db import models
 
+from .base import TimestampedModel
 from .hram import Hram
+from .parohijan import Osoba
 from .svestenik import Svestenik
 
 
-class Vencanje(models.Model):
+class Vencanje(TimestampedModel):
     """Класа која представља венчања."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
+    zenik = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vencanja_kao_zenik",
+        verbose_name="женик",
+    )
+    nevesta = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vencanja_kao_nevesta",
+        verbose_name="невеста",
+    )
+    kum = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vencanja_kao_kum",
+        verbose_name="кум",
+    )
+
     # tekuca godina i redni broj vencanja u godini
     redni_broj_vencanja_tekuca_godina = models.IntegerField(
-        verbose_name="редни број венчања текућа година"
+        verbose_name="редни број венчања текућа година",
+        validators=[MinValueValidator(1)],
     )
-    vencanje_tekuca_godina = models.IntegerField(verbose_name="венчање текућа година")
+    vencanje_tekuca_godina = models.IntegerField(
+        verbose_name="венчање текућа година",
+        validators=[MinValueValidator(1900)],
+    )
 
     # podaci za registar(protokol) vencanih
-    knjiga = models.IntegerField(verbose_name="књига")
-    strana = models.IntegerField(verbose_name="страна")
-    tekuci_broj = models.IntegerField(verbose_name="текући број")
+    knjiga = models.IntegerField(
+        verbose_name="књига", validators=[MinValueValidator(1)]
+    )
+    strana = models.IntegerField(
+        verbose_name="страна", validators=[MinValueValidator(1)]
+    )
+    tekuci_broj = models.IntegerField(
+        verbose_name="текући број", validators=[MinValueValidator(1)]
+    )
 
     datum = models.DateField(verbose_name="датум венчања", null=True, blank=True)
 
@@ -98,7 +136,7 @@ class Vencanje(models.Model):
         related_name="свештеник_венчани",
     )
 
-    kum = models.CharField(
+    ime_kuma = models.CharField(
         max_length=255, verbose_name="име кума", null=True, blank=True
     )
     stari_svat = models.CharField(

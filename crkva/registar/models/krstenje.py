@@ -4,26 +4,71 @@
 
 import uuid
 
+from django.core.validators import MinValueValidator
 from django.db import models
 
+from .base import TimestampedModel
 from .hram import Hram
+from .parohijan import Osoba
 from .svestenik import Svestenik
 
 
-class Krstenje(models.Model):
+class Krstenje(TimestampedModel):
     """Класа која представља крштења."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    redni_broj_krstenja_tekuca_godina = models.IntegerField(
-        verbose_name="редни број крштења текућа година"
+    # Везе са Особама (опционо - ако су регистроване)
+    dete = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_dete",
+        verbose_name="дете",
     )
-    krstenje_tekuca_godina = models.IntegerField(verbose_name="крштењe текућа година")
+    otac = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_otac",
+        verbose_name="отац",
+    )
+    majka = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_majka",
+        verbose_name="мајка",
+    )
+    kum = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_kum",
+        verbose_name="кум",
+    )
+
+    redni_broj_krstenja_tekuca_godina = models.IntegerField(
+        verbose_name="редни број крштења текућа година",
+        validators=[MinValueValidator(1)],
+    )
+    krstenje_tekuca_godina = models.IntegerField(
+        verbose_name="крштењe текућа година",
+        validators=[MinValueValidator(1900)],
+    )
 
     # podaci za registar(protokol) krstenih
-    knjiga = models.IntegerField(verbose_name="књига")
-    broj = models.IntegerField(verbose_name="број")
-    strana = models.IntegerField(verbose_name="страна")
+    knjiga = models.IntegerField(
+        verbose_name="књига", validators=[MinValueValidator(1)]
+    )
+    broj = models.IntegerField(verbose_name="број", validators=[MinValueValidator(1)])
+    strana = models.IntegerField(
+        verbose_name="страна", validators=[MinValueValidator(1)]
+    )
 
     # podaci o krstenju
     datum = models.DateField(verbose_name="датум")

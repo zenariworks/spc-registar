@@ -2,14 +2,14 @@
 Migracija tabele svestenika iz PostgreSQL staging tabele 'hsp_svestenici' u tabelu 'svestenici'
 """
 
-from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db.utils import IntegrityError
+from registar.management.commands.base_migration import MigrationCommand
 from registar.management.commands.convert_utils import Konvertor
 from registar.models import Parohija, Svestenik
 
 
-class Command(BaseCommand):
+class Command(MigrationCommand):
     """
     Класа Ђанго команде за попуњавање табеле svestenika
 
@@ -18,6 +18,8 @@ class Command(BaseCommand):
     """
 
     help = "Migracija tabele svestenika iz PostgreSQL staging tabele 'hsp_svestenici'"
+    staging_table_name = "hsp_svestenici"
+    target_model = Svestenik
 
     def handle(self, *args, **kwargs):
         parsed_data = self._parse_data()
@@ -50,24 +52,12 @@ class Command(BaseCommand):
                 created_count += 1
 
             except IntegrityError as e:
-                self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
+                self.log_error(e)
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Успешно попуњена табела 'svestenici': {created_count} нових уноса."
-            )
-        )
+        self.log_success(created_count, "свештеници")
 
         # Drop staging table after successful migration
-        self._drop_staging_table()
-
-    def _drop_staging_table(self):
-        """Брише staging табелу 'hsp_svestenici' након успешне миграције."""
-        with connection.cursor() as cursor:
-            cursor.execute("DROP TABLE IF EXISTS hsp_svestenici")
-        self.stdout.write(
-            self.style.SUCCESS("Обрисана staging табела 'hsp_svestenici'.")
-        )
+        self.drop_staging_table()
 
     def _convert_roman_to_integer(self, parohija):
         # Define a mapping from Roman numerals to integers
