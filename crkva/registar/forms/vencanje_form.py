@@ -19,42 +19,29 @@ class VencanjeForm(forms.ModelForm):
             "tekuci_broj",
             # Датум венчања
             "datum",
-            # Женик
-            "ime_zenika",
-            "prezime_zenika",
-            "zanimanje_zenika",
+            # Особе (FK)
+            "zenik",
+            "nevesta",
+            "kum",
+            "svestenik",
+            # Адресе (специфичне за догађај)
             "mesto_zenika",
-            "veroispovest_zenika",
-            "narodnost_zenika",
             "adresa_zenika",
-            # Невеста
-            "ime_neveste",
-            "prezime_neveste",
-            "zanimanje_neveste",
             "mesto_neveste",
-            "veroispovest_neveste",
-            "narodnost_neveste",
             "adresa_neveste",
-            # Родитељи
+            # Родитељи (нису у Osoba моделу)
             "svekar",
             "svekrva",
             "tast",
             "tasta",
-            # Рођење женика и невесте
-            "datum_rodjenja_zenika",
-            "mesto_rodjenja_zenika",
-            "datum_rodjenja_neveste",
-            "mesto_rodjenja_neveste",
             # Брак по реду
             "zenik_rb_brak",
             "nevesta_rb_brak",
             # Испитивање
             "datum_ispita",
-            # Место венчања и свештеник
+            # Место венчања
             "hram",
-            "svestenik",
-            # Кум и стари сват
-            "kum",
+            # Стари сват
             "stari_svat",
             # Разрешење и напомене
             "razresenje",
@@ -63,8 +50,6 @@ class VencanjeForm(forms.ModelForm):
         ]
         widgets = {
             "datum": forms.DateInput(attrs={"type": "date"}),
-            "datum_rodjenja_zenika": forms.DateInput(attrs={"type": "date"}),
-            "datum_rodjenja_neveste": forms.DateInput(attrs={"type": "date"}),
             "datum_ispita": forms.DateInput(attrs={"type": "date"}),
             "razresenje_primedba": forms.Textarea(attrs={"rows": 3}),
             "primedba": forms.Textarea(attrs={"rows": 3}),

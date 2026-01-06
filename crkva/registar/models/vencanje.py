@@ -64,59 +64,25 @@ class Vencanje(TimestampedModel):
 
     datum = models.DateField(verbose_name="датум венчања", null=True, blank=True)
 
-    # podaci o zeniku
-    ime_zenika = models.CharField(max_length=255, verbose_name="име женика")
-    prezime_zenika = models.CharField(max_length=255, verbose_name="презиме женика")
-    zanimanje_zenika = models.CharField(
-        max_length=255, verbose_name="занимање женика", null=True, blank=True
-    )
+    # adrese (specifične za događaj venčanja)
     mesto_zenika = models.CharField(
         max_length=255, verbose_name="место женика", null=True, blank=True
-    )
-    veroispovest_zenika = models.CharField(
-        max_length=255, verbose_name="вероисповест женика", null=True, blank=True
-    )
-    narodnost_zenika = models.CharField(
-        max_length=255, verbose_name="народност женика", null=True, blank=True
     )
     adresa_zenika = models.CharField(
         max_length=255, verbose_name="адреса женика", null=True, blank=True
     )
-
-    # podaci o nevesti
-    ime_neveste = models.CharField(max_length=255, verbose_name="име невесте")
-    prezime_neveste = models.CharField(max_length=255, verbose_name="презиме невесте")
-    zanimanje_neveste = models.CharField(
-        max_length=255, verbose_name="занимање невесте", null=True, blank=True
-    )
     mesto_neveste = models.CharField(
         max_length=255, verbose_name="место невесте", null=True, blank=True
-    )
-    veroispovest_neveste = models.CharField(
-        max_length=255, verbose_name="вероисповест невесте", null=True, blank=True
-    )
-    narodnost_neveste = models.CharField(
-        max_length=255, verbose_name="народност невесте", null=True, blank=True
     )
     adresa_neveste = models.CharField(
         max_length=255, verbose_name="адреса невесте", null=True, blank=True
     )
 
-    # podaci o roditeljima
+    # podaci o roditeljima (ime oca/majke - nisu u Osoba modelu)
     svekar = models.CharField(max_length=255, verbose_name="име оца женика")
     svekrva = models.CharField(max_length=255, verbose_name="име мајке женика")
     tast = models.CharField(max_length=255, verbose_name="име оца невесте")
     tasta = models.CharField(max_length=255, verbose_name="име мајке невесте")
-
-    # podaci o rodjenju zenika i neveste
-    datum_rodjenja_zenika = models.DateField(verbose_name="датум рођења женика")
-    mesto_rodjenja_zenika = models.CharField(
-        max_length=255, verbose_name="место рођења женика", null=True, blank=True
-    )
-    datum_rodjenja_neveste = models.DateField(verbose_name="датум рођења невесте")
-    mesto_rodjenja_neveste = models.CharField(
-        max_length=255, verbose_name="место рођења невесте", null=True, blank=True
-    )
 
     # podaci o braku
     zenik_rb_brak = models.CharField(verbose_name="брак по реду женика")
@@ -136,11 +102,8 @@ class Vencanje(TimestampedModel):
         related_name="свештеник_венчани",
     )
 
-    ime_kuma = models.CharField(
-        max_length=255, verbose_name="име кума", null=True, blank=True
-    )
     stari_svat = models.CharField(
-        max_length=255, verbose_name="име старот свата", null=True, blank=True
+        max_length=255, verbose_name="име старог свата", null=True, blank=True
     )
 
     razresenje = models.CharField(verbose_name="разрешење")

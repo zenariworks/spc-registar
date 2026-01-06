@@ -80,7 +80,7 @@ class Krstenje(TimestampedModel):
         Hram, on_delete=models.SET_NULL, null=True, verbose_name="храм"
     )
 
-    # podaci o detetu
+    # podaci o detetu (adresa je specifična za događaj)
     adresa_deteta_grad = models.CharField(
         max_length=255, verbose_name="адреса детета град"
     )
@@ -90,50 +90,16 @@ class Krstenje(TimestampedModel):
     adresa_deteta_broj = models.CharField(
         max_length=255, verbose_name="адреса детета број", null=True, blank=True
     )
-    datum_rodjenja = models.DateField(verbose_name="датум рођења")
-    vreme_rodjenja = models.TimeField(
-        verbose_name="време рођења", null=True, blank=True
-    )
-    mesto_rodjenja = models.CharField(
-        max_length=255, verbose_name="место рођења", null=True, blank=True
-    )
-    ime_deteta = models.CharField(max_length=255, verbose_name="име детета")
     gradjansko_ime_deteta = models.CharField(
         max_length=255, verbose_name="грађанско име детета", null=True, blank=True
     )
-    pol_deteta = models.CharField(
-        verbose_name="пол",
-        choices=[("М", "мушки"), ("Ж", "женски")],
-        blank=True,
-        null=True,
-    )
 
-    # podaci o roditeljima
-    ime_oca = models.CharField(max_length=255, verbose_name="име оца")
-    prezime_oca = models.CharField(max_length=255, verbose_name="презиме оца")
-    zanimanje_oca = models.CharField(
-        max_length=255, verbose_name="занимање оца", null=True, blank=True
-    )
+    # adrese roditelja (specifične za događaj)
     adresa_oca_mesto = models.CharField(
         max_length=255, verbose_name="адреса оца место", null=True, blank=True
     )
-    veroispovest_oca = models.CharField(
-        max_length=255, verbose_name="вероисповест оца", null=True, blank=True
-    )
-    narodnost_oca = models.CharField(
-        max_length=255, verbose_name="народност оца", null=True, blank=True
-    )
-
-    ime_majke = models.CharField(max_length=255, verbose_name="име мајке")
-    prezime_majke = models.CharField(max_length=255, verbose_name="презиме мајке")
-    zanimanje_majke = models.CharField(
-        max_length=255, verbose_name="занимање мајке", null=True, blank=True
-    )
     adresa_majke_mesto = models.CharField(
         max_length=255, verbose_name="адреса мајке место", null=True, blank=True
-    )
-    veroispovest_majke = models.CharField(
-        max_length=255, verbose_name="вероисповест мајке", null=True, blank=True
     )
 
     # ostali podaci o detetu
@@ -159,12 +125,7 @@ class Krstenje(TimestampedModel):
         verbose_name="свештеник",
     )
 
-    # podaci o kumu
-    ime_kuma = models.CharField(max_length=255, verbose_name="име кума")
-    prezime_kuma = models.CharField(max_length=255, verbose_name="презиме кума")
-    zanimanje_kuma = models.CharField(
-        max_length=255, verbose_name="занимање кума", null=True, blank=True
-    )
+    # adresa kuma (specifična za događaj)
     adresa_kuma_mesto = models.CharField(
         max_length=255, verbose_name="адреса кума место", null=True, blank=True
     )
