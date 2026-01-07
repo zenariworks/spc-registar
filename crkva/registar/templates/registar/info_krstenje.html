@@ -95,7 +95,7 @@
 
         <!-- Field 11: Svestenik -->
         <div class="krst-absolute-field" style="top: var(--krst-field11-top); font-size: 14pt; letter-spacing: 1px;">
-            {{ krstenje.svestenik }}
+            {{ krstenje.svestenik|default_if_none:"" }}
         </div>
 
         <!-- Field 12: Kum -->
@@ -119,7 +119,7 @@
             <div style="width: 12%; letter-spacing: 1px;">{% now "d.m" %}</div>
             <div style="width: 11%;">{% now "y" %}</div>
             <div style="width: 36%; text-align: right; font-size: 12pt; letter-spacing: 1px; padding-right: 5%;">
-                {{krstenje.svestenik.parohija}}
+                {% if krstenje.svestenik %}{{krstenje.svestenik.parohija}}{% endif %}
             </div>
             <div style="width: 36%; text-align: right; font-size: 12pt; letter-spacing: 1px; padding-right: 8%;">
                 при Храму Свете Петке

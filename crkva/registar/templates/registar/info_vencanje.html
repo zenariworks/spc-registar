@@ -57,19 +57,19 @@
         <div class="venc-absolute-field" style="top: var(--venc-field1b-top); font-size: 9pt; letter-spacing: 1px; line-height: 1.2;">
             {{ vencanje.ime_neveste }}, {{ vencanje.zanimanje_neveste|lower }},<br>
             <small>{{ vencanje.adresa_neveste }}</small><br>
-            <small>{{ vencanje.veroispovest_neveste|lower }} {{ vencanje.narodnost.neveste|lower }}</small>
+            <small>{{ vencanje.veroispovest_neveste|lower }} {{ vencanje.narodnost_neveste|lower }}</small>
         </div>
 
         <!-- Field 2a: Roditelji zenika -->
         <div class="venc-absolute-field" style="top: var(--venc-field2a-top); font-size: 9pt; letter-spacing: 1px; line-height: 1.2;">
-            {{ vencanje.svekar }}<br>
-            {{ vencanje.svekrva }}
+            {{ vencanje.svekar|default_if_none:"" }}<br>
+            {{ vencanje.svekrva|default_if_none:"" }}
         </div>
 
         <!-- Field 2b: Roditelji neveste -->
         <div class="venc-absolute-field" style="top: var(--venc-field2b-top); font-size: 9pt; letter-spacing: 1px; line-height: 1.2;">
-            {{ vencanje.tast }}<br>
-            {{ vencanje.tasta }}
+            {{ vencanje.tast|default_if_none:"" }}<br>
+            {{ vencanje.tasta|default_if_none:"" }}
         </div>
 
         <!-- Field 3a: Rodjenje zenika -->
@@ -111,19 +111,18 @@
 
         <!-- Field 8: Svestenik -->
         <div class="venc-absolute-field" style="top: var(--venc-field8-top); font-size: 10pt; letter-spacing: 1px;">
-            {{ vencanje.svestenik }}
+            {{ vencanje.svestenik|default_if_none:"" }}
         </div>
 
         <!-- Field 9: Svedoci -->
         <div class="venc-absolute-field" style="top: var(--venc-field9-top); font-size: 10pt; letter-spacing: 1px; line-height: 1.2;">
-            {{ vencanje.kum }}<br>
-            {{ vencanje.stari_svat }}
+            {{ vencanje.kum|default_if_none:"" }}<br>
+            {{ vencanje.stari_svat|default_if_none:"" }}
         </div>
 
         <!-- Field 10: Razresenje -->
         <div class="venc-absolute-field" style="top: var(--venc-field10-top); font-size: 10pt; letter-spacing: 1px; line-height: 1.3;">
-            {{ vencanje.razresenje }}<br>
-            {% if vencanje.razresenje_primedba is not none %}{{ vencanje.razresenje_primedba}}{% endif %}
+            {% if vencanje.razresenje %}Да{% else %}Не{% endif %}
         </div>
 
         <!-- Field 11: Primedba -->
@@ -147,7 +146,7 @@
             <div style="width: 5%; font-size: 9pt;">{% now "y" %}</div>
             <div style="width: 33%;"></div>
             <div style="width: 5%;"></div>
-            <div style="width: 12%;">{{vencanje.svestenik.parohija}}</div>
+            <div style="width: 12%;">{% if vencanje.svestenik %}{{vencanje.svestenik.parohija}}{% endif %}</div>
             <div style="width: 30%; letter-spacing: 1px; font-size: 9pt;">при Храму Свете Петке</div>
         </div>
 

@@ -144,7 +144,7 @@
       <!-- 11. Име и презиме свештеника који је дете крстио и миропомазао -->
       <div style="width: 46%"></div>
       <div style="width: 53%; font-size: 14pt; letter-spacing: 1px;">
-        {{ krstenje.svestenik }}
+        {{ krstenje.svestenik|default_if_none:"" }}
       </div>
     </div>
     <div class="row" style="height: 13mm">
@@ -185,7 +185,7 @@
       </div>
       <div class="row"
         style="width: 36%; justify-content: flex-end; font-size: 12pt; letter-spacing: 1px; padding-right: 5%; padding-top: 1%; height: 4mm">
-        {{krstenje.svestenik.parohija}}
+        {% if krstenje.svestenik %}{{krstenje.svestenik.parohija}}{% endif %}
       </div>
       <div class="row"
         style="width: 36%; justify-content: flex-end; font-size: 12pt; letter-spacing: 1px; padding-right: 8%; padding-bottom: 0.2%; height: 5mm">

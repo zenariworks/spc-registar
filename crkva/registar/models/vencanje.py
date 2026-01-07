@@ -156,6 +156,76 @@ class Vencanje(TimestampedModel):
     razresenje = models.BooleanField(verbose_name="разрешење", default=True)
     primedba = models.TextField(verbose_name="примедба", blank=True, default="")
 
+    @property
+    def ime_zenika(self):
+        """Име женика из везаног Osoba objekta."""
+        return self.zenik.ime if self.zenik else ""
+
+    @property
+    def prezime_zenika(self):
+        """Презиме женика из везаног Osoba objekta."""
+        return self.zenik.prezime if self.zenik else ""
+
+    @property
+    def zanimanje_zenika(self):
+        """Занимање женика из везаног Osoba objekta."""
+        return self.zenik.zanimanje if self.zenik and self.zenik.zanimanje else ""
+
+    @property
+    def veroispovest_zenika(self):
+        """Вероисповест женика из везаног Osoba objekta."""
+        return self.zenik.veroispovest if self.zenik and self.zenik.veroispovest else ""
+
+    @property
+    def narodnost_zenika(self):
+        """Народност женика из везаног Osoba objekta."""
+        return self.zenik.narodnost if self.zenik and self.zenik.narodnost else ""
+
+    @property
+    def datum_rodjenja_zenika(self):
+        """Датум рођења женика из везаног Osoba objekta."""
+        return self.zenik.datum_rodjenja if self.zenik else None
+
+    @property
+    def mesto_rodjenja_zenika(self):
+        """Место рођења женика из везаног Osoba objekta."""
+        return self.zenik.mesto_rodjenja if self.zenik else ""
+
+    @property
+    def ime_neveste(self):
+        """Име невесте из везаног Osoba objekta."""
+        return self.nevesta.ime if self.nevesta else ""
+
+    @property
+    def prezime_neveste(self):
+        """Презиме невесте из везаног Osoba objekta."""
+        return self.nevesta.prezime if self.nevesta else ""
+
+    @property
+    def zanimanje_neveste(self):
+        """Занимање невесте из везаног Osoba objekta."""
+        return self.nevesta.zanimanje if self.nevesta else ""
+
+    @property
+    def veroispovest_neveste(self):
+        """Вероисповест невесте из везаног Osoba objekta."""
+        return self.nevesta.veroispovest if self.nevesta else ""
+
+    @property
+    def narodnost_neveste(self):
+        """Народност невесте из везаног Osoba objekta."""
+        return self.nevesta.narodnost if self.nevesta else ""
+
+    @property
+    def datum_rodjenja_neveste(self):
+        """Датум рођења невесте из везаног Osoba objekta."""
+        return self.nevesta.datum_rodjenja if self.nevesta else None
+
+    @property
+    def mesto_rodjenja_neveste(self):
+        """Место рођења невесте из везаног Osoba objekta."""
+        return self.nevesta.mesto_rodjenja if self.nevesta else ""
+
     def __str__(self):
         return f"{self.uid}"
 

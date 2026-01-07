@@ -60,23 +60,23 @@
         <div style="width: 55%; letter-spacing: 1px; font-size: 9pt; justify-content: center; line-height: 10px;">
           {{ vencanje.ime_neveste }} {{ vencanje.prezime_neveste }}, {{ vencanje.zanimanje_neveste|lower }},</br>
           <small>{{ vencanje.adresa_neveste }}</small></br>
-          <small>{{ vencanje.veroispovest_neveste|lower }} {{ vencanje.narodnost.neveste|lower }}</small>
+          <small>{{ vencanje.veroispovest_neveste|lower }} {{ vencanje.narodnost_neveste|lower }}</small>
         </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 2. Ime, prezime, zanimanje i mesto stanovanja roditelja vencanih a) zenika -->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 9pt; justify-content: center;">
-          {{ vencanje.svekar }} </br>
-          {{ vencanje.svekrva }}
+          {{ vencanje.svekar|default_if_none:"" }} </br>
+          {{ vencanje.svekrva|default_if_none:"" }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 2. Ime, prezime, zanimanje i mesto stanovanja roditelja vencanih b) neveste -->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 9pt; justify-content: center;">
-          {{ vencanje.tast }}</br>
-          {{ vencanje.tasta }}
+          {{ vencanje.tast|default_if_none:"" }}</br>
+          {{ vencanje.tasta|default_if_none:"" }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
@@ -134,23 +134,22 @@
         <!-- 8. Ime i prezime svestenika koji je vencanje izvrsio-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          {{ vencanje.svestenik }}
+          {{ vencanje.svestenik|default_if_none:"" }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 9. Ime, prezime, zanimanje, veroispovest i mesto stanovanja svedoka (kuma i starog svata)-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          {{ vencanje.kum }}<br>
-          {{ vencanje.stari_svat }}
+          {{ vencanje.kum|default_if_none:"" }}<br>
+          {{ vencanje.stari_svat|default_if_none:"" }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 10. Da li su ovi bracnici imali potrebu razresenja od oglasenja ili druge smetnje i jesu li razreseni-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center; line-height: 15px;">
-          {{ vencanje.razresenje }}<br>
-          {% if vencanje.razresenje_primedba is not none %} {{ vencanje.razresenje_primedba}}{% endif %}
+          {% if vencanje.razresenje %}Да{% else %}Не{% endif %}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
@@ -184,7 +183,7 @@
         <div class="row" style="width: 5%;">
         </div>
         <div style="width: 12%;">
-          {{vencanje.svestenik.parohija}}
+          {% if vencanje.svestenik %}{{vencanje.svestenik.parohija}}{% endif %}
         </div>
         <div style="width: 30%; letter-spacing: 1px;font-size: 9pt; height: 5mm;">
           при Храму Свете Петке

@@ -146,6 +146,96 @@ class Krstenje(TimestampedModel):
 
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
+    @property
+    def ime_deteta(self):
+        """Име детета из везаног Osoba objekta."""
+        return self.dete.ime if self.dete else ""
+
+    @property
+    def pol_deteta(self):
+        """Пол детета из везаног Osoba objekta."""
+        return self.dete.pol if self.dete else ""
+
+    @property
+    def datum_rodjenja(self):
+        """Датум рођења детета из везаног Osoba objekta."""
+        return self.dete.datum_rodjenja if self.dete else None
+
+    @property
+    def vreme_rodjenja(self):
+        """Време рођења детета из везаног Osoba objekta."""
+        return self.dete.vreme_rodjenja if self.dete else ""
+
+    @property
+    def mesto_rodjenja(self):
+        """Место рођења детета из везаног Osoba objekta."""
+        return self.dete.mesto_rodjenja if self.dete else ""
+
+    @property
+    def ime_oca(self):
+        """Име оца из везаног Osoba objekta."""
+        return self.otac.ime if self.otac else ""
+
+    @property
+    def prezime_oca(self):
+        """Презиме оца из везаног Osoba objekta."""
+        return self.otac.prezime if self.otac else ""
+
+    @property
+    def zanimanje_oca(self):
+        """Занимање оца из везаног Osoba objekta."""
+        return self.otac.zanimanje if self.otac and self.otac.zanimanje else ""
+
+    @property
+    def veroispovest_oca(self):
+        """Вероисповест оца из везаног Osoba objekta."""
+        return self.otac.veroispovest if self.otac and self.otac.veroispovest else ""
+
+    @property
+    def narodnost_oca(self):
+        """Народност оца из везаног Osoba objekta."""
+        return self.otac.narodnost if self.otac and self.otac.narodnost else ""
+
+    @property
+    def ime_majke(self):
+        """Име мајке из везаног Osoba objekta."""
+        return self.majka.ime if self.majka else ""
+
+    @property
+    def prezime_majke(self):
+        """Презиме мајке из везаног Osoba objekta."""
+        return self.majka.prezime if self.majka else ""
+
+    @property
+    def zanimanje_majke(self):
+        """Занимање мајке из везаног Osoba objekta."""
+        return self.majka.zanimanje if self.majka and self.majka.zanimanje else ""
+
+    @property
+    def veroispovest_majke(self):
+        """Вероисповест мајке из везаног Osoba objekta."""
+        return self.majka.veroispovest if self.majka and self.majka.veroispovest else ""
+
+    @property
+    def narodnost_majke(self):
+        """Народност мајке из везаног Osoba objekta."""
+        return self.majka.narodnost if self.majka and self.majka.narodnost else ""
+
+    @property
+    def ime_kuma(self):
+        """Име кума из везаног Osoba objekta."""
+        return self.kum.ime if self.kum else ""
+
+    @property
+    def prezime_kuma(self):
+        """Презиме кума из везаног Osoba objekta."""
+        return self.kum.prezime if self.kum else ""
+
+    @property
+    def zanimanje_kuma(self):
+        """Занимање кума из везаног Osoba objekta."""
+        return self.kum.zanimanje if self.kum and self.kum.zanimanje else ""
+
     def __str__(self):
         return f"{self.uid}"
 
