@@ -265,7 +265,7 @@ class Command(MigrationCommand):
 
         majka = self._find_or_create_osoba(
             ime=r.majka_ime.strip(),
-            prezime=r.majka_prezime.strip(),
+            prezime=self._clean_prezime(r.majka_prezime.strip()),
             pol="Ж",
             zanimanje=r.majka_zanimanje,
             veroispovest=r.majka_veroispovest,
@@ -357,6 +357,15 @@ class Command(MigrationCommand):
         if len(parts) < 2:
             return full_name, ""
         return " ".join(parts[:-1]), parts[-1]
+
+    def _clean_prezime(self, prezime: str) -> str:
+        """Очисти презиме од префикса као што су 'р.', 'р ', 'r.', 'рођена', итд."""
+        if not prezime:
+            return prezime
+        prezime = re.sub(r"^р\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
+        prezime = re.sub(r"^r\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
+        prezime = re.sub(r"^рођена\s+", "", prezime, flags=re.IGNORECASE).strip()
+        return prezime
 
     def _find_or_create_osoba(self, ime: str, prezime: str, **extra) -> Osoba:
         if not ime or not prezime:

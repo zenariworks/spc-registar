@@ -20,12 +20,36 @@
     <ul class="spisak">
         {% for parohijan in parohijani %}
             <li class="stavka">
-                <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza">
-                    {{ parohijan.ime|markiraj:upit }} {{ parohijan.prezime|markiraj:upit }} ({{ parohijan.datum_rodjenja|date:"Y" }})
+                <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza" style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <div style="font-weight: 500; min-width: 180px;">
+                            {{ parohijan.ime|markiraj:upit|safe }} {{ parohijan.prezime|markiraj:upit|safe }}
+                        </div>
+                        {% if parohijan.datum_rodjenja %}
+                        <div style="color: #666; font-size: 0.9em;">
+                            {{ parohijan.datum_rodjenja }}
+                        </div>
+                        {% endif %}
+                        {% if parohijan.adresa %}
+                        <div style="color: #666; font-size: 0.9em;">
+                            📍 {{ parohijan.adresa }}
+                        </div>
+                        {% endif %}
+                        {% if parohijan.tel_mobilni or parohijan.tel_fiksni %}
+                        <div style="color: #666; font-size: 0.9em;">
+                            📱 {{ parohijan.tel_mobilni|default:parohijan.tel_fiksni }}
+                        </div>
+                        {% endif %}
+                        {% if parohijan.slava %}
+                        <div style="color: #856404; font-size: 0.9em; background: #fff3cd; padding: 2px 8px; border-radius: 3px;">
+                            {{ parohijan.slava }}
+                        </div>
+                        {% endif %}
+                    </div>
                 </a>
-                        <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
-<button class="button button--primary" type="button">Штампај</button>
-                        </a>
+                <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
+                    <button class="button button--primary" type="button">Штампај</button>
+                </a>
             </li>
         {% empty %}
             <li>Нема уписаних парохијана у бази.</li>

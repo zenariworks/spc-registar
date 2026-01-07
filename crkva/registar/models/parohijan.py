@@ -15,6 +15,10 @@ class Osoba(TimestampedModel):
     ime = models.CharField(max_length=100, verbose_name="име")
     prezime = models.CharField(max_length=100, verbose_name="презиме")
 
+    devojacko_prezime = models.CharField(
+        max_length=100, verbose_name="девојачко презиме", blank=True, null=True
+    )
+
     parohijan = models.BooleanField(
         default=False, verbose_name="парохијан", help_text="Да ли је особа парохијанин"
     )
@@ -51,10 +55,6 @@ class Osoba(TimestampedModel):
         choices=[("М", "мушки"), ("Ж", "женски")],
         blank=True,
         null=True,
-    )
-
-    devojacko_prezime = models.CharField(
-        max_length=100, verbose_name="девојачко презиме", blank=True, null=True
     )
 
     zanimanje = models.CharField(

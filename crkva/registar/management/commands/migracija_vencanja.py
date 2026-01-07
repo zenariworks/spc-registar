@@ -263,13 +263,22 @@ class Command(MigrationCommand):
         create_data.update({k: v for k, v in extra.items() if v is not None})
         return Osoba.objects.create(**create_data)
 
+    def _clean_prezime(self, prezime: str) -> str:
+        """Очисти презиме од префикса као што су 'р.', 'р ', 'r.', итд."""
+        if not prezime:
+            return prezime
+        # Уклони префикс р. (рођена) са почетка презимена
+        prezime = re.sub(r"^р\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
+        prezime = re.sub(r"^r\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
+        return prezime
+
     def _build_vencanje_data(
         self, r: VencanjeRecord, svestenici_cache: dict, hramovi_cache: dict
     ) -> Optional[dict]:
         zenik_ime = r.zenik_ime.strip()
-        zenik_prezime = r.zenik_prezime.strip()
+        zenik_prezime = self._clean_prezime(r.zenik_prezime.strip())
         nevesta_ime = r.nevesta_ime.strip()
-        nevesta_prezime = r.nevesta_prezime.strip()
+        nevesta_prezime = self._clean_prezime(r.nevesta_prezime.strip())
 
         if not (zenik_ime and zenik_prezime and nevesta_ime and nevesta_prezime):
             self.log_warning(
@@ -292,11 +301,12 @@ class Command(MigrationCommand):
 
         nevesta = self._find_or_create_osoba(
             ime=nevesta_ime,
-            prezime=nevesta_prezime,
+            prezime=zenik_prezime,
             pol="Ж",
             datum_rodjenja=r.nevesta_datum_rodj,
             mesto_rodjenja=r.nevesta_mesto_rodj or None,
             zanimanje=r.nevesta_zanimanje or None,
+            devojacko_prezime=nevesta_prezime,
         )
 
         kum = None

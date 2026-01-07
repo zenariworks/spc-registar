@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="u-page-header">
+    <h1 class="u-page-title">Табела не постоји</h1>
+</div>
+
+<div style="padding: 20px; max-width: 800px; margin: 0 auto;">
+    <div style="background-color: #fff3cd; border: 1px solid #ffc107; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
+        <h2 style="margin-top: 0; color: #856404;">
+            <i class="fa-solid fa-exclamation-triangle" style="margin-right: 10px;"></i>
+            Табела {{ table_name }} није креирана
+        </h2>
+        <p style="font-size: 16px; line-height: 1.6;">
+            Табела за {{ table_name }} тренутно не постоји у бази података.
+            Ово обично значи да миграције још нису извршене.
+        </p>
+        <p style="font-size: 16px; line-height: 1.6;">
+            Молимо администратора да покрене миграције како би креирао потребне табеле.
+        </p>
+    </div>
+
+    <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px;">
+        <h3 style="margin-top: 0;">Кораци за решавање:</h3>
+        <ol style="line-height: 1.8;">
+            <li>Покрените Django миграције: <code>python manage.py migrate</code></li>
+            <li>Ако табела треба да се попуни подацима, покрените команде за миграцију података</li>
+            <li>Освежите ову страницу</li>
+        </ol>
+    </div>
+
+    {% if error_detail %}
+    <details style="margin-top: 20px;">
+        <summary style="cursor: pointer; padding: 10px; background-color: #e9ecef; border-radius: 4px;">
+            Технички детаљи
+        </summary>
+        <pre style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; margin-top: 10px;">{{ error_detail }}</pre>
+    </details>
+    {% endif %}
+
+    <div style="margin-top: 30px; text-align: center;">
+        <a href="/" class="button button--primary">
+            <i class="fa-solid fa-home" style="margin-right: 6px;"></i>
+            Назад на почетну
+        </a>
+    </div>
+</div>
+{% endblock %}

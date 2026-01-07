@@ -198,8 +198,12 @@ class Vencanje(TimestampedModel):
 
     @property
     def prezime_neveste(self):
-        """Презиме невесте из везаног Osoba objekta."""
-        return self.nevesta.prezime if self.nevesta else ""
+        """Девојачко презиме невесте из везаног Osoba objekta."""
+        return (
+            self.nevesta.devojacko_prezime
+            if self.nevesta and self.nevesta.devojacko_prezime
+            else ""
+        )
 
     @property
     def zanimanje_neveste(self):
