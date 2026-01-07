@@ -5,7 +5,7 @@ Migracija tabele krstenja iz PostgreSQL staging tabele 'hsp_krstenja' u tabelu '
 import re
 from dataclasses import dataclass
 from datetime import date, time
-from typing import Optional, Tuple
+from typing import Optional
 
 from django.db import connection
 from django.db.utils import IntegrityError
@@ -14,10 +14,13 @@ from registar.management.commands.convert_utils import Konvertor
 from registar.models import Hram, Krstenje, Osoba, Svestenik
 
 
+def _date(y: int, m: int, d: int) -> date:
+    """Create date from y/m/d, replacing zeros with 1900-01-01."""
+    return date(1900 if y == 0 else y, 1 if m == 0 else m, 1 if d == 0 else d)
+
+
 @dataclass
 class KrstenjeRecord:
-    """Clean, typed representation of one row from hsp_krstenja"""
-
     redni_broj: int
     knjiga: str
     broj: str
@@ -27,15 +30,11 @@ class KrstenjeRecord:
     adresa_deteta_ulica: str
     adresa_deteta_broj: str
 
-    rodjenje_godina: int
-    rodjenje_mesec: int
-    rodjenje_dan: int
+    datum_rodjenja: date
     rodjenje_vreme: str
     rodjenje_mesto: str
 
-    krstenje_godina: int
-    krstenje_mesec: int
-    krstenje_dan: int
+    datum_krstenja: date
     krstenje_vreme: str
     krstenje_mesto: str
     hram_naziv: str
@@ -104,51 +103,85 @@ class Command(MigrationCommand):
 
     def _fetch_records(self):
         """Yield parsed KrstenjeRecord objects from staging table."""
+        columns = (
+            "K_SIFRA",
+            "K_PROKNJ",
+            "K_PROTBR",
+            "K_PROTST",
+            "K_IZ",
+            "K_ULICA",
+            "K_BROJ",
+            "K_RODJGOD",
+            "K_RODJMESE",
+            "K_RODJDAN",
+            "K_RODJVRE",
+            "K_RODJMEST",
+            "K_KRSGOD",
+            "K_KRSMESE",
+            "K_KRSDAN",
+            "K_KRSVRE",
+            "K_KRSMEST",
+            "K_KRSHRAM",
+            "K_DETIME",
+            "K_DETIMEG",
+            "K_DETPOL",
+            "K_RODIME",
+            "K_RODPREZ",
+            "K_RODZANIM",
+            "K_RODMEST",
+            "K_RODVERA",
+            "K_RODNAROD",
+            "K_ROD2IME",
+            "K_ROD2PREZ",
+            "K_ROD2ZAN",
+            "K_ROD2MEST",
+            "K_ROD2VERA",
+            "K_DETZIVO",
+            "K_DETKOJE",
+            "K_DETBRAC",
+            "K_DETBLIZ",
+            "K_DETBLIZ2",
+            "K_DETMANA",
+            "K_RBRSVE",
+            "K_KUMIME",
+            "K_KUMPREZ",
+            "K_KUMZANIM",
+            "K_KUMMEST",
+            "K_REGMESTO",
+            "K_REGKADA",
+            "K_REGBROJ",
+            "K_REGSTR",
+        )
+
+        query = f"""
+            SELECT {', '.join(f'"{col}"' for col in columns)}
+            FROM {self.staging_table_name}
+            ORDER BY "K_SIFRA"
+        """
+
         with connection.cursor() as cursor:
-            cursor.execute(f"""
-                SELECT
-                    "K_SIFRA", "K_PROKNJ", "K_PROTBR", "K_PROTST",
-                    "K_IZ", "K_ULICA", "K_BROJ",
-                    "K_RODJGOD", "K_RODJMESE", "K_RODJDAN", "K_RODJVRE", "K_RODJMEST",
-                    "K_KRSGOD", "K_KRSMESE", "K_KRSDAN", "K_KRSVRE", "K_KRSMEST", "K_KRSHRAM",
-                    "K_DETIME", "K_DETIMEG", "K_DETPOL",
-                    "K_RODIME", "K_RODPREZ", "K_RODZANIM", "K_RODMEST", "K_RODVERA", "K_RODNAROD",
-                    "K_ROD2IME", "K_ROD2PREZ", "K_ROD2ZAN", "K_ROD2MEST", "K_ROD2VERA",
-                    "K_DETZIVO", "K_DETKOJE", "K_DETBRAC", "K_DETBLIZ", "K_DETBLIZ2", "K_DETMANA",
-                    "K_RBRSVE",
-                    "K_KUMIME", "K_KUMPREZ", "K_KUMZANIM", "K_KUMMEST",
-                    "K_REGMESTO", "K_REGKADA", "K_REGBROJ", "K_REGSTR"
-                FROM {self.staging_table_name}
-                ORDER BY "K_SIFRA"
-            """)
+            cursor.execute(query)
             for row in cursor.fetchall():
                 yield self._parse_record(row)
 
     def _parse_record(self, row) -> KrstenjeRecord:
-        """Convert raw DB row to clean KrstenjeRecord."""
-
-        def s(v):
-            return Konvertor.string(v or "")
+        s = Konvertor.string
 
         def i(v, default=0):
             return Konvertor.int(v, default) if v is not None else default
 
         return KrstenjeRecord(
-            redni_broj=i(row[0], 0),
+            redni_broj=i(row[0]),
             knjiga=s(row[1]),
             broj=s(row[2]),
-            strana=i(row[3], 0),
+            strana=i(row[3]),
             adresa_deteta_grad=s(row[4]),
             adresa_deteta_ulica=s(row[5]),
             adresa_deteta_broj=s(row[6]),
-            rodjenje_godina=i(row[7], 1900),
-            rodjenje_mesec=i(row[8], 1),
-            rodjenje_dan=i(row[9], 1),
+            datum_rodjenja=_date(i(row[7]), i(row[8]), i(row[9])),
             rodjenje_vreme=s(row[10]),
             rodjenje_mesto=s(row[11]),
-            krstenje_godina=i(row[12], 1900),
-            krstenje_mesec=i(row[13], 1),
-            krstenje_dan=i(row[14], 1),
+            datum_krstenja=_date(i(row[12]), i(row[13]), i(row[14])),
             krstenje_vreme=s(row[15]),
             krstenje_mesto=s(row[16]),
             hram_naziv=s(row[17]),
@@ -172,7 +205,7 @@ class Command(MigrationCommand):
             dete_blizanac=s(row[35]),
             blizanac_ime=s(row[36]),
             dete_sa_manom=s(row[37]),
-            svestenik_id=i(row[38], 0),
+            svestenik_id=i(row[38]),
             kum_puno_ime=s(row[39]),
             kum_prezime=s(row[40]),
             kum_zanimanje=s(row[41]),
@@ -199,12 +232,11 @@ class Command(MigrationCommand):
         return created_count
 
     def _build_krstenje(self, r: KrstenjeRecord) -> Optional[dict]:
-        if not r.dete_ime.strip() or not r.otac_prezime.strip():
+        if not (dete_ime := r.dete_ime.strip()) or not (
+            otac_prezime := r.otac_prezime.strip()
+        ):
             self.log_warning("Прескачем запис без имена детета или презимена оца")
             return None
-
-        datum_krstenja = date(r.krstenje_godina, r.krstenje_mesec, r.krstenje_dan)
-        vreme_krstenja = self._parse_time(r.krstenje_vreme)
 
         # Related objects
         hram_naziv_clean = re.sub(r"(?i)\bhram\b", "", r.hram_naziv).strip()
@@ -214,17 +246,17 @@ class Command(MigrationCommand):
 
         # Persons
         dete = self._find_or_create_osoba(
-            ime=r.dete_ime.strip(),
-            prezime=r.otac_prezime.strip(),
+            ime=dete_ime,
+            prezime=otac_prezime,
             pol="М" if r.dete_pol.strip() == "1" else "Ж",
-            datum_rodjenja=date(r.rodjenje_godina, r.rodjenje_mesec, r.rodjenje_dan),
+            datum_rodjenja=r.datum_rodjenja,
             vreme_rodjenja=self._parse_time(r.rodjenje_vreme),
             mesto_rodjenja=r.rodjenje_mesto,
         )
 
         otac = self._find_or_create_osoba(
             ime=r.otac_ime.strip(),
-            prezime=r.otac_prezime.strip(),
+            prezime=otac_prezime,
             pol="М",
             zanimanje=r.otac_zanimanje,
             veroispovest=r.otac_veroispovest,
@@ -241,8 +273,8 @@ class Command(MigrationCommand):
 
         kum = None
         if kum_puno_ime := r.kum_puno_ime.strip():
-            # Use K_KUMPREZ if available, otherwise split from full name
-            if kum_prezime := r.kum_prezime.strip():
+            kum_prezime = r.kum_prezime.strip()
+            if kum_prezime:
                 kum_ime = kum_puno_ime
             else:
                 kum_ime, kum_prezime = self._split_full_name(kum_puno_ime)
@@ -270,12 +302,12 @@ class Command(MigrationCommand):
             "hram": hram,
             "svestenik": svestenik,
             "redni_broj_krstenja_tekuca_godina": r.redni_broj,
-            "krstenje_tekuca_godina": r.krstenje_godina,
+            "krstenje_tekuca_godina": r.datum_krstenja.year,
             "knjiga": Konvertor.int(r.knjiga, 0),
             "broj": Konvertor.int(r.broj, 0),
             "strana": Konvertor.int(r.strana, 0),
-            "datum": datum_krstenja,
-            "vreme": vreme_krstenja,
+            "datum": r.datum_krstenja,
+            "vreme": self._parse_time(r.krstenje_vreme),
             "mesto": r.krstenje_mesto,
             "adresa_deteta_grad": r.adresa_deteta_grad,
             "adresa_deteta_ulica": r.adresa_deteta_ulica,
@@ -297,8 +329,9 @@ class Command(MigrationCommand):
             "primedba": "",
         }
 
-    def _parse_time(self, time_str: str) -> Optional[time]:
-        if not (time_str := str(time_str or "").strip()):
+    def _parse_time(self, time_str: Optional[str]) -> Optional[time]:
+        time_str = (time_str or "").strip()
+        if not time_str:
             return None
 
         if "." in time_str or "," in time_str:
@@ -310,7 +343,8 @@ class Command(MigrationCommand):
             hh = Konvertor.int(time_str, 12)
             mm = 0
 
-        hh = 0 if hh == 24 else max(0, min(23, hh))
+        hh = 0 if hh == 24 else hh
+        hh = max(0, min(23, hh))
         mm = max(0, min(59, mm))
         return time(hh, mm)
 
@@ -318,24 +352,31 @@ class Command(MigrationCommand):
         return self._ORDINAL_WORDS[num - 1] if 1 <= num <= 10 else "прво"
 
     @staticmethod
-    def _split_full_name(full_name: str) -> Tuple[str, str]:
+    def _split_full_name(full_name: str) -> tuple[str, str]:
         parts = full_name.strip().split()
-        return (" ".join(parts[:-1]), parts[-1]) if len(parts) >= 2 else (full_name, "")
+        if len(parts) < 2:
+            return full_name, ""
+        return " ".join(parts[:-1]), parts[-1]
 
-    def _find_or_create_osoba(self, ime: str, prezime: str, **extra) -> Optional[Osoba]:
+    def _find_or_create_osoba(self, ime: str, prezime: str, **extra) -> Osoba:
         if not ime or not prezime:
             return None
 
+        # Try to find existing
         osoba = Osoba.objects.filter(ime__exact=ime, prezime__exact=prezime).first()
         if osoba:
+            # Update only empty fields
             updates = {
-                k: v for k, v in extra.items() if v and not getattr(osoba, k, None)
+                k: v
+                for k, v in extra.items()
+                if v and getattr(osoba, k, None) in (None, "")
             }
             if updates:
                 Osoba.objects.filter(pk=osoba.pk).update(**updates)
                 osoba.refresh_from_db()
             return osoba
 
+        # Create new
         create_data = {"ime": ime, "prezime": prezime, "parohijan": False}
         create_data.update({k: v for k, v in extra.items() if v is not None})
         return Osoba.objects.create(**create_data)

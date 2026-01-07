@@ -10,9 +10,9 @@ class VencanjeForm(forms.ModelForm):
     class Meta:
         model = Vencanje
         fields = [
-            # Текућа година и редни број
-            "redni_broj_vencanja_tekuca_godina",
-            "vencanje_tekuca_godina",
+            # Редни број и година регистрације
+            "redni_broj",
+            "godina_registracije",
             # Регистар
             "knjiga",
             "strana",
@@ -45,12 +45,10 @@ class VencanjeForm(forms.ModelForm):
             "stari_svat",
             # Разрешење и напомене
             "razresenje",
-            "razresenje_primedba",
             "primedba",
         ]
         widgets = {
             "datum": forms.DateInput(attrs={"type": "date"}),
             "datum_ispita": forms.DateInput(attrs={"type": "date"}),
-            "razresenje_primedba": forms.Textarea(attrs={"rows": 3}),
             "primedba": forms.Textarea(attrs={"rows": 3}),
         }

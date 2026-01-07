@@ -16,6 +16,29 @@ class Vencanje(TimestampedModel):
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
+    godina_registracije = models.IntegerField(
+        verbose_name="година регистрације",
+        validators=[MinValueValidator(1900)],
+        default=2000,
+    )
+    redni_broj = models.IntegerField(
+        verbose_name="редни број венчања",
+        validators=[MinValueValidator(1)],
+        default=1,
+    )
+
+    knjiga = models.IntegerField(
+        verbose_name="књига", validators=[MinValueValidator(1)], default=1
+    )
+    strana = models.IntegerField(
+        verbose_name="страна", validators=[MinValueValidator(1)], default=1
+    )
+    tekuci_broj = models.IntegerField(
+        verbose_name="текући број", validators=[MinValueValidator(1)], default=1
+    )
+
+    datum = models.DateField(verbose_name="датум венчања", null=True, blank=True)
+
     zenik = models.ForeignKey(
         Osoba,
         on_delete=models.SET_NULL,
@@ -41,29 +64,6 @@ class Vencanje(TimestampedModel):
         verbose_name="кум",
     )
 
-    # tekuca godina i redni broj vencanja u godini
-    redni_broj_vencanja_tekuca_godina = models.IntegerField(
-        verbose_name="редни број венчања текућа година",
-        validators=[MinValueValidator(1)],
-    )
-    vencanje_tekuca_godina = models.IntegerField(
-        verbose_name="венчање текућа година",
-        validators=[MinValueValidator(1900)],
-    )
-
-    # podaci za registar(protokol) vencanih
-    knjiga = models.IntegerField(
-        verbose_name="књига", validators=[MinValueValidator(1)]
-    )
-    strana = models.IntegerField(
-        verbose_name="страна", validators=[MinValueValidator(1)]
-    )
-    tekuci_broj = models.IntegerField(
-        verbose_name="текући број", validators=[MinValueValidator(1)]
-    )
-
-    datum = models.DateField(verbose_name="датум венчања", null=True, blank=True)
-
     # adrese (specifične za događaj venčanja)
     mesto_zenika = models.CharField(
         max_length=255, verbose_name="место женика", null=True, blank=True
@@ -78,38 +78,83 @@ class Vencanje(TimestampedModel):
         max_length=255, verbose_name="адреса невесте", null=True, blank=True
     )
 
-    # podaci o roditeljima (ime oca/majke - nisu u Osoba modelu)
-    svekar = models.CharField(max_length=255, verbose_name="име оца женика")
-    svekrva = models.CharField(max_length=255, verbose_name="име мајке женика")
-    tast = models.CharField(max_length=255, verbose_name="име оца невесте")
-    tasta = models.CharField(max_length=255, verbose_name="име мајке невесте")
-
     # podaci o braku
-    zenik_rb_brak = models.CharField(verbose_name="брак по реду женика")
-    nevesta_rb_brak = models.CharField(verbose_name="брак по реду невесте")
+    zenik_rb_brak = models.PositiveSmallIntegerField(
+        verbose_name="брак по реду женика", validators=[MinValueValidator(1)], default=1
+    )
+    nevesta_rb_brak = models.PositiveSmallIntegerField(
+        verbose_name="брак по реду невесте",
+        validators=[MinValueValidator(1)],
+        default=1,
+    )
 
-    # podaci o ispitivanju
-    datum_ispita = models.DateField(verbose_name="датум испита")
+    svekar = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vencanja_kao_svekar",
+        verbose_name="отац женика",
+    )
+    svekrva = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vencanja_kao_svekrva",
+        verbose_name="мајка женика",
+    )
+    tast = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vencanja_kao_tast",
+        verbose_name="отац невесте",
+    )
+    tasta = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vencanja_kao_tasta",
+        verbose_name="мајка невесте",
+    )
+
+    stari_svat = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="vencanja_kao_stari_svat",
+        verbose_name="име старог свата",
+    )
+
+    datum_ispita = models.DateField(
+        verbose_name="датум испита",
+        validators=[MinValueValidator(1900)],
+        null=True,
+        blank=True,
+    )
 
     hram = models.ForeignKey(
-        Hram, on_delete=models.SET_NULL, null=True, verbose_name="место венчања"
+        Hram,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="место венчања",
     )
     svestenik = models.ForeignKey(
         Svestenik,
         verbose_name="свештеник",
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="свештеник_венчани",
     )
 
-    stari_svat = models.CharField(
-        max_length=255, verbose_name="име старог свата", null=True, blank=True
-    )
-
-    razresenje = models.CharField(verbose_name="разрешење")
-    razresenje_primedba = models.TextField(verbose_name="примедба", blank=True)
-
-    primedba = models.TextField(verbose_name="примедба", blank=True)
+    razresenje = models.BooleanField(verbose_name="разрешење", default=True)
+    primedba = models.TextField(verbose_name="примедба", blank=True, default="")
 
     def __str__(self):
         return f"{self.uid}"

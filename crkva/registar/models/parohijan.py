@@ -15,8 +15,9 @@ class Osoba(TimestampedModel):
     ime = models.CharField(max_length=100, verbose_name="име")
     prezime = models.CharField(max_length=100, verbose_name="презиме")
 
-    # Да ли је особа парохијанин (члан парохије)
-    parohijan = models.BooleanField(default=False, verbose_name="парохијан")
+    parohijan = models.BooleanField(
+        default=False, verbose_name="парохијан", help_text="Да ли је особа парохијанин"
+    )
 
     # Подаци специфични за парохијане (опционо за остале)
     adresa = models.ForeignKey(

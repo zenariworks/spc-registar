@@ -122,3 +122,6 @@ target/
 *.bkp
 *.dtmp
 .python-version
+
+# Archives
+*.zip
