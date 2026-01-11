@@ -78,7 +78,7 @@ class KrstenjeRecord:
 
 class Command(MigrationCommand):
     help = "Migracija tabele krstenja iz PostgreSQL staging tabele 'hsp_krstenja'"
-    staging_table_name = "hsp_krstenja"
+    staging_table = "hsp_krstenja"
     target_model = Krstenje
 
     _ORDINAL_WORDS = [
@@ -155,7 +155,7 @@ class Command(MigrationCommand):
 
         query = f"""
             SELECT {', '.join(f'"{col}"' for col in columns)}
-            FROM {self.staging_table_name}
+            FROM {self.staging_table}
             ORDER BY "K_SIFRA"
         """
 

@@ -2,6 +2,8 @@
 Migracija tabele domacina iz PostgreSQL staging tabele 'hsp_domacini' u tabele: 'adresa', 'parohijani'
 """
 
+import re
+
 from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db.utils import IntegrityError
@@ -53,10 +55,11 @@ class Command(BaseCommand):
                 adresa_instance.save()
 
                 ime, prezime = (ime_prezime.strip().split(" ", 1) + [""])[:2]
+                cleaned_prezime = self._clean_prezime(prezime)
                 parohijan = Parohijan(
                     uid=parohijan_uid,
                     ime=Konvertor.string(ime),
-                    prezime=Konvertor.string(prezime),
+                    prezime=Konvertor.string(cleaned_prezime),
                     adresa=adresa_instance,
                     slava=Slava.objects.get(uid=slava_uid),
                     tel_fiksni=telefon_fiksni,
@@ -87,6 +90,16 @@ class Command(BaseCommand):
 
         # Drop staging table after successful migration
         self._drop_staging_table()
+
+    def _clean_prezime(self, prezime: str) -> str:
+        """Очисти презиме од префикса као што су 'р.', 'р ', 'r.', 'рођена', итд."""
+        if not prezime:
+            return prezime
+        # Уклони префикс р. (рођена) са почетка презимена
+        prezime = re.sub(r"^р\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
+        prezime = re.sub(r"^r\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
+        prezime = re.sub(r"^рођена\s+", "", prezime, flags=re.IGNORECASE).strip()
+        return prezime
 
     def _drop_staging_table(self):
         """Брише staging табелу 'hsp_domacini' након успешне миграције."""

@@ -2,9 +2,11 @@
 
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
+from registar.models import Domacinstvo
 
 
-class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
+@admin.register(Domacinstvo)
+class DomacinstvоAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Домаћинство."""
 
     list_display = (
@@ -14,8 +16,8 @@ class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
         "tel_mobilni",
         "slava",
         "slavska_vodica",
-        "uskrsnja_vodica",
-        "primedba",
+        "vaskrsnja_vodica",
+        "napomena",
     )
     ordering = ("domacin",)
 
@@ -31,7 +33,7 @@ class DomacinstvoAdmin(ImportExportMixin, admin.ModelAdmin):
         (
             "Додатни детаљи",
             {
-                "fields": ("slava", ("slavska_vodica", "uskrsnja_vodica"), "primedba"),
+                "fields": ("slava", ("slavska_vodica", "vaskrsnja_vodica"), "napomena"),
                 "description": "Информације везане за верске објекте",
             },
         ),

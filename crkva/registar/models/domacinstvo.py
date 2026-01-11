@@ -5,39 +5,49 @@ import uuid
 from django.db import models
 
 from .adresa import Adresa
+from .base import TimestampedModel
+from .parohijan import Osoba
 from .slava import Slava
 
 # from phonenumber_field.modelfields import PhoneNumberField
 
 
-class Domacinstvo(models.Model):
-    """Класа која представља домаћинства."""
-
+class Domacinstvo(TimestampedModel):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    # domacin = models.ForeignKey(
-    #    Parohijan, on_delete=models.CASCADE, null=False, verbose_name="домаћин"
-    # )
-    adresa = models.ForeignKey(
-        Adresa, on_delete=models.SET_NULL, null=True, verbose_name="адреса"
-    )
-    tel_fiksni = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="тел. фиксни"
-    )
-    tel_mobilni = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="тел. мобилни"
-    )
-    slava = models.ForeignKey(
-        Slava, on_delete=models.SET_NULL, null=True, verbose_name="слава"
-    )
-    slavska_vodica = models.CharField(default=False, verbose_name="славска водица")
-    uskrsnja_vodica = models.CharField(default=False, verbose_name="ускршња водица")
-    primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
-    def __str__(self) -> str:
-        return f"{self.domacin.prezime}"
+    domacin = models.OneToOneField(
+        Osoba,
+        on_delete=models.CASCADE,
+        verbose_name="домаћин",
+        related_name="domacinstvo",
+    )
+
+    adresa = models.ForeignKey(
+        Adresa,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="адреса домаћинства",
+    )
+
+    slava = models.ForeignKey(
+        Slava,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="слава домаћинства",
+    )
+
+    tel_fiksni = models.CharField(max_length=20, blank=True, null=True)
+    tel_mobilni = models.CharField(max_length=20, blank=True, null=True)
+    slavska_vodica = models.BooleanField(default=False)
+    vaskrsnja_vodica = models.BooleanField(default=False)
+    napomena = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = True
-        db_table: str = "domacinstva"
-        verbose_name: str = "Домаћинство"
-        verbose_name_plural: str = "Домаћинства"
+        db_table = "domacinstva"
+        verbose_name = "Домаћинство"
+        verbose_name_plural = "Домаћинства"
+
+    def __str__(self):
+        return f"Домаћинство {self.domacin.prezime}"

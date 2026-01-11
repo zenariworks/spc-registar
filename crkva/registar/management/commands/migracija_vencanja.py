@@ -64,7 +64,7 @@ class VencanjeRecord:
 
 class Command(MigrationCommand):
     help = "Migracija tabele venčanja iz PostgreSQL staging tabele 'hsp_vencanja'"
-    staging_table_name = "hsp_vencanja"
+    staging_table = "hsp_vencanja"
     target_model = Vencanje
 
     BATCH_SIZE = 500
@@ -123,7 +123,7 @@ class Command(MigrationCommand):
 
         query = f"""
             SELECT {', '.join(f'"{col}"' for col in columns)}
-            FROM {self.staging_table_name}
+            FROM {self.staging_table}
             ORDER BY "V_SIFRA"
         """
 
