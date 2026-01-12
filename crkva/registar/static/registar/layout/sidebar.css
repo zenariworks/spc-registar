@@ -271,7 +271,26 @@
   margin: 0;
 }
 
-/* Submenu items with add buttons */
+/* Menu groups for hierarchical organization */
+.sidebar-menu-group {
+  margin-bottom: 5px;
+}
+
+.sidebar-menu-group .sidebar-menu-item.sidebar-submenu-item > a:first-child {
+  padding-left: 56px;
+  font-size: 14px;
+  opacity: 0.85;
+}
+
+.sidebar-menu-group .sidebar-menu-item.sidebar-submenu-item > a:first-child:hover {
+  opacity: 1;
+}
+
+.sidebar-menu-group .sidebar-menu-item.sidebar-submenu-item > a:first-child i {
+  font-size: 18px;
+}
+
+/* Submenu items with add buttons (for expandable sections) */
 .sidebar-submenu-item {
   display: flex;
   align-items: stretch;

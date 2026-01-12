@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ slava.naziv }} - Домаћинства{% endblock %}
+
+{% block content %}
+<div class="u-page-header">
+  <a href="{% url 'kalendar' %}" class="back-button" aria-label="Назад на календар" title="Назад на календар">
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+  <h1 class="u-page-title">{{ slava.naziv }}</h1>
+</div>
+
+<div style="background: #f5f5f5; padding: 20px; border-radius: 8px; margin-bottom: 30px;" data-theme-aware>
+  <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px;">
+    <i class="fa-solid fa-calendar-day" style="font-size: 32px; color: #A21514;"></i>
+    <div>
+      <h2 style="margin: 0; color: #333;" data-theme-text>{{ slava.naziv }}</h2>
+      {% if slava.mesec and slava.dan %}
+        <p style="margin: 5px 0 0 0; color: #666; font-size: 16px;" data-theme-text-secondary>
+          {{ slava.dan }}. {{ slava.get_mesec_naziv }}
+        </p>
+      {% elif slava.pokretni %}
+        <p style="margin: 5px 0 0 0; color: #666; font-size: 16px;" data-theme-text-secondary>
+          Покретни празник
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 8px; padding: 12px; background: white; border-radius: 6px; border-left: 4px solid #A21514;" data-theme-card>
+    <i class="fa-solid fa-house" style="color: #A21514;"></i>
+    <strong data-theme-text>Број домаћинстава:</strong>
+    <span style="font-size: 18px; color: #A21514; font-weight: 600;">{{ count }}</span>
+  </div>
+</div>
+
+{% if domacinstva %}
+  <div style="display: flex; flex-direction: column; gap: 15px;">
+    {% for domacinstvo in domacinstva %}
+      <div class="domacinstvo-card" style="background: white; border-radius: 8px; padding: 20px; border: 1px solid #e0e0e0; transition: box-shadow 0.2s;" data-theme-card>
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px;">
+          <div style="flex: 1;">
+            <h3 style="margin: 0 0 8px 0; color: #333;" data-theme-text>
+              <i class="fa-solid fa-user" style="color: #A21514; margin-right: 8px;"></i>
+              {% if domacinstvo.domacin %}
+                <a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}" style="color: #A21514; text-decoration: none;">
+                  {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}
+                </a>
+              {% else %}
+                <span style="color: #999;">Непознат домаћин</span>
+              {% endif %}
+            </h3>
+
+            {% if domacinstvo.adresa %}
+              <div style="color: #666; margin-bottom: 4px;" data-theme-text-secondary>
+                <i class="fa-solid fa-location-dot" style="width: 20px; color: #666;"></i>
+                {% if domacinstvo.adresa.ulica %}
+                  {{ domacinstvo.adresa.ulica.naziv }}
+                  {% if domacinstvo.adresa.broj %}{{ domacinstvo.adresa.broj }}{% endif %}
+                {% else %}
+                  {{ domacinstvo.adresa }}
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px;">
+              {% if domacinstvo.tel_fiksni %}
+                <div style="color: #666;" data-theme-text-secondary>
+                  <i class="fa-solid fa-phone" style="width: 20px;"></i>
+                  {{ domacinstvo.tel_fiksni }}
+                </div>
+              {% endif %}
+              {% if domacinstvo.tel_mobilni %}
+                <div style="color: #666;" data-theme-text-secondary>
+                  <i class="fa-solid fa-mobile-screen" style="width: 20px;"></i>
+                  {{ domacinstvo.tel_mobilni }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}"
+             style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #A21514; color: white; text-decoration: none; border-radius: 6px; font-weight: 500; transition: background 0.2s;"
+             onmouseover="this.style.background='#8B1312'"
+             onmouseout="this.style.background='#A21514'">
+            Детаљи
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        {% if domacinstvo.ukucani.all %}
+          <div style="border-top: 1px solid #e0e0e0; padding-top: 15px; margin-top: 10px;">
+            <div style="color: #666; font-size: 14px; margin-bottom: 10px; font-weight: 500;" data-theme-text-secondary>
+              <i class="fa-solid fa-users" style="margin-right: 6px;"></i>
+              Чланови домаћинства ({{ domacinstvo.ukucani.all.count }})
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+              {% for ukucanin in domacinstvo.ukucani.all %}
+                <div style="display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: {% if ukucanin.preminuo %}#f5f5f5{% else %}#e7f3ff{% endif %}; border-radius: 20px; font-size: 14px; border: 1px solid {% if ukucanin.preminuo %}#d0d0d0{% else %}#b3d9ff{% endif %};" data-theme-aware>
+                  {% if ukucanin.preminuo %}
+                    <span style="color: #666;">†</span>
+                  {% endif %}
+                  {% if ukucanin.osoba %}
+                    <a href="{% url 'parohijan_detail' uid=ukucanin.osoba.uid %}" style="color: {% if ukucanin.preminuo %}#666{% else %}#0066cc{% endif %}; text-decoration: none;">
+                      {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
+                    </a>
+                  {% else %}
+                    <span style="color: #999;">{{ ukucanin.ime_prezime|default:"Непознато" }}</span>
+                  {% endif %}
+                  {% if ukucanin.uloga %}
+                    <span style="background: rgba(162, 21, 20, 0.1); color: #A21514; padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: 500;">
+                      {{ ukucanin.uloga }}
+                    </span>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div style="text-align: center; padding: 60px 20px; background: #f9f9f9; border-radius: 8px; border: 2px dashed #ddd;" data-theme-aware>
+    <i class="fa-solid fa-house-circle-xmark" style="font-size: 64px; color: #ccc; margin-bottom: 20px;"></i>
+    <p style="color: #666; font-size: 18px; margin: 0;" data-theme-text-secondary>
+      Нема домаћинстава која славе {{ slava.naziv }}
+    </p>
+  </div>
+{% endif %}
+
+<style>
+[data-theme="dark"] [data-theme-aware],
+[data-theme="dark"] [data-theme-card] {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+[data-theme="dark"] [data-theme-text] {
+  color: #f1f5f9 !important;
+}
+
+[data-theme="dark"] [data-theme-text-secondary] {
+  color: #94a3b8 !important;
+}
+
+.domacinstvo-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .domacinstvo-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+</style>
+
+{% endblock %}

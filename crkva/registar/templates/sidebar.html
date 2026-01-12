@@ -12,6 +12,7 @@
   <!-- Navigation Menu -->
   <nav class="sidebar-nav" aria-label="Главни мени">
     {% url 'parohijani' as parohijani_url %}
+    {% url 'domacinstva' as domacinstva_url %}
     {% url 'krstenja' as krstenja_url %}
     {% url 'vencanja' as vencanja_url %}
     {% url 'svestenici' as svestenici_url %}
@@ -20,14 +21,23 @@
     {% url 'unos_vencanja' as unos_vencanja_url %}
     {% url 'unos_parohijana' as unos_parohijana_url %}
 
-    <div class="sidebar-menu-item">
-      <a href="{{ parohijani_url }}" class="{% if request.path == parohijani_url %}active{% endif %}" title="Парохијани">
-        <i class="fa-solid fa-users"></i>
-        <span class="sidebar-text">Парохијани</span>
-      </a>
-      <a href="{{ unos_parohijana_url }}" class="sidebar-add-btn {% if request.path == unos_parohijana_url %}active{% endif %}" title="Додај парохијана" aria-label="Додај парохијана">
-        <i class="fa-solid fa-circle-plus"></i>
-      </a>
+    <div class="sidebar-menu-group">
+      <div class="sidebar-menu-item">
+        <a href="{{ parohijani_url }}" class="{% if request.path == parohijani_url %}active{% endif %}" title="Парохијани">
+          <i class="fa-solid fa-users"></i>
+          <span class="sidebar-text">Парохијани</span>
+        </a>
+        <a href="{{ unos_parohijana_url }}" class="sidebar-add-btn {% if request.path == unos_parohijana_url %}active{% endif %}" title="Додај парохијана" aria-label="Додај парохијана">
+          <i class="fa-solid fa-circle-plus"></i>
+        </a>
+      </div>
+
+      <div class="sidebar-menu-item sidebar-submenu-item">
+        <a href="{{ domacinstva_url }}" class="{% if request.path == domacinstva_url %}active{% endif %}" title="Домаћинства">
+          <i class="fa-solid fa-house"></i>
+          <span class="sidebar-text">Домаћинства</span>
+        </a>
+      </div>
     </div>
 
     <div class="sidebar-menu-item">

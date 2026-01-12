@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% load marker_filter %}
+
+{% block content %}
+<div class="u-page-header">
+        <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+<h1 class="u-page-title">Домаћинства ({{ page_obj.paginator.count }})</h1>
+        <form method="get" action="" class="form-container">
+            <div>
+                {% for field in form.visible_fields %}
+                    {{ field }}
+                {% endfor %}
+                <input type="submit" class="hidden-submit">
+            </div>
+        </form>
+    </div>
+
+    <style>
+        .domacinstvo-item {
+            margin-bottom: 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+        }
+        [data-theme="dark"] .domacinstvo-item {
+            background: #2a2a2a;
+            border-color: #444;
+        }
+        .domacinstvo-header {
+            padding: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            transition: background 0.2s;
+        }
+        .domacinstvo-header:hover {
+            background: #f8f9fa;
+        }
+        [data-theme="dark"] .domacinstvo-header:hover {
+            background: #333;
+        }
+        .domacinstvo-toggle {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            background: #e7f3ff;
+            color: #0066cc;
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+        [data-theme="dark"] .domacinstvo-toggle {
+            background: #1a3a52;
+            color: #4da3ff;
+        }
+        .domacinstvo-item.expanded .domacinstvo-toggle {
+            transform: rotate(90deg);
+        }
+        .domacinstvo-members {
+            display: none;
+            padding: 0 15px 15px 15px;
+            border-top: 1px solid #e0e0e0;
+            background: #f8f9fa;
+        }
+        [data-theme="dark"] .domacinstvo-members {
+            background: #1a1a1a;
+            border-top-color: #444;
+        }
+        .domacinstvo-item.expanded .domacinstvo-members {
+            display: block;
+        }
+        .member-item {
+            padding: 10px;
+            border-left: 3px solid #28a745;
+            margin: 10px 0;
+            background: white;
+            border-radius: 4px;
+        }
+        [data-theme="dark"] .member-item {
+            background: #2a2a2a;
+        }
+        .member-item.deceased {
+            border-left-color: #6c757d;
+            opacity: 0.7;
+        }
+        .detail-link {
+            padding: 8px 15px;
+            background: #e7f3ff;
+            color: #0066cc;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+        [data-theme="dark"] .detail-link {
+            background: #1a3a52;
+            color: #4da3ff;
+        }
+        .detail-link:hover {
+            background: #cce5ff;
+        }
+        [data-theme="dark"] .detail-link:hover {
+            background: #2a4a62;
+        }
+    </style>
+
+    <ul class="spisak" style="list-style: none; padding: 0;">
+        {% for domacinstvo in domacinstva %}
+            <li class="domacinstvo-item" data-id="{{ domacinstvo.uid }}">
+                <div class="domacinstvo-header" onclick="toggleDomacinstvo(this)">
+                    <div class="domacinstvo-toggle">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
+                            <div style="font-weight: 500; min-width: 200px;">
+                                <i class="fa-solid fa-house" style="margin-right: 8px; color: #666;"></i>
+                                {{ domacinstvo.domacin.ime|markiraj:upit|safe }} {{ domacinstvo.domacin.prezime|markiraj:upit|safe }}
+                            </div>
+                            {% if domacinstvo.adresa and domacinstvo.adresa.ulica %}
+                            <div style="color: #666; font-size: 0.9em;">
+                                📍 {{ domacinstvo.adresa.ulica.naziv|markiraj:upit|safe }} {{ domacinstvo.adresa.broj }}
+                            </div>
+                            {% endif %}
+                            {% if domacinstvo.tel_mobilni or domacinstvo.tel_fiksni %}
+                            <div style="color: #666; font-size: 0.9em;">
+                                📱 {{ domacinstvo.tel_mobilni|default:domacinstvo.tel_fiksni }}
+                            </div>
+                            {% endif %}
+                            {% if domacinstvo.slava %}
+                            <div style="color: #856404; font-size: 0.9em; background: #fff3cd; padding: 2px 8px; border-radius: 3px;">
+                                {{ domacinstvo.slava }}
+                            </div>
+                            {% endif %}
+                            <div style="color: #666; font-size: 0.9em;">
+                                <i class="fa-solid fa-users" style="margin-right: 4px;"></i>
+                                {{ domacinstvo.ukucani.count }} чл.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="domacinstvo-members">
+                    {% with ukucani=domacinstvo.ukucani.all %}
+                        {% if ukucani %}
+                            <div style="padding-top: 10px;">
+                                <strong style="display: block; margin-bottom: 10px; color: #666;">Чланови домаћинства:</strong>
+                                {% for ukucanin in ukucani %}
+                                    <div class="member-item {% if ukucanin.preminuo %}deceased{% endif %}">
+                                        <div style="font-weight: 500;">
+                                            {% if ukucanin.osoba %}
+                                                <a href="{% url 'parohijan_detail' uid=ukucanin.osoba.uid %}" style="color: #0066cc; text-decoration: none;">
+                                                    {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
+                                                </a>
+                                            {% else %}
+                                                {{ ukucanin.ime_ukucana }}
+                                            {% endif %}
+                                            {% if ukucanin.preminuo %} <span style="color: #6c757d;">†</span>{% endif %}
+                                        </div>
+                                        <div style="color: #666; font-size: 0.85em; margin-top: 4px;">
+                                            <span style="background: #e7f3ff; padding: 2px 6px; border-radius: 3px;">
+                                                {{ ukucanin.get_uloga_display }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <p style="color: #666; margin-top: 10px;">Нема података о члановима.</p>
+                        {% endif %}
+                    {% endwith %}
+                    <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}" class="detail-link">
+                        <i class="fa-solid fa-arrow-right"></i> Детаљни приказ
+                    </a>
+                </div>
+            </li>
+        {% empty %}
+            <li>Нема уписаних домаћинстава у бази.</li>
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1{% if upit %}&search={{ upit }}{% endif %}" class="page-link">&laquo; прва</a>
+                <a href="?page={{ page_obj.previous_page_number }}{% if upit %}&search={{ upit }}{% endif %}" class="page-link">претходна</a>
+            {% endif %}
+
+            <span class="current">
+                страна {{ page_obj.number }} од {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}{% if upit %}&search={{ upit }}{% endif %}" class="page-link">следећа</a>
+                <a href="?page={{ page_obj.paginator.num_pages }}{% if upit %}&search={{ upit }}{% endif %}" class="page-link">последња &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+    <script>
+        function toggleDomacinstvo(header) {
+            const item = header.closest('.domacinstvo-item');
+            item.classList.toggle('expanded');
+        }
+    </script>
+{% endblock %}

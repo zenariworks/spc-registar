@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div>
+<div class="u-page-header">
+        <a href="{% url 'domacinstva' %}" class="back-button" aria-label="Назад" title="Назад на списак">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+<h1 class="u-page-title">Домаћинство</h1>
+    </div>
+
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+        <h2 style="margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+            <i class="fa-solid fa-house" style="color: #666;"></i>
+            Домаћин:
+            <a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}" style="color: #0066cc; text-decoration: none;">
+                {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}
+            </a>
+        </h2>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px;">
+            {% if domacinstvo.adresa %}
+            <div>
+                <strong style="color: #666;">Адреса:</strong><br>
+                📍 {{ domacinstvo.adresa }}
+            </div>
+            {% endif %}
+
+            {% if domacinstvo.tel_fiksni or domacinstvo.tel_mobilni %}
+            <div>
+                <strong style="color: #666;">Телефон:</strong><br>
+                {% if domacinstvo.tel_mobilni %}
+                    📱 {{ domacinstvo.tel_mobilni }}{% if domacinstvo.tel_fiksni %}<br>{% endif %}
+                {% endif %}
+                {% if domacinstvo.tel_fiksni %}
+                    ☎️ {{ domacinstvo.tel_fiksni }}
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if domacinstvo.slava %}
+            <div>
+                <strong style="color: #666;">Слава:</strong><br>
+                <span style="color: #856404; background: #fff3cd; padding: 4px 10px; border-radius: 4px; display: inline-block;">
+                    {{ domacinstvo.slava }}
+                </span>
+            </div>
+            {% endif %}
+
+            <div>
+                <strong style="color: #666;">Водице:</strong><br>
+                {% if domacinstvo.slavska_vodica %}✅ Славска водица<br>{% endif %}
+                {% if domacinstvo.vaskrsnja_vodica %}✅ Васкршња водица{% endif %}
+                {% if not domacinstvo.slavska_vodica and not domacinstvo.vaskrsnja_vodica %}—{% endif %}
+            </div>
+        </div>
+
+        {% if domacinstvo.napomena %}
+        <div style="margin-top: 20px; padding: 15px; background: white; border-left: 4px solid #0066cc; border-radius: 4px;">
+            <strong style="color: #666;">Напомена:</strong><br>
+            {{ domacinstvo.napomena }}
+        </div>
+        {% endif %}
+    </div>
+
+    {% if ukucani_zivi or ukucani_preminuli %}
+    <div style="margin-top: 30px;">
+        <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+            <i class="fa-solid fa-users"></i>
+            Чланови домаћинства
+        </h2>
+
+        {% if ukucani_zivi %}
+        <div style="margin-bottom: 30px;">
+            <h3 style="color: #28a745; margin-bottom: 15px;">
+                <i class="fa-solid fa-circle" style="font-size: 0.5em; vertical-align: middle;"></i>
+                Живи чланови ({{ ukucani_zivi|length }})
+            </h3>
+            <ul class="spisak">
+                {% for ukucanin in ukucani_zivi %}
+                <li class="stavka" style="border-left: 4px solid #28a745;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; margin-bottom: 5px;">
+                            {% if ukucanin.osoba %}
+                                <a href="{% url 'parohijan_detail' uid=ukucanin.osoba.uid %}" style="color: #0066cc; text-decoration: none;">
+                                    {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
+                                </a>
+                            {% else %}
+                                {{ ukucanin.ime_ukucana }}
+                            {% endif %}
+                        </div>
+                        <div style="color: #666; font-size: 0.9em;">
+                            <span style="background: #e7f3ff; padding: 2px 8px; border-radius: 3px;">
+                                {{ ukucanin.get_uloga_display }}
+                            </span>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if ukucani_preminuli %}
+        <div>
+            <h3 style="color: #6c757d; margin-bottom: 15px;">
+                <i class="fa-solid fa-circle" style="font-size: 0.5em; vertical-align: middle;"></i>
+                Преминули чланови ({{ ukucani_preminuli|length }})
+            </h3>
+            <ul class="spisak">
+                {% for ukucanin in ukucani_preminuli %}
+                <li class="stavka" style="border-left: 4px solid #6c757d; opacity: 0.7;">
+                    <div style="flex: 1;">
+                        <div style="font-weight: 500; margin-bottom: 5px; text-decoration: line-through;">
+                            {% if ukucanin.osoba %}
+                                {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
+                            {% else %}
+                                {{ ukucanin.ime_ukucana }}
+                            {% endif %}
+                            †
+                        </div>
+                        <div style="color: #666; font-size: 0.9em;">
+                            <span style="background: #f8f9fa; padding: 2px 8px; border-radius: 3px;">
+                                {{ ukucanin.get_uloga_display }}
+                            </span>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <div style="padding: 20px; background: #f8f9fa; border-radius: 8px; text-align: center; color: #666;">
+        <i class="fa-solid fa-users" style="font-size: 2em; margin-bottom: 10px; opacity: 0.5;"></i>
+        <p>Нема података о члановима домаћинства.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -10,6 +10,7 @@ from registar.models import Parohijan, Slava, Veroispovest
 from registar.utils import get_query_variants
 from registar.utils_fasting import get_fasting_type
 
+from .domacinstvo_view import PrikazDomacinstva, SpisakDomacinsta
 from .kalendar_view import kalendar
 from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja, unos_krstenja
 from .parohijan_view import (
@@ -18,6 +19,7 @@ from .parohijan_view import (
     SpisakParohijana,
     unos_parohijana,
 )
+from .slava_view import slava_domacinstva
 from .svestenik_view import PrikazSvestenika, SpisakSvestenika, SvestenikPDF
 from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF, unos_vencanja
 from .view_404 import custom_404
@@ -191,6 +193,8 @@ __all__ = [
     "unos_vencanja",
     "SpisakParohijana",
     "PrikazParohijana",
+    "SpisakDomacinsta",
+    "PrikazDomacinstva",
     "SpisakKrstenja",
     "PrikazKrstenja",
     "SpisakVencanja",
@@ -201,4 +205,5 @@ __all__ = [
     "ParohijanPDF",
     "KrstenjePDF",
     "SvestenikPDF",
+    "slava_domacinstva",
 ]

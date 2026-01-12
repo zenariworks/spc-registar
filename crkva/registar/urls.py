@@ -14,6 +14,7 @@ urlpatterns = [
         views.kalendar,
         name="kalendar_mesec",
     ),
+    path("slava/<int:uid>/", views.slava_domacinstva, name="slava_detail"),
     path("parohijani/", views.SpisakParohijana.as_view(), name="parohijani"),
     path(
         "parohijan/<int:uid>/",
@@ -24,6 +25,12 @@ urlpatterns = [
         "parohijan/print/<int:uid>/",
         views.ParohijanPDF.as_view(),
         name="parohijan_pdf",
+    ),
+    path("domacinstva/", views.SpisakDomacinsta.as_view(), name="domacinstva"),
+    path(
+        "domacinstvo/<uuid:uid>/",
+        views.PrikazDomacinstva.as_view(),
+        name="domacinstvo_detail",
     ),
     path("krstenja/", views.SpisakKrstenja.as_view(), name="krstenja"),
     path(
