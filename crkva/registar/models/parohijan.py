@@ -1,6 +1,7 @@
 """Модул модела особе у бази података."""
 
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .adresa import Adresa
 from .base import TimestampedModel
@@ -30,11 +31,11 @@ class Osoba(TimestampedModel):
     slava = models.ForeignKey(
         Slava, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="слава"
     )
-    tel_fiksni = models.CharField(
-        max_length=20, verbose_name="фиксни телефон", blank=True, null=True
+    tel_fiksni = PhoneNumberField(
+        region="RS", verbose_name="фиксни телефон", blank=True, null=True
     )
-    tel_mobilni = models.CharField(
-        max_length=20, verbose_name="мобилни телефон", blank=True, null=True
+    tel_mobilni = PhoneNumberField(
+        region="RS", verbose_name="мобилни телефон", blank=True, null=True
     )
     slavska_vodica = models.BooleanField(default=False, verbose_name="славска водица")
     uskrsnja_vodica = models.BooleanField(default=False, verbose_name="ускршња водица")

@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static phone_filters %}
 
 {% block title %}{{ slava.naziv }} - Домаћинства{% endblock %}
 
@@ -66,16 +66,16 @@
 
             <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 8px;">
               {% if domacinstvo.tel_fiksni %}
-                <div style="color: #666;" data-theme-text-secondary>
-                  <i class="fa-solid fa-phone" style="width: 20px;"></i>
-                  {{ domacinstvo.tel_fiksni }}
-                </div>
+                <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" style="color: #0066cc; text-decoration: none;" data-theme-text-secondary>
+                  <i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}" style="width: 20px;"></i>
+                  {{ domacinstvo.tel_fiksni|format_phone }}
+                </a>
               {% endif %}
               {% if domacinstvo.tel_mobilni %}
-                <div style="color: #666;" data-theme-text-secondary>
-                  <i class="fa-solid fa-mobile-screen" style="width: 20px;"></i>
-                  {{ domacinstvo.tel_mobilni }}
-                </div>
+                <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" style="color: #0066cc; text-decoration: none;" data-theme-text-secondary>
+                  <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}" style="width: 20px;"></i>
+                  {{ domacinstvo.tel_mobilni|format_phone }}
+                </a>
               {% endif %}
             </div>
           </div>

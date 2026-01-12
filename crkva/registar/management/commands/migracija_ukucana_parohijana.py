@@ -42,8 +42,13 @@ class Command(MigrationCommand):
         """Очисти презиме од префикса као што су 'р.', 'r.', 'рођена'."""
         if not prezime:
             return prezime
-        prezime = re.sub(r"^р\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
-        prezime = re.sub(r"^r\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
+        # Match only 'р.' or 'р ' (lowercase р followed by period or space)
+        prezime = re.sub(r"^р\.\s*", "", prezime, flags=re.IGNORECASE).strip()
+        prezime = re.sub(r"^р\s+", "", prezime, flags=re.IGNORECASE).strip()
+        # Match 'r.' or 'r ' (Latin r)
+        prezime = re.sub(r"^r\.\s*", "", prezime, flags=re.IGNORECASE).strip()
+        prezime = re.sub(r"^r\s+", "", prezime, flags=re.IGNORECASE).strip()
+        # Match 'рођена ' followed by space
         prezime = re.sub(r"^рођена\s+", "", prezime, flags=re.IGNORECASE).strip()
         return prezime
 

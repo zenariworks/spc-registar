@@ -3,13 +3,12 @@
 import uuid
 
 from django.db import models
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .adresa import Adresa
 from .base import TimestampedModel
 from .parohijan import Osoba
 from .slava import Slava
-
-# from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Domacinstvo(TimestampedModel):
@@ -38,8 +37,12 @@ class Domacinstvo(TimestampedModel):
         verbose_name="слава домаћинства",
     )
 
-    tel_fiksni = models.CharField(max_length=20, blank=True, null=True)
-    tel_mobilni = models.CharField(max_length=20, blank=True, null=True)
+    tel_fiksni = PhoneNumberField(
+        region="RS", blank=True, null=True, verbose_name="фиксни телефон"
+    )
+    tel_mobilni = PhoneNumberField(
+        region="RS", blank=True, null=True, verbose_name="мобилни телефон"
+    )
     slavska_vodica = models.BooleanField(default=False)
     vaskrsnja_vodica = models.BooleanField(default=False)
     napomena = models.TextField(blank=True, null=True)

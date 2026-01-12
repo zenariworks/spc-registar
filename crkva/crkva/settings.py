@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     "django_select2",
     "admin_searchable_dropdown",
     "django_filters",
-    # "phonenumber_field",
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [

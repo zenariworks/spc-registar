@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load marker_filter %}
+{% load marker_filter phone_filters %}
 
 {% block content %}
 <div class="u-page-header">
@@ -132,7 +132,17 @@
                             {% endif %}
                             {% if domacinstvo.tel_mobilni or domacinstvo.tel_fiksni %}
                             <div style="color: #666; font-size: 0.9em;">
-                                📱 {{ domacinstvo.tel_mobilni|default:domacinstvo.tel_fiksni }}
+                                {% if domacinstvo.tel_mobilni %}
+                                <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" style="color: #0066cc; text-decoration: none;">
+                                    <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i>
+                                    {{ domacinstvo.tel_mobilni|format_phone }}
+                                </a>
+                                {% elif domacinstvo.tel_fiksni %}
+                                <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" style="color: #0066cc; text-decoration: none;">
+                                    <i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i>
+                                    {{ domacinstvo.tel_fiksni|format_phone }}
+                                </a>
+                                {% endif %}
                             </div>
                             {% endif %}
                             {% if domacinstvo.slava %}

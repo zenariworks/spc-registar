@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load phone_filters %}
 {% block content %}
 
 <div>
@@ -30,10 +31,16 @@
             <div>
                 <strong style="color: #666;">Телефон:</strong><br>
                 {% if domacinstvo.tel_mobilni %}
-                    📱 {{ domacinstvo.tel_mobilni }}{% if domacinstvo.tel_fiksni %}<br>{% endif %}
+                    <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" style="color: #0066cc; text-decoration: none;">
+                        <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i>
+                        {{ domacinstvo.tel_mobilni|format_phone }}
+                    </a>{% if domacinstvo.tel_fiksni %}<br>{% endif %}
                 {% endif %}
                 {% if domacinstvo.tel_fiksni %}
-                    ☎️ {{ domacinstvo.tel_fiksni }}
+                    <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" style="color: #0066cc; text-decoration: none;">
+                        <i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i>
+                        {{ domacinstvo.tel_fiksni|format_phone }}
+                    </a>
                 {% endif %}
             </div>
             {% endif %}
