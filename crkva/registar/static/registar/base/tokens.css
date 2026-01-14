@@ -23,6 +23,43 @@
     /* Slava badge colors */
     --color-slava-text: #856404;
     --color-slava-bg: #fff3cd;
+    --color-slava-border: #ffc107;
+
+    /* Warning/info colors */
+    --color-warning-text: #856404;
+    --color-warning-bg: #fff3cd;
+    --color-warning-border: #ffc107;
+    --color-info-bg: #f8f9fa;
+    --color-info-border: #dee2e6;
+
+    /* Gray shades */
+    --color-gray-100: #f8f9fa;
+    --color-gray-200: #e9ecef;
+    --color-gray-300: #dee2e6;
+    --color-gray-400: #e0e0e0;
+    --color-gray-500: #999;
+    --color-gray-600: #666;
+    --color-gray-700: #333;
+    --color-gray-800: #f5f5f5;
+    --color-gray-900: #f9f9f9;
+    --color-gray-light: #ccc;
+    --color-gray-border: #ddd;
+    --color-gray-dark: #d0d0d0;
+
+    /* Info/blue shades */
+    --color-info-light: #e7f3ff;
+    --color-info-border-light: #b3d9ff;
+    --color-info-link: #0066cc;
+
+    /* Primary hover state */
+    --color-primary-hover: #8B1312;
+    --color-primary-transparent: rgba(162, 21, 20, 0.1);
+
+    /* Dark theme colors */
+    --color-dark-bg: #1e293b;
+    --color-dark-border: #334155;
+    --color-dark-text: #f1f5f9;
+    --color-dark-text-secondary: #94a3b8;
 
     /* Fasting type colors */
     --fasting-dairy-bg: rgba(251, 191, 36, 0.15);

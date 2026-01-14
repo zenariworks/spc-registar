@@ -6,8 +6,8 @@
 </div>
 
 <div style="padding: 20px; max-width: 800px; margin: 0 auto;">
-    <div style="background-color: var(--color-slava-bg); border: 1px solid #ffc107; border-radius: 4px; padding: 20px; margin-bottom: 20px;">
-        <h2 style="margin-top: 0; color: var(--color-slava-text);">
+    <div style="background-color: var(--color-warning-bg); border: 1px solid var(--color-warning-border); border-radius: 4px; padding: 20px; margin-bottom: 20px;">
+        <h2 style="margin-top: 0; color: var(--color-warning-text);">
             <i class="fa-solid fa-exclamation-triangle" style="margin-right: 10px;"></i>
             Табела {{ table_name }} није креирана
         </h2>
@@ -20,7 +20,7 @@
         </p>
     </div>
 
-    <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 15px;">
+    <div style="background-color: var(--color-info-bg); border: 1px solid var(--color-info-border); border-radius: 4px; padding: 15px;">
         <h3 style="margin-top: 0;">Кораци за решавање:</h3>
         <ol style="line-height: 1.8;">
             <li>Покрените Django миграције: <code>python manage.py migrate</code></li>
@@ -31,10 +31,10 @@
 
     {% if error_detail %}
     <details style="margin-top: 20px;">
-        <summary style="cursor: pointer; padding: 10px; background-color: #e9ecef; border-radius: 4px;">
+        <summary style="cursor: pointer; padding: 10px; background-color: var(--color-gray-200); border-radius: 4px;">
             Технички детаљи
         </summary>
-        <pre style="background-color: #f8f9fa; padding: 15px; border-radius: 4px; overflow-x: auto; margin-top: 10px;">{{ error_detail }}</pre>
+        <pre style="background-color: var(--color-info-bg); padding: 15px; border-radius: 4px; overflow-x: auto; margin-top: 10px;">{{ error_detail }}</pre>
     </details>
     {% endif %}
 
