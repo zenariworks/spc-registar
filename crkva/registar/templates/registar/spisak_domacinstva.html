@@ -37,12 +37,12 @@
                     {% if domacinstvo.tel_mobilni or domacinstvo.tel_fiksni %}
                     <div style="color: var(--color-text-secondary); font-size: 0.9em;">
                         {% if domacinstvo.tel_mobilni %}
-                        <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" style="color: var(--color-primary); text-decoration: none;">
+                        <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" class="u-link-primary">
                             <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i>
                             {{ domacinstvo.tel_mobilni|format_phone }}
                         </a>
                         {% elif domacinstvo.tel_fiksni %}
-                        <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" style="color: var(--color-primary); text-decoration: none;">
+                        <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" class="u-link-primary">
                             <i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i>
                             {{ domacinstvo.tel_fiksni|format_phone }}
                         </a>
@@ -50,7 +50,7 @@
                     </div>
                     {% endif %}
                     {% if domacinstvo.slava %}
-                    <div style="color: var(--color-slava-text); font-size: 0.9em; background: var(--color-slava-bg); padding: 2px 8px; border-radius: 3px;">
+                    <div class="u-badge u-badge--slava">
                         {{ domacinstvo.slava }}
                     </div>
                     {% endif %}

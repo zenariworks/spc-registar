@@ -37,12 +37,12 @@
                     {% if parohijan.tel_mobilni or parohijan.tel_fiksni %}
                     <span style="color: var(--color-text-secondary); font-size: 0.9em;">
                         {% if parohijan.tel_mobilni %}
-                        <a href="tel:{{ parohijan.tel_mobilni|tel_link }}" style="color: var(--color-primary); text-decoration: none;" onclick="event.stopPropagation();">
+                        <a href="tel:{{ parohijan.tel_mobilni|tel_link }}" class="u-link-primary" onclick="event.stopPropagation();">
                             <i class="fa-solid {{ parohijan.tel_mobilni|phone_icon }}"></i>
                             {{ parohijan.tel_mobilni|format_phone }}
                         </a>
                         {% elif parohijan.tel_fiksni %}
-                        <a href="tel:{{ parohijan.tel_fiksni|tel_link }}" style="color: var(--color-primary); text-decoration: none;" onclick="event.stopPropagation();">
+                        <a href="tel:{{ parohijan.tel_fiksni|tel_link }}" class="u-link-primary" onclick="event.stopPropagation();">
                             <i class="fa-solid {{ parohijan.tel_fiksni|phone_icon }}"></i>
                             {{ parohijan.tel_fiksni|format_phone }}
                         </a>
@@ -50,12 +50,12 @@
                     </span>
                     {% endif %}
                     {% if parohijan.slava %}
-                    <span style="color: var(--color-slava-text); font-size: 0.9em; background: var(--color-slava-bg); padding: 2px 8px; border-radius: 3px;">
+                    <span class="u-badge u-badge--slava">
                         {{ parohijan.slava }}
                     </span>
                     {% endif %}
                 </a>
-                <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
+                <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" class="u-link-primary" style="margin-left: 10px;">
                     <button class="button button--primary" type="button">Штампај</button>
                 </a>
             </li>

@@ -13,7 +13,7 @@
     <h2 style="margin-top: 0; margin-bottom: var(--space-4); display: flex; align-items: center; gap: 10px;">
         <i class="fa-solid fa-house" style="color: var(--color-text-muted);"></i>
         Домаћин:
-        <a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}" style="color: var(--color-primary); text-decoration: none;">
+        <a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}" class="u-link-primary">
             {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}
         </a>
     </h2>
@@ -30,13 +30,13 @@
         <div>
             <strong style="color: var(--color-text-muted);">Телефон:</strong><br>
             {% if domacinstvo.tel_mobilni %}
-                <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" style="color: var(--color-primary); text-decoration: none;">
+                <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" class="u-link-primary">
                     <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i>
                     {{ domacinstvo.tel_mobilni|format_phone }}
                 </a>{% if domacinstvo.tel_fiksni %}<br>{% endif %}
             {% endif %}
             {% if domacinstvo.tel_fiksni %}
-                <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" style="color: var(--color-primary); text-decoration: none;">
+                <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" class="u-link-primary">
                     <i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i>
                     {{ domacinstvo.tel_fiksni|format_phone }}
                 </a>
@@ -47,7 +47,7 @@
         {% if domacinstvo.slava %}
         <div>
             <strong style="color: var(--color-text-muted);">Слава:</strong><br>
-            <span style="color: var(--color-slava-text); background: var(--color-slava-bg); padding: 4px 10px; border-radius: 4px; display: inline-block;">
+            <span class="u-badge u-badge--slava" style="display: inline-block;">
                 {{ domacinstvo.slava }}
             </span>
         </div>
@@ -88,15 +88,15 @@
                 <div style="flex: 1;">
                     <div style="font-weight: 500; margin-bottom: 5px;">
                         {% if ukucanin.osoba %}
-                            <a href="{% url 'parohijan_detail' uid=ukucanin.osoba.uid %}" style="color: var(--color-primary); text-decoration: none;">
+                            <a href="{% url 'parohijan_detail' uid=ukucanin.osoba.uid %}" class="u-link-primary">
                                 {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
                             </a>
                         {% else %}
                             {{ ukucanin.ime_ukucana }}
                         {% endif %}
                     </div>
-                    <div style="color: var(--color-text-muted); font-size: 0.9em;">
-                        <span style="background: var(--color-primary-50); padding: 2px 8px; border-radius: 3px;">
+                    <div class="u-text-muted u-text-small">
+                        <span class="u-badge u-badge--role">
                             {{ ukucanin.get_uloga_display }}
                         </span>
                     </div>

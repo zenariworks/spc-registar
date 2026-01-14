@@ -52,6 +52,109 @@
 .u-p-3  { padding: var(--space-3); }
 .u-p-4  { padding: var(--space-4); }
 
+/* Link utilities */
+.u-link-primary {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.u-link-primary:hover {
+  text-decoration: underline;
+}
+
+/* Text utilities */
+.u-text-muted {
+  color: var(--color-text-muted);
+}
+
+.u-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.u-text-small {
+  font-size: 0.9em;
+}
+
+.u-font-medium {
+  font-weight: 500;
+}
+
+.u-font-semibold {
+  font-weight: 600;
+}
+
+/* Badge utilities */
+.u-badge {
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.u-badge--slava {
+  color: var(--color-slava-text);
+  background: var(--color-slava-bg);
+}
+
+.u-badge--role {
+  background: var(--color-primary-50);
+}
+
+/* Flexbox utilities */
+.u-flex {
+  display: flex;
+}
+
+.u-flex-center {
+  display: flex;
+  align-items: center;
+}
+
+.u-flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.u-gap-2 {
+  gap: var(--space-2);
+}
+
+.u-gap-3 {
+  gap: var(--space-3);
+}
+
+.u-gap-4 {
+  gap: var(--space-4);
+}
+
+/* Key-value list utilities */
+.u-kv-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.u-kv-item {
+  display: flex;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.u-kv-item:last-child {
+  border-bottom: none;
+}
+
+.u-kv-label {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  min-width: 180px;
+  flex-shrink: 0;
+}
+
+.u-kv-value {
+  flex: 1;
+}
+
 @media (max-width: 640px) {
   .u-container { padding: 0 var(--space-3); }
   .u-page-header { gap: var(--space-3); }
