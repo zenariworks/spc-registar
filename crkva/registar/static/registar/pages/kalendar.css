@@ -618,3 +618,23 @@
 [data-theme="dark"] .calendar-cell.today .slavas div {
   color: #fef3c7 !important;
 }
+
+/* Slava links */
+.slava-link {
+    display: block;
+    color: var(--color-primary);
+    text-decoration: none;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.slava-link:hover {
+    background-color: var(--color-primary-50);
+    color: var(--color-primary-700);
+    text-decoration: underline;
+}
+
+[data-theme="dark"] .slava-link:hover {
+    background-color: rgba(162, 21, 20, 0.2);
+}
