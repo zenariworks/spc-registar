@@ -17,6 +17,13 @@
     --color-surface-1: #f1f5f9;
     --color-border: #e2e8f0;
 
+    /* Success color for living members */
+    --color-success: #28a745;
+
+    /* Slava badge colors */
+    --color-slava-text: #856404;
+    --color-slava-bg: #fff3cd;
+
     /* Fasting type colors */
     --fasting-dairy-bg: rgba(251, 191, 36, 0.15);
     --fasting-fish-bg: rgba(20, 184, 166, 0.2);
