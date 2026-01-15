@@ -6,23 +6,23 @@
         <i class="fa-solid fa-arrow-left"></i>
     </a>
     <h1 class="u-page-title">Свештеник</h1>
-    <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank" style="text-decoration: none;">
+    <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank">
         <button class="button button--primary" type="button" title="Штампај">
-            <i class="fa-solid fa-print" style="margin-right: 6px;"></i> Штампај
+            <i class="fa-solid fa-print"></i> Штампај
         </button>
     </a>
 </div>
 
-<h2 style="margin-top: var(--space-4); margin-bottom: var(--space-4);">{{ svestenik.ime }}</h2>
+<h2 class="u-mt-4 u-mb-4">{{ svestenik.ime }}</h2>
 
 <div class="card">
-    <ul class="spisak" style="gap: 0;">
-        <li style="display: flex; padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border);">
-            <span style="color: var(--color-text-muted); font-weight: 600; min-width: 180px; flex-shrink: 0;">Звање:</span>
+    <ul class="u-kv-list">
+        <li class="u-kv-item">
+            <span class="u-kv-label">Звање:</span>
             <span>{{ svestenik.zvanje }}</span>
         </li>
-        <li style="display: flex; padding: var(--space-3) 0;">
-            <span style="color: var(--color-text-muted); font-weight: 600; min-width: 180px; flex-shrink: 0;">Парохија:</span>
+        <li class="u-kv-item">
+            <span class="u-kv-label">Парохија:</span>
             <span>{{ svestenik.parohija }}</span>
         </li>
     </ul>

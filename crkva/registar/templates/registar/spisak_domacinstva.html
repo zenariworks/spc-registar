@@ -25,17 +25,17 @@
                     <i class="fa-solid fa-chevron-right"></i>
                 </div>
                 <div class="stavka__content">
-                    <div style="font-weight: 500; min-width: 200px;">
-                        <i class="fa-solid fa-house" style="margin-right: 8px; color: var(--color-text-secondary);"></i>
+                    <div class="u-font-medium" style="min-width: 200px;">
+                        <i class="fa-solid fa-house u-icon-muted" style="margin-right: 8px;"></i>
                         {{ domacinstvo.domacin.ime|markiraj:upit|safe }} {{ domacinstvo.domacin.prezime|markiraj:upit|safe }}
                     </div>
                     {% if domacinstvo.adresa and domacinstvo.adresa.ulica %}
-                    <div style="color: var(--color-text-secondary); font-size: 0.9em;">
+                    <div class="u-text-muted u-text-small">
                         📍 {{ domacinstvo.adresa.ulica.naziv|markiraj:upit|safe }} {{ domacinstvo.adresa.broj }}
                     </div>
                     {% endif %}
                     {% if domacinstvo.tel_mobilni or domacinstvo.tel_fiksni %}
-                    <div style="color: var(--color-text-secondary); font-size: 0.9em;">
+                    <div class="u-text-muted u-text-small">
                         {% if domacinstvo.tel_mobilni %}
                         <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" class="u-link-primary">
                             <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i>
@@ -54,7 +54,7 @@
                         {{ domacinstvo.slava }}
                     </div>
                     {% endif %}
-                    <div style="color: var(--color-text-secondary); font-size: 0.9em;">
+                    <div class="u-text-muted u-text-small">
                         <i class="fa-solid fa-users" style="margin-right: 4px;"></i>
                         {{ domacinstvo.ukucani.count }} чл.
                     </div>
@@ -63,8 +63,8 @@
             <div class="stavka__expandable-section">
                 {% with ukucani=domacinstvo.ukucani.all %}
                     {% if ukucani %}
-                        <div style="padding-top: 10px;">
-                            <strong style="display: block; margin-bottom: 10px; color: var(--color-text-secondary);">Чланови домаћинства:</strong>
+                        <div class="u-mt-3">
+                            <strong class="u-label u-mb-3" style="display: block;">Чланови домаћинства:</strong>
                             {% for ukucanin in ukucani %}
                                 <div class="stavka__member {% if ukucanin.preminuo %}stavka__member--deceased{% endif %}">
                                     <div class="stavka__member-name">
@@ -75,7 +75,7 @@
                                         {% else %}
                                             {{ ukucanin.ime_ukucana }}
                                         {% endif %}
-                                        {% if ukucanin.preminuo %} <span style="color: var(--color-text-muted);">†</span>{% endif %}
+                                        {% if ukucanin.preminuo %} <span class="u-text-muted">†</span>{% endif %}
                                     </div>
                                     <div class="stavka__member-role">
                                         <span class="stavka__member-role-badge">
@@ -86,10 +86,10 @@
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p style="color: var(--color-text-secondary); margin-top: 10px;">Нема података о члановима.</p>
+                        <p class="u-text-muted u-mt-3">Нема података о члановима.</p>
                     {% endif %}
                 {% endwith %}
-                <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}" class="button button--primary" style="margin-top: 10px;">
+                <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}" class="button button--primary u-mt-3">
                     <i class="fa-solid fa-arrow-right"></i> Детаљни приказ
                 </a>
             </div>
