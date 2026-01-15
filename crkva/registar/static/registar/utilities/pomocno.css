@@ -155,6 +155,88 @@
   flex: 1;
 }
 
+/* Grid utilities */
+.u-grid {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.u-grid--auto {
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* Margin utilities */
+.u-mt-0 { margin-top: 0; }
+.u-mt-5 { margin-top: var(--space-5); }
+.u-mt-6 { margin-top: var(--space-6); }
+.u-mb-0 { margin-bottom: 0; }
+.u-mb-5 { margin-bottom: var(--space-5); }
+.u-mb-6 { margin-bottom: var(--space-6); }
+
+/* Text alignment */
+.u-text-center { text-align: center; }
+
+/* Display utilities */
+.u-inline-block { display: inline-block; }
+
+/* Border utilities */
+.u-border-left-success {
+  border-left: 4px solid var(--color-success);
+}
+
+.u-border-left-muted {
+  border-left: 4px solid var(--color-text-muted);
+}
+
+.u-border-left-primary {
+  border-left: 4px solid var(--color-primary);
+}
+
+/* Note/highlight block */
+.u-note {
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 4px;
+}
+
+/* Icon color helpers */
+.u-icon-muted {
+  color: var(--color-text-muted);
+}
+
+.u-icon-success {
+  color: var(--color-success);
+}
+
+/* Opacity */
+.u-opacity-70 { opacity: 0.7; }
+.u-opacity-50 { opacity: 0.5; }
+
+/* Text decoration */
+.u-text-strikethrough { text-decoration: line-through; }
+
+/* Section title with icon */
+.u-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: var(--space-4);
+}
+
+.u-section-title--success {
+  color: var(--color-success);
+}
+
+/* Label styling for forms and info cards */
+.u-label {
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+/* Flex item grow */
+.u-flex-1 { flex: 1; }
+
 @media (max-width: 640px) {
   .u-container { padding: 0 var(--space-3); }
   .u-page-header { gap: var(--space-3); }

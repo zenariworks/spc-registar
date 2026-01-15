@@ -57,9 +57,26 @@
 
     /* Dark theme colors */
     --color-dark-bg: #1e293b;
+    --color-dark-bg-deep: #0f172a;
     --color-dark-border: #334155;
     --color-dark-text: #f1f5f9;
     --color-dark-text-secondary: #94a3b8;
+
+    /* Golden/amber colors for today highlighting */
+    --color-amber-500: #f59e0b;
+    --color-amber-400: #fbbf24;
+    --color-amber-300: #fcd34d;
+    --color-amber-200: #fde68a;
+    --color-amber-100: #fef3c7;
+    --color-amber-900: #78350f;
+    --color-amber-800: #92400e;
+
+    /* Secondary brand color */
+    --color-secondary: #C92F2E;
+
+    /* Utility colors */
+    --color-black-alpha-90: rgba(0, 0, 0, 0.9);
+    --color-white-alpha-20: rgba(255, 255, 255, 0.2);
 
     /* Fasting type colors */
     --fasting-dairy-bg: rgba(251, 191, 36, 0.15);

@@ -9,26 +9,26 @@
     <h1 class="u-page-title">Домаћинство</h1>
 </div>
 
-<div class="card" style="margin-bottom: var(--space-6);">
-    <h2 style="margin-top: 0; margin-bottom: var(--space-4); display: flex; align-items: center; gap: 10px;">
-        <i class="fa-solid fa-house" style="color: var(--color-text-muted);"></i>
+<div class="card u-mb-6">
+    <h2 class="u-mt-0 u-mb-4 u-flex-center u-gap-3">
+        <i class="fa-solid fa-house u-icon-muted"></i>
         Домаћин:
         <a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}" class="u-link-primary">
             {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}
         </a>
     </h2>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--space-4); margin-top: var(--space-5);">
+    <div class="u-grid u-grid--auto u-mt-5">
         {% if domacinstvo.adresa %}
         <div>
-            <strong style="color: var(--color-text-muted);">Адреса:</strong><br>
+            <strong class="u-label">Адреса:</strong><br>
             📍 {{ domacinstvo.adresa }}
         </div>
         {% endif %}
 
         {% if domacinstvo.tel_fiksni or domacinstvo.tel_mobilni %}
         <div>
-            <strong style="color: var(--color-text-muted);">Телефон:</strong><br>
+            <strong class="u-label">Телефон:</strong><br>
             {% if domacinstvo.tel_mobilni %}
                 <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" class="u-link-primary">
                     <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i>
@@ -46,15 +46,15 @@
 
         {% if domacinstvo.slava %}
         <div>
-            <strong style="color: var(--color-text-muted);">Слава:</strong><br>
-            <span class="u-badge u-badge--slava" style="display: inline-block;">
+            <strong class="u-label">Слава:</strong><br>
+            <span class="u-badge u-badge--slava u-inline-block">
                 {{ domacinstvo.slava }}
             </span>
         </div>
         {% endif %}
 
         <div>
-            <strong style="color: var(--color-text-muted);">Водице:</strong><br>
+            <strong class="u-label">Водице:</strong><br>
             {% if domacinstvo.slavska_vodica %}✅ Славска водица<br>{% endif %}
             {% if domacinstvo.vaskrsnja_vodica %}✅ Васкршња водица{% endif %}
             {% if not domacinstvo.slavska_vodica and not domacinstvo.vaskrsnja_vodica %}—{% endif %}
@@ -62,31 +62,31 @@
     </div>
 
     {% if domacinstvo.napomena %}
-    <div style="margin-top: var(--space-5); padding: var(--space-4); background: var(--color-surface); border-left: 4px solid var(--color-primary); border-radius: 4px;">
-        <strong style="color: var(--color-text-muted);">Напомена:</strong><br>
+    <div class="u-note u-mt-5">
+        <strong class="u-label">Напомена:</strong><br>
         {{ domacinstvo.napomena }}
     </div>
     {% endif %}
 </div>
 
 {% if ukucani_zivi or ukucani_preminuli %}
-<div style="margin-top: var(--space-6);">
-    <h2 style="display: flex; align-items: center; gap: 10px; margin-bottom: var(--space-5);">
+<div class="u-mt-6">
+    <h2 class="u-section-title u-mb-5">
         <i class="fa-solid fa-users"></i>
         Чланови домаћинства
     </h2>
 
     {% if ukucani_zivi %}
-    <div style="margin-bottom: var(--space-6);">
-        <h3 style="color: var(--color-success); margin-bottom: var(--space-4);">
-            <i class="fa-solid fa-circle" style="font-size: 0.5em; vertical-align: middle;"></i>
+    <div class="u-mb-6">
+        <h3 class="u-section-title u-section-title--success">
+            <i class="fa-solid fa-circle u-text-small"></i>
             Живи чланови ({{ ukucani_zivi|length }})
         </h3>
         <ul class="spisak">
             {% for ukucanin in ukucani_zivi %}
-            <li class="stavka" style="border-left: 4px solid var(--color-success);">
-                <div style="flex: 1;">
-                    <div style="font-weight: 500; margin-bottom: 5px;">
+            <li class="stavka u-border-left-success">
+                <div class="u-flex-1">
+                    <div class="u-font-medium u-mb-2">
                         {% if ukucanin.osoba %}
                             <a href="{% url 'parohijan_detail' uid=ukucanin.osoba.uid %}" class="u-link-primary">
                                 {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
@@ -109,15 +109,15 @@
 
     {% if ukucani_preminuli %}
     <div>
-        <h3 style="color: var(--color-text-muted); margin-bottom: var(--space-4);">
-            <i class="fa-solid fa-circle" style="font-size: 0.5em; vertical-align: middle;"></i>
+        <h3 class="u-section-title u-text-muted">
+            <i class="fa-solid fa-circle u-text-small"></i>
             Преминули чланови ({{ ukucani_preminuli|length }})
         </h3>
         <ul class="spisak">
             {% for ukucanin in ukucani_preminuli %}
-            <li class="stavka" style="border-left: 4px solid var(--color-text-muted); opacity: 0.7;">
-                <div style="flex: 1;">
-                    <div style="font-weight: 500; margin-bottom: 5px; text-decoration: line-through;">
+            <li class="stavka u-border-left-muted u-opacity-70">
+                <div class="u-flex-1">
+                    <div class="u-font-medium u-mb-2 u-text-strikethrough">
                         {% if ukucanin.osoba %}
                             {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
                         {% else %}
@@ -125,8 +125,8 @@
                         {% endif %}
                         †
                     </div>
-                    <div style="color: var(--color-text-muted); font-size: 0.9em;">
-                        <span style="background: var(--color-surface-2); padding: 2px 8px; border-radius: 3px;">
+                    <div class="u-text-muted u-text-small">
+                        <span class="u-badge u-badge--role">
                             {{ ukucanin.get_uloga_display }}
                         </span>
                     </div>
@@ -138,8 +138,8 @@
     {% endif %}
 </div>
 {% else %}
-<div class="card" style="padding: var(--space-6); text-align: center; color: var(--color-text-muted);">
-    <i class="fa-solid fa-users" style="font-size: 2em; margin-bottom: 10px; opacity: 0.5;"></i>
+<div class="card u-p-4 u-text-center u-text-muted">
+    <i class="fa-solid fa-users u-opacity-50" style="font-size: 2em; margin-bottom: 10px;"></i>
     <p>Нема података о члановима домаћинства.</p>
 </div>
 {% endif %}

@@ -190,8 +190,8 @@
 
 /* Today - golden border only, background preserved */
 .calendar-cell.today {
-  border: 3px solid #f59e0b;
-  box-shadow: 0 0 0 1px #fbbf24, 0 2px 8px rgba(245, 158, 11, 0.3);
+  border: 3px solid var(--color-amber-500);
+  box-shadow: 0 0 0 1px var(--color-amber-400), 0 2px 8px rgba(245, 158, 11, 0.3);
 }
 
 
@@ -257,14 +257,14 @@
 
 @media (hover: hover) and (pointer: fine) {
   .slava-link:hover {
-    background: rgba(162, 21, 20, 0.1);
+    background: var(--color-primary-transparent);
     transform: translateX(2px);
   }
 }
 
 @media (hover: none) and (pointer: coarse) {
   .slava-link:active {
-    background: rgba(162, 21, 20, 0.15);
+    background: var(--color-primary-transparent);
     transform: scale(0.98);
   }
 }
@@ -276,17 +276,17 @@
 
 @media (hover: hover) and (pointer: fine) {
   .calendar-cell.crveno-slovo .slava-link:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: var(--color-white-alpha-20);
   }
 }
 
 /* Dark theme slava link styles */
 [data-theme="dark"] .slava-link:hover {
-  background: rgba(162, 21, 20, 0.25);
+  background: var(--color-primary-transparent);
 }
 
 [data-theme="dark"] .calendar-cell.today .slava-link:hover {
-  background: rgba(253, 230, 138, 0.2);
+  background: var(--color-white-alpha-20);
 }
 
 .calendar-cell .no-slavas-text {
@@ -499,8 +499,8 @@
   right: 0;
   margin-top: 8px;
   padding: 8px 12px;
-  background: rgba(0, 0, 0, 0.9);
-  color: #fff;
+  background: var(--color-black-alpha-90);
+  color: var(--color-surface);
   border-radius: 6px;
   font-size: 0.85rem;
   white-space: nowrap;
@@ -520,7 +520,7 @@
   bottom: 100%;
   right: 10px;
   border: 6px solid transparent;
-  border-bottom-color: rgba(0, 0, 0, 0.9);
+  border-bottom-color: var(--color-black-alpha-90);
 }
 
 /* Црвено слово (red letter days) - dark red like water fasting */
@@ -598,43 +598,23 @@
 
 /* Today in dark mode - golden glow */
 [data-theme="dark"] .calendar-cell.today {
-  background: linear-gradient(135deg, #78350f 0%, #92400e 100%);
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 1px #f59e0b, 0 2px 12px rgba(245, 158, 11, 0.3);
-  color: #fbbf24;
+  background: linear-gradient(135deg, var(--color-amber-900) 0%, var(--color-amber-800) 100%);
+  border-color: var(--color-amber-500);
+  box-shadow: 0 0 0 1px var(--color-amber-500), 0 2px 12px rgba(245, 158, 11, 0.3);
+  color: var(--color-amber-400);
 }
 
 [data-theme="dark"] .calendar-cell.today .date {
-  color: #fde68a;
+  color: var(--color-amber-200);
   font-weight: 800;
 }
 
 [data-theme="dark"] .calendar-cell.today .weekday {
-  color: #fcd34d;
+  color: var(--color-amber-300);
   font-weight: 600;
 }
 
 [data-theme="dark"] .calendar-cell.today .slavas,
 [data-theme="dark"] .calendar-cell.today .slavas div {
-  color: #fef3c7 !important;
-}
-
-/* Slava links */
-.slava-link {
-    display: block;
-    color: var(--color-primary);
-    text-decoration: none;
-    padding: 4px 6px;
-    border-radius: 4px;
-    transition: background-color 0.2s, color 0.2s;
-}
-
-.slava-link:hover {
-    background-color: var(--color-primary-50);
-    color: var(--color-primary-700);
-    text-decoration: underline;
-}
-
-[data-theme="dark"] .slava-link:hover {
-    background-color: rgba(162, 21, 20, 0.2);
+  color: var(--color-amber-100) !important;
 }
