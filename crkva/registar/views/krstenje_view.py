@@ -93,3 +93,8 @@ class PrikazKrstenja(DetailView):
         """Враћа објекат крштења на основу UID-а."""
         uid = self.kwargs.get("uid")
         return get_object_or_404(Krstenje, uid=uid)
+
+
+def calibrate_krstenje(request):
+    """Калибрациона страница за подешавање позиција поља на крштеници."""
+    return render(request, "registar/calibrate_krstenje.html")

@@ -1,196 +1,377 @@
-/* Крштеница */
+/* Крштеница - Calibrated Absolute Positioning */
 
-/* CSS Variables for easy positioning adjustments */
+/* ==========================================================================
+   CSS VARIABLES - Calibrated from drag-n-drop tool
+   ========================================================================== */
 :root {
-    /* Vertical positions (percentage from top) - fine-tuned based on background image */
-    --krst-knjiga-top: 6%;     /* Knjiga/Strana/Broj section */
-    --krst-eparhija-top: 16%;  /* БЕОГРАДСКО - КАРЛОВАЧКЕ line */
-    --krst-hram-top: 19.5%;    /* Hram/mesto/godina line */
-    --krst-field1-top: 27.5%;  /* 1. Godina, mesec, dan i vreme rodjenja */
-    --krst-field2-top: 30.5%;  /* 2. Mesto i opstina rodjenja */
-    --krst-field3-top: 35%;    /* 3. Godina, mesec, dan i vreme krstenja */
-    --krst-field4-top: 40%;    /* 4. Mesto i hram krstenja */
-    --krst-field5-top: 43.5%;  /* 5. Ime i pol deteta */
-    --krst-field6-top: 45.5%;  /* 6. Roditelji (multi-line field) */
-    --krst-field7-top: 56.5%;  /* 7. Koje je dete po redjenju materi */
-    --krst-field8-top: 59.5%;  /* 8. Je li dete crkveno bracno */
-    --krst-field9-top: 62.5%;  /* 9. Je li dete blizanac */
-    --krst-field10-top: 65.5%; /* 10. Je li dete rodjeno sa telesnim nedostatkom */
-    --krst-field11-top: 69%;   /* 11. Ime i prezime svestenika */
-    --krst-field12-top: 73%;   /* 12. Ime i prezime kuma */
-    --krst-field13-top: 78%;   /* 13. Strana domovnika - anagrafa */
-    --krst-field14-top: 81.5%; /* 14. PRIMEDBA */
-    --krst-bottom-top: 89%;    /* Bottom section (datum/mesto/parok) */
+    /* Main container dimensions (A4 paper) */
+    --krst-page-width: 210mm;
+    --krst-page-height: 297mm;
 
-    /* Horizontal positions */
-    --krst-left-label: 5%;
-    --krst-left-value: 47%;    /* Left side of value fields (fields 1-6, 11-14) */
-    --krst-right-value: 56%;   /* Right side values (fields 7-10) */
+    /* Header fields - Књига/Страна/Број */
+    --krst-knjiga-top: 18.2mm;
+    --krst-knjiga-left: 36.2mm;
+    --krst-strana-top: 26.8mm;
+    --krst-strana-left: 36.2mm;
+    --krst-broj-top: 34.4mm;
+    --krst-broj-left: 36.2mm;
+
+    /* Header fields - Епархија / Храм / Место / Година */
+    --krst-eparhija-top: 59.5mm;
+    --krst-eparhija-left: 31.3mm;
+    --krst-hram-top: 68.0mm;
+    --krst-hram-left: 31.6mm;
+    --krst-mesto-top: 67.8mm;
+    --krst-mesto-left: 122.4mm;
+    --krst-godina-top: 67.5mm;
+    --krst-godina-left: 186.4mm;
+
+    /* Table fields 1-6 (left column) */
+    --krst-field1-top: 78.0mm;
+    --krst-field1-left: 88.7mm;
+    --krst-field2-top: 88.1mm;
+    --krst-field2-left: 88.7mm;
+    --krst-field3-top: 98.4mm;
+    --krst-field3-left: 88.4mm;
+    --krst-field4-top: 108.4mm;
+    --krst-field4-left: 88.2mm;
+    --krst-field5-top: 120.0mm;
+    --krst-field5-left: 87.9mm;
+    --krst-field6-top: 131.0mm;
+    --krst-field6-left: 87.6mm;
+
+    /* Table fields 7-10 (right column answers) */
+    --krst-field7-top: 156.9mm;
+    --krst-field7-left: 95.2mm;
+    --krst-field8-top: 167.5mm;
+    --krst-field8-left: 95.2mm;
+    --krst-field9-top: 177.3mm;
+    --krst-field9-left: 95.2mm;
+    --krst-field10-top: 187.9mm;
+    --krst-field10-left: 95.2mm;
+
+    /* Table fields 11-14 (left column continued) */
+    --krst-field11-top: 197.9mm;
+    --krst-field11-left: 95.0mm;
+    --krst-field12-top: 210.4mm;
+    --krst-field12-left: 95.0mm;
+    --krst-field13-top: 224.1mm;
+    --krst-field13-left: 95.2mm;
+    --krst-field14-top: 234.6mm;
+    --krst-field14-left: 95.2mm;
+
+    /* Footer fields */
+    --krst-footer_br-top: 256.9mm;
+    --krst-footer_br-left: 18.5mm;
+    --krst-footer_godina-top: 263.7mm;
+    --krst-footer_godina-left: 40.9mm;
+    --krst-footer_u-top: 270.5mm;
+    --krst-footer_u-left: 16.3mm;
+    --krst-footer_paroh-top: 270.3mm;
+    --krst-footer_paroh-left: 141.6mm;
+    --krst-footer_parohija-top: 263.4mm;
+    --krst-footer_parohija-left: 141.6mm;
 }
 
+/* ==========================================================================
+   MAIN CONTAINER
+   ========================================================================== */
 .krstenica {
-    border: 1px solid #ccc;
-    margin: 2mm;
-    margin-top: 6mm;
-    margin-left: 6mm;
-    height: 297mm;
-    width: 210mm;
-    padding: 0mm;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 2px solid red;
-    background-size: cover;
-    background-image: url("../slike/krstenica-nova.jpg");
-    font-family: 'Miroslavljeva Cirilica', serif;
+    width: var(--krst-page-width);
+    height: var(--krst-page-height);
+    margin: 6mm auto;
+    padding: 0;
     position: relative;
+    background-image: url("../slike/krstenica-nova.jpg");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    font-family: 'Miroslav', serif;
     color: #111;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
 }
 
 .krstenica-frame {
-    margin: 2mm;
-    margin-top: 6mm;
-    margin-left: 6mm;
-    height: 286mm;
-    width: 200mm;
-    padding: 0mm;
-    position: relative;
-}
-
-.krstenica-row {
-    display: flex;
-    font-family: 'Miroslavljeva Cirilica', serif;
-}
-
-/* Absolute positioning for dynamic layout */
-.krst-absolute-field {
     position: absolute;
-    left: var(--krst-left-value);
-    right: 5%;
-    font-family: 'Miroslavljeva Cirilica', serif;
-    color: #111;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
-
-.krst-absolute-right {
-    position: absolute;
-    left: var(--krst-right-value);
-    right: 5%;
-    color: #111;
-}
-
-/* Utility classes for form fields */
-.krst-ls { letter-spacing: 1px; }
-.krst-text-sm { font-size: 12pt; }
-.krst-text-md { font-size: 14pt; }
-.krst-lh { line-height: 1.3; }
 
 /* ==========================================================================
-   POSITION CLASSES FOR FIELDS
+   HEADER FIELDS
    ========================================================================== */
 
-/* Individual field positions */
-.krst-field1 { top: var(--krst-field1-top); }
-.krst-field2 { top: var(--krst-field2-top); }
-.krst-field3 { top: var(--krst-field3-top); }
-.krst-field4 { top: var(--krst-field4-top); }
-.krst-field5 { top: var(--krst-field5-top); }
-.krst-field6 { top: var(--krst-field6-top); }
-.krst-field7 { top: var(--krst-field7-top); }
-.krst-field8 { top: var(--krst-field8-top); }
-.krst-field9 { top: var(--krst-field9-top); }
-.krst-field10 { top: var(--krst-field10-top); }
-.krst-field11 { top: var(--krst-field11-top); }
-.krst-field12 { top: var(--krst-field12-top); }
-.krst-field13 { top: var(--krst-field13-top); }
-.krst-field14 { top: var(--krst-field14-top); }
-
-/* ==========================================================================
-   HEADER/FOOTER SECTIONS
-   ========================================================================== */
-
-/* Knjiga/Strana/Broj section */
-.krst-section-knjiga {
+.krst-field-knjiga {
     position: absolute;
     top: var(--krst-knjiga-top);
-    right: 77%;
-    text-align: right;
-    width: 15%;
+    left: var(--krst-knjiga-left);
+    width: 15mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
 }
 
-.krst-section-knjiga > div {
-    margin-bottom: 2mm;
+.krst-field-strana {
+    position: absolute;
+    top: var(--krst-strana-top);
+    left: var(--krst-strana-left);
+    width: 15mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
 }
 
-.krst-section-knjiga > div:last-child {
-    margin-bottom: 0;
+.krst-field-broj {
+    position: absolute;
+    top: var(--krst-broj-top);
+    left: var(--krst-broj-left);
+    width: 15mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
 }
 
-/* Eparhija line */
-.krst-section-eparhija {
+.krst-field-eparhija {
     position: absolute;
     top: var(--krst-eparhija-top);
-    left: 12.2%;
+    left: var(--krst-eparhija-left);
+    width: 80mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    font-size: 10pt;
 }
 
-/* Hram/mesto/godina row */
-.krst-section-hram {
+.krst-field-hram {
     position: absolute;
     top: var(--krst-hram-top);
-    left: 12.2%;
-    right: 5%;
+    left: var(--krst-hram-left);
+    width: 85mm;
+    height: 6mm;
     display: flex;
+    align-items: center;
+    font-size: 10pt;
 }
 
-.krst-section-hram__hram {
-    width: 45%;
-}
-
-.krst-section-hram__mesto {
-    width: 30%;
-    padding-left: 6%;
-    letter-spacing: 1px;
-}
-
-.krst-section-hram__godina {
-    width: 12%;
-}
-
-/* Bottom section */
-.krst-section-bottom {
+.krst-field-mesto {
     position: absolute;
-    top: var(--krst-bottom-top);
-    left: 5%;
-    right: 5%;
+    top: var(--krst-mesto-top);
+    left: var(--krst-mesto-left);
+    width: 55mm;
+    height: 6mm;
     display: flex;
+    align-items: center;
+    font-size: 10pt;
 }
 
-.krst-section-bottom__datum {
-    width: 12%;
-    letter-spacing: 1px;
-}
-
-.krst-section-bottom__godina {
-    width: 11%;
-}
-
-.krst-section-bottom__parohija {
-    width: 36%;
-    text-align: right;
-    font-size: 12pt;
-    letter-spacing: 1px;
-    padding-right: 5%;
-}
-
-.krst-section-bottom__hram {
-    width: 36%;
-    text-align: right;
-    font-size: 12pt;
-    letter-spacing: 1px;
-    padding-right: 8%;
-}
-
-/* Beograd line below bottom */
-.krst-section-beograd {
+.krst-field-godina {
     position: absolute;
-    top: calc(var(--krst-bottom-top) + 2%);
-    left: 5%;
+    top: var(--krst-godina-top);
+    left: var(--krst-godina-left);
+    width: 15mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    font-size: 10pt;
+}
+
+/* ==========================================================================
+   TABLE FIELDS
+   ========================================================================== */
+
+.krst-table-field {
+    position: absolute;
+    width: 105mm;
+    display: flex;
+    align-items: center;
+    font-size: 10pt;
+    line-height: 1.3;
+}
+
+/* Fields 1-6: Left column main data */
+.krst-field-rodjenje_datum {
+    top: var(--krst-field1-top);
+    left: var(--krst-field1-left);
+    height: 8mm;
+}
+
+.krst-field-rodjenje_mesto {
+    top: var(--krst-field2-top);
+    left: var(--krst-field2-left);
+    height: 8mm;
+}
+
+.krst-field-krstenje_datum {
+    top: var(--krst-field3-top);
+    left: var(--krst-field3-left);
+    height: 8mm;
+}
+
+.krst-field-krstenje_mesto {
+    top: var(--krst-field4-top);
+    left: var(--krst-field4-left);
+    height: 8mm;
+}
+
+.krst-field-ime_pol {
+    top: var(--krst-field5-top);
+    left: var(--krst-field5-left);
+    height: 8mm;
+}
+
+.krst-field-roditelji {
+    top: var(--krst-field6-top);
+    left: var(--krst-field6-left);
+    height: 24mm;
+    font-size: 9pt;
+    line-height: 1.4;
+}
+
+/* Fields 7-10: Right column answers */
+.krst-field-dete_po_redu {
+    top: var(--krst-field7-top);
+    left: var(--krst-field7-left);
+    height: 8mm;
+}
+
+.krst-field-bracno {
+    top: var(--krst-field8-top);
+    left: var(--krst-field8-left);
+    height: 8mm;
+}
+
+.krst-field-blizanac {
+    top: var(--krst-field9-top);
+    left: var(--krst-field9-left);
+    height: 8mm;
+}
+
+.krst-field-telesna_mana {
+    top: var(--krst-field10-top);
+    left: var(--krst-field10-left);
+    height: 8mm;
+}
+
+/* Fields 11-14: Left column continued */
+.krst-field-svestenik {
+    top: var(--krst-field11-top);
+    left: var(--krst-field11-left);
+    height: 8mm;
+}
+
+.krst-field-kum {
+    top: var(--krst-field12-top);
+    left: var(--krst-field12-left);
+    height: 12mm;
+    font-size: 9pt;
+    line-height: 1.4;
+}
+
+.krst-field-domovnik {
+    top: var(--krst-field13-top);
+    left: var(--krst-field13-left);
+    height: 8mm;
+}
+
+.krst-field-primedba {
+    top: var(--krst-field14-top);
+    left: var(--krst-field14-left);
+    height: 8mm;
+}
+
+/* ==========================================================================
+   FOOTER FIELDS
+   ========================================================================== */
+
+.krst-field-footer_br {
+    position: absolute;
+    top: var(--krst-footer_br-top);
+    left: var(--krst-footer_br-left);
+    width: 20mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    font-size: 9pt;
+}
+
+.krst-field-footer_godina {
+    position: absolute;
+    top: var(--krst-footer_godina-top);
+    left: var(--krst-footer_godina-left);
+    width: 15mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    font-size: 9pt;
+}
+
+.krst-field-footer_u {
+    position: absolute;
+    top: var(--krst-footer_u-top);
+    left: var(--krst-footer_u-left);
+    width: 30mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    font-size: 9pt;
+}
+
+.krst-field-footer_paroh {
+    position: absolute;
+    top: var(--krst-footer_paroh-top);
+    left: var(--krst-footer_paroh-left);
+    width: 55mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    font-size: 9pt;
+}
+
+.krst-field-footer_parohija {
+    position: absolute;
+    top: var(--krst-footer_parohija-top);
+    left: var(--krst-footer_parohija-left);
+    width: 55mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    font-size: 9pt;
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.krst-text-sm {
+    font-size: 8pt;
+}
+
+.krst-text-md {
+    font-size: 10pt;
+}
+
+.krst-ls {
     letter-spacing: 1px;
+}
+
+/* ==========================================================================
+   PRINT STYLES
+   ========================================================================== */
+
+@media print {
+    .krstenica {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
 }

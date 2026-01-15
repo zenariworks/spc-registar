@@ -21,114 +21,112 @@
 
 <div class="krstenica">
     <div class="krstenica-frame">
-        <!-- Knjiga/Strana/Broj -->
-        <div class="krst-section-knjiga">
-            <div>{{ krstenje.knjiga }}</div>
-            <div>{{ krstenje.strana }}</div>
-            <div>{{ krstenje.broj }}</div>
-        </div>
 
-        <!-- Eparhije -->
-        <div class="krst-section-eparhija">
-            БЕОГРАДСКО - КАРЛОВАЧКЕ
-        </div>
+        <!-- ============================================================
+        HEADER
+        ============================================================ -->
 
-        <!-- Hram/mesto/godina -->
-        <div class="krst-section-hram">
-            <div class="krst-section-hram__hram">{{ krstenje.hram }}</div>
-            <div class="krst-section-hram__mesto">{{ krstenje.mesto }}у</div>
-            <div class="krst-section-hram__godina">{{ krstenje.datum|date:"y" }}</div>
-        </div>
+        <!-- Књига / Страна / Број -->
+        <div class="krst-field-knjiga">{{ krstenje.knjiga }}</div>
+        <div class="krst-field-strana">{{ krstenje.strana }}</div>
+        <div class="krst-field-broj">{{ krstenje.broj }}</div>
 
-        <!-- Field 1: Godina rodjenja -->
-        <div class="krst-absolute-field krst-ls krst-field1">
+        <!-- Епархије -->
+        <div class="krst-field-eparhija">БЕОГРАДСКО - КАРЛОВАЧКЕ</div>
+
+        <!-- Храм / Место / Година -->
+        <div class="krst-field-hram">{{ krstenje.hram }}</div>
+        <div class="krst-field-mesto">{{ krstenje.mesto }}у</div>
+        <div class="krst-field-godina">{{ krstenje.datum|date:"y" }}</div>
+
+        <!-- ============================================================
+        MAIN TABLE FIELDS
+        ============================================================ -->
+
+        <!-- 1: Година, месец, дан и време рођења -->
+        <div class="krst-table-field krst-field-rodjenje_datum">
             {{ krstenje.datum_rodjenja|julian_date }}, {{ krstenje.vreme_rodjenja }} часова
         </div>
 
-        <!-- Field 2: Mesto rodjenja -->
-        <div class="krst-absolute-field krst-field2">
+        <!-- 2: Место и општина рођења -->
+        <div class="krst-table-field krst-field-rodjenje_mesto">
             {{ krstenje.mesto_rodjenja }}
         </div>
 
-        <!-- Field 3: Godina krstenja -->
-        <div class="krst-absolute-field krst-ls krst-field3">
+        <!-- 3: Година, месец, дан и време крштења -->
+        <div class="krst-table-field krst-field-krstenje_datum">
             {{ krstenje.datum|julian_date|default_if_none:"" }}{% if krstenje.vreme is not none %}, {{ krstenje.vreme }} часова{% endif %}
         </div>
 
-        <!-- Field 4: Mesto krstenja -->
-        <div class="krst-absolute-field krst-field4">
+        <!-- 4: Место и храм крштења -->
+        <div class="krst-table-field krst-field-krstenje_mesto">
             {{ krstenje.mesto }}, {{ krstenje.hram }}
         </div>
 
-        <!-- Field 5: Ime i pol -->
-        <div class="krst-absolute-field krst-field5">
-            {{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta}}, {{ krstenje.get_pol_deteta_display }}
+        <!-- 5: Име и пол детета -->
+        <div class="krst-table-field krst-field-ime_pol">
+            {{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}
         </div>
 
-        <!-- Field 6: Roditelji -->
-        <div class="krst-absolute-field krst-text-sm krst-lh krst-field6">
+        <!-- 6: Родитељи -->
+        <div class="krst-table-field krst-field-roditelji">
             {{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>
             {{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>
-            {{ krstenje.mesto }}, {{ krstenje.adresa_deteta_ulica}} {{ krstenje.adresa_deteta_broj}}<br>
-            {{krstenje.veroispovest_oca }}
+            {{ krstenje.mesto }}, {{ krstenje.adresa_deteta_ulica }} {{ krstenje.adresa_deteta_broj }}<br>
+            {{ krstenje.veroispovest_oca }}
         </div>
 
-        <!-- Field 7: Dete po redu -->
-        <div class="krst-absolute-right krst-ls krst-text-md krst-field7">
+        <!-- 7: Које је дете по рођењу матери -->
+        <div class="krst-table-field krst-field-dete_po_redu">
             {{ krstenje.dete_po_redu_po_majci }}
         </div>
 
-        <!-- Field 8: Bracno -->
-        <div class="krst-absolute-right krst-ls krst-text-md krst-field8">
+        <!-- 8: Је ли дете црквено брачно -->
+        <div class="krst-table-field krst-field-bracno">
             {{ krstenje.dete_vanbracno|yesno:"није,јесте" }}
         </div>
 
-        <!-- Field 9: Blizanac -->
-        <div class="krst-absolute-right krst-ls krst-text-md krst-field9">
+        <!-- 9: Је ли дете близанац -->
+        <div class="krst-table-field krst-field-blizanac">
             {{ krstenje.dete_blizanac|yesno:"јесте,није" }}
         </div>
 
-        <!-- Field 10: Telesni nedostatak -->
-        <div class="krst-absolute-right krst-ls krst-text-md krst-field10">
+        <!-- 10: Је ли дете рођено са телесним недостатком -->
+        <div class="krst-table-field krst-field-telesna_mana">
             {{ krstenje.dete_sa_telesnom_manom|yesno:"јесте,није,непознато" }}
         </div>
 
-        <!-- Field 11: Svestenik -->
-        <div class="krst-absolute-field krst-text-md krst-ls krst-field11">
+        <!-- 11: Име и презиме свештеника -->
+        <div class="krst-table-field krst-field-svestenik">
             {{ krstenje.svestenik|default_if_none:"" }}
         </div>
 
-        <!-- Field 12: Kum -->
-        <div class="krst-absolute-field krst-lh krst-field12">
+        <!-- 12: Име и презиме кума -->
+        <div class="krst-table-field krst-field-kum">
             {{ krstenje.ime_kuma }}, {{ krstenje.zanimanje_kuma }}<br>
             {{ krstenje.adresa_kuma_mesto }}
         </div>
 
-        <!-- Field 13: Domovnik (empty) -->
-        <div class="krst-absolute-field krst-field13">
+        <!-- 13: Страна домовника - анаграфа -->
+        <div class="krst-table-field krst-field-domovnik">
             <!-- Empty -->
         </div>
 
-        <!-- Field 14: Primedba -->
-        <div class="krst-absolute-field krst-field14">
+        <!-- 14: Примедба -->
+        <div class="krst-table-field krst-field-primedba">
             {{ krstenje.primedba|default_if_none:"" }}
         </div>
 
-        <!-- Bottom section -->
-        <div class="krst-section-bottom">
-            <div class="krst-section-bottom__datum">{% now "d.m" %}</div>
-            <div class="krst-section-bottom__godina">{% now "y" %}</div>
-            <div class="krst-section-bottom__parohija">
-                {% if krstenje.svestenik %}{{krstenje.svestenik.parohija}}{% endif %}
-            </div>
-            <div class="krst-section-bottom__hram">
-                при Храму Свете Петке
-            </div>
-        </div>
+        <!-- ============================================================
+        FOOTER
+        ============================================================ -->
 
-        <div class="krst-section-beograd">
-            Београду
-        </div>
+        <div class="krst-field-footer_br">{% now "d.m" %}</div>
+        <div class="krst-field-footer_godina">{% now "y" %}</div>
+        <div class="krst-field-footer_u">Београду</div>
+        <div class="krst-field-footer_parohija">{% if krstenje.svestenik %}{{ krstenje.svestenik.parohija }}{% endif %}</div>
+        <div class="krst-field-footer_paroh">{% if krstenje.svestenik %}{{ krstenje.svestenik }}{% endif %}</div>
+
     </div>
 </div>
 

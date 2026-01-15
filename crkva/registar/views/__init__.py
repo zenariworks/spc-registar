@@ -12,7 +12,13 @@ from registar.utils_fasting import get_fasting_type
 
 from .domacinstvo_view import PrikazDomacinstva, SpisakDomacinsta
 from .kalendar_view import kalendar
-from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja, unos_krstenja
+from .krstenje_view import (
+    KrstenjePDF,
+    PrikazKrstenja,
+    SpisakKrstenja,
+    calibrate_krstenje,
+    unos_krstenja,
+)
 from .parohijan_view import (
     ParohijanPDF,
     PrikazParohijana,
@@ -197,6 +203,7 @@ __all__ = [
     "unos_krstenja",
     "unos_parohijana",
     "unos_vencanja",
+    "calibrate_krstenje",
     "calibrate_vencanje",
     "SpisakParohijana",
     "PrikazParohijana",
