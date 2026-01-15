@@ -280,14 +280,6 @@
   }
 }
 
-/* Dark theme slava link styles */
-[data-theme="dark"] .slava-link:hover {
-  background: var(--color-primary-transparent);
-}
-
-[data-theme="dark"] .calendar-cell.today .slava-link:hover {
-  background: var(--color-white-alpha-20);
-}
 
 .calendar-cell .no-slavas-text {
   margin-top: 6px;
@@ -593,28 +585,4 @@
     font-size: 0.8rem;
     padding: 7px 11px;
   }
-}
-
-
-/* Today in dark mode - golden glow */
-[data-theme="dark"] .calendar-cell.today {
-  background: linear-gradient(135deg, var(--color-amber-900) 0%, var(--color-amber-800) 100%);
-  border-color: var(--color-amber-500);
-  box-shadow: 0 0 0 1px var(--color-amber-500), 0 2px 12px rgba(245, 158, 11, 0.3);
-  color: var(--color-amber-400);
-}
-
-[data-theme="dark"] .calendar-cell.today .date {
-  color: var(--color-amber-200);
-  font-weight: 800;
-}
-
-[data-theme="dark"] .calendar-cell.today .weekday {
-  color: var(--color-amber-300);
-  font-weight: 600;
-}
-
-[data-theme="dark"] .calendar-cell.today .slavas,
-[data-theme="dark"] .calendar-cell.today .slavas div {
-  color: var(--color-amber-100) !important;
 }

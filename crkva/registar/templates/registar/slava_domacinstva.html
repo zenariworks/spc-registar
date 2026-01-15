@@ -13,7 +13,7 @@
 
 <div class="u-info-header" data-theme-aware>
   <div class="u-flex-center u-gap-4 u-mb-4">
-    <i class="fa-solid fa-calendar-day u-text-xl" style="color: var(--color-primary);"></i>
+    <i class="fa-solid fa-calendar-day u-text-xl u-icon-primary"></i>
     <div>
       <h2 class="u-mt-0 u-mb-0" data-theme-text>{{ slava.naziv }}</h2>
       {% if slava.mesec and slava.dan %}
@@ -29,9 +29,9 @@
   </div>
 
   <div class="u-stat-card" data-theme-card>
-    <i class="fa-solid fa-house" style="color: var(--color-primary);"></i>
+    <i class="fa-solid fa-house u-icon-primary"></i>
     <strong data-theme-text>Број домаћинстава:</strong>
-    <span class="u-text-lg u-font-semibold" style="color: var(--color-primary);">{{ count }}</span>
+    <span class="u-text-lg u-font-semibold u-icon-primary">{{ count }}</span>
   </div>
 </div>
 
@@ -42,7 +42,7 @@
         <div class="u-flex u-justify-between u-items-start u-mb-4">
           <div class="u-flex-1">
             <h3 class="u-mt-0 u-mb-2" data-theme-text>
-              <i class="fa-solid fa-user" style="color: var(--color-primary); margin-right: 8px;"></i>
+              <i class="fa-solid fa-user u-icon-primary u-mr-2"></i>
               {% if domacinstvo.domacin %}
                 <a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}" class="u-link-primary">
                   {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}
@@ -89,7 +89,7 @@
         {% if domacinstvo.ukucani.all %}
           <div class="u-border-top">
             <div class="u-text-muted u-text-small u-font-medium u-mb-3" data-theme-text-secondary>
-              <i class="fa-solid fa-users" style="margin-right: 6px;"></i>
+              <i class="fa-solid fa-users u-mr-2"></i>
               Чланови домаћинства ({{ domacinstvo.ukucani.all.count }})
             </div>
             <div class="u-flex u-flex-wrap u-gap-3">
@@ -118,31 +118,11 @@
   </div>
 {% else %}
   <div class="u-empty-state" data-theme-aware>
-    <i class="fa-solid fa-house-circle-xmark u-text-muted u-opacity-50" style="font-size: 64px; margin-bottom: 20px;"></i>
+    <i class="fa-solid fa-house-circle-xmark u-text-muted u-opacity-50 u-icon-lg u-mb-4"></i>
     <p class="u-text-muted u-text-lg u-mb-0" data-theme-text-secondary>
       Нема домаћинстава која славе {{ slava.naziv }}
     </p>
   </div>
 {% endif %}
-
-<style>
-[data-theme="dark"] [data-theme-aware],
-[data-theme="dark"] [data-theme-card] {
-  background: var(--color-dark-bg) !important;
-  border-color: var(--color-dark-border) !important;
-}
-
-[data-theme="dark"] [data-theme-text] {
-  color: var(--color-dark-text) !important;
-}
-
-[data-theme="dark"] [data-theme-text-secondary] {
-  color: var(--color-dark-text-secondary) !important;
-}
-
-[data-theme="dark"] .u-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-</style>
 
 {% endblock %}

@@ -10,11 +10,6 @@
   --sidebar-transition: all 0.3s ease;
 }
 
-/* Dark theme overrides */
-[data-theme="dark"] {
-  --sidebar-bg: linear-gradient(180deg, var(--color-dark-bg) 0%, var(--color-dark-bg-deep) 100%);
-}
-
 /* Sidebar Container */
 .sidebar {
   position: fixed;

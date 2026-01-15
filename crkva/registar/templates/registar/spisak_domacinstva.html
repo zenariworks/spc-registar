@@ -25,8 +25,8 @@
                     <i class="fa-solid fa-chevron-right"></i>
                 </div>
                 <div class="stavka__content">
-                    <div class="u-font-medium" style="min-width: 200px;">
-                        <i class="fa-solid fa-house u-icon-muted" style="margin-right: 8px;"></i>
+                    <div class="u-font-medium u-min-w-200">
+                        <i class="fa-solid fa-house u-icon-muted u-mr-2"></i>
                         {{ domacinstvo.domacin.ime|markiraj:upit|safe }} {{ domacinstvo.domacin.prezime|markiraj:upit|safe }}
                     </div>
                     {% if domacinstvo.adresa and domacinstvo.adresa.ulica %}
@@ -55,7 +55,7 @@
                     </div>
                     {% endif %}
                     <div class="u-text-muted u-text-small">
-                        <i class="fa-solid fa-users" style="margin-right: 4px;"></i>
+                        <i class="fa-solid fa-users u-mr-2"></i>
                         {{ domacinstvo.ukucani.count }} чл.
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                 {% with ukucani=domacinstvo.ukucani.all %}
                     {% if ukucani %}
                         <div class="u-mt-3">
-                            <strong class="u-label u-mb-3" style="display: block;">Чланови домаћинства:</strong>
+                            <strong class="u-label u-mb-3 u-inline-block">Чланови домаћинства:</strong>
                             {% for ukucanin in ukucani %}
                                 <div class="stavka__member {% if ukucanin.preminuo %}stavka__member--deceased{% endif %}">
                                     <div class="stavka__member-name">

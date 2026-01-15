@@ -21,21 +21,21 @@
         {% for parohijan in parohijani %}
             <li class="stavka">
                 <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza">
-                    <span style="font-weight: 500;">
+                    <span class="u-font-medium">
                         {{ parohijan.ime|markiraj:upit|safe }} {{ parohijan.prezime|markiraj:upit|safe }}
                     </span>
                     {% if parohijan.datum_rodjenja %}
-                    <span style="color: var(--color-text-secondary); font-size: 0.9em;">
+                    <span class="u-text-secondary u-text-small">
                         {{ parohijan.datum_rodjenja }}
                     </span>
                     {% endif %}
                     {% if parohijan.adresa %}
-                    <span style="color: var(--color-text-secondary); font-size: 0.9em;">
+                    <span class="u-text-secondary u-text-small">
                         📍 {{ parohijan.adresa }}
                     </span>
                     {% endif %}
                     {% if parohijan.tel_mobilni or parohijan.tel_fiksni %}
-                    <span style="color: var(--color-text-secondary); font-size: 0.9em;">
+                    <span class="u-text-secondary u-text-small">
                         {% if parohijan.tel_mobilni %}
                         <a href="tel:{{ parohijan.tel_mobilni|tel_link }}" class="u-link-primary" onclick="event.stopPropagation();">
                             <i class="fa-solid {{ parohijan.tel_mobilni|phone_icon }}"></i>
@@ -55,7 +55,7 @@
                     </span>
                     {% endif %}
                 </a>
-                <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" class="u-link-primary" style="margin-left: 10px;">
+                <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" class="u-link-primary u-ml-3">
                     <button class="button button--primary" type="button">Штампај</button>
                 </a>
             </li>

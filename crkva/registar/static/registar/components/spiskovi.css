@@ -133,10 +133,6 @@
     border-radius: 3px;
 }
 
-[data-theme="dark"] .stavka__member-role-badge {
-    background: rgba(162, 21, 20, 0.2);
-}
-
 /* BEM aliases for lists and items */
 .list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
 .list__item {
@@ -309,4 +305,50 @@
         font-size: 13px;
         padding: 8px 10px;
     }
+}
+
+/* ==========================================================================
+   KEY-VALUE LIST (из pomocno.css)
+   ========================================================================== */
+
+.u-kv-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.u-kv-item {
+    display: flex;
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.u-kv-item:last-child {
+    border-bottom: none;
+}
+
+.u-kv-label {
+    color: var(--color-text-muted);
+    font-weight: 600;
+    min-width: 180px;
+    flex-shrink: 0;
+}
+
+.u-kv-value {
+    flex: 1;
+}
+
+/* ==========================================================================
+   SECTION TITLE (из pomocno.css)
+   ========================================================================== */
+
+.u-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: var(--space-4);
+}
+
+.u-section-title--success {
+    color: var(--color-success);
 }

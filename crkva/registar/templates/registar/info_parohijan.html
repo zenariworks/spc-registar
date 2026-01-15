@@ -14,10 +14,10 @@
     </a>
 </div>
 
-<h2 style="margin-top: var(--space-4); margin-bottom: var(--space-4);">{{ parohijan.ime }} {{ parohijan.prezime }}</h2>
+<h2 class="u-mt-4 u-mb-4">{{ parohijan.ime }} {{ parohijan.prezime }}</h2>
 
 {% if parohijan.domacinstvo %}
-<div class="card u-mb-4" style="border-left: 4px solid var(--color-primary);">
+<div class="card u-mb-4 u-border-left-primary">
     <strong class="u-flex-center u-gap-2 u-mb-2">
         <i class="fa-solid fa-house"></i>
         Домаћин домаћинства
@@ -29,7 +29,7 @@
 {% endif %}
 
 <div class="card">
-    <ul class="spisak" style="gap: 0;">
+    <ul class="u-kv-list">
         {% if parohijan.devojacko_prezime %}
         <li class="u-kv-item">
             <span class="u-kv-label">Девојачко презиме:</span>
