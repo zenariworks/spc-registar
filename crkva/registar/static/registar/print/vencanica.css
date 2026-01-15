@@ -80,3 +80,168 @@
 .venc-text-sm { font-size: 9pt; }
 .venc-text-md { font-size: 10pt; }
 .venc-lh { line-height: 1.2; }
+
+/* ==========================================================================
+   POSITION CLASSES FOR FIELDS
+   ========================================================================== */
+
+/* Individual field positions */
+.venc-field1a { top: var(--venc-field1a-top); }
+.venc-field1b { top: var(--venc-field1b-top); }
+.venc-field2a { top: var(--venc-field2a-top); }
+.venc-field2b { top: var(--venc-field2b-top); }
+.venc-field3a { top: var(--venc-field3a-top); }
+.venc-field3b { top: var(--venc-field3b-top); }
+.venc-field4a { top: var(--venc-field4a-top); }
+.venc-field4b { top: var(--venc-field4b-top); }
+.venc-field5 { top: var(--venc-field5-top); }
+.venc-field6 { top: var(--venc-field6-top); }
+.venc-field7 { top: var(--venc-field7-top); }
+.venc-field8 { top: var(--venc-field8-top); }
+.venc-field9 { top: var(--venc-field9-top); }
+.venc-field10 { top: var(--venc-field10-top); }
+.venc-field11 { top: var(--venc-field11-top); }
+
+/* ==========================================================================
+   HEADER/FOOTER SECTIONS
+   ========================================================================== */
+
+/* vencanica-frame custom width/margin */
+.vencanica-frame--custom {
+    width: 185mm;
+    margin-left: 14mm;
+}
+
+/* Knjiga/Strana/Tekuci broj section */
+.venc-section-knjiga {
+    position: absolute;
+    top: var(--venc-knjiga-top);
+    left: 5%;
+    text-align: right;
+    width: 18%;
+}
+
+.venc-section-knjiga > div {
+    margin-bottom: 2mm;
+}
+
+.venc-section-knjiga > div:last-child {
+    margin-bottom: 0;
+}
+
+/* Eparhije line */
+.venc-section-eparhija {
+    position: absolute;
+    top: var(--venc-eparhija-top);
+    right: 20%;
+    text-align: right;
+}
+
+/* BEOGRADSKO-KARLOVACKE / hram line */
+.venc-section-hram {
+    position: absolute;
+    top: var(--venc-hram-top);
+    left: 10%;
+    right: 5%;
+    display: flex;
+}
+
+.venc-section-hram__eparhija {
+    width: 45%;
+}
+
+.venc-section-hram__spacer {
+    width: 20%;
+}
+
+.venc-section-hram__hram {
+    width: 35%;
+    text-align: right;
+}
+
+/* Mesto / godina line */
+.venc-section-mesto {
+    position: absolute;
+    top: var(--venc-mesto-top);
+    left: 10%;
+    right: 5%;
+    display: flex;
+}
+
+.venc-section-mesto__mesto {
+    width: 55%;
+    text-align: center;
+    padding-left: 10%;
+}
+
+.venc-section-mesto__godina {
+    width: 45%;
+    padding-left: 6%;
+}
+
+/* Beogradske section */
+.venc-section-eparhija2 {
+    position: absolute;
+    top: var(--venc-eparhija2-top);
+    left: 62%;
+    width: 30%;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* Hram name again */
+.venc-section-hram2 {
+    position: absolute;
+    top: var(--venc-hram2-top);
+    left: 70%;
+    width: 30%;
+    text-align: center;
+    letter-spacing: 1px;
+}
+
+/* Bottom section */
+.venc-section-bottom {
+    position: absolute;
+    top: var(--venc-bottom-top);
+    left: 5%;
+    right: 5%;
+    display: flex;
+    align-items: flex-end;
+}
+
+.venc-section-bottom__datum {
+    width: 9%;
+    font-size: 9pt;
+    letter-spacing: 1px;
+}
+
+.venc-section-bottom__godina {
+    width: 5%;
+    font-size: 9pt;
+}
+
+.venc-section-bottom__spacer1 {
+    width: 33%;
+}
+
+.venc-section-bottom__spacer2 {
+    width: 5%;
+}
+
+.venc-section-bottom__parohija {
+    width: 12%;
+}
+
+.venc-section-bottom__hram {
+    width: 30%;
+    letter-spacing: 1px;
+    font-size: 9pt;
+}
+
+/* Beograd line below bottom */
+.venc-section-beograd {
+    position: absolute;
+    top: calc(var(--venc-bottom-top) + 2.5%);
+    left: 5%;
+    letter-spacing: 1px;
+}

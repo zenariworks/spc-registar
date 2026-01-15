@@ -81,3 +81,116 @@
 .krst-text-sm { font-size: 12pt; }
 .krst-text-md { font-size: 14pt; }
 .krst-lh { line-height: 1.3; }
+
+/* ==========================================================================
+   POSITION CLASSES FOR FIELDS
+   ========================================================================== */
+
+/* Individual field positions */
+.krst-field1 { top: var(--krst-field1-top); }
+.krst-field2 { top: var(--krst-field2-top); }
+.krst-field3 { top: var(--krst-field3-top); }
+.krst-field4 { top: var(--krst-field4-top); }
+.krst-field5 { top: var(--krst-field5-top); }
+.krst-field6 { top: var(--krst-field6-top); }
+.krst-field7 { top: var(--krst-field7-top); }
+.krst-field8 { top: var(--krst-field8-top); }
+.krst-field9 { top: var(--krst-field9-top); }
+.krst-field10 { top: var(--krst-field10-top); }
+.krst-field11 { top: var(--krst-field11-top); }
+.krst-field12 { top: var(--krst-field12-top); }
+.krst-field13 { top: var(--krst-field13-top); }
+.krst-field14 { top: var(--krst-field14-top); }
+
+/* ==========================================================================
+   HEADER/FOOTER SECTIONS
+   ========================================================================== */
+
+/* Knjiga/Strana/Broj section */
+.krst-section-knjiga {
+    position: absolute;
+    top: var(--krst-knjiga-top);
+    right: 77%;
+    text-align: right;
+    width: 15%;
+}
+
+.krst-section-knjiga > div {
+    margin-bottom: 2mm;
+}
+
+.krst-section-knjiga > div:last-child {
+    margin-bottom: 0;
+}
+
+/* Eparhija line */
+.krst-section-eparhija {
+    position: absolute;
+    top: var(--krst-eparhija-top);
+    left: 12.2%;
+}
+
+/* Hram/mesto/godina row */
+.krst-section-hram {
+    position: absolute;
+    top: var(--krst-hram-top);
+    left: 12.2%;
+    right: 5%;
+    display: flex;
+}
+
+.krst-section-hram__hram {
+    width: 45%;
+}
+
+.krst-section-hram__mesto {
+    width: 30%;
+    padding-left: 6%;
+    letter-spacing: 1px;
+}
+
+.krst-section-hram__godina {
+    width: 12%;
+}
+
+/* Bottom section */
+.krst-section-bottom {
+    position: absolute;
+    top: var(--krst-bottom-top);
+    left: 5%;
+    right: 5%;
+    display: flex;
+}
+
+.krst-section-bottom__datum {
+    width: 12%;
+    letter-spacing: 1px;
+}
+
+.krst-section-bottom__godina {
+    width: 11%;
+}
+
+.krst-section-bottom__parohija {
+    width: 36%;
+    text-align: right;
+    font-size: 12pt;
+    letter-spacing: 1px;
+    padding-right: 5%;
+}
+
+.krst-section-bottom__hram {
+    width: 36%;
+    text-align: right;
+    font-size: 12pt;
+    letter-spacing: 1px;
+    padding-right: 8%;
+}
+
+/* Beograd line below bottom */
+.krst-section-beograd {
+    position: absolute;
+    top: calc(var(--krst-bottom-top) + 2%);
+    left: 5%;
+    letter-spacing: 1px;
+}
