@@ -46,6 +46,7 @@ urlpatterns = [
     path(
         "vencanje/print/<uuid:uid>/", views.VencanjePDF.as_view(), name="vencanje_pdf"
     ),
+    path("vencanje/calibrate/", views.calibrate_vencanje, name="calibrate_vencanje"),
     path("svestenici/", views.SpisakSvestenika.as_view(), name="svestenici"),
     path(
         "svestenik/<int:uid>/",

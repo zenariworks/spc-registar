@@ -21,7 +21,13 @@ from .parohijan_view import (
 )
 from .slava_view import slava_domacinstva
 from .svestenik_view import PrikazSvestenika, SpisakSvestenika, SvestenikPDF
-from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF, unos_vencanja
+from .vencanje_view import (
+    PrikazVencanja,
+    SpisakVencanja,
+    VencanjePDF,
+    calibrate_vencanje,
+    unos_vencanja,
+)
 from .view_404 import custom_404
 
 
@@ -191,6 +197,7 @@ __all__ = [
     "unos_krstenja",
     "unos_parohijana",
     "unos_vencanja",
+    "calibrate_vencanje",
     "SpisakParohijana",
     "PrikazParohijana",
     "SpisakDomacinsta",

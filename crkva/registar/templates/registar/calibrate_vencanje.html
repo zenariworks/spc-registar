@@ -1,0 +1,550 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+<style>
+/* Calibration page styles */
+.calibration-container {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: 20px auto;
+    background-image: url("{% static 'registar/slike/vencanica-nova.jpg' %}");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border: 2px solid #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.draggable-field {
+    position: absolute;
+    background: rgba(255, 255, 0, 0.7);
+    border: 2px dashed #c00;
+    padding: 2px 5px;
+    cursor: move;
+    font-size: 10pt;
+    font-family: 'Miroslav', serif;
+    user-select: none;
+    z-index: 10;
+    overflow: hidden;
+    min-width: 20px;
+    min-height: 15px;
+    box-sizing: border-box;
+}
+
+.draggable-field:hover {
+    background: rgba(255, 200, 0, 0.9);
+    border-color: #900;
+}
+
+.draggable-field.selected {
+    background: rgba(0, 255, 100, 0.8);
+    border-color: #060;
+    z-index: 100;
+}
+
+.draggable-field .field-label {
+    font-size: 8pt;
+    color: #666;
+    display: block;
+}
+
+/* Resize handle */
+.resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #c00;
+    bottom: 0;
+    right: 0;
+    cursor: se-resize;
+    border-radius: 2px 0 0 0;
+}
+
+.draggable-field.selected .resize-handle {
+    background: #060;
+}
+
+/* Control panel */
+.control-panel {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 320px;
+}
+
+.control-panel h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.control-panel button {
+    margin: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.control-panel .export-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.control-panel .reset-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+#css-output {
+    width: 100%;
+    height: 200px;
+    font-family: monospace;
+    font-size: 10px;
+    margin-top: 10px;
+}
+
+.field-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 5px;
+    margin: 10px 0;
+}
+
+.field-list-item {
+    padding: 3px 5px;
+    cursor: pointer;
+    font-size: 11px;
+    border-bottom: 1px solid #eee;
+}
+
+.field-list-item:hover {
+    background: #f0f0f0;
+}
+
+.field-list-item.active {
+    background: #e0ffe0;
+}
+
+.position-display {
+    font-family: monospace;
+    font-size: 12px;
+    background: #f5f5f5;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.nudge-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.nudge-controls button {
+    padding: 5px;
+    font-size: 12px;
+}
+
+.size-controls {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    margin: 10px 0;
+}
+
+.size-controls button {
+    padding: 4px;
+    font-size: 11px;
+}
+
+.section-label {
+    font-weight: bold;
+    margin: 10px 0 5px 0;
+    font-size: 12px;
+    color: #333;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="control-panel">
+    <h3>Calibration Tool</h3>
+
+    <div class="position-display" id="position-display">
+        Select a field to see position
+    </div>
+
+    <div class="section-label">Move Position:</div>
+    <div class="nudge-controls">
+        <button onclick="nudge(0, -1)">↑1</button>
+        <button onclick="nudge(0, -0.5)">↑.5</button>
+        <button onclick="nudge(0, -0.1)">↑.1</button>
+        <button onclick="nudge(-1, 0)">←1</button>
+        <button onclick="nudge(-0.5, 0)">←.5</button>
+        <button onclick="nudge(-0.1, 0)">←.1</button>
+        <button onclick="nudge(1, 0)">→1</button>
+        <button onclick="nudge(0.5, 0)">→.5</button>
+        <button onclick="nudge(0.1, 0)">→.1</button>
+        <button onclick="nudge(0, 1)">↓1</button>
+        <button onclick="nudge(0, 0.5)">↓.5</button>
+        <button onclick="nudge(0, 0.1)">↓.1</button>
+    </div>
+
+    <div class="section-label">Resize (Width/Height):</div>
+    <div class="size-controls">
+        <button onclick="resizeField(-1, 0)">W-1</button>
+        <button onclick="resizeField(1, 0)">W+1</button>
+        <button onclick="resizeField(-5, 0)">W-5</button>
+        <button onclick="resizeField(5, 0)">W+5</button>
+        <button onclick="resizeField(0, -1)">H-1</button>
+        <button onclick="resizeField(0, 1)">H+1</button>
+        <button onclick="resizeField(0, -5)">H-5</button>
+        <button onclick="resizeField(0, 5)">H+5</button>
+    </div>
+
+    <div class="field-list" id="field-list"></div>
+
+    <button class="export-btn" onclick="exportCSS()">Export CSS</button>
+    <button class="reset-btn" onclick="resetPositions()">Reset All</button>
+
+    <textarea id="css-output" readonly placeholder="CSS will appear here after export..."></textarea>
+</div>
+
+<div class="calibration-container" id="calibration-container">
+    <!-- Fields will be added by JavaScript -->
+</div>
+
+<script>
+// Field definitions with initial positions and sizes (in mm)
+const fields = [
+    // Header fields
+    { id: 'knjiga', label: 'Књига', value: '1', top: 14.5, left: 41, width: 15, height: 6, group: 'header' },
+    { id: 'strana', label: 'Страна', value: '2', top: 19.5, left: 41, width: 15, height: 6, group: 'header' },
+    { id: 'tekuci', label: 'Текући број', value: '11', top: 24.5, left: 41, width: 15, height: 6, group: 'header' },
+    { id: 'hram', label: 'Храм', value: 'Храм Светог Ђорђа', top: 36, left: 55, width: 50, height: 6, group: 'header' },
+    { id: 'eparhija', label: 'Епархија', value: 'Београдско-Карловачке', top: 36, left: 145, width: 55, height: 6, group: 'header' },
+    { id: 'mesto', label: 'Место', value: 'Београд', top: 41, left: 55, width: 50, height: 6, group: 'header' },
+    { id: 'godina', label: 'Година', value: '03', top: 41, left: 155, width: 15, height: 6, group: 'header' },
+
+    // Table Row 1 - Име, презиме
+    { id: 'ime_zenika', label: '1a) Женик име', value: 'немања студент\n80. Нова 1\nправ. срб.', top: 58, left: 68, width: 60, height: 22, group: 'table' },
+    { id: 'ime_neveste', label: '1б) Невеста име', value: 'БИЉАНА студент\n80. Нова 1\nправ. срб.', top: 58, left: 138, width: 60, height: 22, group: 'table' },
+
+    // Table Row 2 - Родитељи
+    { id: 'roditelji_zenika', label: '2a) Родитељи женика', value: 'Дарко Поповић\nЛенка р. Арадовић', top: 78, left: 68, width: 60, height: 15, group: 'table' },
+    { id: 'roditelji_neveste', label: '2б) Родитељи невесте', value: 'Тодор Анђелић\nСлавица р. Јованов', top: 78, left: 138, width: 60, height: 15, group: 'table' },
+
+    // Table Row 3 - Рођење
+    { id: 'rodjenje_zenika', label: '3a) Рођење женика', value: '1979, август 31 / 18\nУжице', top: 96, left: 68, width: 60, height: 15, group: 'table' },
+    { id: 'rodjenje_neveste', label: '3б) Рођење невесте', value: '1978, новембар 22 / 9\nБеоград', top: 96, left: 138, width: 60, height: 15, group: 'table' },
+
+    // Table Row 4 - Брак
+    { id: 'brak_zenika', label: '4a) Брак женика', value: '1', top: 114, left: 68, width: 60, height: 10, group: 'table' },
+    { id: 'brak_neveste', label: '4б) Брак невесте', value: '1', top: 114, left: 138, width: 60, height: 10, group: 'table' },
+
+    // Table Rows 5-11 - Single column (spans both columns)
+    { id: 'ispit', label: '5) Испит', value: '2003, април 27 / 14', top: 128, left: 68, width: 130, height: 8, group: 'table' },
+    { id: 'datum_vencanja', label: '6) Датум венчања', value: '2003, мај 10 / април 27', top: 138, left: 68, width: 130, height: 8, group: 'table' },
+    { id: 'mesto_hram', label: '7) Место и храм', value: 'Београд, Храм Светог Ђорђа', top: 148, left: 68, width: 130, height: 8, group: 'table' },
+    { id: 'svestenik', label: '8) Свештеник', value: 'протојереј Саша Крстић', top: 160, left: 68, width: 130, height: 10, group: 'table' },
+    { id: 'svedoci', label: '9) Сведоци', value: 'Вељко Жарић, студент\nЈЕЛЕНА Павловић', top: 174, left: 68, width: 130, height: 15, group: 'table' },
+    { id: 'razresenje', label: '10) Разрешење', value: 'Не', top: 192, left: 68, width: 130, height: 12, group: 'table' },
+    { id: 'primedba', label: '11) Примедба', value: '', top: 210, left: 68, width: 130, height: 8, group: 'table' },
+
+    // Footer
+    { id: 'footer_hram', label: 'Footer храм', value: 'Храм Светог Ђорђа', top: 231, left: 52, width: 55, height: 6, group: 'footer' },
+    { id: 'footer_eparhija', label: 'Footer епархија', value: 'Београдске', top: 231, left: 145, width: 50, height: 6, group: 'footer' },
+    { id: 'footer_mesto', label: 'Footer место', value: 'Београду', top: 253, left: 14, width: 30, height: 6, group: 'footer' },
+    { id: 'footer_datum', label: 'Footer датум', value: '15. јануар', top: 253, left: 28, width: 30, height: 6, group: 'footer' },
+    { id: 'footer_godina', label: 'Footer година', value: '26', top: 253, left: 56, width: 15, height: 6, group: 'footer' },
+    { id: 'footer_paroh', label: 'Footer парох', value: 'протојереј Саша Крстић', top: 253, left: 130, width: 35, height: 6, group: 'footer' },
+];
+
+let selectedField = null;
+const container = document.getElementById('calibration-container');
+const fieldList = document.getElementById('field-list');
+const positionDisplay = document.getElementById('position-display');
+
+// Convert mm to pixels (approximate for screen display)
+const MM_TO_PX = 3.7795275591; // 1mm ≈ 3.78px at 96dpi
+
+function mmToPx(mm) {
+    return mm * MM_TO_PX;
+}
+
+function pxToMm(px) {
+    return px / MM_TO_PX;
+}
+
+// Create draggable fields
+function createFields() {
+    fields.forEach(field => {
+        // Create DOM element
+        const el = document.createElement('div');
+        el.className = 'draggable-field';
+        el.id = `field-${field.id}`;
+        el.innerHTML = `<span class="field-label">${field.label}</span>${field.value.replace(/\n/g, '<br>')}`;
+        el.style.top = mmToPx(field.top) + 'px';
+        el.style.left = mmToPx(field.left) + 'px';
+        if (field.width) el.style.width = mmToPx(field.width) + 'px';
+        if (field.height) el.style.height = mmToPx(field.height) + 'px';
+        el.dataset.fieldId = field.id;
+
+        // Add resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+        resizeHandle.addEventListener('mousedown', startResize);
+        el.appendChild(resizeHandle);
+
+        // Make draggable
+        el.addEventListener('mousedown', (e) => {
+            if (!e.target.classList.contains('resize-handle')) {
+                startDrag(e);
+            }
+        });
+        el.addEventListener('click', () => selectField(field.id));
+
+        container.appendChild(el);
+
+        // Add to field list
+        const listItem = document.createElement('div');
+        listItem.className = 'field-list-item';
+        listItem.textContent = `${field.label} (${field.group})`;
+        listItem.onclick = () => {
+            selectField(field.id);
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+        listItem.id = `list-${field.id}`;
+        fieldList.appendChild(listItem);
+    });
+}
+
+// Field selection
+function selectField(fieldId) {
+    // Deselect previous
+    document.querySelectorAll('.draggable-field').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.field-list-item').forEach(el => el.classList.remove('active'));
+
+    // Select new
+    const el = document.getElementById(`field-${fieldId}`);
+    const listEl = document.getElementById(`list-${fieldId}`);
+    if (el) {
+        el.classList.add('selected');
+        listEl?.classList.add('active');
+        selectedField = fieldId;
+        updatePositionDisplay();
+    }
+}
+
+function updatePositionDisplay() {
+    if (!selectedField) {
+        positionDisplay.textContent = 'Select a field to see position';
+        return;
+    }
+
+    const el = document.getElementById(`field-${selectedField}`);
+    const field = fields.find(f => f.id === selectedField);
+    if (el && field) {
+        const top = pxToMm(parseFloat(el.style.top)).toFixed(1);
+        const left = pxToMm(parseFloat(el.style.left)).toFixed(1);
+        const width = pxToMm(parseFloat(el.style.width) || el.offsetWidth).toFixed(1);
+        const height = pxToMm(parseFloat(el.style.height) || el.offsetHeight).toFixed(1);
+        positionDisplay.innerHTML = `<strong>${field.label}</strong><br>top: ${top}mm | left: ${left}mm<br>width: ${width}mm | height: ${height}mm`;
+    }
+}
+
+// Drag handling
+let isDragging = false;
+let dragOffset = { x: 0, y: 0 };
+let dragElement = null;
+
+function startDrag(e) {
+    if (e.button !== 0) return;
+
+    isDragging = true;
+    dragElement = e.target.closest('.draggable-field');
+    const rect = dragElement.getBoundingClientRect();
+    dragOffset = {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+    };
+
+    selectField(dragElement.dataset.fieldId);
+
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('mouseup', stopDrag);
+    e.preventDefault();
+}
+
+function onDrag(e) {
+    if (!isDragging || !dragElement) return;
+
+    const containerRect = container.getBoundingClientRect();
+    let newX = e.clientX - containerRect.left - dragOffset.x;
+    let newY = e.clientY - containerRect.top - dragOffset.y;
+
+    // Constrain to container
+    newX = Math.max(0, Math.min(newX, containerRect.width - dragElement.offsetWidth));
+    newY = Math.max(0, Math.min(newY, containerRect.height - dragElement.offsetHeight));
+
+    dragElement.style.left = newX + 'px';
+    dragElement.style.top = newY + 'px';
+
+    updatePositionDisplay();
+}
+
+function stopDrag() {
+    isDragging = false;
+    dragElement = null;
+    document.removeEventListener('mousemove', onDrag);
+    document.removeEventListener('mouseup', stopDrag);
+}
+
+// Nudge selected field
+function nudge(dx, dy) {
+    if (!selectedField) return;
+
+    const el = document.getElementById(`field-${selectedField}`);
+    if (el) {
+        const currentTop = parseFloat(el.style.top);
+        const currentLeft = parseFloat(el.style.left);
+        el.style.top = (currentTop + mmToPx(dy)) + 'px';
+        el.style.left = (currentLeft + mmToPx(dx)) + 'px';
+        updatePositionDisplay();
+    }
+}
+
+// Resize handling
+let isResizing = false;
+let resizeElement = null;
+
+function startResize(e) {
+    e.stopPropagation();
+    isResizing = true;
+    resizeElement = e.target.closest('.draggable-field');
+    selectField(resizeElement.dataset.fieldId);
+
+    document.addEventListener('mousemove', onResize);
+    document.addEventListener('mouseup', stopResize);
+    e.preventDefault();
+}
+
+function onResize(e) {
+    if (!isResizing || !resizeElement) return;
+
+    const rect = resizeElement.getBoundingClientRect();
+    const newWidth = e.clientX - rect.left;
+    const newHeight = e.clientY - rect.top;
+
+    resizeElement.style.width = Math.max(20, newWidth) + 'px';
+    resizeElement.style.height = Math.max(15, newHeight) + 'px';
+
+    updatePositionDisplay();
+}
+
+function stopResize() {
+    isResizing = false;
+    resizeElement = null;
+    document.removeEventListener('mousemove', onResize);
+    document.removeEventListener('mouseup', stopResize);
+}
+
+// Resize field by buttons
+function resizeField(dw, dh) {
+    if (!selectedField) return;
+
+    const el = document.getElementById(`field-${selectedField}`);
+    if (el) {
+        const currentWidth = parseFloat(el.style.width) || el.offsetWidth;
+        const currentHeight = parseFloat(el.style.height) || el.offsetHeight;
+        el.style.width = Math.max(20, currentWidth + mmToPx(dw)) + 'px';
+        el.style.height = Math.max(15, currentHeight + mmToPx(dh)) + 'px';
+        updatePositionDisplay();
+    }
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', (e) => {
+    if (!selectedField) return;
+
+    const step = e.shiftKey ? 0.1 : (e.ctrlKey ? 1 : 0.5);
+
+    switch(e.key) {
+        case 'ArrowUp': nudge(0, -step); e.preventDefault(); break;
+        case 'ArrowDown': nudge(0, step); e.preventDefault(); break;
+        case 'ArrowLeft': nudge(-step, 0); e.preventDefault(); break;
+        case 'ArrowRight': nudge(step, 0); e.preventDefault(); break;
+    }
+});
+
+// Export CSS
+function exportCSS() {
+    let css = '/* Generated CSS positions and sizes (in mm) */\n:root {\n';
+
+    fields.forEach(field => {
+        const el = document.getElementById(`field-${field.id}`);
+        if (el) {
+            const top = pxToMm(parseFloat(el.style.top)).toFixed(1);
+            const left = pxToMm(parseFloat(el.style.left)).toFixed(1);
+            const width = pxToMm(parseFloat(el.style.width) || el.offsetWidth).toFixed(1);
+            const height = pxToMm(parseFloat(el.style.height) || el.offsetHeight).toFixed(1);
+            css += `    --venc-${field.id}-top: ${top}mm;\n`;
+            css += `    --venc-${field.id}-left: ${left}mm;\n`;
+            css += `    --venc-${field.id}-width: ${width}mm;\n`;
+            css += `    --venc-${field.id}-height: ${height}mm;\n`;
+        }
+    });
+
+    css += '}\n\n/* Field classes */\n';
+
+    fields.forEach(field => {
+        const el = document.getElementById(`field-${field.id}`);
+        if (el) {
+            const top = pxToMm(parseFloat(el.style.top)).toFixed(1);
+            const left = pxToMm(parseFloat(el.style.left)).toFixed(1);
+            const width = pxToMm(parseFloat(el.style.width) || el.offsetWidth).toFixed(1);
+            const height = pxToMm(parseFloat(el.style.height) || el.offsetHeight).toFixed(1);
+            css += `.venc-field-${field.id} {\n`;
+            css += `    position: absolute;\n`;
+            css += `    top: ${top}mm;\n`;
+            css += `    left: ${left}mm;\n`;
+            css += `    width: ${width}mm;\n`;
+            css += `    height: ${height}mm;\n`;
+            css += `}\n`;
+        }
+    });
+
+    document.getElementById('css-output').value = css;
+}
+
+// Reset positions
+function resetPositions() {
+    fields.forEach(field => {
+        const el = document.getElementById(`field-${field.id}`);
+        if (el) {
+            el.style.top = mmToPx(field.top) + 'px';
+            el.style.left = mmToPx(field.left) + 'px';
+            if (field.width) el.style.width = mmToPx(field.width) + 'px';
+            if (field.height) el.style.height = mmToPx(field.height) + 'px';
+        }
+    });
+    updatePositionDisplay();
+}
+
+// Initialize
+createFields();
+</script>
+{% endblock %}

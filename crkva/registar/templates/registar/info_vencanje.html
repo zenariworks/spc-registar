@@ -20,139 +20,97 @@
 </div>
 
 <div class="vencanica">
-    <div class="vencanica-frame vencanica-frame--custom">
-        <!-- Knjiga/Strana/Tekuci broj -->
-        <div class="venc-section-knjiga">
-            <div>{{ vencanje.knjiga }}</div>
-            <div>{{ vencanje.strana }}</div>
-            <div>{{ vencanje.tekuci_broj }}</div>
+    <div class="vencanica-frame">
+
+        <!-- ============================================================
+        HEADER
+        ============================================================ -->
+
+        <!-- Књига / Страна / Текући број -->
+        <div class="venc-field-knjiga">{{ vencanje.knjiga }}</div>
+        <div class="venc-field-strana">{{ vencanje.strana }}</div>
+        <div class="venc-field-tekuci">{{ vencanje.tekuci_broj }}</div>
+
+        <!-- храма ___ епархије -->
+        <div class="venc-field-hram">{{ vencanje.hram }}</div>
+        <div class="venc-field-eparhija">Београдско-Карловачке</div>
+
+        <!-- У ___ за 20__ годину -->
+        <div class="venc-field-mesto">{{ vencanje.mesto_zenika }}</div>
+        <div class="venc-field-godina">{{ vencanje.datum|date:"y" }}</div>
+
+        <!-- ============================================================
+        MAIN
+        ============================================================ -->
+
+        <!-- 1: Име, презиме и занимање венчаних -->
+        <div class="venc-table-field venc-field-ime_zenika">
+            <span>{{ vencanje.ime_zenika }} | {{ vencanje.zanimanje_zenika|lower }} | {{ vencanje.adresa_zenika }} | {{ vencanje.veroispovest_zenika|lower }}, {{ vencanje.narodnost_zenika|lower }}
+        </div>
+        <div class="venc-table-field venc-field-ime_neveste">
+            <span>{{ vencanje.ime_neveste }} | {{ vencanje.zanimanje_neveste|lower }} | {{ vencanje.adresa_neveste }} | {{ vencanje.veroispovest_neveste|lower }}, {{ vencanje.narodnost_neveste|lower }}</span>
         </div>
 
-        <!-- епархије -->
-        <div class="venc-section-eparhija">
-            епархије
+        <!-- 2: Родитеља венчаних -->
+        <div class="venc-table-field venc-field-roditelji_zenika">
+            <span>{{ vencanje.svekar|default_if_none:"" }}</span>
+            <span>{{ vencanje.svekrva|default_if_none:"" }}</span>
+        </div>
+        <div class="venc-table-field venc-field-roditelji_neveste">
+            <span>{{ vencanje.tast|default_if_none:"" }}</span>
+            <span>{{ vencanje.tasta|default_if_none:"" }}</span>
         </div>
 
-        <!-- БЕОГРАДСКО-КАРЛОВАЧКЕ and hram -->
-        <div class="venc-section-hram">
-            <div class="venc-section-hram__eparhija">БЕОГРАДСКО - КАРЛОВАЧКЕ</div>
-            <div class="venc-section-hram__spacer"></div>
-            <div class="venc-section-hram__hram">{{ vencanje.hram }}</div>
+        <!-- 3: Рођења венчаних -->
+        <div class="venc-table-field venc-field-rodjenje_zenika">
+            <span>{{ vencanje.datum_rodjenja_zenika|julian_date }}</span>
+            <span class="venc-text-sm">{{ vencanje.mesto_rodjenja_zenika }}</span>
+        </div>
+        <div class="venc-table-field venc-field-rodjenje_neveste">
+            <span>{{ vencanje.datum_rodjenja_neveste|julian_date }}</span>
+            <span class="venc-text-sm">{{ vencanje.mesto_rodjenja_neveste }}</span>
         </div>
 
-        <!-- mesto / godina -->
-        <div class="venc-section-mesto">
-            <div class="venc-section-mesto__mesto">{{ vencanje.mesto_zenika }}</div>
-            <div class="venc-section-mesto__godina">{{ vencanje.datum|date:"y" }}</div>
+        <!-- 4: У који брак ступају -->
+        <div class="venc-table-field venc-field-brak_zenika">{{ vencanje.zenik_rb_brak }}</div>
+        <div class="venc-table-field venc-field-brak_neveste">{{ vencanje.nevesta_rb_brak }}</div>
+
+        <!-- 5: Испитани и оглашени -->
+        <div class="venc-table-field venc-field-ispit">{{ vencanje.datum_ispita|julian_date }}</div>
+
+        <!-- 6: Датум венчања -->
+        <div class="venc-table-field venc-field-datum_vencanja">{{ vencanje.datum|julian_date }}</div>
+
+        <!-- 7: Место и храм -->
+        <div class="venc-table-field venc-field-mesto_hram">{{ vencanje.mesto_zenika }}, {{ vencanje.hram }}</div>
+
+        <!-- 8: Свештеник -->
+        <div class="venc-table-field venc-field-svestenik">{{ vencanje.svestenik|default_if_none:"" }}</div>
+
+        <!-- 9: Сведоци (кум и стари сват) -->
+        <div class="venc-table-field venc-field-svedoci">
+            <span>{{ vencanje.kum|default_if_none:"" }}</span>
+            <span>{{ vencanje.stari_svat|default_if_none:"" }}</span>
         </div>
 
-        <!-- Field 1a: Ime zenika -->
-        <div class="venc-absolute-field venc-text-sm venc-ls venc-lh venc-field1a">
-            {{ vencanje.ime_zenika }}, {{ vencanje.zanimanje_zenika|lower }},<br>
-            <small>{{ vencanje.adresa_zenika }}</small><br>
-            <small>{{ vencanje.veroispovest_zenika|lower }} {{ vencanje.narodnost_zenika|lower }}</small>
-        </div>
+        <!-- 10: Разрешење -->
+        <div class="venc-table-field venc-field-razresenje">{% if vencanje.razresenje %}Да{% else %}Не{% endif %}</div>
 
-        <!-- Field 1b: Ime neveste -->
-        <div class="venc-absolute-field venc-text-sm venc-ls venc-lh venc-field1b">
-            {{ vencanje.ime_neveste }}, {{ vencanje.zanimanje_neveste|lower }},<br>
-            <small>{{ vencanje.adresa_neveste }}</small><br>
-            <small>{{ vencanje.veroispovest_neveste|lower }} {{ vencanje.narodnost_neveste|lower }}</small>
-        </div>
+        <!-- 11: Примедба -->
+        <div class="venc-table-field venc-field-primedba">{{ vencanje.primedba|default_if_none:"" }}</div>
 
-        <!-- Field 2a: Roditelji zenika -->
-        <div class="venc-absolute-field venc-text-sm venc-ls venc-lh venc-field2a">
-            {{ vencanje.svekar|default_if_none:"" }}<br>
-            {{ vencanje.svekrva|default_if_none:"" }}
-        </div>
+        <!-- ============================================================
+        FOOTER
+        ============================================================ -->
+        <div class="venc-field-footer_hram">{{ vencanje.hram }}</div>
+        <div class="venc-field-footer_eparhija">Београдске</div>
 
-        <!-- Field 2b: Roditelji neveste -->
-        <div class="venc-absolute-field venc-text-sm venc-ls venc-lh venc-field2b">
-            {{ vencanje.tast|default_if_none:"" }}<br>
-            {{ vencanje.tasta|default_if_none:"" }}
-        </div>
+        <div class="venc-field-footer_mesto">Београду</div>
+        <div class="venc-field-footer_datum">{% now "j. F" %}</div>
+        <div class="venc-field-footer_godina">{% now "y" %}</div>
+        <div class="venc-field-footer_paroh">{% if vencanje.svestenik %}{{ vencanje.svestenik }}{% endif %}</div>
+        <div class="venc-field-footer_parohija">{% if vencanje.svestenik %}{{ vencanje.svestenik.parohija }}{% endif %}</div>
 
-        <!-- Field 3a: Rodjenje zenika -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-lh venc-field3a">
-            {{ vencanje.datum_rodjenja_zenika|julian_date}}<br>
-            {{ vencanje.mesto_rodjenja_zenika }}
-        </div>
-
-        <!-- Field 3b: Rodjenje neveste -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-lh venc-field3b">
-            {{ vencanje.datum_rodjenja_neveste|julian_date }}<br>
-            {{ vencanje.mesto_rodjenja_neveste }}
-        </div>
-
-        <!-- Field 4a: Brak zenika -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-field4a">
-            {{ vencanje.zenik_rb_brak }}
-        </div>
-
-        <!-- Field 4b: Brak neveste -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-field4b">
-            {{ vencanje.nevesta_rb_brak }}
-        </div>
-
-        <!-- Field 5: Datum ispita -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-field5">
-            {{ vencanje.datum_ispita|julian_date }}
-        </div>
-
-        <!-- Field 6: Datum vencanja -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-field6">
-            {{ vencanje.datum|julian_date }}
-        </div>
-
-        <!-- Field 7: Mesto i hram -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-field7">
-            {{ vencanje.mesto_zenika }}, {{ vencanje.hram }}
-        </div>
-
-        <!-- Field 8: Svestenik -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-field8">
-            {{ vencanje.svestenik|default_if_none:"" }}
-        </div>
-
-        <!-- Field 9: Svedoci -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-lh venc-field9">
-            {{ vencanje.kum|default_if_none:"" }}<br>
-            {{ vencanje.stari_svat|default_if_none:"" }}
-        </div>
-
-        <!-- Field 10: Razresenje -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-field10">
-            {% if vencanje.razresenje %}Да{% else %}Не{% endif %}
-        </div>
-
-        <!-- Field 11: Primedba -->
-        <div class="venc-absolute-field venc-text-md venc-ls venc-field11">
-            {{ vencanje.primedba|default_if_none:"" }}
-        </div>
-
-        <!-- Beogradske -->
-        <div class="venc-section-eparhija2">
-            Београдске
-        </div>
-
-        <!-- Hram again -->
-        <div class="venc-section-hram2">
-            {{ vencanje.hram }}
-        </div>
-
-        <!-- Bottom section -->
-        <div class="venc-section-bottom">
-            <div class="venc-section-bottom__datum">{% now "j.F" %}</div>
-            <div class="venc-section-bottom__godina">{% now "y" %}</div>
-            <div class="venc-section-bottom__spacer1"></div>
-            <div class="venc-section-bottom__spacer2"></div>
-            <div class="venc-section-bottom__parohija">{% if vencanje.svestenik %}{{vencanje.svestenik.parohija}}{% endif %}</div>
-            <div class="venc-section-bottom__hram">при Храму Свете Петке</div>
-        </div>
-
-        <div class="venc-section-beograd">
-            Београду
-        </div>
     </div>
 </div>
 

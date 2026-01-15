@@ -94,3 +94,8 @@ def unos_vencanja(request):
     else:
         form = VencanjeForm()
     return render(request, "registar/unos_vencanja.html", {"form": form})
+
+
+def calibrate_vencanje(request):
+    """Приказује страницу за калибрацију позиција поља на венчаници."""
+    return render(request, "registar/calibrate_vencanje.html")

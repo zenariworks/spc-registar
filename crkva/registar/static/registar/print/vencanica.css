@@ -1,247 +1,404 @@
-/* Венчаница */
+/* Венчаница - Calibrated Absolute Positioning */
 
-/* CSS Variables for easy positioning adjustments */
+/* ==========================================================================
+   CSS VARIABLES - Calibrated from drag-n-drop tool
+   ========================================================================== */
 :root {
-    /* Vertical positions (percentage from top) - fine-tuned based on background image */
-    --venc-knjiga-top: 3%;      /* Knjiga/Strana/Tekuci broj section */
-    --venc-eparhija-top: 14%;   /* епархије line */
-    --venc-hram-top: 16%;       /* БЕОГРАДСКО-КАРЛОВАЧКЕ / hram line */
-    --venc-mesto-top: 19.5%;    /* mesto / godina line */
-    --venc-field1a-top: 24%;    /* 1a. Ime zenika */
-    --venc-field1b-top: 27%;    /* 1b. Ime neveste */
-    --venc-field2a-top: 30%;    /* 2a. Roditelji zenika */
-    --venc-field2b-top: 33%;    /* 2b. Roditelji neveste */
-    --venc-field3a-top: 36%;    /* 3a. Rodjenje zenika */
-    --venc-field3b-top: 39%;    /* 3b. Rodjenje neveste */
-    --venc-field4a-top: 42%;    /* 4a. Brak zenika */
-    --venc-field4b-top: 45%;    /* 4b. Brak neveste */
-    --venc-field5-top: 48%;     /* 5. Datum ispita */
-    --venc-field6-top: 51%;     /* 6. Datum vencanja */
-    --venc-field7-top: 54%;     /* 7. Mesto i hram */
-    --venc-field8-top: 57%;     /* 8. Svestenik */
-    --venc-field9-top: 60%;     /* 9. Svedoci (kum i stari svat) */
-    --venc-field10-top: 63%;    /* 10. Razresenje */
-    --venc-field11-top: 66%;    /* 11. Primedba */
-    --venc-eparhija2-top: 70%;  /* Beogradske */
-    --venc-hram2-top: 73%;      /* Hram name again */
-    --venc-bottom-top: 85%;     /* Bottom section */
+    /* Main container dimensions (A4 paper) */
+    --venc-page-width: 210mm;
+    --venc-page-height: 297mm;
 
-    /* Horizontal positions */
-    --venc-left-label: 5%;
-    --venc-left-value: 42%;     /* Left edge of value column */
+    /* Header fields - Књига/Страна/Текући */
+    --venc-knjiga-top: 12.5mm;
+    --venc-knjiga-left: 41mm;
+    --venc-strana-top: 20.5mm;
+    --venc-strana-left: 41mm;
+    --venc-tekuci-top: 28.5mm;
+    --venc-tekuci-left: 41mm;
+
+    /* Header fields - храма/епархије line */
+    --venc-hram-top: 53.9mm;
+    --venc-hram-left: 121mm;
+    --venc-eparhija-top: 53.2mm;
+    --venc-eparhija-left: 27mm;
+
+    /* Header fields - У/за 20 line */
+    --venc-mesto-top: 60.8mm;
+    --venc-mesto-left: 27mm;
+    --venc-godina-top: 61.1mm;
+    --venc-godina-left: 130mm;
+
+    /* Table fields - aligned left at 87mm */
+    --venc-table-left: 87mm;
+    --venc-table-width: 107mm;
+
+    /* Table row positions */
+    --venc-ime_zenika-top: 71.8mm;
+    --venc-ime_neveste-top: 81.5mm;
+    --venc-roditelji_zenika-top: 91.5mm;
+    --venc-roditelji_neveste-top: 101.3mm;
+    --venc-rodjenje_zenika-top: 111.6mm;
+    --venc-rodjenje_neveste-top: 121.7mm;
+    --venc-brak_zenika-top: 131.5mm;
+    --venc-brak_neveste-top: 141.3mm;
+    --venc-ispit-top: 151.3mm;
+    --venc-datum_vencanja-top: 161.3mm;
+    --venc-mesto_hram-top: 171mm;
+    --venc-svestenik-top: 181.4mm;
+    --venc-svedoci-top: 191.2mm;
+    --venc-razresenje-top: 202.1mm;
+    --venc-primedba-top: 213.2mm;
+
+    /* Footer */
+    --venc-footer_hram-top: 229.9mm;
+    --venc-footer_hram-left: 123.4mm;
+    --venc-footer_eparhija-top: 221.7mm;
+    --venc-footer_eparhija-left: 99.5mm;
+    --venc-footer_mesto-top: 263.3mm;
+    --venc-footer_mesto-left: 18.7mm;
+    --venc-footer_datum-top: 257.4mm;
+    --venc-footer_datum-left: 10.0mm;
+    --venc-footer_godina-top: 257.1mm;
+    --venc-footer_godina-left: 41.4mm;
+    --venc-footer_paroh-top: 264.8mm;
+    --venc-footer_paroh-left: 137mm;
+    --venc-footer_parohija-top: 258.8mm;
+    --venc-footer_parohija-left: 137mm;
 }
 
+/* ==========================================================================
+   MAIN CONTAINER
+   ========================================================================== */
 .vencanica {
-    border: 1px solid #ccc;
-    margin: 2mm;
-    margin-top: 6mm;
-    margin-left: 6mm;
-    height: 297mm;
-    width: 210mm;
-    padding: 0mm;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 2px solid red;
-    background-size: cover;
-    background-image: url("../slike/vencanica-nova.jpg");
-    /* Use the bundled Miroslav font for better legibility and consistency */
-    font-family: 'Miroslav', serif;
+    width: var(--venc-page-width);
+    height: var(--venc-page-height);
+    margin: 6mm auto;
+    padding: 0;
     position: relative;
-    /* Ensure text over light certificate background stays dark in all themes */
+    background-image: url("../slike/vencanica-nova.jpg");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    font-family: 'Miroslav', serif;
     color: #111;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
 }
 
 .vencanica-frame {
-    margin: 2mm;
-    margin-top: 6mm;
-    margin-left: 6mm;
-    height: 286mm;
-    width: 200mm;
-    padding: 0mm;
-    position: relative;
-}
-
-.vencanica-row {
-    display: flex;
-    font-family: 'Miroslav', serif;
-}
-
-/* Absolute positioning for dynamic layout */
-.venc-absolute-field {
     position: absolute;
-    left: var(--venc-left-value);
-    right: 5%;
-    font-family: 'Miroslav', serif;
-    text-align: center;
-    color: #111;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
-/* Utility classes for form fields */
-.venc-ls { letter-spacing: 1px; }
-.venc-text-sm { font-size: 9pt; }
-.venc-text-md { font-size: 10pt; }
-.venc-lh { line-height: 1.2; }
-
 /* ==========================================================================
-   POSITION CLASSES FOR FIELDS
+   HEADER FIELDS
    ========================================================================== */
 
-/* Individual field positions */
-.venc-field1a { top: var(--venc-field1a-top); }
-.venc-field1b { top: var(--venc-field1b-top); }
-.venc-field2a { top: var(--venc-field2a-top); }
-.venc-field2b { top: var(--venc-field2b-top); }
-.venc-field3a { top: var(--venc-field3a-top); }
-.venc-field3b { top: var(--venc-field3b-top); }
-.venc-field4a { top: var(--venc-field4a-top); }
-.venc-field4b { top: var(--venc-field4b-top); }
-.venc-field5 { top: var(--venc-field5-top); }
-.venc-field6 { top: var(--venc-field6-top); }
-.venc-field7 { top: var(--venc-field7-top); }
-.venc-field8 { top: var(--venc-field8-top); }
-.venc-field9 { top: var(--venc-field9-top); }
-.venc-field10 { top: var(--venc-field10-top); }
-.venc-field11 { top: var(--venc-field11-top); }
-
-/* ==========================================================================
-   HEADER/FOOTER SECTIONS
-   ========================================================================== */
-
-/* vencanica-frame custom width/margin */
-.vencanica-frame--custom {
-    width: 185mm;
-    margin-left: 14mm;
-}
-
-/* Knjiga/Strana/Tekuci broj section */
-.venc-section-knjiga {
+/* Књига/Страна/Текући број */
+.venc-field-knjiga {
     position: absolute;
     top: var(--venc-knjiga-top);
-    left: 5%;
-    text-align: right;
-    width: 18%;
+    left: var(--venc-knjiga-left);
+    width: 15mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
 }
 
-.venc-section-knjiga > div {
-    margin-bottom: 2mm;
-}
-
-.venc-section-knjiga > div:last-child {
-    margin-bottom: 0;
-}
-
-/* Eparhije line */
-.venc-section-eparhija {
+.venc-field-strana {
     position: absolute;
-    top: var(--venc-eparhija-top);
-    right: 20%;
-    text-align: right;
+    top: var(--venc-strana-top);
+    left: var(--venc-strana-left);
+    width: 15mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
 }
 
-/* BEOGRADSKO-KARLOVACKE / hram line */
-.venc-section-hram {
+.venc-field-tekuci {
+    position: absolute;
+    top: var(--venc-tekuci-top);
+    left: var(--venc-tekuci-left);
+    width: 15mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11pt;
+}
+
+/* Храм and Епархија line */
+.venc-field-hram {
     position: absolute;
     top: var(--venc-hram-top);
-    left: 10%;
-    right: 5%;
+    left: var(--venc-hram-left);
+    width: 50mm;
+    height: 6mm;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
+    text-align: center;
 }
 
-.venc-section-hram__eparhija {
-    width: 45%;
+.venc-field-eparhija {
+    position: absolute;
+    top: var(--venc-eparhija-top);
+    left: var(--venc-eparhija-left);
+    width: 55mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
+    text-align: center;
 }
 
-.venc-section-hram__spacer {
-    width: 20%;
-}
-
-.venc-section-hram__hram {
-    width: 35%;
-    text-align: right;
-}
-
-/* Mesto / godina line */
-.venc-section-mesto {
+/* Место and Година line */
+.venc-field-mesto {
     position: absolute;
     top: var(--venc-mesto-top);
-    left: 10%;
-    right: 5%;
+    left: var(--venc-mesto-left);
+    width: 55mm;
+    height: 6mm;
     display: flex;
-}
-
-.venc-section-mesto__mesto {
-    width: 55%;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
     text-align: center;
-    padding-left: 10%;
 }
 
-.venc-section-mesto__godina {
-    width: 45%;
-    padding-left: 6%;
-}
-
-/* Beogradske section */
-.venc-section-eparhija2 {
+.venc-field-godina {
     position: absolute;
-    top: var(--venc-eparhija2-top);
-    left: 62%;
-    width: 30%;
-    text-align: center;
-    letter-spacing: 1px;
-}
-
-/* Hram name again */
-.venc-section-hram2 {
-    position: absolute;
-    top: var(--venc-hram2-top);
-    left: 70%;
-    width: 30%;
-    text-align: center;
-    letter-spacing: 1px;
-}
-
-/* Bottom section */
-.venc-section-bottom {
-    position: absolute;
-    top: var(--venc-bottom-top);
-    left: 5%;
-    right: 5%;
+    top: var(--venc-godina-top);
+    left: var(--venc-godina-left);
+    width: 15mm;
+    height: 6mm;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
 }
 
-.venc-section-bottom__datum {
-    width: 9%;
-    font-size: 9pt;
-    letter-spacing: 1px;
-}
+/* ==========================================================================
+   TABLE FIELDS - All use same left position and width
+   ========================================================================== */
 
-.venc-section-bottom__godina {
-    width: 5%;
-    font-size: 9pt;
-}
-
-.venc-section-bottom__spacer1 {
-    width: 33%;
-}
-
-.venc-section-bottom__spacer2 {
-    width: 5%;
-}
-
-.venc-section-bottom__parohija {
-    width: 12%;
-}
-
-.venc-section-bottom__hram {
-    width: 30%;
-    letter-spacing: 1px;
-    font-size: 9pt;
-}
-
-/* Beograd line below bottom */
-.venc-section-beograd {
+.venc-table-field {
     position: absolute;
-    top: calc(var(--venc-bottom-top) + 2.5%);
-    left: 5%;
-    letter-spacing: 1px;
+    left: var(--venc-table-left);
+    width: var(--venc-table-width);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-size: 9pt;
+    line-height: 1.3;
+    overflow: hidden;
+}
+
+/* Individual row positions */
+.venc-field-ime_zenika {
+    top: var(--venc-ime_zenika-top);
+    height: 10mm;
+}
+
+.venc-field-ime_neveste {
+    top: var(--venc-ime_neveste-top);
+    height: 10mm;
+}
+
+.venc-field-roditelji_zenika {
+    top: var(--venc-roditelji_zenika-top);
+    height: 10mm;
+}
+
+.venc-field-roditelji_neveste {
+    top: var(--venc-roditelji_neveste-top);
+    height: 10mm;
+}
+
+.venc-field-rodjenje_zenika {
+    top: var(--venc-rodjenje_zenika-top);
+    height: 10mm;
+}
+
+.venc-field-rodjenje_neveste {
+    top: var(--venc-rodjenje_neveste-top);
+    height: 10mm;
+}
+
+.venc-field-brak_zenika {
+    top: var(--venc-brak_zenika-top);
+    height: 10mm;
+}
+
+.venc-field-brak_neveste {
+    top: var(--venc-brak_neveste-top);
+    height: 10mm;
+}
+
+.venc-field-ispit {
+    top: var(--venc-ispit-top);
+    height: 10mm;
+}
+
+.venc-field-datum_vencanja {
+    top: var(--venc-datum_vencanja-top);
+    height: 10mm;
+}
+
+.venc-field-mesto_hram {
+    top: var(--venc-mesto_hram-top);
+    height: 11mm;
+}
+
+.venc-field-svestenik {
+    top: var(--venc-svestenik-top);
+    height: 10mm;
+}
+
+.venc-field-svedoci {
+    top: var(--venc-svedoci-top);
+    height: 11mm;
+    flex-direction: column;
+}
+
+.venc-field-razresenje {
+    top: var(--venc-razresenje-top);
+    height: 12mm;
+}
+
+.venc-field-primedba {
+    top: var(--venc-primedba-top);
+    height: 9mm;
+}
+
+/* ==========================================================================
+   FOOTER FIELDS
+   ========================================================================== */
+
+.venc-field-footer_hram {
+    position: absolute;
+    top: var(--venc-footer_hram-top);
+    left: var(--venc-footer_hram-left);
+    width: 55mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
+    text-align: center;
+}
+
+.venc-field-footer_eparhija {
+    position: absolute;
+    top: var(--venc-footer_eparhija-top);
+    left: var(--venc-footer_eparhija-left);
+    width: 94mm;
+    height: 7.5mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10pt;
+    text-align: center;
+}
+
+.venc-field-footer_mesto {
+    position: absolute;
+    top: var(--venc-footer_mesto-top);
+    left: var(--venc-footer_mesto-left);
+    width: 21mm;
+    height: 7mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+}
+
+.venc-field-footer_datum {
+    position: absolute;
+    top: var(--venc-footer_datum-top);
+    left: var(--venc-footer_datum-left);
+    width: 33mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+}
+
+.venc-field-footer_godina {
+    position: absolute;
+    top: var(--venc-footer_godina-top);
+    left: var(--venc-footer_godina-left);
+    width: 10mm;
+    height: 7mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+}
+
+.venc-field-footer_paroh {
+    position: absolute;
+    top: var(--venc-footer_paroh-top);
+    left: var(--venc-footer_paroh-left);
+    width: 53mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+}
+
+.venc-field-footer_parohija {
+    position: absolute;
+    top: var(--venc-footer_parohija-top);
+    left: var(--venc-footer_parohija-left);
+    width: 53mm;
+    height: 6mm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9pt;
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+
+.venc-text-sm {
+    font-size: 8pt;
+}
+
+/* Multi-line table fields need vertical stacking */
+.venc-field-ime_zenika,
+.venc-field-ime_neveste,
+.venc-field-roditelji_zenika,
+.venc-field-roditelji_neveste,
+.venc-field-rodjenje_zenika,
+.venc-field-rodjenje_neveste {
+    flex-direction: column;
+    gap: 0.5mm;
+}
+
+/* ==========================================================================
+   PRINT STYLES
+   ========================================================================== */
+
+@media print {
+    .vencanica {
+        margin: 0;
+        box-shadow: none;
+        page-break-after: always;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
 }
