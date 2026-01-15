@@ -153,17 +153,7 @@ fieldset.form-section legend {
 }
 .toggle-wrapper { display: flex; align-items: center; gap: 10px; }
 .toggle-label { font-weight: 600; color: var(--color-text-muted); }
-.visually-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
-}
+/* NOTE: .visually-hidden је дефинисан у utilities/pomocno.css */
 
 /* Nicer date and time pickers */
 input[type="date"],

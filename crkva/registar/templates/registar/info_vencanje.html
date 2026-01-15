@@ -12,9 +12,9 @@
         <i class="fa-solid fa-arrow-left"></i>
     </a>
     <h1 class="u-page-title">Венчаница</h1>
-    <a href="{% url 'vencanje_pdf' vencanje.uid %}" target="_blank" style="text-decoration: none;">
+    <a href="{% url 'vencanje_pdf' vencanje.uid %}" target="_blank" class="u-link-primary">
         <button class="button button--primary" type="button" title="Штампај">
-          <i class="fa-solid fa-print" style="margin-right: 6px;"></i> Штампај
+          <i class="fa-solid fa-print u-mr-2"></i> Штампај
         </button>
     </a>
 </div>
@@ -47,86 +47,86 @@
         </div>
 
         <!-- Field 1a: Ime zenika -->
-        <div class="venc-absolute-field" style="top: var(--venc-field1a-top); font-size: 9pt; letter-spacing: 1px; line-height: 1.2;">
+        <div class="venc-absolute-field venc-text-sm venc-ls venc-lh" style="top: var(--venc-field1a-top);">
             {{ vencanje.ime_zenika }}, {{ vencanje.zanimanje_zenika|lower }},<br>
             <small>{{ vencanje.adresa_zenika }}</small><br>
             <small>{{ vencanje.veroispovest_zenika|lower }} {{ vencanje.narodnost_zenika|lower }}</small>
         </div>
 
         <!-- Field 1b: Ime neveste -->
-        <div class="venc-absolute-field" style="top: var(--venc-field1b-top); font-size: 9pt; letter-spacing: 1px; line-height: 1.2;">
+        <div class="venc-absolute-field venc-text-sm venc-ls venc-lh" style="top: var(--venc-field1b-top);">
             {{ vencanje.ime_neveste }}, {{ vencanje.zanimanje_neveste|lower }},<br>
             <small>{{ vencanje.adresa_neveste }}</small><br>
             <small>{{ vencanje.veroispovest_neveste|lower }} {{ vencanje.narodnost_neveste|lower }}</small>
         </div>
 
         <!-- Field 2a: Roditelji zenika -->
-        <div class="venc-absolute-field" style="top: var(--venc-field2a-top); font-size: 9pt; letter-spacing: 1px; line-height: 1.2;">
+        <div class="venc-absolute-field venc-text-sm venc-ls venc-lh" style="top: var(--venc-field2a-top);">
             {{ vencanje.svekar|default_if_none:"" }}<br>
             {{ vencanje.svekrva|default_if_none:"" }}
         </div>
 
         <!-- Field 2b: Roditelji neveste -->
-        <div class="venc-absolute-field" style="top: var(--venc-field2b-top); font-size: 9pt; letter-spacing: 1px; line-height: 1.2;">
+        <div class="venc-absolute-field venc-text-sm venc-ls venc-lh" style="top: var(--venc-field2b-top);">
             {{ vencanje.tast|default_if_none:"" }}<br>
             {{ vencanje.tasta|default_if_none:"" }}
         </div>
 
         <!-- Field 3a: Rodjenje zenika -->
-        <div class="venc-absolute-field" style="top: var(--venc-field3a-top); font-size: 10pt; letter-spacing: 1px; line-height: 1.2;">
+        <div class="venc-absolute-field venc-text-md venc-ls venc-lh" style="top: var(--venc-field3a-top);">
             {{ vencanje.datum_rodjenja_zenika|julian_date}}<br>
             {{ vencanje.mesto_rodjenja_zenika }}
         </div>
 
         <!-- Field 3b: Rodjenje neveste -->
-        <div class="venc-absolute-field" style="top: var(--venc-field3b-top); font-size: 10pt; letter-spacing: 1px; line-height: 1.2;">
+        <div class="venc-absolute-field venc-text-md venc-ls venc-lh" style="top: var(--venc-field3b-top);">
             {{ vencanje.datum_rodjenja_neveste|julian_date }}<br>
             {{ vencanje.mesto_rodjenja_neveste }}
         </div>
 
         <!-- Field 4a: Brak zenika -->
-        <div class="venc-absolute-field" style="top: var(--venc-field4a-top); font-size: 10pt; letter-spacing: 1px;">
+        <div class="venc-absolute-field venc-text-md venc-ls" style="top: var(--venc-field4a-top);">
             {{ vencanje.zenik_rb_brak }}
         </div>
 
         <!-- Field 4b: Brak neveste -->
-        <div class="venc-absolute-field" style="top: var(--venc-field4b-top); font-size: 10pt; letter-spacing: 1px;">
+        <div class="venc-absolute-field venc-text-md venc-ls" style="top: var(--venc-field4b-top);">
             {{ vencanje.nevesta_rb_brak }}
         </div>
 
         <!-- Field 5: Datum ispita -->
-        <div class="venc-absolute-field" style="top: var(--venc-field5-top); font-size: 10pt; letter-spacing: 1px;">
+        <div class="venc-absolute-field venc-text-md venc-ls" style="top: var(--venc-field5-top);">
             {{ vencanje.datum_ispita|julian_date }}
         </div>
 
         <!-- Field 6: Datum vencanja -->
-        <div class="venc-absolute-field" style="top: var(--venc-field6-top); font-size: 10pt; letter-spacing: 1px;">
+        <div class="venc-absolute-field venc-text-md venc-ls" style="top: var(--venc-field6-top);">
             {{ vencanje.datum|julian_date }}
         </div>
 
         <!-- Field 7: Mesto i hram -->
-        <div class="venc-absolute-field" style="top: var(--venc-field7-top); font-size: 10pt; letter-spacing: 1px;">
+        <div class="venc-absolute-field venc-text-md venc-ls" style="top: var(--venc-field7-top);">
             {{ vencanje.mesto_zenika }}, {{ vencanje.hram }}
         </div>
 
         <!-- Field 8: Svestenik -->
-        <div class="venc-absolute-field" style="top: var(--venc-field8-top); font-size: 10pt; letter-spacing: 1px;">
+        <div class="venc-absolute-field venc-text-md venc-ls" style="top: var(--venc-field8-top);">
             {{ vencanje.svestenik|default_if_none:"" }}
         </div>
 
         <!-- Field 9: Svedoci -->
-        <div class="venc-absolute-field" style="top: var(--venc-field9-top); font-size: 10pt; letter-spacing: 1px; line-height: 1.2;">
+        <div class="venc-absolute-field venc-text-md venc-ls venc-lh" style="top: var(--venc-field9-top);">
             {{ vencanje.kum|default_if_none:"" }}<br>
             {{ vencanje.stari_svat|default_if_none:"" }}
         </div>
 
         <!-- Field 10: Razresenje -->
-        <div class="venc-absolute-field" style="top: var(--venc-field10-top); font-size: 10pt; letter-spacing: 1px; line-height: 1.3;">
+        <div class="venc-absolute-field venc-text-md venc-ls" style="top: var(--venc-field10-top);">
             {% if vencanje.razresenje %}Да{% else %}Не{% endif %}
         </div>
 
         <!-- Field 11: Primedba -->
-        <div class="venc-absolute-field" style="top: var(--venc-field11-top); font-size: 10pt; letter-spacing: 1px;">
+        <div class="venc-absolute-field venc-text-md venc-ls" style="top: var(--venc-field11-top);">
             {{ vencanje.primedba|default_if_none:"" }}
         </div>
 

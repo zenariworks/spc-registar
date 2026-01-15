@@ -74,3 +74,9 @@
     text-align: center;
     color: #111;
 }
+
+/* Utility classes for form fields */
+.venc-ls { letter-spacing: 1px; }
+.venc-text-sm { font-size: 9pt; }
+.venc-text-md { font-size: 10pt; }
+.venc-lh { line-height: 1.2; }

@@ -75,3 +75,9 @@
     right: 5%;
     color: #111;
 }
+
+/* Utility classes for form fields */
+.krst-ls { letter-spacing: 1px; }
+.krst-text-sm { font-size: 12pt; }
+.krst-text-md { font-size: 14pt; }
+.krst-lh { line-height: 1.3; }
