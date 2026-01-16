@@ -54,3 +54,13 @@ repos:
           - --rcfile=.pylintrc
           - --django-settings-module=crkva.settings
         exclude: ^.*/migrations/.*$
+
+  # Django tests
+  - repo: local
+    hooks:
+      - id: django-tests
+        name: django tests
+        entry: python crkva/manage.py test registar.tests --keepdb --verbosity=1
+        language: system
+        pass_filenames: false
+        always_run: true
