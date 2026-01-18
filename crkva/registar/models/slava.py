@@ -4,11 +4,10 @@ from datetime import date, timedelta
 
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from model_utils.models import TimeStampedModel
 
-from .base import TimestampedModel
 
-
-class Slava(TimestampedModel):
+class Slava(TimeStampedModel):
     """Класа која представља слава."""
 
     uid = models.AutoField(primary_key=True, unique=True, editable=False)

@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="{% static 'registar/base/fonts.css' %}">
   <link rel="stylesheet" href="{% static 'registar/print/stampa.css' %}">
     <title>
-      Венчаница {{ vencanje.knjiga }}.{{ vencanje.strana }}.{{ vencanje.tekuci_broj }}
+      Венчаница {{ vencanje.knjiga }}.{{ vencanje.strana }}.{{ vencanje.broj }}
     </title>
   </head>
   <body>
@@ -20,7 +20,7 @@
             {{ vencanje.strana }}
           </div>
           <div class="row" style="width: 100%; justify-content: flex-end; padding-right: 7%; height: 7mm">
-            {{ vencanje.tekuci_broj }}
+            {{ vencanje.broj }}
           </div>
         </div>
         <div style="width: 50%;"></div>

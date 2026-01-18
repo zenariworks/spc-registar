@@ -72,8 +72,8 @@ class Command(BaseCommand):
         datum_rodjenja = RandomUtils.random_date_of_birth(0, 1)
 
         krstenje = Krstenje(
-            redni_broj_krstenja_tekuca_godina=random.randint(1, 1000),
-            krstenje_tekuca_godina=today.year,
+            redni_broj=random.randint(1, 1000),
+            godina_registracije=today.year,
             knjiga=random.randint(1, 100),
             broj=random.randint(1, 1000),
             strana=random.randint(1, 500),

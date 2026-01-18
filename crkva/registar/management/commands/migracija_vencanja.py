@@ -22,7 +22,7 @@ class VencanjeRecord:
 
     knjiga: str
     strana: str
-    tekuci_broj: str
+    broj: str
 
     datum: Optional[date]
 
@@ -154,7 +154,7 @@ class Command(MigrationCommand):
             godina=i(row[1], 1900),
             knjiga=s(row[2]),
             strana=s(row[3]),
-            tekuci_broj=s(row[4]),
+            broj=s(row[4]),
             datum=row[5],
             zenik_ime=s(row[6]),
             zenik_prezime=s(row[7]),
@@ -339,7 +339,7 @@ class Command(MigrationCommand):
             "redni_broj": r.redni_broj,
             "knjiga": Konvertor.int(r.knjiga, 1),
             "strana": Konvertor.int(r.strana, 1),
-            "tekuci_broj": Konvertor.int(r.tekuci_broj, 1),
+            "broj": Konvertor.int(r.broj, 1),
             "datum": r.datum,
             "zenik": zenik,
             "nevesta": nevesta,

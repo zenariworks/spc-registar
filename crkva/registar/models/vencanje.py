@@ -4,14 +4,14 @@ import uuid
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from model_utils.models import TimeStampedModel
 
-from .base import TimestampedModel
 from .hram import Hram
 from .parohijan import Osoba
 from .svestenik import Svestenik
 
 
-class Vencanje(TimestampedModel):
+class Vencanje(TimeStampedModel):
     """Класа која представља венчања."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
@@ -33,11 +33,11 @@ class Vencanje(TimestampedModel):
     strana = models.IntegerField(
         verbose_name="страна", validators=[MinValueValidator(1)], default=1
     )
-    tekuci_broj = models.IntegerField(
+    broj = models.IntegerField(
         verbose_name="текући број", validators=[MinValueValidator(1)], default=1
     )
 
-    datum = models.DateField(verbose_name="датум венчања", null=True, blank=True)
+    datum = models.DateField(verbose_name="датум", null=True, blank=True)
 
     zenik = models.ForeignKey(
         Osoba,
@@ -47,6 +47,17 @@ class Vencanje(TimestampedModel):
         related_name="vencanja_kao_zenik",
         verbose_name="женик",
     )
+    # adrese (specifične za događaj venčanja)
+    mesto_zenika = models.CharField(
+        max_length=255, verbose_name="место женика", null=True, blank=True
+    )
+    adresa_zenika = models.CharField(
+        max_length=255, verbose_name="адреса женика", null=True, blank=True
+    )
+    zenik_rb_brak = models.PositiveSmallIntegerField(
+        verbose_name="брак по реду женика", validators=[MinValueValidator(1)], default=1
+    )
+
     nevesta = models.ForeignKey(
         Osoba,
         on_delete=models.SET_NULL,
@@ -55,6 +66,18 @@ class Vencanje(TimestampedModel):
         related_name="vencanja_kao_nevesta",
         verbose_name="невеста",
     )
+    mesto_neveste = models.CharField(
+        max_length=255, verbose_name="место невесте", null=True, blank=True
+    )
+    adresa_neveste = models.CharField(
+        max_length=255, verbose_name="адреса невесте", null=True, blank=True
+    )
+    nevesta_rb_brak = models.PositiveSmallIntegerField(
+        verbose_name="брак по реду невесте",
+        validators=[MinValueValidator(1)],
+        default=1,
+    )
+
     kum = models.ForeignKey(
         Osoba,
         on_delete=models.SET_NULL,
@@ -62,30 +85,6 @@ class Vencanje(TimestampedModel):
         blank=True,
         related_name="vencanja_kao_kum",
         verbose_name="кум",
-    )
-
-    # adrese (specifične za događaj venčanja)
-    mesto_zenika = models.CharField(
-        max_length=255, verbose_name="место женика", null=True, blank=True
-    )
-    adresa_zenika = models.CharField(
-        max_length=255, verbose_name="адреса женика", null=True, blank=True
-    )
-    mesto_neveste = models.CharField(
-        max_length=255, verbose_name="место невесте", null=True, blank=True
-    )
-    adresa_neveste = models.CharField(
-        max_length=255, verbose_name="адреса невесте", null=True, blank=True
-    )
-
-    # podaci o braku
-    zenik_rb_brak = models.PositiveSmallIntegerField(
-        verbose_name="брак по реду женика", validators=[MinValueValidator(1)], default=1
-    )
-    nevesta_rb_brak = models.PositiveSmallIntegerField(
-        verbose_name="брак по реду невесте",
-        validators=[MinValueValidator(1)],
-        default=1,
     )
 
     svekar = models.ForeignKey(

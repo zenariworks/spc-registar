@@ -18,7 +18,6 @@ class Zanimanje(models.Model):
         return f"{self.naziv}"
 
     class Meta:
-        managed = False
         db_table = "zanimanja"
         verbose_name = "Занимање"
         verbose_name_plural = "Занимања"

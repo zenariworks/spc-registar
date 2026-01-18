@@ -72,8 +72,8 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
             "knjiga": 1,
             "broj": 1,
             "strana": 1,
-            "redni_broj_krstenja_tekuca_godina": 1,
-            "krstenje_tekuca_godina": 2024,
+            "redni_broj": 1,
+            "godina_registracije": 2024,
             "datum": "2024-02-10",
             "vreme": "10:00",
             "mesto": "Београд",
@@ -91,7 +91,7 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
         self.assertEqual(response.status_code, 302)  # Редирект након креирања
 
         # Верификација да је крштење креирано
-        krstenje = Krstenje.objects.get(redni_broj_krstenja_tekuca_godina=1)
+        krstenje = Krstenje.objects.get(redni_broj=1)
         self.assertEqual(krstenje.dete, dete)
         self.assertEqual(krstenje.otac, otac)
         self.assertEqual(krstenje.majka, majka)
@@ -116,8 +116,8 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
             "knjiga": 0,  # Неважећа вредност - мора бити >= 1
             "broj": 1,
             "strana": 1,
-            "redni_broj_krstenja_tekuca_godina": 1,
-            "krstenje_tekuca_godina": 2024,
+            "redni_broj": 1,
+            "godina_registracije": 2024,
             "datum": "2024-02-10",
             "adresa_deteta_grad": "Београд",
             "dete_vanbracno": False,
@@ -197,7 +197,7 @@ class VencanjeCreationIntegrationTest(TransactionTestCase):
             "redni_broj": 1,
             "knjiga": 1,
             "strana": 1,
-            "tekuci_broj": 1,
+            "broj": 1,
             "datum": "2024-06-15",
             "mesto_zenika": "Београд",
             "adresa_zenika": "ул. Николе Пашића 10",
@@ -260,8 +260,8 @@ class SearchIntegrationTest(TestCase):
             knjiga=1,
             broj=1,
             strana=1,
-            redni_broj_krstenja_tekuca_godina=1,
-            krstenje_tekuca_godina=2024,
+            redni_broj=1,
+            godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
             adresa_deteta_grad="Београд",
             dete_vanbracno=False,
@@ -329,8 +329,8 @@ class ModelRelationshipsIntegrationTest(TestCase):
             knjiga=1,
             broj=1,
             strana=1,
-            redni_broj_krstenja_tekuca_godina=1,
-            krstenje_tekuca_godina=2024,
+            redni_broj=1,
+            godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
             adresa_deteta_grad="Београд",
             dete_vanbracno=False,
@@ -361,8 +361,8 @@ class ModelRelationshipsIntegrationTest(TestCase):
             knjiga=1,
             broj=1,
             strana=1,
-            redni_broj_krstenja_tekuca_godina=1,
-            krstenje_tekuca_godina=2024,
+            redni_broj=1,
+            godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
             adresa_deteta_grad="Београд",
             dete_vanbracno=False,
@@ -404,8 +404,8 @@ class FormValidationIntegrationTest(TestCase):
             "knjiga": -1,  # Негативна вредност
             "broj": 1,
             "strana": 1,
-            "redni_broj_krstenja_tekuca_godina": 1,
-            "krstenje_tekuca_godina": 2024,
+            "redni_broj": 1,
+            "godina_registracije": 2024,
             "datum": "2024-02-10",
             "adresa_deteta_grad": "Београд",
             "dete_vanbracno": False,
@@ -429,7 +429,7 @@ class FormValidationIntegrationTest(TestCase):
             "redni_broj": 1,
             "knjiga": 1,
             "strana": 1,
-            "tekuci_broj": 1,
+            "broj": 1,
             "datum": f"{past_year}-06-15",
         }
 
@@ -464,7 +464,7 @@ class CrossModelReferenceTest(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
 
@@ -474,8 +474,8 @@ class CrossModelReferenceTest(TestCase):
             knjiga=1,
             broj=1,
             strana=1,
-            redni_broj_krstenja_tekuca_godina=1,
-            krstenje_tekuca_godina=2024,
+            redni_broj=1,
+            godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
             adresa_deteta_grad="Београд",
             dete_vanbracno=False,

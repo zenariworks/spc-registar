@@ -15,8 +15,8 @@ class KrstenjeForm(forms.ModelForm):
         model = Krstenje
         fields = [
             # Протокол (регистар)
-            "redni_broj_krstenja_tekuca_godina",
-            "krstenje_tekuca_godina",
+            "redni_broj",
+            "godina_registracije",
             "knjiga",
             "broj",
             "strana",
@@ -63,6 +63,6 @@ class KrstenjeForm(forms.ModelForm):
             "primedba": forms.Textarea(attrs={"rows": 4}),
         }
         help_texts = {
-            "krstenje_tekuca_godina": "Година у којој је крштење забележено",
-            "redni_broj_krstenja_tekuca_godina": "Редни број крштења у текућој години",
+            "godina_registracije": "Година у којој је крштење забележено",
+            "redni_broj": "Редни број крштења у текућој години",
         }

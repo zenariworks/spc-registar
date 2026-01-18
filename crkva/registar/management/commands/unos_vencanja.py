@@ -50,7 +50,7 @@ class Command(BaseCommand):
             godina_registracije=today.year,
             knjiga=random.randint(1, 10),
             strana=random.randint(1, 500),
-            tekuci_broj=random.randint(1, 1000),
+            broj=random.randint(1, 1000),
             datum=RandomUtils.random_datetime().date(),
             mesto_zenika="Београд",
             adresa_zenika="Насумична адреса",

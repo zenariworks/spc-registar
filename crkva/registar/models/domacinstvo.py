@@ -3,15 +3,15 @@
 import uuid
 
 from django.db import models
+from model_utils.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .adresa import Adresa
-from .base import TimestampedModel
 from .parohijan import Osoba
 from .slava import Slava
 
 
-class Domacinstvo(TimestampedModel):
+class Domacinstvo(TimeStampedModel):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     domacin = models.OneToOneField(

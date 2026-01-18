@@ -1,13 +1,13 @@
 """Модул модела укућана у бази података."""
 
 from django.db import models
+from model_utils.models import TimeStampedModel
 
-from .base import TimestampedModel
 from .domacinstvo import Domacinstvo
 from .parohijan import Osoba
 
 
-class Ukucanin(TimestampedModel):
+class Ukucanin(TimeStampedModel):
     domacinstvo = models.ForeignKey(
         Domacinstvo, on_delete=models.CASCADE, related_name="ukucani"
     )

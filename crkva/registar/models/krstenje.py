@@ -6,72 +6,38 @@ import uuid
 
 from django.core.validators import MinValueValidator
 from django.db import models
+from model_utils.models import TimeStampedModel
 
-from .base import TimestampedModel
 from .hram import Hram
 from .parohijan import Osoba
 from .svestenik import Svestenik
 
 
-class Krstenje(TimestampedModel):
+class Krstenje(TimeStampedModel):
     """Класа која представља крштења."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    # Везе са Особама (опционо - ако су регистроване)
-    dete = models.ForeignKey(
-        Osoba,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="krstenja_kao_dete",
-        verbose_name="дете",
-    )
-    otac = models.ForeignKey(
-        Osoba,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="krstenja_kao_otac",
-        verbose_name="отац",
-    )
-    majka = models.ForeignKey(
-        Osoba,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="krstenja_kao_majka",
-        verbose_name="мајка",
-    )
-    kum = models.ForeignKey(
-        Osoba,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="krstenja_kao_kum",
-        verbose_name="кум",
-    )
-
-    redni_broj_krstenja_tekuca_godina = models.IntegerField(
-        verbose_name="редни број крштења текућа година",
-        validators=[MinValueValidator(1)],
-    )
-    krstenje_tekuca_godina = models.IntegerField(
-        verbose_name="крштењe текућа година",
+    godina_registracije = models.IntegerField(
+        verbose_name="година регистрације",
         validators=[MinValueValidator(1900)],
     )
-
-    # podaci za registar(protokol) krstenih
-    knjiga = models.IntegerField(
-        verbose_name="књига", validators=[MinValueValidator(1)]
+    redni_broj = models.IntegerField(
+        verbose_name="редни број крштења",
+        validators=[MinValueValidator(1)],
     )
-    broj = models.IntegerField(verbose_name="број", validators=[MinValueValidator(1)])
+
+    knjiga = models.IntegerField(
+        verbose_name="књига", validators=[MinValueValidator(1)], default=1
+    )
     strana = models.IntegerField(
         verbose_name="страна", validators=[MinValueValidator(1)]
     )
+    broj = models.IntegerField(
+        verbose_name="текући број", validators=[MinValueValidator(1)], default=1
+    )
 
-    # podaci o krstenju
-    datum = models.DateField(verbose_name="датум")
+    datum = models.DateField(verbose_name="датум", null=True, blank=True)
     vreme = models.TimeField(verbose_name="време", null=True, blank=True)
     mesto = models.CharField(
         max_length=255, verbose_name="место", null=True, blank=True
@@ -80,6 +46,14 @@ class Krstenje(TimestampedModel):
         Hram, on_delete=models.SET_NULL, null=True, verbose_name="храм"
     )
 
+    dete = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_dete",
+        verbose_name="дете",
+    )
     # podaci o detetu (adresa je specifična za događaj)
     adresa_deteta_grad = models.CharField(
         max_length=255, verbose_name="адреса детета град"
@@ -94,14 +68,42 @@ class Krstenje(TimestampedModel):
         max_length=255, verbose_name="грађанско име детета", null=True, blank=True
     )
 
+    otac = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_otac",
+        verbose_name="отац",
+    )
     # adrese roditelja (specifične za događaj)
     adresa_oca_mesto = models.CharField(
         max_length=255, verbose_name="адреса оца место", null=True, blank=True
     )
+
+    majka = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_majka",
+        verbose_name="мајка",
+    )
     adresa_majke_mesto = models.CharField(
         max_length=255, verbose_name="адреса мајке место", null=True, blank=True
     )
-
+    kum = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_kum",
+        verbose_name="кум",
+    )
+    # adresa kuma (specifična za događaj)
+    adresa_kuma_mesto = models.CharField(
+        max_length=255, verbose_name="адреса кума место", null=True, blank=True
+    )
     # ostali podaci o detetu
     dete_rodjeno_zivo = models.BooleanField(
         verbose_name="дете рођено живо", default=True
@@ -123,11 +125,6 @@ class Krstenje(TimestampedModel):
         null=True,
         related_name="свештеник_крститељ",
         verbose_name="свештеник",
-    )
-
-    # adresa kuma (specifična za događaj)
-    adresa_kuma_mesto = models.CharField(
-        max_length=255, verbose_name="адреса кума место", null=True, blank=True
     )
 
     # podaci iz matične knjige - anagraf

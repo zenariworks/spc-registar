@@ -1,5 +1,4 @@
 from .adresa import Adresa
-from .base import TimestampedModel
 from .crkvena_opstina import CrkvenaOpstina
 from .domacinstvo import Domacinstvo
 from .drzava import Drzava
@@ -20,7 +19,6 @@ from .veroispovest import Veroispovest
 from .zanimanje import Zanimanje
 
 __all__ = [
-    "TimestampedModel",
     "Adresa",
     "Opstina",
     "Mesto",

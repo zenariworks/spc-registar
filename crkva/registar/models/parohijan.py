@@ -1,14 +1,14 @@
 """Модул модела особе у бази података."""
 
 from django.db import models
+from model_utils.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
 
 from .adresa import Adresa
-from .base import TimestampedModel
 from .slava import Slava
 
 
-class Osoba(TimestampedModel):
+class Osoba(TimeStampedModel):
     """Класа која представља особу (парохијанин или друга особа из црквених записа)."""
 
     uid = models.AutoField(primary_key=True, unique=True, editable=False)

@@ -11,8 +11,8 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
 
     ordering = ("datum",)
     list_display = (
-        "redni_broj_krstenja_tekuca_godina",
-        "krstenje_tekuca_godina",
+        "redni_broj",
+        "godina_registracije",
         "knjiga",
         "broj",
         "strana",

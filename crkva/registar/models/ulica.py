@@ -1,15 +1,15 @@
 """Модул модела улице у бази података."""
 
 from django.db import models
+from model_utils.models import TimeStampedModel
 
-from .base import TimestampedModel
 from .drzava import Drzava
 from .mesto import Mesto
 from .opstina import Opstina
 from .svestenik import Svestenik
 
 
-class Ulica(TimestampedModel):
+class Ulica(TimeStampedModel):
     """Класа која представља улица."""
 
     uid = models.AutoField(primary_key=True, unique=True, editable=False)

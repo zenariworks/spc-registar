@@ -60,5 +60,5 @@ class OsobaModelTestCase(TestCase):
     def test_timestamps_auto_created(self):
         """Временске ознаке се аутоматски креирају."""
         osoba = Osoba.objects.create(ime="Тест", prezime="Тестић")
-        self.assertIsNotNone(osoba.created_at)
-        self.assertIsNotNone(osoba.updated_at)
+        self.assertIsNotNone(osoba.created)
+        self.assertIsNotNone(osoba.modified)

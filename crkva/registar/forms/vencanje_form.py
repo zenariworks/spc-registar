@@ -16,7 +16,7 @@ class VencanjeForm(forms.ModelForm):
             # Регистар
             "knjiga",
             "strana",
-            "tekuci_broj",
+            "broj",
             # Датум венчања
             "datum",
             # Особе (FK)

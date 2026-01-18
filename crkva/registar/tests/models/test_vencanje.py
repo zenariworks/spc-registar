@@ -53,7 +53,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
         self.assertIsInstance(vencanje.uid, uuid.UUID)
@@ -69,7 +69,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
         self.assertEqual(str(vencanje), str(vencanje.uid))
@@ -83,7 +83,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
 
@@ -104,7 +104,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
 
@@ -123,7 +123,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
 
@@ -164,7 +164,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
             hram=self.hram,
             svestenik=self.svestenik,
@@ -186,7 +186,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
         with self.assertRaises(ValidationError):
@@ -199,7 +199,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=0,  # Неважећи редни број
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
         with self.assertRaises(ValidationError):
@@ -212,7 +212,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=0,  # Неважећа књига
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
         with self.assertRaises(ValidationError):
@@ -225,20 +225,20 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=0,  # Неважећа страна
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
         with self.assertRaises(ValidationError):
             vencanje.full_clean()
 
-    def test_vencanje_validators_tekuci_broj(self):
+    def test_vencanje_validators_broj(self):
         """Валидација минималне вредности за текући број."""
         vencanje = Vencanje(
             godina_registracije=2024,
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=0,  # Неважећи текући број
+            broj=0,  # Неважећи текући број
             datum=datetime.date(2024, 6, 15),
         )
         with self.assertRaises(ValidationError):
@@ -253,7 +253,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
         )
 
@@ -277,7 +277,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
             mesto_zenika="Београд",
             adresa_zenika="ул. Николе Пашића 10",
@@ -317,7 +317,7 @@ class VencanjeModelTestCase(TestCase):
         self.assertEqual(vencanje.redni_broj, 1)  # подразумевана вредност
         self.assertEqual(vencanje.knjiga, 1)  # подразумевана вредност
         self.assertEqual(vencanje.strana, 1)  # подразумевана вредност
-        self.assertEqual(vencanje.tekuci_broj, 1)  # подразумевана вредност
+        self.assertEqual(vencanje.broj, 1)  # подразумевана вредност
         self.assertTrue(vencanje.razresenje)  # подразумевана вредност
         self.assertEqual(vencanje.primedba, "")  # подразумевана вредност
 
@@ -333,7 +333,7 @@ class VencanjeModelEdgeCasesTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
             mesto_zenika=long_text,
             adresa_zenika=long_text,
@@ -350,7 +350,7 @@ class VencanjeModelEdgeCasesTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=future_date,
         )
         self.assertEqual(vencanje.datum, future_date)
@@ -362,7 +362,7 @@ class VencanjeModelEdgeCasesTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             # datum је nullable, тако да га не постављамо
         )
         self.assertIsNone(vencanje.datum)
@@ -374,7 +374,7 @@ class VencanjeModelEdgeCasesTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            tekuci_broj=1,
+            broj=1,
             datum=datetime.date(2024, 6, 15),
             zenik_rb_brak=0,  # Ово би требало да буде 1 као минимум, али ако је nullable онда OK
             nevesta_rb_brak=0,
