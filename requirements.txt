@@ -2,7 +2,7 @@
 # Utilities
 dbfread~=2.0.7
 # Django and related packages
-django~=5.1.2
+django~=6.0.1
 django-admin-searchable-dropdown~=1.2
 django-compressor~=4.4
 django-environ~=0.11.0
