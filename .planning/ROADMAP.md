@@ -60,6 +60,13 @@ Consolidate complex, multi-step data migration process into a single unified com
 - Migration time reduced by 40%+ through optimized queries
 - 80%+ test coverage on conversion logic
 
+#### Plans: 3 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — TDD: Extract Konvertor utility to registar/utils/ with comprehensive unit tests
+- [ ] 01-02-PLAN.md — Build unified migrate_data command with --dummy/--real/--dry-run flags
+- [ ] 01-03-PLAN.md — Integration tests for migrate_data command + update MIGRACIJA.md docs
+
 #### Dependencies
 - None (foundational phase)
 
