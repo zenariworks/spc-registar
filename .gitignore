@@ -125,3 +125,6 @@ target/
 
 # Archives
 *.zip
+.claude/
+.agentic-qe/
+.planning/
