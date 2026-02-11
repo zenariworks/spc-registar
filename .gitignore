@@ -127,4 +127,3 @@ target/
 *.zip
 .claude/
 .agentic-qe/
-.planning/
