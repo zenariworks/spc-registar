@@ -4,29 +4,40 @@
 
 import uuid
 
+from django.core.validators import MinValueValidator
 from django.db import models
+from model_utils.models import TimeStampedModel
 
 from .hram import Hram
+from .parohijan import Osoba
 from .svestenik import Svestenik
 
 
-class Krstenje(models.Model):
+class Krstenje(TimeStampedModel):
     """Класа која представља крштења."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    redni_broj_krstenja_tekuca_godina = models.IntegerField(
-        verbose_name="редни број крштења текућа година"
+    godina_registracije = models.IntegerField(
+        verbose_name="година регистрације",
+        validators=[MinValueValidator(1900)],
     )
-    krstenje_tekuca_godina = models.IntegerField(verbose_name="крштењe текућа година")
+    redni_broj = models.IntegerField(
+        verbose_name="редни број крштења",
+        validators=[MinValueValidator(1)],
+    )
 
-    # podaci za registar(protokol) krstenih
-    knjiga = models.IntegerField(verbose_name="књига")
-    broj = models.IntegerField(verbose_name="број")
-    strana = models.IntegerField(verbose_name="страна")
+    knjiga = models.IntegerField(
+        verbose_name="књига", validators=[MinValueValidator(1)], default=1
+    )
+    strana = models.IntegerField(
+        verbose_name="страна", validators=[MinValueValidator(1)]
+    )
+    broj = models.IntegerField(
+        verbose_name="текући број", validators=[MinValueValidator(1)], default=1
+    )
 
-    # podaci o krstenju
-    datum = models.DateField(verbose_name="датум")
+    datum = models.DateField(verbose_name="датум", null=True, blank=True)
     vreme = models.TimeField(verbose_name="време", null=True, blank=True)
     mesto = models.CharField(
         max_length=255, verbose_name="место", null=True, blank=True
@@ -35,7 +46,15 @@ class Krstenje(models.Model):
         Hram, on_delete=models.SET_NULL, null=True, verbose_name="храм"
     )
 
-    # podaci o detetu
+    dete = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_dete",
+        verbose_name="дете",
+    )
+    # podaci o detetu (adresa je specifična za događaj)
     adresa_deteta_grad = models.CharField(
         max_length=255, verbose_name="адреса детета град"
     )
@@ -45,54 +64,50 @@ class Krstenje(models.Model):
     adresa_deteta_broj = models.CharField(
         max_length=255, verbose_name="адреса детета број", null=True, blank=True
     )
-    datum_rodjenja = models.DateField(verbose_name="датум рођења")
-    vreme_rodjenja = models.TimeField(
-        verbose_name="време рођења", null=True, blank=True
-    )
-    mesto_rodjenja = models.CharField(
-        max_length=255, verbose_name="место рођења", null=True, blank=True
-    )
-    ime_deteta = models.CharField(max_length=255, verbose_name="име детета")
     gradjansko_ime_deteta = models.CharField(
         max_length=255, verbose_name="грађанско име детета", null=True, blank=True
     )
-    pol_deteta = models.CharField(
-        verbose_name="пол",
-        choices=[("М", "мушки"), ("Ж", "женски")],
-        blank=True,
-        null=True,
-    )
 
-    # podaci o roditeljima
-    ime_oca = models.CharField(max_length=255, verbose_name="име оца")
-    prezime_oca = models.CharField(max_length=255, verbose_name="презиме оца")
-    zanimanje_oca = models.CharField(
-        max_length=255, verbose_name="занимање оца", null=True, blank=True
+    otac = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_otac",
+        verbose_name="отац",
     )
+    # adrese roditelja (specifične za događaj)
     adresa_oca_mesto = models.CharField(
         max_length=255, verbose_name="адреса оца место", null=True, blank=True
     )
-    veroispovest_oca = models.CharField(
-        max_length=255, verbose_name="вероисповест оца", null=True, blank=True
-    )
-    narodnost_oca = models.CharField(
-        max_length=255, verbose_name="народност оца", null=True, blank=True
-    )
 
-    ime_majke = models.CharField(max_length=255, verbose_name="име мајке")
-    prezime_majke = models.CharField(max_length=255, verbose_name="презиме мајке")
-    zanimanje_majke = models.CharField(
-        max_length=255, verbose_name="занимање мајке", null=True, blank=True
+    majka = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_majka",
+        verbose_name="мајка",
     )
     adresa_majke_mesto = models.CharField(
         max_length=255, verbose_name="адреса мајке место", null=True, blank=True
     )
-    veroispovest_majke = models.CharField(
-        max_length=255, verbose_name="вероисповест мајке", null=True, blank=True
+    kum = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="krstenja_kao_kum",
+        verbose_name="кум",
     )
-
+    # adresa kuma (specifična za događaj)
+    adresa_kuma_mesto = models.CharField(
+        max_length=255, verbose_name="адреса кума место", null=True, blank=True
+    )
     # ostali podaci o detetu
-    dete_rodjeno_zivo = models.BooleanField(verbose_name="дете рођено живо", default=True)
+    dete_rodjeno_zivo = models.BooleanField(
+        verbose_name="дете рођено живо", default=True
+    )
     dete_po_redu_po_majci = models.CharField(
         verbose_name="дете по реду (по мајци)", null=True, blank=True
     )
@@ -112,16 +127,6 @@ class Krstenje(models.Model):
         verbose_name="свештеник",
     )
 
-    # podaci o kumu
-    ime_kuma = models.CharField(max_length=255, verbose_name="име кума")
-    prezime_kuma = models.CharField(max_length=255, verbose_name="презиме кума")
-    zanimanje_kuma = models.CharField(
-        max_length=255, verbose_name="занимање кума", null=True, blank=True
-    )
-    adresa_kuma_mesto = models.CharField(
-        max_length=255, verbose_name="адреса кума место", null=True, blank=True
-    )
-
     # podaci iz matične knjige - anagraf
     mesto_registracije = models.CharField(
         max_length=255, verbose_name="место регистрације", null=True, blank=True
@@ -137,6 +142,96 @@ class Krstenje(models.Model):
     )
 
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
+
+    @property
+    def ime_deteta(self):
+        """Име детета из везаног Osoba objekta."""
+        return self.dete.ime if self.dete else ""
+
+    @property
+    def pol_deteta(self):
+        """Пол детета из везаног Osoba objekta."""
+        return self.dete.pol if self.dete else ""
+
+    @property
+    def datum_rodjenja(self):
+        """Датум рођења детета из везаног Osoba objekta."""
+        return self.dete.datum_rodjenja if self.dete else None
+
+    @property
+    def vreme_rodjenja(self):
+        """Време рођења детета из везаног Osoba objekta."""
+        return self.dete.vreme_rodjenja if self.dete else ""
+
+    @property
+    def mesto_rodjenja(self):
+        """Место рођења детета из везаног Osoba objekta."""
+        return self.dete.mesto_rodjenja if self.dete else ""
+
+    @property
+    def ime_oca(self):
+        """Име оца из везаног Osoba objekta."""
+        return self.otac.ime if self.otac else ""
+
+    @property
+    def prezime_oca(self):
+        """Презиме оца из везаног Osoba objekta."""
+        return self.otac.prezime if self.otac else ""
+
+    @property
+    def zanimanje_oca(self):
+        """Занимање оца из везаног Osoba objekta."""
+        return self.otac.zanimanje if self.otac and self.otac.zanimanje else ""
+
+    @property
+    def veroispovest_oca(self):
+        """Вероисповест оца из везаног Osoba objekta."""
+        return self.otac.veroispovest if self.otac and self.otac.veroispovest else ""
+
+    @property
+    def narodnost_oca(self):
+        """Народност оца из везаног Osoba objekta."""
+        return self.otac.narodnost if self.otac and self.otac.narodnost else ""
+
+    @property
+    def ime_majke(self):
+        """Име мајке из везаног Osoba objekta."""
+        return self.majka.ime if self.majka else ""
+
+    @property
+    def prezime_majke(self):
+        """Презиме мајке из везаног Osoba objekta."""
+        return self.majka.prezime if self.majka else ""
+
+    @property
+    def zanimanje_majke(self):
+        """Занимање мајке из везаног Osoba objekta."""
+        return self.majka.zanimanje if self.majka and self.majka.zanimanje else ""
+
+    @property
+    def veroispovest_majke(self):
+        """Вероисповест мајке из везаног Osoba objekta."""
+        return self.majka.veroispovest if self.majka and self.majka.veroispovest else ""
+
+    @property
+    def narodnost_majke(self):
+        """Народност мајке из везаног Osoba objekta."""
+        return self.majka.narodnost if self.majka and self.majka.narodnost else ""
+
+    @property
+    def ime_kuma(self):
+        """Име кума из везаног Osoba objekta."""
+        return self.kum.ime if self.kum else ""
+
+    @property
+    def prezime_kuma(self):
+        """Презиме кума из везаног Osoba objekta."""
+        return self.kum.prezime if self.kum else ""
+
+    @property
+    def zanimanje_kuma(self):
+        """Занимање кума из везаног Osoba objekta."""
+        return self.kum.zanimanje if self.kum and self.kum.zanimanje else ""
 
     def __str__(self):
         return f"{self.uid}"

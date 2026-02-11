@@ -1,0 +1,469 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extra_css %}
+<style>
+.calibration-container {
+    position: relative;
+    width: 210mm;
+    height: 297mm;
+    margin: 20px auto;
+    background-image: url("{% static 'registar/slike/krstenica-nova.jpg' %}");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    border: 2px solid #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.draggable-field {
+    position: absolute;
+    background: rgba(255, 255, 0, 0.7);
+    border: 2px dashed #c00;
+    padding: 2px 5px;
+    cursor: move;
+    font-size: 10pt;
+    font-family: 'Miroslav', serif;
+    user-select: none;
+    z-index: 10;
+    overflow: hidden;
+    min-width: 20px;
+    min-height: 15px;
+    box-sizing: border-box;
+}
+
+.draggable-field:hover {
+    background: rgba(255, 200, 0, 0.9);
+    border-color: #900;
+}
+
+.draggable-field.selected {
+    background: rgba(0, 255, 100, 0.8);
+    border-color: #060;
+    z-index: 100;
+}
+
+.draggable-field .field-label {
+    font-size: 8pt;
+    color: #666;
+    display: block;
+}
+
+.resize-handle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #c00;
+    bottom: 0;
+    right: 0;
+    cursor: se-resize;
+    border-radius: 2px 0 0 0;
+}
+
+.draggable-field.selected .resize-handle {
+    background: #060;
+}
+
+.control-panel {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    max-height: 90vh;
+    overflow-y: auto;
+    width: 320px;
+}
+
+.control-panel h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.control-panel button {
+    margin: 5px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+.control-panel .export-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.control-panel .reset-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+#css-output {
+    width: 100%;
+    height: 200px;
+    font-family: monospace;
+    font-size: 10px;
+    margin-top: 10px;
+}
+
+.field-list {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 5px;
+    margin: 10px 0;
+}
+
+.field-list-item {
+    padding: 3px 5px;
+    cursor: pointer;
+    font-size: 11px;
+    border-bottom: 1px solid #eee;
+}
+
+.field-list-item:hover {
+    background: #f0f0f0;
+}
+
+.field-list-item.active {
+    background: #e0ffe0;
+}
+
+.position-display {
+    font-family: monospace;
+    font-size: 12px;
+    background: #f5f5f5;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.nudge-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin: 10px 0;
+}
+
+.nudge-controls button {
+    padding: 5px;
+    font-size: 12px;
+}
+
+.size-controls {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    margin: 10px 0;
+}
+
+.size-controls button {
+    padding: 4px;
+    font-size: 11px;
+}
+
+.section-label {
+    font-weight: bold;
+    margin: 10px 0 5px 0;
+    font-size: 12px;
+    color: #333;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="control-panel">
+    <h3>Krstenica Calibration</h3>
+
+    <div class="position-display" id="position-display">
+        Select a field to see position
+    </div>
+
+    <div class="section-label">Move Position:</div>
+    <div class="nudge-controls">
+        <button onclick="nudge(0, -1)">↑1</button>
+        <button onclick="nudge(0, -0.5)">↑.5</button>
+        <button onclick="nudge(0, -0.1)">↑.1</button>
+        <button onclick="nudge(-1, 0)">←1</button>
+        <button onclick="nudge(-0.5, 0)">←.5</button>
+        <button onclick="nudge(-0.1, 0)">←.1</button>
+        <button onclick="nudge(1, 0)">→1</button>
+        <button onclick="nudge(0.5, 0)">→.5</button>
+        <button onclick="nudge(0.1, 0)">→.1</button>
+        <button onclick="nudge(0, 1)">↓1</button>
+        <button onclick="nudge(0, 0.5)">↓.5</button>
+        <button onclick="nudge(0, 0.1)">↓.1</button>
+    </div>
+
+    <div class="section-label">Resize (Width/Height):</div>
+    <div class="size-controls">
+        <button onclick="resizeField(-1, 0)">W-1</button>
+        <button onclick="resizeField(1, 0)">W+1</button>
+        <button onclick="resizeField(-5, 0)">W-5</button>
+        <button onclick="resizeField(5, 0)">W+5</button>
+        <button onclick="resizeField(0, -1)">H-1</button>
+        <button onclick="resizeField(0, 1)">H+1</button>
+        <button onclick="resizeField(0, -5)">H-5</button>
+        <button onclick="resizeField(0, 5)">H+5</button>
+    </div>
+
+    <div class="field-list" id="field-list"></div>
+
+    <button class="export-btn" onclick="exportCSS()">Export CSS</button>
+    <button class="reset-btn" onclick="resetPositions()">Reset All</button>
+
+    <textarea id="css-output" readonly placeholder="CSS will appear here..."></textarea>
+</div>
+
+<div class="calibration-container" id="calibration-container">
+</div>
+
+<script>
+const fields = [
+    // Header - Књига/Страна/Број
+    { id: 'knjiga', label: 'Књига', value: '1', top: 14, left: 41, width: 15, height: 6, group: 'header' },
+    { id: 'strana', label: 'Страна', value: '2', top: 22, left: 41, width: 15, height: 6, group: 'header' },
+    { id: 'broj', label: 'Текући број', value: '11', top: 30, left: 41, width: 15, height: 6, group: 'header' },
+
+    // Header - Епархије
+    { id: 'eparhija', label: 'Епархије', value: 'БЕОГРАДСКО-КАРЛОВАЧКЕ', top: 46, left: 26, width: 80, height: 6, group: 'header' },
+
+    // Header - храма / у / год
+    { id: 'hram', label: 'храма', value: 'Храм Свете Петке', top: 54, left: 26, width: 75, height: 6, group: 'header' },
+    { id: 'mesto', label: 'у', value: 'Београду', top: 54, left: 110, width: 45, height: 6, group: 'header' },
+    { id: 'godina', label: 'год', value: '25', top: 54, left: 165, width: 15, height: 6, group: 'header' },
+
+    // Fields 1-6 (left column)
+    { id: 'field1', label: '1. Рођење датум', value: '2025, јануар 15/2, 14ч', top: 82, left: 99, width: 100, height: 8, group: 'table' },
+    { id: 'field2', label: '2. Место рођења', value: 'Београд', top: 91, left: 99, width: 100, height: 8, group: 'table' },
+    { id: 'field3', label: '3. Крштење датум', value: '2025, фебруар 10/јануар 28', top: 104, left: 99, width: 100, height: 8, group: 'table' },
+    { id: 'field4', label: '4. Место крштења', value: 'Београд, Храм Св. Петке', top: 119, left: 99, width: 100, height: 8, group: 'table' },
+    { id: 'field5', label: '5. Име и пол', value: 'МАРКО, мушко', top: 129, left: 99, width: 100, height: 6, group: 'table' },
+    { id: 'field6', label: '6. Родитељи', value: 'Петар Петровић, инж.\nМарија Петровић\nБеоград, Кн. Милоша 10\nправославна', top: 135, left: 99, width: 100, height: 30, group: 'table' },
+
+    // Fields 7-10 (right column)
+    { id: 'field7', label: '7. Дете по реду', value: 'прво', top: 168, left: 118, width: 80, height: 8, group: 'table' },
+    { id: 'field8', label: '8. Брачно', value: 'јесте', top: 177, left: 118, width: 80, height: 8, group: 'table' },
+    { id: 'field9', label: '9. Близанац', value: 'није', top: 186, left: 118, width: 80, height: 8, group: 'table' },
+    { id: 'field10', label: '10. Телесна мана', value: 'није', top: 195, left: 118, width: 80, height: 8, group: 'table' },
+
+    // Fields 11-14 (left column continued)
+    { id: 'field11', label: '11. Свештеник', value: 'прот. Саша Крстић', top: 205, left: 99, width: 100, height: 8, group: 'table' },
+    { id: 'field12', label: '12. Кум', value: 'Јован Јовановић\nБеоград', top: 217, left: 99, width: 100, height: 12, group: 'table' },
+    { id: 'field13', label: '13. Домовник', value: '', top: 232, left: 99, width: 100, height: 8, group: 'table' },
+    { id: 'field14', label: '14. Примедба', value: '', top: 242, left: 99, width: 100, height: 8, group: 'table' },
+
+    // Footer
+    { id: 'footer_br', label: 'Бр.', value: '11', top: 264, left: 14, width: 15, height: 6, group: 'footer' },
+    { id: 'footer_godina', label: 'год', value: '25', top: 264, left: 33, width: 12, height: 6, group: 'footer' },
+    { id: 'footer_u', label: 'у', value: 'Београду', top: 270, left: 10, width: 30, height: 6, group: 'footer' },
+    { id: 'footer_paroh', label: 'Парох', value: 'прот. Саша Крстић', top: 264, left: 145, width: 55, height: 6, group: 'footer' },
+    { id: 'footer_parohija', label: 'парохије', value: 'Свете Петке', top: 270, left: 145, width: 55, height: 6, group: 'footer' },
+];
+
+let selectedField = null;
+const container = document.getElementById('calibration-container');
+const fieldList = document.getElementById('field-list');
+const positionDisplay = document.getElementById('position-display');
+
+const MM_TO_PX = 3.7795275591;
+
+function mmToPx(mm) { return mm * MM_TO_PX; }
+function pxToMm(px) { return px / MM_TO_PX; }
+
+function createFields() {
+    fields.forEach(field => {
+        const el = document.createElement('div');
+        el.className = 'draggable-field';
+        el.id = `field-${field.id}`;
+        el.innerHTML = `<span class="field-label">${field.label}</span>${field.value.replace(/\n/g, '<br>')}`;
+        el.style.top = mmToPx(field.top) + 'px';
+        el.style.left = mmToPx(field.left) + 'px';
+        if (field.width) el.style.width = mmToPx(field.width) + 'px';
+        if (field.height) el.style.height = mmToPx(field.height) + 'px';
+        el.dataset.fieldId = field.id;
+
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+        resizeHandle.addEventListener('mousedown', startResize);
+        el.appendChild(resizeHandle);
+
+        el.addEventListener('mousedown', (e) => {
+            if (!e.target.classList.contains('resize-handle')) startDrag(e);
+        });
+        el.addEventListener('click', () => selectField(field.id));
+
+        container.appendChild(el);
+
+        const listItem = document.createElement('div');
+        listItem.className = 'field-list-item';
+        listItem.textContent = `${field.label} (${field.group})`;
+        listItem.onclick = () => {
+            selectField(field.id);
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+        listItem.id = `list-${field.id}`;
+        fieldList.appendChild(listItem);
+    });
+}
+
+function selectField(fieldId) {
+    document.querySelectorAll('.draggable-field').forEach(el => el.classList.remove('selected'));
+    document.querySelectorAll('.field-list-item').forEach(el => el.classList.remove('active'));
+
+    const el = document.getElementById(`field-${fieldId}`);
+    const listEl = document.getElementById(`list-${fieldId}`);
+    if (el) {
+        el.classList.add('selected');
+        listEl?.classList.add('active');
+        selectedField = fieldId;
+        updatePositionDisplay();
+    }
+}
+
+function updatePositionDisplay() {
+    if (!selectedField) {
+        positionDisplay.textContent = 'Select a field';
+        return;
+    }
+    const el = document.getElementById(`field-${selectedField}`);
+    const field = fields.find(f => f.id === selectedField);
+    if (el && field) {
+        const top = pxToMm(parseFloat(el.style.top)).toFixed(1);
+        const left = pxToMm(parseFloat(el.style.left)).toFixed(1);
+        const width = pxToMm(parseFloat(el.style.width) || el.offsetWidth).toFixed(1);
+        const height = pxToMm(parseFloat(el.style.height) || el.offsetHeight).toFixed(1);
+        positionDisplay.innerHTML = `<strong>${field.label}</strong><br>top: ${top}mm | left: ${left}mm<br>width: ${width}mm | height: ${height}mm`;
+    }
+}
+
+let isDragging = false;
+let dragOffset = { x: 0, y: 0 };
+let dragElement = null;
+
+function startDrag(e) {
+    if (e.button !== 0) return;
+    isDragging = true;
+    dragElement = e.target.closest('.draggable-field');
+    const rect = dragElement.getBoundingClientRect();
+    dragOffset = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+    selectField(dragElement.dataset.fieldId);
+    document.addEventListener('mousemove', onDrag);
+    document.addEventListener('mouseup', stopDrag);
+    e.preventDefault();
+}
+
+function onDrag(e) {
+    if (!isDragging || !dragElement) return;
+    const containerRect = container.getBoundingClientRect();
+    let newX = e.clientX - containerRect.left - dragOffset.x;
+    let newY = e.clientY - containerRect.top - dragOffset.y;
+    newX = Math.max(0, Math.min(newX, containerRect.width - dragElement.offsetWidth));
+    newY = Math.max(0, Math.min(newY, containerRect.height - dragElement.offsetHeight));
+    dragElement.style.left = newX + 'px';
+    dragElement.style.top = newY + 'px';
+    updatePositionDisplay();
+}
+
+function stopDrag() {
+    isDragging = false;
+    dragElement = null;
+    document.removeEventListener('mousemove', onDrag);
+    document.removeEventListener('mouseup', stopDrag);
+}
+
+function nudge(dx, dy) {
+    if (!selectedField) return;
+    const el = document.getElementById(`field-${selectedField}`);
+    if (el) {
+        el.style.top = (parseFloat(el.style.top) + mmToPx(dy)) + 'px';
+        el.style.left = (parseFloat(el.style.left) + mmToPx(dx)) + 'px';
+        updatePositionDisplay();
+    }
+}
+
+let isResizing = false;
+let resizeElement = null;
+
+function startResize(e) {
+    e.stopPropagation();
+    isResizing = true;
+    resizeElement = e.target.closest('.draggable-field');
+    selectField(resizeElement.dataset.fieldId);
+    document.addEventListener('mousemove', onResize);
+    document.addEventListener('mouseup', stopResize);
+    e.preventDefault();
+}
+
+function onResize(e) {
+    if (!isResizing || !resizeElement) return;
+    const rect = resizeElement.getBoundingClientRect();
+    resizeElement.style.width = Math.max(20, e.clientX - rect.left) + 'px';
+    resizeElement.style.height = Math.max(15, e.clientY - rect.top) + 'px';
+    updatePositionDisplay();
+}
+
+function stopResize() {
+    isResizing = false;
+    resizeElement = null;
+    document.removeEventListener('mousemove', onResize);
+    document.removeEventListener('mouseup', stopResize);
+}
+
+function resizeField(dw, dh) {
+    if (!selectedField) return;
+    const el = document.getElementById(`field-${selectedField}`);
+    if (el) {
+        el.style.width = Math.max(20, (parseFloat(el.style.width) || el.offsetWidth) + mmToPx(dw)) + 'px';
+        el.style.height = Math.max(15, (parseFloat(el.style.height) || el.offsetHeight) + mmToPx(dh)) + 'px';
+        updatePositionDisplay();
+    }
+}
+
+document.addEventListener('keydown', (e) => {
+    if (!selectedField) return;
+    const step = e.shiftKey ? 0.1 : (e.ctrlKey ? 1 : 0.5);
+    switch(e.key) {
+        case 'ArrowUp': nudge(0, -step); e.preventDefault(); break;
+        case 'ArrowDown': nudge(0, step); e.preventDefault(); break;
+        case 'ArrowLeft': nudge(-step, 0); e.preventDefault(); break;
+        case 'ArrowRight': nudge(step, 0); e.preventDefault(); break;
+    }
+});
+
+function exportCSS() {
+    let css = ':root {\n';
+    fields.forEach(field => {
+        const el = document.getElementById(`field-${field.id}`);
+        if (el) {
+            const top = pxToMm(parseFloat(el.style.top)).toFixed(1);
+            const left = pxToMm(parseFloat(el.style.left)).toFixed(1);
+            css += `    --krst-${field.id}-top: ${top}mm;\n`;
+            css += `    --krst-${field.id}-left: ${left}mm;\n`;
+        }
+    });
+    css += '}\n';
+    document.getElementById('css-output').value = css;
+}
+
+function resetPositions() {
+    fields.forEach(field => {
+        const el = document.getElementById(`field-${field.id}`);
+        if (el) {
+            el.style.top = mmToPx(field.top) + 'px';
+            el.style.left = mmToPx(field.left) + 'px';
+            if (field.width) el.style.width = mmToPx(field.width) + 'px';
+            if (field.height) el.style.height = mmToPx(field.height) + 'px';
+        }
+    });
+    updatePositionDisplay();
+}
+
+createFields();
+</script>
+{% endblock %}

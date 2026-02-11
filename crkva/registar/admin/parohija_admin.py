@@ -3,6 +3,7 @@
 from django.contrib import admin
 from registar.models import Parohija
 
+
 @admin.register(Parohija)
 class ParohijaAdmin(admin.ModelAdmin):
     """Класа админ интерфејса модела Парохија."""

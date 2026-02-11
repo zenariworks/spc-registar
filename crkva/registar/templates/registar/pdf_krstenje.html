@@ -5,7 +5,7 @@
 
 <head>
   <link rel="stylesheet" href="{% static 'registar/base/fonts.css' %}">
-  <link rel="stylesheet" href="{% static 'registar/pages/print.css' %}">
+  <link rel="stylesheet" href="{% static 'registar/print/stampa.css' %}">
   <title>Крштеница-{{ krstenje.knjiga }}.{{ krstenje.strana }}.{{ krstenje.broj }}</title>
 </head>
 
@@ -126,7 +126,7 @@
       <!-- 9. Је ли дете близанац -->
       <div style="width: 55.5%"></div>
       <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">
-        <!-- ovako se printa ', ' i ime drugog blizanca ako postoji. o.Nikola je 07.03.2025 rekao da to vise nije potrebno  
+        <!-- ovako se printa ', ' i ime drugog blizanca ako postoji. o.Nikola je 07.03.2025 rekao da to vise nije potrebno
         {{ krstenje.dete_blizanac|yesno:"јесте,није" }}{% if krstenje.drugo_dete_blizanac_ime %}, {{krstenje.drugo_dete_blizanac_ime }}{% endif %} -->
         {{ krstenje.dete_blizanac|yesno:"јесте,није" }}
       </div>
@@ -144,7 +144,7 @@
       <!-- 11. Име и презиме свештеника који је дете крстио и миропомазао -->
       <div style="width: 46%"></div>
       <div style="width: 53%; font-size: 14pt; letter-spacing: 1px;">
-        {{ krstenje.svestenik }}
+        {{ krstenje.svestenik|default_if_none:"" }}
       </div>
     </div>
     <div class="row" style="height: 13mm">
@@ -185,7 +185,7 @@
       </div>
       <div class="row"
         style="width: 36%; justify-content: flex-end; font-size: 12pt; letter-spacing: 1px; padding-right: 5%; padding-top: 1%; height: 4mm">
-        {{krstenje.svestenik.parohija}}
+        {% if krstenje.svestenik %}{{krstenje.svestenik.parohija}}{% endif %}
       </div>
       <div class="row"
         style="width: 36%; justify-content: flex-end; font-size: 12pt; letter-spacing: 1px; padding-right: 8%; padding-bottom: 0.2%; height: 5mm">

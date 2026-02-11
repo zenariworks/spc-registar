@@ -1,76 +1,63 @@
 """
-Migracija tabele `HSPUKUCANI.sqlite` (tabela ukucana) u tabelu: `ukucani`
+Migracija табеле укућана из PostgreSQL staging табеле 'hsp_ukucani' у модел Ukucanin.
+Ова миграција се извршава прва, јер друге миграције могу зависити од парохијана.
 """
 
-import sqlite3
+from typing import Iterable
 
-from django.core.management.base import BaseCommand
-from django.db.utils import IntegrityError
+from django.db import connection
+from registar.management.commands.base_migration import MigrationCommand
 from registar.management.commands.convert_utils import Konvertor
 from registar.models import Parohijan, Ukucanin
 
 
-class Command(BaseCommand):
-    """
-    Класа Ђанго команде за попуњавање табеле 'parohijani'
+class Command(MigrationCommand):
+    help = "Migracija табеле укућана из staging табеле 'hsp_ukucani'"
 
-    cmd:
-    docker compose run --rm app sh -c "python manage.py migracija_ukucana"
-    """
+    staging_table = "hsp_ukucani"
+    target_model = Ukucanin
 
-    help = "Migracija tabele `HSPUKUCANI.sqlite` (tabela ukucana) u tabelu: `ukucani`"
-
-    def handle(self, *args, **kwargs):
-
-        parsed_data = self._parse_data()
-        created_count = 0
-
-        # tabela 'ukucani'
-        for parohijan_uid, ime_ukucana in parsed_data:
-            try:
-                # test
-                # print("parohijan_uid: " + str(parohijan_uid))
-                # proveri da li postoji parohijan sa datim uid-om
-                parohijan_exist = Parohijan.objects.filter(uid=parohijan_uid)
-                # print("parohijan_exist: " + str(parohijan_exist))
-                # print("ime_ukucana: " + str(ime_ukucana))
-                if not parohijan_exist or ime_ukucana.rstrip() == "":
-                    continue
-
-                ukucani_instance = Ukucanin(
-                    parohijan=Parohijan.objects.get(uid=parohijan_uid),
-                    ime_ukucana=Konvertor.string(ime_ukucana),
-                )
-                ukucani_instance.save()
-
-                created_count += 1
-
-            except IntegrityError as e:
-                self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
-
+    def handle(self, *args, **kwargs) -> None:
+        self.clear_target_table()
         self.stdout.write(
-            self.style.SUCCESS(
-                f"Успешно попуњена табеле 'укућани': {created_count} нових уноса."
-            )
+            f"Учитавам податке из staging табеле '{self.staging_table}'..."
         )
 
-    def _parse_data(self):
+        records = self._parse_and_prepare_records()
+        created_count = self.migrate_in_batches(records)
+
+        self.log_success(created_count, table_name="укућани")
+        self.drop_staging_table()
+
+    def _parse_and_prepare_records(self) -> Iterable[dict | None]:
         """
-        Migracija tabele 'HSPDOMACINI.sqlite'
-            uk_rbrdom       - parohijan_uid,
-            uk_ime          - ime_ukucana
-
-        :return: Листа парсираних података (parohijan_uid, ime_ukucana)
+        Чита податке из staging табеле и припрема их за bulk_create.
+        Враћа generator диктова (или None ако запис треба прескочити).
         """
-        parsed_data = []
-        with sqlite3.connect("fixtures/combined_original_hsp_database.sqlite") as conn:
-            cursor = conn.cursor()
-            cursor.execute("SELECT uk_rbrdom, uk_ime FROM HSPUKUCANI")
-            # cursor.execute("SELECT uk_rbrdom, uk_ime FROM HSPUKUCANI where uk_rbrdom=1831")
-            rows = cursor.fetchall()
+        # Предкеширај све парохијане по uid-у за O(1) приступ
+        parohijani_cache = {p.uid: p for p in Parohijan.objects.all()}
 
-            for row in rows:
-                parohijan_uid, ime_ukucana = row
-                parsed_data.append((parohijan_uid, ime_ukucana))
+        query = 'SELECT "UK_RBRDOM", "UK_IME" FROM hsp_ukucani ORDER BY "UK_RBRDOM"'
 
-        return parsed_data
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            for row in cursor.fetchall():
+                raw_uid, raw_ime = row
+
+                uid = int(raw_uid) if raw_uid else 0
+                ime = Konvertor.string(raw_ime or "").strip()
+
+                if uid == 0 or uid not in parohijani_cache:
+                    self.log_skip(f"Парохијан са UID {uid} не постоји")
+                    yield None
+                    continue
+
+                if not ime:
+                    self.log_skip(f"Празно име укућанина за парохијана UID {uid}")
+                    yield None
+                    continue
+
+                yield {
+                    "parohijan": parohijani_cache[uid],
+                    "ime_ukucana": ime,
+                }

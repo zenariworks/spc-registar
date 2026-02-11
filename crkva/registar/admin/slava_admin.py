@@ -4,6 +4,7 @@ from django.contrib import admin
 from import_export.admin import ImportExportMixin
 from registar.models import Slava
 
+
 @admin.register(Slava)
 class SlavaAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Слава."""

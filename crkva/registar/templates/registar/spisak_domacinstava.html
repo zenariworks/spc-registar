@@ -1,28 +1,47 @@
 {% extends "base.html" %}
-{% load static %}
+{% load static phone_filters %}
 {% block content %}
-<div class="container">
 <div class="u-page-header">
     <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
       <i class="fa-solid fa-arrow-left"></i>
     </a>
-<h1 class="u-page-title">Домаћинства која славе изабрану славу</h1>
-  </div>
-  <div class="domacinstva-list">
-    {% if domacinstva %}
-      <ul>
-        {% for domacinstvo in domacinstva %}
-          <li>
-            <strong>Домаћин:</strong> {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}<br>
-            <strong>Адреса:</strong> {{ domacinstvo.adresa }}<br>
-            <strong>Телефон:</strong> {{ domacinstvo.tel_fiksni }} / {{ domacinstvo.tel_mobilni }}<br>
-            <strong>Примедба:</strong> {{ domacinstvo.primedba }}
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p>Нема домаћинства које слави ову славу.</p>
-    {% endif %}
-  </div>
+    <h1 class="u-page-title">Домаћинства која славе изабрану славу</h1>
 </div>
+
+<ul class="spisak">
+    {% for domacinstvo in domacinstva %}
+        <li class="stavka">
+            <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}" class="stavka-veza">
+                <div class="stavka__content">
+                    <div class="u-font-medium u-min-w-200">
+                        <i class="fa-solid fa-house u-icon-muted u-mr-2"></i>
+                        {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}
+                    </div>
+                    {% if domacinstvo.adresa %}
+                    <div class="u-text-secondary u-text-small">
+                        📍 {{ domacinstvo.adresa }}
+                    </div>
+                    {% endif %}
+                    {% if domacinstvo.tel_mobilni or domacinstvo.tel_fiksni %}
+                    <div class="u-text-secondary u-text-small">
+                        {% if domacinstvo.tel_mobilni %}
+                        <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" class="u-link-primary">
+                            <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i>
+                            {{ domacinstvo.tel_mobilni|format_phone }}
+                        </a>
+                        {% elif domacinstvo.tel_fiksni %}
+                        <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" class="u-link-primary">
+                            <i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i>
+                            {{ domacinstvo.tel_fiksni|format_phone }}
+                        </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+        </li>
+    {% empty %}
+        <li>Нема домаћинства које слави ову славу.</li>
+    {% endfor %}
+</ul>
 {% endblock %}

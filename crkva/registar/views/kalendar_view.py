@@ -8,7 +8,6 @@ from collections import defaultdict
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-
 from registar.models import Slava
 from registar.utils import MESECI
 from registar.utils_fasting import get_fasting_type
@@ -84,7 +83,7 @@ def kalendar(
         if day_slavas and not is_important:
             for slava in day_slavas:
                 slava_lower = slava.naziv.lower()
-                keywords = ['васкрс', 'спасовдан', 'тројице', 'духови', 'вазнесењ']
+                keywords = ["васкрс", "спасовдан", "тројице", "духови", "вазнесењ"]
                 if any(keyword in slava_lower for keyword in keywords):
                     is_important = True
                     break
@@ -94,10 +93,10 @@ def kalendar(
                 "is_placeholder": False,
                 "date": d,
                 "weekday_label": weekday_labels[d.weekday()],
-                "is_fasting": fasting_info['is_fasting'],
-                "fasting_type": fasting_info['type'],
-                "fasting_display": fasting_info['display'],
-                "fasting_description": fasting_info['description'],
+                "is_fasting": fasting_info["is_fasting"],
+                "fasting_type": fasting_info["type"],
+                "fasting_display": fasting_info["display"],
+                "fasting_description": fasting_info["description"],
                 "slave": day_slavas,
                 "fixed_slavas": fixed_slavas,
                 "moveable_slavas": moveable_slavas,

@@ -27,8 +27,7 @@ class Command(BaseCommand):
         )
         if eligible_parohijan.exists():
             return random.choice(eligible_parohijan)
-        else:
-            return RandomUtils.create_random_parohijan(unesi_adresu, gender, min_age)
+        return RandomUtils.create_random_parohijan(unesi_adresu, gender, min_age)
 
     def get_or_create_parohija(self, naziv):
         """Креира насумично парохију."""
@@ -58,7 +57,9 @@ class Command(BaseCommand):
     def create_random_krstenje(self, _parohijan):
         """Креира насумично крштење."""
         dete_pol = "М" if random.choice([True, False]) else "Ж"
-        dete_ime = random.choice(RandomUtils.male_names if dete_pol == "М" else RandomUtils.female_names)
+        dete_ime = random.choice(
+            RandomUtils.male_names if dete_pol == "М" else RandomUtils.female_names
+        )
         otac = self.random_parohijan("М", min_age=20)
         majka = self.random_parohijan("Ж", min_age=20)
         kum = self.random_parohijan(
@@ -71,8 +72,8 @@ class Command(BaseCommand):
         datum_rodjenja = RandomUtils.random_date_of_birth(0, 1)
 
         krstenje = Krstenje(
-            redni_broj_krstenja_tekuca_godina=random.randint(1, 1000),
-            krstenje_tekuca_godina=today.year,
+            redni_broj=random.randint(1, 1000),
+            godina_registracije=today.year,
             knjiga=random.randint(1, 100),
             broj=random.randint(1, 1000),
             strana=random.randint(1, 500),

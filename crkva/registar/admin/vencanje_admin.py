@@ -1,8 +1,8 @@
 """Модул админ интерфејса модела Венчање са опцијама увоз и извоз."""
 
 from django.contrib import admin
-
 from registar.models import Vencanje
+
 
 @admin.register(Vencanje)
 class VencanjeAdmin(admin.ModelAdmin):
@@ -10,8 +10,8 @@ class VencanjeAdmin(admin.ModelAdmin):
 
     list_display = (
         "knjiga_strana_broj",
-        "ime_zenika",
-        "ime_neveste",
+        "zenik",
+        "nevesta",
         "datum",
         "svestenik",
         "hram",
@@ -29,14 +29,8 @@ class VencanjeAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "datum",
-                    (
-                        "ime_zenika",
-                        "zenik_rb_brak",
-                    ),
-                    (
-                        "ime_neveste",
-                        "nevesta_rb_brak",
-                    ),
+                    ("zenik", "zenik_rb_brak"),
+                    ("nevesta", "nevesta_rb_brak"),
                     "datum_ispita",
                 )
             },
@@ -51,9 +45,8 @@ class VencanjeAdmin(admin.ModelAdmin):
                 "fields": (
                     "hram",
                     "svestenik",
-                    "parohija",
                     "kum",
-                    "kuma",
+                    "stari_svat",
                     "primedba",
                 )
             },

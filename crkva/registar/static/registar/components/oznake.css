@@ -1,0 +1,114 @@
+/* ==========================================================================
+   ОЗНАКЕ (oznake.css)
+   ==========================================================================
+   Компоненте за означавање и обавештења:
+   1. Badge - мале ознаке
+   2. Chip - веће ознаке са иконама
+   3. Tag - ознаке за улоге
+   4. Alert - упозорења и обавештења
+   5. Details/Summary - проширив садржај
+   ========================================================================== */
+
+/* ==========================================================================
+   1. BADGE
+   ========================================================================== */
+
+.u-badge {
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+.u-badge--slava {
+    color: var(--color-slava-text);
+    background: var(--color-slava-bg);
+}
+
+.u-badge--role {
+    background: var(--color-primary-50);
+}
+
+/* ==========================================================================
+   2. CHIP
+   ========================================================================== */
+
+.u-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.u-chip--info {
+    background: var(--color-info-light);
+    border: 1px solid var(--color-info-border-light);
+}
+
+.u-chip--muted {
+    background: var(--color-gray-800);
+    border: 1px solid var(--color-gray-dark);
+}
+
+/* ==========================================================================
+   3. TAG
+   ========================================================================== */
+
+.u-role-tag {
+    background: var(--color-primary-transparent);
+    color: var(--color-primary);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* ==========================================================================
+   4. ALERT
+   ========================================================================== */
+
+.u-alert {
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.u-alert--warning {
+    background-color: var(--color-warning-bg);
+    border: 1px solid var(--color-warning-border);
+}
+
+.u-alert--info {
+    background-color: var(--color-info-bg);
+    border: 1px solid var(--color-info-border);
+    padding: 15px;
+}
+
+.u-alert__title {
+    margin-top: 0;
+    color: var(--color-warning-text);
+}
+
+/* ==========================================================================
+   5. DETAILS/SUMMARY
+   ========================================================================== */
+
+.u-details {
+    margin-top: 20px;
+}
+
+.u-details__summary {
+    cursor: pointer;
+    padding: 10px;
+    background-color: var(--color-gray-200);
+    border-radius: 4px;
+}
+
+.u-details__content {
+    background-color: var(--color-info-bg);
+    padding: 15px;
+    border-radius: 4px;
+    overflow-x: auto;
+    margin-top: 10px;
+}

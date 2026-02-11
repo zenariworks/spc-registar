@@ -1,7 +1,6 @@
 from .adresa import Adresa
 from .crkvena_opstina import CrkvenaOpstina
-
-# from .domacinstvo import Domacinstvo
+from .domacinstvo import Domacinstvo
 from .drzava import Drzava
 from .eparhija import Eparhija
 from .hram import Hram
@@ -10,7 +9,7 @@ from .mesto import Mesto
 from .narodnost import Narodnost
 from .opstina import Opstina
 from .parohija import Parohija
-from .parohijan import Parohijan
+from .parohijan import Osoba, Parohijan
 from .slava import Slava
 from .svestenik import Svestenik
 from .ukucanin import Ukucanin
@@ -25,12 +24,13 @@ __all__ = [
     "Mesto",
     "Drzava",
     "CrkvenaOpstina",
-    # "Domacinstvo",
+    "Domacinstvo",
     "Eparhija",
     "Hram",
     "Krstenje",
     "Narodnost",
     "Parohija",
+    "Osoba",
     "Parohijan",
     "Slava",
     "Svestenik",

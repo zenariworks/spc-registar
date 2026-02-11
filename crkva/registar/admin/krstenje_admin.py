@@ -4,14 +4,15 @@ from django.contrib import admin
 from import_export.admin import ImportExportMixin
 from registar.models import Krstenje
 
+
 @admin.register(Krstenje)
 class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Крштење."""
 
     ordering = ("datum",)
     list_display = (
-        "redni_broj_krstenja_tekuca_godina",
-        "krstenje_tekuca_godina",
+        "redni_broj",
+        "godina_registracije",
         "knjiga",
         "broj",
         "strana",
@@ -19,36 +20,29 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "vreme",
         "mesto",
         "hram",
+        # Особе (FK)
+        "dete",
+        "otac",
+        "majka",
+        "kum",
+        "svestenik",
+        # Адресе (специфичне за догађај)
         "adresa_deteta_grad",
         "adresa_deteta_ulica",
         "adresa_deteta_broj",
-        "datum_rodjenja",
-        "vreme_rodjenja",
-        "mesto_rodjenja",
-        "ime_deteta",
         "gradjansko_ime_deteta",
-        "pol_deteta",
-        "ime_oca",
-        "prezime_oca",
-        "zanimanje_oca",
         "adresa_oca_mesto",
-        "veroispovest_oca",
-        "narodnost_oca",
-        "ime_majke",
-        "prezime_majke",
-        "zanimanje_majke",
         "adresa_majke_mesto",
+        # Остали подаци о детету
         "dete_rodjeno_zivo",
         "dete_po_redu_po_majci",
         "dete_vanbracno",
         "dete_blizanac",
         "drugo_dete_blizanac_ime",
         "dete_sa_telesnom_manom",
-        "svestenik",
-        "ime_kuma",
-        "prezime_kuma",
-        "zanimanje_kuma",
+        # Кум адреса
         "adresa_kuma_mesto",
+        # Регистрација
         "mesto_registracije",
         "datum_registracije",
         "maticni_broj",

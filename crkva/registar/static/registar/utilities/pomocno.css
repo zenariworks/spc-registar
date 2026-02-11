@@ -1,0 +1,219 @@
+/* ==========================================================================
+   UTILITY КЛАСЕ (pomocno.css)
+   ==========================================================================
+   Само utility класе - компоненте су премештене у components/ фолдер:
+   - kartice.css: .u-card, .u-info-header, .u-stat-card, .u-empty-state, .u-note
+   - dugmad.css: .u-btn-primary
+   - oznake.css: .u-badge, .u-chip, .u-role-tag, .u-alert, .u-details
+   - spiskovi.css: .u-kv-list, .u-kv-item, .u-section-title
+   ==========================================================================
+   Организација:
+   1. Layout utilities
+   2. Flexbox utilities
+   3. Spacing utilities (margin, padding, gap)
+   4. Typography utilities
+   5. Display & visibility utilities
+   6. Border utilities
+   7. Icon utilities
+   8. Width utilities
+   ========================================================================== */
+
+/* ==========================================================================
+   1. LAYOUT UTILITIES
+   ========================================================================== */
+
+.u-container {
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 var(--space-5);
+}
+
+.u-max-w-md {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.u-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin: var(--space-5) 0 var(--space-3);
+    width: 100%;
+}
+
+.u-page-title {
+    margin: 0;
+    line-height: 1.25;
+    font-weight: 600;
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.u-grid {
+    display: grid;
+    gap: var(--space-4);
+}
+
+.u-grid--auto {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+/* ==========================================================================
+   2. FLEXBOX UTILITIES
+   ========================================================================== */
+
+.u-flex { display: flex; }
+.u-flex-1 { flex: 1; }
+.u-flex-col { display: flex; flex-direction: column; }
+.u-flex-wrap { flex-wrap: wrap; }
+.u-flex-center { display: flex; align-items: center; }
+.u-flex-between { display: flex; justify-content: space-between; align-items: center; }
+.u-justify-between { justify-content: space-between; }
+.u-items-start { align-items: flex-start; }
+.u-items-center { align-items: center; }
+
+/* ==========================================================================
+   3. SPACING UTILITIES
+   ========================================================================== */
+
+/* Margin top */
+.u-mt-0 { margin-top: 0; }
+.u-mt-2 { margin-top: var(--space-2); }
+.u-mt-3 { margin-top: var(--space-3); }
+.u-mt-4 { margin-top: var(--space-4); }
+.u-mt-5 { margin-top: var(--space-5); }
+.u-mt-6 { margin-top: var(--space-6); }
+
+/* Margin bottom */
+.u-mb-0 { margin-bottom: 0; }
+.u-mb-2 { margin-bottom: var(--space-2); }
+.u-mb-3 { margin-bottom: var(--space-3); }
+.u-mb-4 { margin-bottom: var(--space-4); }
+.u-mb-5 { margin-bottom: var(--space-5); }
+.u-mb-6 { margin-bottom: var(--space-6); }
+
+/* Margin left/right */
+.u-ml-2 { margin-left: var(--space-2); }
+.u-ml-3 { margin-left: var(--space-3); }
+.u-mr-2 { margin-right: var(--space-2); }
+.u-mr-3 { margin-right: var(--space-3); }
+
+/* Padding */
+.u-p-2 { padding: var(--space-2); }
+.u-p-3 { padding: var(--space-3); }
+.u-p-4 { padding: var(--space-4); }
+.u-p-5 { padding: var(--space-5); }
+.u-p-6 { padding: var(--space-6); }
+
+/* Gap */
+.u-gap-2 { gap: var(--space-2); }
+.u-gap-3 { gap: var(--space-3); }
+.u-gap-4 { gap: var(--space-4); }
+.u-gap-5 { gap: var(--space-5); }
+
+/* ==========================================================================
+   4. TYPOGRAPHY UTILITIES
+   ========================================================================== */
+
+/* Text color */
+.u-text-muted { color: var(--color-text-muted); }
+.u-text-secondary { color: var(--color-text-secondary); }
+
+/* Font size */
+.u-text-small { font-size: 0.9em; }
+.u-text-lg { font-size: 18px; }
+.u-text-xl { font-size: 32px; }
+
+/* Font weight */
+.u-font-medium { font-weight: 500; }
+.u-font-semibold { font-weight: 600; }
+
+/* Line height */
+.u-leading-relaxed { line-height: 1.6; }
+.u-leading-loose { line-height: 1.8; }
+
+/* Text align */
+.u-text-center { text-align: center; }
+
+/* Text decoration */
+.u-text-strikethrough { text-decoration: line-through; }
+
+/* Links */
+.u-link-primary {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+.u-link-primary:hover {
+    text-decoration: underline;
+}
+
+/* Labels */
+.u-label {
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   5. DISPLAY & VISIBILITY UTILITIES
+   ========================================================================== */
+
+.u-inline-block { display: inline-block; }
+
+.u-visually-hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    padding: 0 !important;
+    margin: -1px !important;
+    overflow: hidden !important;
+    clip: rect(0, 0, 0, 0) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.u-opacity-70 { opacity: 0.7; }
+.u-opacity-50 { opacity: 0.5; }
+
+/* ==========================================================================
+   6. BORDER UTILITIES
+   ========================================================================== */
+
+.u-border-left-primary { border-left: 4px solid var(--color-primary); }
+.u-border-left-success { border-left: 4px solid var(--color-success); }
+.u-border-left-muted { border-left: 4px solid var(--color-text-muted); }
+
+.u-border-top {
+    border-top: 1px solid var(--color-border);
+    padding-top: 15px;
+    margin-top: 10px;
+}
+
+/* ==========================================================================
+   7. ICON UTILITIES
+   ========================================================================== */
+
+.u-icon-muted { color: var(--color-text-muted); }
+.u-icon-success { color: var(--color-success); }
+.u-icon-primary { color: var(--color-primary); }
+.u-icon-w { width: 20px; }
+.u-icon-lg { font-size: 64px; }
+
+/* ==========================================================================
+   8. WIDTH UTILITIES
+   ========================================================================== */
+
+.u-min-w-200 { min-width: 200px; }
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 640px) {
+    .u-container { padding: 0 var(--space-3); }
+    .u-page-header { gap: var(--space-3); }
+}

@@ -12,6 +12,7 @@
 - [Први кораци](#први-кораци)
 - [Производно окружење](#производно-окружење)
 - [Развој и тестирање](#развој-и-тестирање)
+- [Миграција података из HramSP](#миграција-података-из-hramsp)
 - [Додатне белешке](#додатне-белешке)
 
 ## Предуслови
@@ -203,6 +204,33 @@ make clean               # Уклањање свих контејнера, во�
    docker compose run --rm app sh -c "python manage.py test"
    ```
 
+## Миграција података из HramSP
+
+За миграцију података из старе HramSP апликације (DBF фајлови) у нову базу података, погледајте детаљну документацију: **[docs/MIGRACIJA.md](docs/MIGRACIJA.md)**
+
+Кратак преглед:
+
+```bash
+# Учитавање DBF фајлова у PostgreSQL staging табеле (из директоријума или ZIP архиве)
+docker compose run --rm app sh -c "python manage.py load_dbf --src_dir '/mnt/c/HramSP/dbf'"
+docker compose run --rm app sh -c "python manage.py load_dbf --src_zip '/путања/до/crkva.zip'"
+
+# Миграција крштења и венчања
+docker compose run --rm app sh -c "python manage.py migracija_krstenja"
+docker compose run --rm app sh -c "python manage.py migracija_vencanja"
+```
+
+Или користите скрипту за аутоматску миграцију:
+
+```bash
+./start.sh                    # Комплетна изградња (app + db + run)
+./start.sh --app              # Само rebuild app контејнера
+./start.sh --db               # Само rebuild базе (миграције + load_dbf + миграција података)
+./start.sh --run              # Брзо покретање (load_dbf + krstenja/vencanja + up)
+./start.sh --home             # Користи home WSL путању за DBF фајлове
+./start.sh --zip /путања.zip  # Користи ZIP архиву за DBF фајлове
+```
+
 ## Додатне белешке
 
 ### Проблем са дозволама код Докера
@@ -251,7 +279,7 @@ make clean               # Уклањање свих контејнера, во�
    # wsl - instalira default Ubuntu 24.04 distribuciju
    wsl --install
    wsl -l -v
-   
+
    # python
    sudo apt update
    sudo apt upgrade -y
@@ -265,23 +293,23 @@ make clean               # Уклањање свих контејнера, во�
    sudo groupadd docker
    sudo usermod -aG docker $USER
    sudo service docker restart
-   
+
    # git
    sudo apt install git
    git --version
 
    # python virtual environment
-   cd /home/sasa 
+   cd /home/sasa
    sudo apt install python3 -y
    sudo apt install python3-pip -y
    python3 --version
    pip3 --version
    sudo apt install python3-dev -y
-   
+
    # kreiranje virtual environment-a u folderu '/home/sasa' i aktivacija
    sudo apt install python3.12-venv
    python3 -m venv .python_venv
-   
+
    # paketi
    pip install pandas dbfread
    pip install --upgrade -r requirements.txt
@@ -301,27 +329,30 @@ make clean               # Уклањање свих контејнера, во�
 
    ```bash
    cd /home/sasa/crkva
-   
+
    # rebuild kontejnera aplikacije (samo ako je nesto menjano)
-   ~/crkva$ ./build.sh --app
+   ~/crkva$ ./start.sh --app
 
-   # rebuild kontejnera base 
-   ~/crkva$ ./build.sh --db
+   # rebuild kontejnera baze
+   ~/crkva$ ./start.sh --db
 
-   # NAPOMENA:
-   # moguce je pozvati i ovako
-   # ~/crkva$ ./build.sh --app --db
-   #
+   # kompletna izgradnja (app + db + run)
+   ~/crkva$ ./start.sh
+   ~/crkva$ ./start.sh --app --db --run
+
+   # brzo pokretanje (samo load_dbf + krstenja/vencanja + up)
+   ~/crkva$ ./start.sh --run
+
+   # korišćenje home WSL putanje za DBF fajlove
+   ~/crkva$ ./start.sh --home
+
+   # korišćenje ZIP arhive za DBF fajlove
+   ~/crkva$ ./start.sh --zip /putanja/do/crkva.zip
+
    # za slucaj da app kontejner ne moze da se podigne, staticki web fajlovi se nalaze u 'data'
    # sudo chown sasa:sasa data -R
 
-   # pokretanje aplikacije iz terminala na WSL linux-u
-   # ova cmd svaki put migrira .dbf fajlove u sqlite, uradi brisanje tabele
-   # krstenja i vencanja i ponovi import. 
-   # Putanja do .dbf fajlova je podesena za crkveni laptop 
-   ~/crkva$ ./start.sh
-
    # pokretanje aplikacije iz terminala na windows-u
    ./start-registar.bat
-  
+
    ```

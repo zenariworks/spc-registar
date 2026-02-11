@@ -122,3 +122,9 @@ target/
 *.bkp
 *.dtmp
 .python-version
+
+# Archives
+*.zip
+.claude/
+.agentic-qe/
+.planning/

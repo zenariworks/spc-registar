@@ -4,7 +4,6 @@ Kod migracije podataka iz stare baza, svaki string koji je unet latinicom, konve
 
 
 class Konvertor:
-
     @staticmethod
     def int(value, default=0):
         """Safely converts a string to an integer."""
@@ -16,7 +15,6 @@ class Konvertor:
 
     @staticmethod
     def string(text):
-
         text = text.strip()
 
         # define a mapping from Serbian Latin to Cyrillic

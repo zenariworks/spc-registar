@@ -1,29 +1,89 @@
 {% extends "base.html" %}
+{% load phone_filters %}
 {% block content %}
 
-<div>
 <div class="u-page-header">
-        <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
-            <i class="fa-solid fa-arrow-left"></i>
-        </a>
-<h1 class="u-page-title">Парохијан</h1>
-        <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" style="text-decoration: none;">
-<button class="button button--primary" type="button" title="Штампај">
-              <i class="fa-solid fa-print" style="margin-right: 6px;"></i> Штампај
-            </button>
-        </a>
-    </div>
-
-    <h2>{{ parohijan.ime }} {{ parohijan.prezime }}</h2>
-    {% if parohijan.devojacko_prezime %}
-        <p>Девојачко презиме: {{ parohijan.devojacko_prezime }}</p>
-    {% endif %}
-    <p>Датум рођења: {{ parohijan.datum_rodjenja }}</p>
-    <p>Место рођења: {{ parohijan.mesto_rodjenja }}</p>
-    <p>Пол: {{ parohijan.pol }}</p>
-    <p>Занимање: {{ parohijan.zanimanje }}</p>
-    <p>Вероисповест: {{ parohijan.veroispovest }}</p>
-    <p>Народност: {{ parohijan.narodnost }}</p>
-    <p>Адреса: {{ parohijan.adresa }}</p>
+    <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="u-page-title">Парохијан</h1>
+    <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" class="u-link-primary">
+        <button class="button button--primary" type="button" title="Штампај">
+            <i class="fa-solid fa-print"></i> Штампај
+        </button>
+    </a>
 </div>
+
+<h2 class="u-mt-4 u-mb-4">{{ parohijan.ime }} {{ parohijan.prezime }}</h2>
+
+{% if parohijan.domacinstvo %}
+<div class="card u-mb-4 u-border-left-primary">
+    <strong class="u-flex-center u-gap-2 u-mb-2">
+        <i class="fa-solid fa-house"></i>
+        Домаћин домаћинства
+    </strong>
+    <a href="{% url 'domacinstvo_detail' uid=parohijan.domacinstvo.uid %}" class="u-link-primary u-font-medium">
+        Прикажи домаћинство <i class="fa-solid fa-arrow-right u-text-small"></i>
+    </a>
+</div>
+{% endif %}
+
+<div class="card">
+    <ul class="u-kv-list">
+        {% if parohijan.devojacko_prezime %}
+        <li class="u-kv-item">
+            <span class="u-kv-label">Девојачко презиме:</span>
+            <span>{{ parohijan.devojacko_prezime }}</span>
+        </li>
+        {% endif %}
+        <li class="u-kv-item">
+            <span class="u-kv-label">Датум рођења:</span>
+            <span>{{ parohijan.datum_rodjenja }}</span>
+        </li>
+        <li class="u-kv-item">
+            <span class="u-kv-label">Место рођења:</span>
+            <span>{{ parohijan.mesto_rodjenja }}</span>
+        </li>
+        <li class="u-kv-item">
+            <span class="u-kv-label">Пол:</span>
+            <span>{{ parohijan.pol }}</span>
+        </li>
+        <li class="u-kv-item">
+            <span class="u-kv-label">Занимање:</span>
+            <span>{{ parohijan.zanimanje }}</span>
+        </li>
+        <li class="u-kv-item">
+            <span class="u-kv-label">Вероисповест:</span>
+            <span>{{ parohijan.veroispovest }}</span>
+        </li>
+        <li class="u-kv-item">
+            <span class="u-kv-label">Народност:</span>
+            <span>{{ parohijan.narodnost }}</span>
+        </li>
+        <li class="u-kv-item">
+            <span class="u-kv-label">Адреса:</span>
+            <span>{{ parohijan.adresa }}</span>
+        </li>
+        {% if parohijan.tel_mobilni or parohijan.tel_fiksni %}
+        <li class="u-kv-item">
+            <span class="u-kv-label">Телефон:</span>
+            <span>
+                {% if parohijan.tel_mobilni %}
+                <a href="tel:{{ parohijan.tel_mobilni|tel_link }}" class="u-link-primary">
+                    <i class="fa-solid {{ parohijan.tel_mobilni|phone_icon }}"></i>
+                    {{ parohijan.tel_mobilni|format_phone }}
+                </a>{% if parohijan.tel_fiksni %}<br>{% endif %}
+                {% endif %}
+                {% if parohijan.tel_fiksni %}
+                <a href="tel:{{ parohijan.tel_fiksni|tel_link }}" class="u-link-primary">
+                    <i class="fa-solid {{ parohijan.tel_fiksni|phone_icon }}"></i>
+                    {{ parohijan.tel_fiksni|format_phone }}
+                </a>
+                {% endif %}
+            </span>
+        </li>
+        {% endif %}
+    </ul>
+</div>
+
 {% endblock %}

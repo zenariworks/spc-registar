@@ -16,7 +16,6 @@ class Veroispovest(models.Model):
         return f"{self.naziv}"
 
     class Meta:
-        managed = False
         db_table = "veroispovesti"
         verbose_name = "Вероисповест"
         verbose_name_plural = "Вероисповести"

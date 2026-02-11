@@ -2,18 +2,29 @@
 
 {% block content %}
 <div class="u-page-header">
-        <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
-            <i class="fa-solid fa-arrow-left"></i>
-        </a>
-<h1 class="u-page-title">Свештеник</h1>
-        <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank" style="text-decoration: none;">
-<button class="button button--primary" type="button" title="Штампај">
-              <i class="fa-solid fa-print" style="margin-right: 6px;"></i> Штампај
-            </button>
-        </a>
-    </div>
+    <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="u-page-title">Свештеник</h1>
+    <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank">
+        <button class="button button--primary" type="button" title="Штампај">
+            <i class="fa-solid fa-print"></i> Штампај
+        </button>
+    </a>
+</div>
 
-    <h1>{{ svestenik.ime }}</h1>
-    <p>Звање: {{ svestenik.zvanje }}</p>
-    <p>Парохија: {{ svestenik.parohija }}</p>
+<h2 class="u-mt-4 u-mb-4">{{ svestenik }}</h2>
+
+<div class="card">
+    <ul class="u-kv-list">
+        <li class="u-kv-item">
+            <span class="u-kv-label">Звање:</span>
+            <span>{{ svestenik.zvanje }}</span>
+        </li>
+        <li class="u-kv-item">
+            <span class="u-kv-label">Парохија:</span>
+            <span>{{ svestenik.parohija }}</span>
+        </li>
+    </ul>
+</div>
 {% endblock %}

@@ -5,22 +5,36 @@ from collections import defaultdict
 
 from django.db.models import Q
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from registar.models import Parohijan, Slava, Veroispovest
 from registar.utils import get_query_variants
 from registar.utils_fasting import get_fasting_type
 
-from .krstenje_view import KrstenjePDF, PrikazKrstenja, SpisakKrstenja, unos_krstenja
+from .domacinstvo_view import PrikazDomacinstva, SpisakDomacinsta
+from .kalendar_view import kalendar
+from .krstenje_view import (
+    KrstenjePDF,
+    PrikazKrstenja,
+    SpisakKrstenja,
+    calibrate_krstenje,
+    unos_krstenja,
+)
 from .parohijan_view import (
     ParohijanPDF,
     PrikazParohijana,
     SpisakParohijana,
     unos_parohijana,
 )
+from .slava_view import slava_domacinstva
 from .svestenik_view import PrikazSvestenika, SpisakSvestenika, SvestenikPDF
-from .vencanje_view import PrikazVencanja, SpisakVencanja, VencanjePDF, unos_vencanja
+from .vencanje_view import (
+    PrikazVencanja,
+    SpisakVencanja,
+    VencanjePDF,
+    calibrate_vencanje,
+    unos_vencanja,
+)
 from .view_404 import custom_404
-from .kalendar_view import kalendar
 
 
 def index(request) -> HttpResponse:
@@ -39,7 +53,9 @@ def index(request) -> HttpResponse:
     months_needed = set(d.month for d in days)
     slave_by_month = {}
     for month in months_needed:
-        slave_by_month[month] = list(Slava.objects.filter(mesec=month).order_by("dan", "naziv"))
+        slave_by_month[month] = list(
+            Slava.objects.filter(mesec=month).order_by("dan", "naziv")
+        )
 
     # Group fixed slavas by (month, day)
     by_day = defaultdict(list)
@@ -49,7 +65,9 @@ def index(request) -> HttpResponse:
                 by_day[(month, s.dan)].append(s)
 
     # Add moveable slavas
-    pokretne_slave = Slava.objects.filter(pokretni=True).order_by("offset_nedelje", "offset_dani", "naziv")
+    pokretne_slave = Slava.objects.filter(pokretni=True).order_by(
+        "offset_nedelje", "offset_dani", "naziv"
+    )
     year = today.year
     for s in pokretne_slave:
         datum = s.get_datum(year)
@@ -88,7 +106,16 @@ def index(request) -> HttpResponse:
         if day_slavas and not is_important:
             for slava in day_slavas:
                 slava_lower = slava.naziv.lower()
-                if any(keyword in slava_lower for keyword in ['васкрс', 'спасовдан', 'тројице', 'духови', 'вазнесењ']):
+                if any(
+                    keyword in slava_lower
+                    for keyword in [
+                        "васкрс",
+                        "спасовдан",
+                        "тројице",
+                        "духови",
+                        "вазнесењ",
+                    ]
+                ):
                     is_important = True
                     break
 
@@ -102,23 +129,25 @@ def index(request) -> HttpResponse:
         else:
             day_label = weekday_labels[d.weekday()]
 
-        cells.append({
-            "date": d,
-            "weekday_label": weekday_labels[d.weekday()],
-            "day_label": day_label,
-            "is_fasting": fasting_info['is_fasting'],
-            "fasting_type": fasting_info['type'],
-            "fasting_display": fasting_info['display'],
-            "fasting_description": fasting_info['description'],
-            "slave": day_slavas,
-            "fixed_slavas": fixed_slavas,
-            "moveable_slavas": moveable_slavas,
-            "is_important": is_important,
-            "is_crveno_slovo": is_crveno_slovo,
-            "is_today": d == today,
-            "is_yesterday": d == today - dt.timedelta(days=1),
-            "is_upcoming": d > today,
-        })
+        cells.append(
+            {
+                "date": d,
+                "weekday_label": weekday_labels[d.weekday()],
+                "day_label": day_label,
+                "is_fasting": fasting_info["is_fasting"],
+                "fasting_type": fasting_info["type"],
+                "fasting_display": fasting_info["display"],
+                "fasting_description": fasting_info["description"],
+                "slave": day_slavas,
+                "fixed_slavas": fixed_slavas,
+                "moveable_slavas": moveable_slavas,
+                "is_important": is_important,
+                "is_crveno_slovo": is_crveno_slovo,
+                "is_today": d == today,
+                "is_yesterday": d == today - dt.timedelta(days=1),
+                "is_upcoming": d > today,
+            }
+        )
 
     context = {
         "calendar_cells": cells,
@@ -154,7 +183,9 @@ def search_view(request) -> HttpResponse:
     context = {
         "query": query,
         "veroisposvest_results": (
-            Veroispovest.objects.filter(q_vero) if q_vero else Veroispovest.objects.none()
+            Veroispovest.objects.filter(q_vero)
+            if q_vero
+            else Veroispovest.objects.none()
         ),
         "parohijan_results": (
             Parohijan.objects.filter(q_par) if q_par else Parohijan.objects.none()
@@ -172,8 +203,12 @@ __all__ = [
     "unos_krstenja",
     "unos_parohijana",
     "unos_vencanja",
+    "calibrate_krstenje",
+    "calibrate_vencanje",
     "SpisakParohijana",
     "PrikazParohijana",
+    "SpisakDomacinsta",
+    "PrikazDomacinstva",
     "SpisakKrstenja",
     "PrikazKrstenja",
     "SpisakVencanja",
@@ -184,4 +219,5 @@ __all__ = [
     "ParohijanPDF",
     "KrstenjePDF",
     "SvestenikPDF",
+    "slava_domacinstva",
 ]

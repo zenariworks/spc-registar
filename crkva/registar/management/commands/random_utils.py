@@ -23,41 +23,62 @@ class RandomUtils:
     @staticmethod
     def sample_occupations():
         from registar.models import Zanimanje
+
         """Враћа све доступне занимања."""
         return Zanimanje.objects.all()
 
     @staticmethod
     def sample_occupations_text():
         return [
-            "инжењер", "учитељ", "лекар", "пољопривредник",
-            "возач", "пекар", "механичар", "економиста",
-            "програмер", "архитекта"
+            "инжењер",
+            "учитељ",
+            "лекар",
+            "пољопривредник",
+            "возач",
+            "пекар",
+            "механичар",
+            "економиста",
+            "програмер",
+            "архитекта",
         ]
 
     @staticmethod
     def sample_nationalities():
         from registar.models import Narodnost
+
         """Враћа све доступне народности."""
         return Narodnost.objects.all()
 
     @staticmethod
     def sample_nationalities_text():
         return [
-            "Српска", "Хрватска", "Бошњачка", "Албанска",
-            "Мађарска", "Ромска", "Словачка", "Румунска"
+            "Српска",
+            "Хрватска",
+            "Бошњачка",
+            "Албанска",
+            "Мађарска",
+            "Ромска",
+            "Словачка",
+            "Румунска",
         ]
 
     @staticmethod
     def sample_religions():
         from registar.models import Veroispovest
+
         """Враћа све доступне вероисповести."""
         return Veroispovest.objects.all()
 
     @staticmethod
     def sample_religions_text():
         return [
-            "Православна", "Католичка", "Исламска", "Протестантска",
-            "Јеврејска", "Атеиста", "Агностик"
+            "Православна",
+            "Католичка",
+            "Исламска",
+            "Протестантска",
+            "Јеврејска",
+            "Атеиста",
+            "Агностик",
         ]
 
     @staticmethod
@@ -114,6 +135,7 @@ class RandomUtils:
     def create_random_hram(_unesi_adresu=None):
         """Креира насумичан објекат Hram."""
         from registar.models import Hram
+
         hram = Hram(
             naziv="Храм "
             + random.choice(

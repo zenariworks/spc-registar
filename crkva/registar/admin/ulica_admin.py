@@ -2,8 +2,8 @@
 
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
-from registar.models import Mesto
-from registar.models import Ulica
+from registar.models import Mesto, Ulica
+
 
 class DrzavaFilter(admin.SimpleListFilter):
     """Класа за филтрирање држава"""

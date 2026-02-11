@@ -5,7 +5,6 @@
 import django_filters
 from django.db import models
 from django.db.models.functions import Cast
-
 from registar.models import Vencanje
 from registar.utils import get_query_variants
 
@@ -22,9 +21,7 @@ class VencanjeFilter(django_filters.FilterSet):
     def filter_search(self, queryset, _name, value):
         """Претражује уносе на основу више текстуалних поља, укључујући датум."""
         termini_pretrage = value.split()
-        queryset = queryset.annotate(
-            datum_str=Cast("datum", models.CharField())
-        )
+        queryset = queryset.annotate(datum_str=Cast("datum", models.CharField()))
 
         query = models.Q()
         for rec in termini_pretrage:

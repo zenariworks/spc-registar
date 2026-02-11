@@ -7,8 +7,8 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from registar.forms import ParohijanForm, SearchForm
-from registar.utils import get_query_variants
 from registar.models.parohijan import Parohijan
+from registar.utils import get_query_variants
 from weasyprint import HTML
 
 
@@ -29,6 +29,7 @@ def unos_parohijana(request):
 
 class SpisakParohijana(ListView):
     """Приказује списак парохијана са могућношћу претраге и пагинације."""
+
     model = Parohijan
     template_name = "registar/spisak_parohijana.html"
     context_object_name = "parohijani"
@@ -46,7 +47,11 @@ class SpisakParohijana(ListView):
             for v in variants:
                 clause = Q(ime__icontains=v) | Q(prezime__icontains=v)
                 q = clause if q is None else (q | clause)
-            return Parohijan.objects.filter(q) if q is not None else Parohijan.objects.all()
+            return (
+                Parohijan.objects.filter(q)
+                if q is not None
+                else Parohijan.objects.all()
+            )
         return Parohijan.objects.all()
 
     def get_context_data(self, **kwargs):
@@ -59,6 +64,7 @@ class SpisakParohijana(ListView):
 
 class ParohijanPDF(DetailView):
     """Генерише PDF документ за одређеног парохијана."""
+
     model = Parohijan
     template_name = "registar/pdf_parohijan.html"
 
@@ -87,6 +93,7 @@ class ParohijanPDF(DetailView):
 
 class PrikazParohijana(DetailView):
     """Приказује детаљне информације о одређеном парохијану."""
+
     model = Parohijan
     template_name = "registar/info_parohijan.html"
     context_object_name = "parohijan"

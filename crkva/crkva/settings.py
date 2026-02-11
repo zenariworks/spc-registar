@@ -13,18 +13,17 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from typing import List
+
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Initialize environ
-env = environ.Env(
-    DEBUG=(bool, False)
-)
+env = environ.Env(DEBUG=(bool, False))
 
 # Read .env file from project root (two levels up from settings.py)
-environ.Env.read_env(os.path.join(BASE_DIR.parent, '.env'))
+environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 
 
 # Quick-start development settings - unsuitable for production
@@ -55,7 +54,7 @@ INSTALLED_APPS = [
     "django_select2",
     "admin_searchable_dropdown",
     "django_filters",
-    # "phonenumber_field",
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
@@ -66,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "registar.middleware.HandleMissingTablesMiddleware",
 ]
 
 ROOT_URLCONF = "crkva.urls"

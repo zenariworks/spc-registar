@@ -3,6 +3,7 @@
 from django.contrib import admin
 from registar.models import Veroispovest
 
+
 @admin.register(Veroispovest)
 class VeroispovestAdmin(admin.ModelAdmin):
     """Класа админ интерфејса модела Вероисповест."""

@@ -4,7 +4,7 @@
 <html>
   <head>
   <link rel="stylesheet" href="{% static 'registar/base/fonts.css' %}">
-  <link rel="stylesheet" href="{% static 'registar/pages/print.css' %}">
+  <link rel="stylesheet" href="{% static 'registar/print/stampa.css' %}">
     <title>Крштеница {{ krstenje.knjiga }}.{{ krstenje.broj }}.{{ krstenje.strana }}</title>
   </head>
   <body>
@@ -138,7 +138,7 @@
         <!-- 11. Име и презиме свештеника који је дете крстио и миропомазао -->
         <div style="width: 46%"></div>
         <div style="width: 53%; font-size: 14pt; letter-spacing: 1px;">
-          {{ krstenje.svestenik }}
+          {{ krstenje.svestenik|default_if_none:"" }}
         </div>
       </div>
       <div class="row" style="height: 13mm">

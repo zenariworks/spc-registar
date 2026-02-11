@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load static phone_filters %}
+
+{% block title %}{{ slava.naziv }} - Домаћинства{% endblock %}
+
+{% block content %}
+<div class="u-page-header">
+  <a href="{% url 'kalendar' %}" class="back-button" aria-label="Назад на календар" title="Назад на календар">
+    <i class="fa-solid fa-arrow-left"></i>
+  </a>
+  <h1 class="u-page-title">{{ slava.naziv }}</h1>
+</div>
+
+<div class="u-info-header" data-theme-aware>
+  <div class="u-flex-center u-gap-4 u-mb-4">
+    <i class="fa-solid fa-calendar-day u-text-xl u-icon-primary"></i>
+    <div>
+      <h2 class="u-mt-0 u-mb-0" data-theme-text>{{ slava.naziv }}</h2>
+      {% if slava.mesec and slava.dan %}
+        <p class="u-text-muted u-mt-2 u-mb-0" data-theme-text-secondary>
+          {{ slava.dan }}. {{ slava.get_mesec_naziv }}
+        </p>
+      {% elif slava.pokretni %}
+        <p class="u-text-muted u-mt-2 u-mb-0" data-theme-text-secondary>
+          Покретни празник
+        </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="u-stat-card" data-theme-card>
+    <i class="fa-solid fa-house u-icon-primary"></i>
+    <strong data-theme-text>Број домаћинстава:</strong>
+    <span class="u-text-lg u-font-semibold u-icon-primary">{{ count }}</span>
+  </div>
+</div>
+
+{% if domacinstva %}
+  <div class="u-flex-col u-gap-4">
+    {% for domacinstvo in domacinstva %}
+      <div class="u-card" data-theme-card>
+        <div class="u-flex u-justify-between u-items-start u-mb-4">
+          <div class="u-flex-1">
+            <h3 class="u-mt-0 u-mb-2" data-theme-text>
+              <i class="fa-solid fa-user u-icon-primary u-mr-2"></i>
+              {% if domacinstvo.domacin %}
+                <a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}" class="u-link-primary">
+                  {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}
+                </a>
+              {% else %}
+                <span class="u-text-muted">Непознат домаћин</span>
+              {% endif %}
+            </h3>
+
+            {% if domacinstvo.adresa %}
+              <div class="u-text-muted u-mb-2" data-theme-text-secondary>
+                <i class="fa-solid fa-location-dot u-icon-w u-text-muted"></i>
+                {% if domacinstvo.adresa.ulica %}
+                  {{ domacinstvo.adresa.ulica.naziv }}
+                  {% if domacinstvo.adresa.broj %}{{ domacinstvo.adresa.broj }}{% endif %}
+                {% else %}
+                  {{ domacinstvo.adresa }}
+                {% endif %}
+              </div>
+            {% endif %}
+
+            <div class="u-flex u-gap-5 u-flex-wrap u-mt-2">
+              {% if domacinstvo.tel_fiksni %}
+                <a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}" class="u-link-primary" data-theme-text-secondary>
+                  <i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }} u-icon-w"></i>
+                  {{ domacinstvo.tel_fiksni|format_phone }}
+                </a>
+              {% endif %}
+              {% if domacinstvo.tel_mobilni %}
+                <a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}" class="u-link-primary" data-theme-text-secondary>
+                  <i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }} u-icon-w"></i>
+                  {{ domacinstvo.tel_mobilni|format_phone }}
+                </a>
+              {% endif %}
+            </div>
+          </div>
+
+          <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}" class="u-btn-primary">
+            Детаљи
+            <i class="fa-solid fa-arrow-right"></i>
+          </a>
+        </div>
+
+        {% if domacinstvo.ukucani.all %}
+          <div class="u-border-top">
+            <div class="u-text-muted u-text-small u-font-medium u-mb-3" data-theme-text-secondary>
+              <i class="fa-solid fa-users u-mr-2"></i>
+              Чланови домаћинства ({{ domacinstvo.ukucani.all.count }})
+            </div>
+            <div class="u-flex u-flex-wrap u-gap-3">
+              {% for ukucanin in domacinstvo.ukucani.all %}
+                <div class="u-chip {% if ukucanin.preminuo %}u-chip--muted{% else %}u-chip--info{% endif %}" data-theme-aware>
+                  {% if ukucanin.preminuo %}
+                    <span class="u-text-muted">†</span>
+                  {% endif %}
+                  {% if ukucanin.osoba %}
+                    <a href="{% url 'parohijan_detail' uid=ukucanin.osoba.uid %}" class="{% if ukucanin.preminuo %}u-text-muted{% else %}u-link-primary{% endif %}">
+                      {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
+                    </a>
+                  {% else %}
+                    <span class="u-text-muted">{{ ukucanin.ime_prezime|default:"Непознато" }}</span>
+                  {% endif %}
+                  {% if ukucanin.uloga %}
+                    <span class="u-role-tag">{{ ukucanin.uloga }}</span>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="u-empty-state" data-theme-aware>
+    <i class="fa-solid fa-house-circle-xmark u-text-muted u-opacity-50 u-icon-lg u-mb-4"></i>
+    <p class="u-text-muted u-text-lg u-mb-0" data-theme-text-secondary>
+      Нема домаћинстава која славе {{ slava.naziv }}
+    </p>
+  </div>
+{% endif %}
+
+{% endblock %}

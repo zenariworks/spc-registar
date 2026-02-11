@@ -5,13 +5,10 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
-
 from django_filters.views import FilterView
-
 from registar.filters import VencanjeFilter
 from registar.forms import SearchForm, VencanjeForm
 from registar.models.vencanje import Vencanje
-
 from weasyprint import HTML
 
 
@@ -97,3 +94,8 @@ def unos_vencanja(request):
     else:
         form = VencanjeForm()
     return render(request, "registar/unos_vencanja.html", {"form": form})
+
+
+def calibrate_vencanje(request):
+    """Приказује страницу за калибрацију позиција поља на венчаници."""
+    return render(request, "registar/calibrate_vencanje.html")

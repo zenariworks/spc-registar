@@ -1,26 +1,56 @@
 """Модул модела укућана у бази података."""
 
 from django.db import models
+from model_utils.models import TimeStampedModel
 
-from .parohijan import Parohijan
+from .domacinstvo import Domacinstvo
+from .parohijan import Osoba
 
 
-class Ukucanin(models.Model):
-    """Класа која представља укућана."""
-
-    parohijan = models.ForeignKey(
-        Parohijan, on_delete=models.CASCADE, verbose_name="парохијан"
+class Ukucanin(TimeStampedModel):
+    domacinstvo = models.ForeignKey(
+        Domacinstvo, on_delete=models.CASCADE, related_name="ukucani"
     )
 
-    ime_ukucana = models.CharField(
-        max_length=255, verbose_name="име укућана", blank=True, null=True
+    osoba = models.ForeignKey(
+        Osoba,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="особа",
     )
 
-    def __str__(self) -> str:
-        return f"{self.parohijan} - {self.ime_ukucana}"
+    # Резервно име ако особа није повезана (за старије преминуле)
+    ime_ukucana = models.CharField(max_length=255, blank=True, null=True)
+
+    uloga = models.CharField(
+        max_length=30,
+        choices=[
+            ("домаћин", "Домаћин"),
+            ("супружник", "Супружник/ка"),
+            ("дете", "Дете"),
+            ("рођак", "Рођак/сродник"),
+            ("остало", "Остало"),
+        ],
+        default="остало",
+    )
+
+    preminuo = models.BooleanField(default=False, verbose_name="преминуо")
+
+    def __str__(self):
+        status = " (+)" if self.preminuo else ""
+        if self.osoba:
+            return f"{self.osoba}{status} ({self.get_uloga_display()})"
+        return f"{self.ime_ukucana}{status} ({self.get_uloga_display()})"
 
     class Meta:
-        managed = True
         db_table = "ukucani"
         verbose_name = "Укућанин"
         verbose_name_plural = "Укућани"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["domacinstvo", "osoba"],
+                condition=models.Q(osoba__isnull=False),
+                name="unique_osoba_per_domacinstvo",
+            )
+        ]

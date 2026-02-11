@@ -67,7 +67,7 @@
           <div class="slavas">
             {% if day.moveable_slavas %}
               {% for s in day.moveable_slavas %}
-                <div class="slava-moveable">{{ s.naziv }}</div>
+                <a href="{% url 'slava_detail' uid=s.uid %}" class="slava-moveable slava-link">{{ s.naziv }}</a>
               {% endfor %}
             {% endif %}
             {% if day.fixed_slavas and day.moveable_slavas %}
@@ -75,7 +75,7 @@
             {% endif %}
             {% if day.fixed_slavas %}
               {% for s in day.fixed_slavas %}
-                <div class="slava-fixed">{{ s.naziv }}</div>
+                <a href="{% url 'slava_detail' uid=s.uid %}" class="slava-fixed slava-link">{{ s.naziv }}</a>
               {% endfor %}
             {% endif %}
           </div>

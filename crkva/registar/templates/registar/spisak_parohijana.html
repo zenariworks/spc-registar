@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load marker_filter %}
+{% load marker_filter phone_filters %}
 
 {% block content %}
 <div class="u-page-header">
@@ -21,11 +21,43 @@
         {% for parohijan in parohijani %}
             <li class="stavka">
                 <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza">
-                    {{ parohijan.ime|markiraj:upit }} {{ parohijan.prezime|markiraj:upit }} ({{ parohijan.datum_rodjenja|date:"Y" }})
-                </a>
-                        <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
-<button class="button button--primary" type="button">Штампај</button>
+                    <span class="u-font-medium">
+                        {{ parohijan.ime|markiraj:upit|safe }} {{ parohijan.prezime|markiraj:upit|safe }}
+                    </span>
+                    {% if parohijan.datum_rodjenja %}
+                    <span class="u-text-secondary u-text-small">
+                        {{ parohijan.datum_rodjenja }}
+                    </span>
+                    {% endif %}
+                    {% if parohijan.adresa %}
+                    <span class="u-text-secondary u-text-small">
+                        📍 {{ parohijan.adresa }}
+                    </span>
+                    {% endif %}
+                    {% if parohijan.tel_mobilni or parohijan.tel_fiksni %}
+                    <span class="u-text-secondary u-text-small">
+                        {% if parohijan.tel_mobilni %}
+                        <a href="tel:{{ parohijan.tel_mobilni|tel_link }}" class="u-link-primary" onclick="event.stopPropagation();">
+                            <i class="fa-solid {{ parohijan.tel_mobilni|phone_icon }}"></i>
+                            {{ parohijan.tel_mobilni|format_phone }}
                         </a>
+                        {% elif parohijan.tel_fiksni %}
+                        <a href="tel:{{ parohijan.tel_fiksni|tel_link }}" class="u-link-primary" onclick="event.stopPropagation();">
+                            <i class="fa-solid {{ parohijan.tel_fiksni|phone_icon }}"></i>
+                            {{ parohijan.tel_fiksni|format_phone }}
+                        </a>
+                        {% endif %}
+                    </span>
+                    {% endif %}
+                    {% if parohijan.slava %}
+                    <span class="u-badge u-badge--slava">
+                        {{ parohijan.slava }}
+                    </span>
+                    {% endif %}
+                </a>
+                <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" class="u-link-primary u-ml-3">
+                    <button class="button button--primary" type="button">Штампај</button>
+                </a>
             </li>
         {% empty %}
             <li>Нема уписаних парохијана у бази.</li>
