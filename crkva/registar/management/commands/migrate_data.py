@@ -126,9 +126,12 @@ class Command(BaseCommand):
         # Штампај извештај
         self._print_summary(results, mode)
 
-        # Ако било какве грешке, излаз са кодом 1
-        if any(r["status"] == "error" for r in results):
-            return 1
+        # Ако било какве грешке, подигни изузетак
+        error_count = sum(1 for r in results if r["status"] == "error")
+        if error_count > 0:
+            raise CommandError(
+                f"Миграција завршена са {error_count} грешком/ама."
+            )
 
     def _migrate_real(
         self, zip_path: Path, skip_staging: bool, keep_staging: bool
@@ -442,7 +445,7 @@ class Command(BaseCommand):
                 total_steps,
                 "Генерисање свештеника",
                 "unos_svestenika",
-                {},
+                {"broj": 5},  # Generate 5 random clergy members
             )
         )
 
