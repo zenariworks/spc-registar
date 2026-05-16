@@ -3,6 +3,7 @@
 """
 
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import DomacinstvoForm
 from registar.models import Domacinstvo
@@ -75,3 +76,26 @@ class PrikazDomacinstva(DetailView):
         context["ukucani_zivi"] = [u for u in ukucani if not u.preminuo]
         context["ukucani_preminuli"] = [u for u in ukucani if u.preminuo]
         return context
+
+
+@tenant_role_required("domacinstvo")
+def izmena_domacinstva(request, uid):
+    """Измена постојеће инстанце."""
+    instance = get_object_or_404(Domacinstvo, uid=uid)
+    if request.method == "POST":
+        form = DomacinstvoForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect("domacinstvo_detail", uid=instance.uid)
+    else:
+        form = DomacinstvoForm(instance=instance)
+    return render(
+        request,
+        "registar/unos_domacinstva.html",
+        {
+            "form": form,
+            "title": "Измена",
+            "back_url": reverse("domacinstvo_detail", kwargs={"uid": instance.uid}),
+            "is_edit": True,
+        },
+    )

@@ -74,4 +74,17 @@ urlpatterns = [
     path("unos/vencanje/", views.unos_vencanja, name="unos_vencanja"),
     path("unos/svestenik/", views.unos_svestenika, name="unos_svestenika"),
     path("unos/domacinstvo/", views.unos_domacinstva, name="unos_domacinstva"),
+    path(
+        "izmena/parohijan/<int:uid>/", views.izmena_parohijana, name="izmena_parohijana"
+    ),
+    path("izmena/krstenje/<uuid:uid>/", views.izmena_krstenja, name="izmena_krstenja"),
+    path("izmena/vencanje/<uuid:uid>/", views.izmena_vencanja, name="izmena_vencanja"),
+    path(
+        "izmena/svestenik/<int:uid>/", views.izmena_svestenika, name="izmena_svestenika"
+    ),
+    path(
+        "izmena/domacinstvo/<uuid:uid>/",
+        views.izmena_domacinstva,
+        name="izmena_domacinstva",
+    ),
 ]

@@ -4,6 +4,7 @@
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import ParohijanForm
 from registar.models import Krstenje
@@ -141,3 +142,26 @@ class PrikazParohijana(DetailView):
         )
 
         return context
+
+
+@tenant_role_required("osoba")
+def izmena_parohijana(request, uid):
+    """Измена постојеће инстанце."""
+    instance = get_object_or_404(Parohijan, uid=uid)
+    if request.method == "POST":
+        form = ParohijanForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect("parohijan_detail", uid=instance.uid)
+    else:
+        form = ParohijanForm(instance=instance)
+    return render(
+        request,
+        "registar/unos_parohijana.html",
+        {
+            "form": form,
+            "title": "Измена",
+            "back_url": reverse("parohijan_detail", kwargs={"uid": instance.uid}),
+            "is_edit": True,
+        },
+    )

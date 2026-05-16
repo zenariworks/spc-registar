@@ -7,6 +7,7 @@
         <i class="fa-solid fa-arrow-left"></i>
     </a>
     <h1 class="u-page-title">{{ parohijan.ime }} {{ parohijan.prezime }}</h1>
+    {% if can_edit_osoba %}<a href="{% url 'izmena_parohijana' parohijan.uid %}" class="button button--primary" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
     <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај">
         <i class="fa-solid fa-print"></i>
     </a>

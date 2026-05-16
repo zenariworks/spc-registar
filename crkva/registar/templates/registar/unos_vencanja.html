@@ -9,7 +9,7 @@
     {% csrf_token %}
 
 <div class="u-page-header">
-      <a href="{% url 'vencanja' %}" class="back-button" aria-label="Назад" title="Назад">
+      <a href="{% if back_url %}{{ back_url }}{% else %}{% url 'vencanja' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
 <h1 class="u-page-title">Унос венчања</h1>

@@ -4,6 +4,7 @@
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import KrstenjeForm
 from registar.models import Krstenje
@@ -144,3 +145,26 @@ def calibrate_krstenje(request):
         context = super().get_context_data(**kwargs)
         context["history_entries"] = history_for(self.object)
         return context
+
+
+@tenant_role_required("krstenje")
+def izmena_krstenja(request, uid):
+    """Измена постојеће инстанце."""
+    instance = get_object_or_404(Krstenje, uid=uid)
+    if request.method == "POST":
+        form = KrstenjeForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect("krstenje_detail", uid=instance.uid)
+    else:
+        form = KrstenjeForm(instance=instance)
+    return render(
+        request,
+        "registar/unos_krstenja.html",
+        {
+            "form": form,
+            "title": "Измена",
+            "back_url": reverse("krstenje_detail", kwargs={"uid": instance.uid}),
+            "is_edit": True,
+        },
+    )

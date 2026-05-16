@@ -9,6 +9,7 @@
     <button type="button" id="history-toggle" class="button button--primary" data-tooltip="Историја измена">
         <i class="fa-solid fa-clock-rotate-left"></i>
     </button>
+    {% if can_edit_domacinstvo %}<a href="{% url 'izmena_domacinstva' uid=domacinstvo.uid %}" class="button button--primary" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
     <h1 class="u-page-title">Домаћинство</h1>
 </div>
 

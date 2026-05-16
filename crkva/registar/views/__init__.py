@@ -11,19 +11,26 @@ from registar.utils import get_query_variants
 from registar.utils_fasting import get_fasting_type
 from tenants.permissions import tenant_role_required
 
-from .domacinstvo_view import PrikazDomacinstva, SpisakDomacinsta, unos_domacinstva
+from .domacinstvo_view import (
+    PrikazDomacinstva,
+    SpisakDomacinsta,
+    izmena_domacinstva,
+    unos_domacinstva,
+)
 from .kalendar_view import kalendar
 from .krstenje_view import (
     KrstenjePDF,
     PrikazKrstenja,
     SpisakKrstenja,
     calibrate_krstenje,
+    izmena_krstenja,
     unos_krstenja,
 )
 from .parohijan_view import (
     ParohijanPDF,
     PrikazParohijana,
     SpisakParohijana,
+    izmena_parohijana,
     unos_parohijana,
 )
 from .slava_view import slava_domacinstva
@@ -31,6 +38,7 @@ from .svestenik_view import (
     PrikazSvestenika,
     SpisakSvestenika,
     SvestenikPDF,
+    izmena_svestenika,
     unos_svestenika,
 )
 from .vencanje_view import (
@@ -38,6 +46,7 @@ from .vencanje_view import (
     SpisakVencanja,
     VencanjePDF,
     calibrate_vencanje,
+    izmena_vencanja,
     unos_vencanja,
 )
 from .view_404 import custom_404
@@ -67,6 +76,11 @@ __all__ = [
     "VencanjePDF",
     "calibrate_vencanje",
     "unos_vencanja",
+    "izmena_domacinstva",
+    "izmena_svestenika",
+    "izmena_vencanja",
+    "izmena_krstenja",
+    "izmena_parohijana",
     "custom_404",
     # Functions defined in this module
     "index",

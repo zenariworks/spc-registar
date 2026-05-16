@@ -4,6 +4,7 @@
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import VencanjeForm
 from registar.models.vencanje import Vencanje
@@ -154,3 +155,26 @@ def calibrate_vencanje(request):
         context = super().get_context_data(**kwargs)
         context["history_entries"] = history_for(self.object)
         return context
+
+
+@tenant_role_required("vencanje")
+def izmena_vencanja(request, uid):
+    """Измена постојеће инстанце."""
+    instance = get_object_or_404(Vencanje, uid=uid)
+    if request.method == "POST":
+        form = VencanjeForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect("vencanje_detail", uid=instance.uid)
+    else:
+        form = VencanjeForm(instance=instance)
+    return render(
+        request,
+        "registar/unos_vencanja.html",
+        {
+            "form": form,
+            "title": "Измена",
+            "back_url": reverse("vencanje_detail", kwargs={"uid": instance.uid}),
+            "is_edit": True,
+        },
+    )
