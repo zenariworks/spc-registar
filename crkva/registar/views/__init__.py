@@ -411,3 +411,19 @@ def search_autocomplete(request):
         groups.append({"label": "Венчања", "items": items})
 
     return JsonResponse({"groups": groups})
+
+
+def brzi_unos_osobe(request):
+    """AJAX endpoint за брзо креирање особе из модалног дијалога."""
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+
+    ime = request.POST.get("ime", "").strip()
+    prezime = request.POST.get("prezime", "").strip()
+    pol = request.POST.get("pol", "").strip()
+
+    if not ime or not prezime:
+        return JsonResponse({"error": "Име и презиме су обавезни"}, status=400)
+
+    osoba = Parohijan.objects.create(ime=ime, prezime=prezime, pol=pol or None)
+    return JsonResponse({"id": osoba.uid, "text": str(osoba)})

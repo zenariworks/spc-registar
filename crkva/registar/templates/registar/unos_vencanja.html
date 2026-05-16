@@ -68,7 +68,10 @@
       <div class="form-row">
         <div class="form-field" style="grid-column: 1 / -1;">
           {{ form.zenik.label_tag }}
-          {{ form.zenik }}
+          <div class="form-field-with-action">
+            <div class="form-field-with-action__input">{{ form.zenik }}</div>
+            <button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_zenik')"><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
       </div>
     </fieldset>
@@ -78,7 +81,10 @@
       <div class="form-row">
         <div class="form-field" style="grid-column: 1 / -1;">
           {{ form.nevesta.label_tag }}
-          {{ form.nevesta }}
+          <div class="form-field-with-action">
+            <div class="form-field-with-action__input">{{ form.nevesta }}</div>
+            <button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_nevesta')"><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
       </div>
     </fieldset>
@@ -88,21 +94,33 @@
       <div class="form-row">
         <div class="form-field">
           {{ form.svekar.label_tag }}
-          {{ form.svekar }}
+          <div class="form-field-with-action">
+            <div class="form-field-with-action__input">{{ form.svekar }}</div>
+            <button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_svekar')"><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
         <div class="form-field">
           {{ form.svekrva.label_tag }}
-          {{ form.svekrva }}
+          <div class="form-field-with-action">
+            <div class="form-field-with-action__input">{{ form.svekrva }}</div>
+            <button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_svekrva')"><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
       </div>
       <div class="form-row">
         <div class="form-field">
           {{ form.tast.label_tag }}
-          {{ form.tast }}
+          <div class="form-field-with-action">
+            <div class="form-field-with-action__input">{{ form.tast }}</div>
+            <button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_tast')"><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
         <div class="form-field">
           {{ form.tasta.label_tag }}
-          {{ form.tasta }}
+          <div class="form-field-with-action">
+            <div class="form-field-with-action__input">{{ form.tasta }}</div>
+            <button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_tasta')"><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
       </div>
     </fieldset>
@@ -127,11 +145,17 @@
       <div class="form-row">
         <div class="form-field">
           {{ form.kum.label_tag }}
-          {{ form.kum }}
+          <div class="form-field-with-action">
+            <div class="form-field-with-action__input">{{ form.kum }}</div>
+            <button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_kum')"><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
         <div class="form-field">
           {{ form.stari_svat.label_tag }}
-          {{ form.stari_svat }}
+          <div class="form-field-with-action">
+            <div class="form-field-with-action__input">{{ form.stari_svat }}</div>
+            <button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_stari_svat')"><i class="fa-solid fa-plus"></i></button>
+          </div>
         </div>
       </div>
     </fieldset>
@@ -148,5 +172,6 @@
 
     <!-- Bottom save removed as per request: action button is now at the top -->
   </form>
-{{ form.media.js }}
+  {% include "registar/_modal_osoba.html" %}
+  {{ form.media.js }}
 {% endblock %}
