@@ -283,7 +283,7 @@ body.sidebar-collapsed .sidebar-toggle {
 }
 
 .sidebar-menu-group .sidebar-menu-item.sidebar-submenu-item > a:first-child {
-  padding-left: 56px;
+  padding-left: 20px;
   font-size: 14px;
   opacity: 0.85;
 }
