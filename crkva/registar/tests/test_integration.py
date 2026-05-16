@@ -6,7 +6,7 @@
 import datetime
 
 from django.contrib.auth.models import User
-from django.test import Client, TestCase, TransactionTestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import (
     Hram,
@@ -19,7 +19,7 @@ from registar.models import (
 )
 
 
-class KrstenjeCreationIntegrationTest(TransactionTestCase):
+class KrstenjeCreationIntegrationTest(TestCase):
     """Интеграциони тестови за креирање крштења."""
 
     def setUp(self):
@@ -127,7 +127,7 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
         self.assertEqual(Krstenje.objects.count(), 0)
 
 
-class VencanjeCreationIntegrationTest(TransactionTestCase):
+class VencanjeCreationIntegrationTest(TestCase):
     """Интеграциони тестови за креирање венчања."""
 
     def setUp(self):
