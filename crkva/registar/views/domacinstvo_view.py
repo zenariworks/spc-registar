@@ -2,10 +2,25 @@
 Модул за приказ домаћинстава и њихових чланова.
 """
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
+from registar.forms import DomacinstvoForm
 from registar.models import Domacinstvo
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from tenants.permissions import tenant_role_required
+
+
+@tenant_role_required("domacinstvo")
+def unos_domacinstva(request):
+    """Обрађује захтев за додавање новог домаћинства."""
+    if request.method == "POST":
+        form = DomacinstvoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("domacinstva")
+    else:
+        form = DomacinstvoForm()
+    return render(request, "registar/unos_domacinstva.html", {"form": form})
 
 
 class SpisakDomacinsta(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
