@@ -66,7 +66,10 @@ class PrikazDomacinstva(DetailView):
 
     def get_context_data(self, **kwargs):
         """Додаје укућане у контекст."""
+        from registar.history import history_for
+
         context = super().get_context_data(**kwargs)
+        context["history_entries"] = history_for(self.object)
         domacinstvo = self.object
         ukucani = domacinstvo.ukucani.all()
         context["ukucani_zivi"] = [u for u in ukucani if not u.preminuo]

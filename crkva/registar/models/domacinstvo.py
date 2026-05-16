@@ -5,6 +5,7 @@ import uuid
 from django.db import models
 from model_utils.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
+from simple_history.models import HistoricalRecords
 
 from .adresa import Adresa
 from .parohijan import Osoba
@@ -46,6 +47,8 @@ class Domacinstvo(TimeStampedModel):
     slavska_vodica = models.BooleanField(default=False)
     vaskrsnja_vodica = models.BooleanField(default=False)
     napomena = models.TextField(blank=True, null=True)
+
+    history = HistoricalRecords()
 
     class Meta:
         db_table = "domacinstva"
