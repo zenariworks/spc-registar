@@ -27,7 +27,12 @@ from .parohijan_view import (
     unos_parohijana,
 )
 from .slava_view import slava_domacinstva
-from .svestenik_view import PrikazSvestenika, SpisakSvestenika, SvestenikPDF
+from .svestenik_view import (
+    PrikazSvestenika,
+    SpisakSvestenika,
+    SvestenikPDF,
+    unos_svestenika,
+)
 from .vencanje_view import (
     PrikazVencanja,
     SpisakVencanja,
@@ -54,6 +59,7 @@ __all__ = [
     "slava_domacinstva",
     "PrikazSvestenika",
     "SpisakSvestenika",
+    "unos_svestenika",
     "SvestenikPDF",
     "PrikazVencanja",
     "SpisakVencanja",

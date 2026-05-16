@@ -20,6 +20,7 @@
     {% url 'unos_krstenja' as unos_krstenja_url %}
     {% url 'unos_vencanja' as unos_vencanja_url %}
     {% url 'unos_parohijana' as unos_parohijana_url %}
+    {% url 'unos_svestenika' as unos_svestenika_url %}
 
     <div class="sidebar-menu-group">
       <div class="sidebar-menu-item">
@@ -71,6 +72,11 @@
         <i class="fa-solid fa-id-badge"></i>
         <span class="sidebar-text">Свештеници</span>
       </a>
+      {% if can_edit_svestenik %}
+      <a href="{{ unos_svestenika_url }}" class="sidebar-add-btn {% if request.path == unos_svestenika_url %}active{% endif %}" title="Додај свештеника" aria-label="Додај свештеника">
+        <i class="fa-solid fa-circle-plus"></i>
+      </a>
+      {% endif %}
     </div>
 
     <div class="sidebar-menu-item">

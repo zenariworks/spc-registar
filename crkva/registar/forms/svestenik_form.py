@@ -1,0 +1,28 @@
+"""Django форма за унос свештеника."""
+
+from django import forms
+from django_select2.forms import ModelSelect2Widget
+from registar.models import Parohija, Svestenik
+
+
+class SvestenikForm(forms.ModelForm):
+    """Формулар за унос новог свештеника."""
+
+    class Meta:
+        model = Svestenik
+        fields = [
+            "ime",
+            "prezime",
+            "zvanje",
+            "mesto_rodjenja",
+            "datum_rodjenja",
+            "parohija",
+        ]
+        widgets = {
+            "parohija": ModelSelect2Widget(
+                model=Parohija,
+                search_fields=["naziv__icontains"],
+                attrs={"data-minimum-input-length": 0},
+            ),
+            "datum_rodjenja": forms.DateInput(attrs={"type": "date"}),
+        }
