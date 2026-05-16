@@ -1,0 +1,120 @@
+/* ==========================================================================
+   MODAL COMPONENT
+   ==========================================================================
+   Generic modal shell used by quick-add dialogs (e.g. _modal_osoba.html).
+
+   Markup pattern:
+     <div id="my-modal" class="modal-overlay" style="display:none;">
+       <div class="modal">
+         <div class="modal__header">
+           <h3><i class="fa-solid fa-…"></i> Title</h3>
+           <button class="modal__close" onclick="Modal.close('my-modal')">&times;</button>
+         </div>
+         <div class="modal__body">
+           …fields…
+         </div>
+         <div class="modal__footer">
+           <button class="button button--neutral" onclick="Modal.close('my-modal')">Откажи</button>
+           <button class="button button--primary" onclick="myModalInstance.save()">Сачувај</button>
+         </div>
+       </div>
+     </div>
+
+   Behaviour is provided by registar/components/modal.js
+   (Modal.open / close / bindForm).
+   ========================================================================== */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal {
+    background: var(--color-surface);
+    border-radius: 12px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 440px;
+    animation: modal-in 0.15s ease-out;
+}
+
+@keyframes modal-in {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.modal__header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.modal__close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    line-height: 1;
+    padding: 0 4px;
+}
+
+.modal__close:hover {
+    color: var(--color-primary);
+}
+
+.modal__body {
+    padding: 20px;
+}
+
+.modal__body .form-row {
+    margin-bottom: 12px;
+}
+
+.modal__body input[type="text"] {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-sizing: border-box;
+}
+
+.modal__body input:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.modal__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--color-border);
+}
+
+.modal .error-text {
+    color: var(--color-danger, #b91c1c);
+    font-size: 13px;
+    margin-top: 8px;
+}

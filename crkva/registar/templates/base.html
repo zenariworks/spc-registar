@@ -45,6 +45,7 @@
       <link rel="stylesheet" href="{% static 'registar/components/forme.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/oznake.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/tabovi.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/components/modali.css' %}">
       <!-- Dark theme overrides (loaded last for correct specificity) -->
       <link rel="stylesheet" href="{% static 'registar/themes/tamna.css' %}">
     {% endcompress %}
@@ -165,5 +166,6 @@
         io.observe(sentinel);
       })();
     </script>
+    <script src="{% static 'registar/components/modal.js' %}"></script>
   </body>
 </html>
