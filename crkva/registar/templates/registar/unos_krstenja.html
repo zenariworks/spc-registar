@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+  {{ form.media.css }}
+{% endblock %}
+
 {% block content %}
   <form method="post" class="form">
     {% csrf_token %}
 
 <div class="u-page-header">
-      <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+      <a href="{% url 'krstenja' %}" class="back-button" aria-label="Назад" title="Назад">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
 <h1 class="u-page-title">Унос крштења</h1>
@@ -19,6 +23,19 @@
         {{ form.non_field_errors }}
       </div>
     {% endif %}
+
+{% if form.errors %}
+  <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);color:#991b1b;">
+    <strong><i class="fa-solid fa-exclamation-circle"></i> Исправите следеће грешке:</strong>
+    <ul style="margin:8px 0 0;padding-left:20px;">
+      {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+          <li>{{ field }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
 
     <fieldset class="form-section">
       <legend>Регистар</legend>
@@ -40,51 +57,40 @@
         <div class="form-field">{{ form.vreme.label_tag }} {{ form.vreme }}</div>
       </div>
       <div class="form-row">
-        <div class="form-field">{{ form.mesto.label_tag }} {{ form.mesto }}</div>
-        <div class="form-field">{{ form.hram.label_tag }} {{ form.hram }}</div>
-        <div class="form-field">{{ form.svestenik.label_tag }} {{ form.svestenik }}</div>
+        <div class="form-field">
+          {{ form.hram.label_tag }}
+          {{ form.hram }}
+        </div>
+        <div class="form-field">
+          {{ form.svestenik.label_tag }}
+          {{ form.svestenik }}
+        </div>
       </div>
     </fieldset>
 
     <fieldset class="form-section">
       <legend>Дете</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.ime_deteta.label_tag }} {{ form.ime_deteta }}</div>
-        <div class="form-field">{{ form.gradjansko_ime_deteta.label_tag }} {{ form.gradjansko_ime_deteta }}</div>
-        <div class="form-field">{{ form.pol_deteta.label_tag }} {{ form.pol_deteta }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.datum_rodjenja.label_tag }} {{ form.datum_rodjenja }}</div>
-        <div class="form-field">{{ form.vreme_rodjenja.label_tag }} {{ form.vreme_rodjenja }}</div>
-        <div class="form-field">{{ form.mesto_rodjenja.label_tag }} {{ form.mesto_rodjenja }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.adresa_deteta_grad.label_tag }} {{ form.adresa_deteta_grad }}</div>
-        <div class="form-field">{{ form.adresa_deteta_ulica.label_tag }} {{ form.adresa_deteta_ulica }}</div>
-        <div class="form-field">{{ form.adresa_deteta_broj.label_tag }} {{ form.adresa_deteta_broj }}</div>
+        <div class="form-field" style="grid-column: 1 / -1;">
+          {{ form.dete.label_tag }}
+          {{ form.dete }}
+        </div>
       </div>
     </fieldset>
 
     <fieldset class="form-section">
       <legend>Родитељи</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.ime_oca.label_tag }} {{ form.ime_oca }}</div>
-        <div class="form-field">{{ form.prezime_oca.label_tag }} {{ form.prezime_oca }}</div>
-        <div class="form-field">{{ form.zanimanje_oca.label_tag }} {{ form.zanimanje_oca }}</div>
+        <div class="form-field" style="grid-column: 1 / -1;">
+          {{ form.otac.label_tag }}
+          {{ form.otac }}
+        </div>
       </div>
       <div class="form-row">
-        <div class="form-field">{{ form.adresa_oca_mesto.label_tag }} {{ form.adresa_oca_mesto }}</div>
-        <div class="form-field">{{ form.veroispovest_oca.label_tag }} {{ form.veroispovest_oca }}</div>
-        <div class="form-field">{{ form.narodnost_oca.label_tag }} {{ form.narodnost_oca }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.ime_majke.label_tag }} {{ form.ime_majke }}</div>
-        <div class="form-field">{{ form.prezime_majke.label_tag }} {{ form.prezime_majke }}</div>
-        <div class="form-field">{{ form.zanimanje_majke.label_tag }} {{ form.zanimanje_majke }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.adresa_majke_mesto.label_tag }} {{ form.adresa_majke_mesto }}</div>
-        <div class="form-field">{{ form.veroispovest_majke.label_tag }} {{ form.veroispovest_majke }}</div>
+        <div class="form-field" style="grid-column: 1 / -1;">
+          {{ form.majka.label_tag }}
+          {{ form.majka }}
+        </div>
       </div>
     </fieldset>
 
@@ -103,15 +109,12 @@
     </fieldset>
 
     <fieldset class="form-section">
-      <legend>Свештеник и Кум</legend>
+      <legend>Кум</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.svestenik.label_tag }} {{ form.svestenik }}</div>
-        <div class="form-field">{{ form.ime_kuma.label_tag }} {{ form.ime_kuma }}</div>
-        <div class="form-field">{{ form.prezime_kuma.label_tag }} {{ form.prezime_kuma }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.zanimanje_kuma.label_tag }} {{ form.zanimanje_kuma }}</div>
-        <div class="form-field">{{ form.adresa_kuma_mesto.label_tag }} {{ form.adresa_kuma_mesto }}</div>
+        <div class="form-field" style="grid-column: 1 / -1;">
+          {{ form.kum.label_tag }}
+          {{ form.kum }}
+        </div>
       </div>
     </fieldset>
 
@@ -134,4 +137,5 @@
 
     <!-- Bottom save removed as per request: action button is now at the top -->
   </form>
+{{ form.media.js }}
 {% endblock %}
