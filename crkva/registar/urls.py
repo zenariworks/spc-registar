@@ -68,6 +68,7 @@ urlpatterns = [
     ),
     path("search/", views.search_view, name="search_view"),
     path("api/search/", views.search_autocomplete, name="search_autocomplete"),
+    path("api/brzi-unos-osobe/", views.brzi_unos_osobe, name="brzi_unos_osobe"),
     path("unos/parohijan/", views.unos_parohijana, name="unos_parohijana"),
     path("unos/krstenje/", views.unos_krstenja, name="unos_krstenja"),
     path("unos/vencanje/", views.unos_vencanja, name="unos_vencanja"),
