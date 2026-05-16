@@ -9,6 +9,7 @@ from django.shortcuts import render
 from registar.models import Domacinstvo, Krstenje, Parohijan, Slava, Svestenik, Vencanje
 from registar.utils import get_query_variants
 from registar.utils_fasting import get_fasting_type
+from tenants.permissions import tenant_role_required
 
 from .domacinstvo_view import PrikazDomacinstva, SpisakDomacinsta
 from .kalendar_view import kalendar
@@ -413,6 +414,7 @@ def search_autocomplete(request):
     return JsonResponse({"groups": groups})
 
 
+@tenant_role_required("osoba")
 def brzi_unos_osobe(request):
     """AJAX endpoint за брзо креирање особе из модалног дијалога."""
     if request.method != "POST":

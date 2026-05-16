@@ -9,10 +9,11 @@ from registar.forms import ParohijanForm
 from registar.models import Krstenje
 from registar.models.parohijan import Parohijan
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from tenants.permissions import tenant_role_required
 from weasyprint import HTML
 
 
-# @login_required
+@tenant_role_required("osoba")
 def unos_parohijana(request):
     """
     Обрађује захтев за додавање новог парохијана. Ако је метод POST,

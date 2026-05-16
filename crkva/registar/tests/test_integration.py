@@ -103,6 +103,7 @@ class KrstenjeCreationIntegrationTest(TestCase):
 
     def test_krstenje_creation_page_accessible(self):
         """Тест да је страница за креирање крштења доступна"""
+        self.client.force_login(self.user)
         response = self.client.get(reverse("unos_krstenja"))
         self.assertEqual(response.status_code, 200)
 
@@ -208,6 +209,7 @@ class VencanjeCreationIntegrationTest(TestCase):
 
     def test_vencanje_creation_page_accessible(self):
         """Тест да је страница за креирање венчања доступна"""
+        self.client.force_login(self.user)
         response = self.client.get(reverse("unos_vencanja"))
         self.assertEqual(response.status_code, 200)
 

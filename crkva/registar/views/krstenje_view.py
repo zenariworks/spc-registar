@@ -8,6 +8,7 @@ from django.views.generic import DetailView, ListView
 from registar.forms import KrstenjeForm
 from registar.models import Krstenje
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from tenants.permissions import tenant_role_required
 from weasyprint import HTML
 
 KRSTENJE_RELATED = (
@@ -20,7 +21,7 @@ KRSTENJE_RELATED = (
 )
 
 
-# @login_required
+@tenant_role_required("krstenje")
 def unos_krstenja(request):
     """
     Обрађује захтеве за унос новог крштења. Ако је захтев POST,
