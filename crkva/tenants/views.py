@@ -12,6 +12,7 @@ from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django.utils.http import url_has_allowed_host_and_scheme
 from tenants.middleware import SESSION_TENANT_KEY
 from tenants.models import Tenant, UserMembership
 
@@ -32,6 +33,11 @@ def switch_tenant(request: HttpRequest, tenant_id: int) -> HttpResponse:
     request.session[SESSION_TENANT_KEY] = tenant.pk
 
     next_url = request.POST.get("next") or request.META.get("HTTP_REFERER")
-    if not next_url:
-        next_url = reverse("pocetna")
+    fallback_url = reverse("pocetna")
+    if not next_url or not url_has_allowed_host_and_scheme(
+        url=next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = fallback_url
     return HttpResponseRedirect(next_url)
