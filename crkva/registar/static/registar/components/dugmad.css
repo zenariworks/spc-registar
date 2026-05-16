@@ -91,3 +91,34 @@
 .u-btn-primary:hover {
     background: var(--color-primary-hover);
 }
+
+/* ==========================================================================
+   TOOLTIP – instant hover label (replaces slow native title)
+   ========================================================================== */
+
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background: var(--color-text, #333);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    white-space: nowrap;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    margin-bottom: 6px;
+}
+
+[data-tooltip]:hover::after {
+    opacity: 1;
+}

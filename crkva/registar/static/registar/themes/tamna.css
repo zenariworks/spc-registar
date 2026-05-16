@@ -428,3 +428,57 @@
 [data-theme=dark] .search-no-results {
   color: var(--color-text-muted);
 }
+
+/* ==========================================================================
+   10. НОВЕ КОМПОНЕНТЕ (tooltip, list controls)
+   ========================================================================== */
+
+/* Tooltip */
+[data-theme=dark] [data-tooltip]::after {
+  background: var(--color-surface-1);
+  color: var(--color-text);
+  border: 1px solid var(--color-border);
+}
+
+/* Page-size selector */
+[data-theme=dark] .page-size-link {
+  background: var(--color-surface-2) !important;
+  color: var(--color-text-muted) !important;
+  border-color: var(--color-border) !important;
+}
+
+[data-theme=dark] .page-size-link:hover {
+  background: var(--color-surface-1) !important;
+  color: var(--color-primary) !important;
+}
+
+[data-theme=dark] .page-size-link--active {
+  background: var(--color-primary) !important;
+  color: #fff !important;
+}
+
+/* List controls bar */
+[data-theme=dark] .list-controls {
+  border-color: var(--color-border);
+}
+
+[data-theme=dark] .list-controls__select {
+  background-color: var(--color-surface-2);
+  color: var(--color-text);
+  border-color: var(--color-border);
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 16 16%27 fill=%27%23bbb%27%3E%3Cpath d=%27M3.204 5h9.592L8 10.481 3.204 5zm-.753.659l4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z%27/%3E%3C/svg%3E");
+}
+
+[data-theme=dark] .list-controls__select:hover {
+  background-color: var(--color-surface);
+}
+
+[data-theme=dark] .list-controls__select option {
+  background: var(--color-surface-2);
+  color: var(--color-text);
+}
+
+/* Primary/secondary text in list items */
+[data-theme=dark] .stavka__secondary {
+  color: var(--color-text-muted);
+}

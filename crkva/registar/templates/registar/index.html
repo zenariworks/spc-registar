@@ -109,6 +109,7 @@
     <div class="registry__grid">
       <a href="{% url 'parohijani' %}" class="registry__card">
         <div class="registry__icon"><i class="fa-solid fa-users"></i></div>
+        <div class="registry__count">{{ stats.parohijani }}</div>
         <div class="registry__info">
           <div class="registry__title">Парохијани</div>
           <div class="registry__desc">Евиденција парохијана</div>
@@ -116,6 +117,7 @@
       </a>
       <a href="{% url 'krstenja' %}" class="registry__card">
         <div class="registry__icon"><i class="fa-solid fa-droplet"></i></div>
+        <div class="registry__count">{{ stats.krstenja }}</div>
         <div class="registry__info">
           <div class="registry__title">Крштења</div>
           <div class="registry__desc">Књига крштених</div>
@@ -123,6 +125,7 @@
       </a>
       <a href="{% url 'vencanja' %}" class="registry__card">
         <div class="registry__icon"><i class="icon-rings"></i></div>
+        <div class="registry__count">{{ stats.vencanja }}</div>
         <div class="registry__info">
           <div class="registry__title">Венчања</div>
           <div class="registry__desc">Књига венчаних</div>
@@ -130,6 +133,7 @@
       </a>
       <a href="{% url 'svestenici' %}" class="registry__card">
         <div class="registry__icon"><i class="fa-solid fa-id-badge"></i></div>
+        <div class="registry__count">{{ stats.svestenici }}</div>
         <div class="registry__info">
           <div class="registry__title">Свештеници</div>
           <div class="registry__desc">Евиденција свештеника</div>

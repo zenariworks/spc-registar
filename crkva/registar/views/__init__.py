@@ -180,6 +180,12 @@ def index(request) -> HttpResponse:
         )
 
     context = {
+        "stats": {
+            "parohijani": Parohijan.objects.count(),
+            "krstenja": Krstenje.objects.count(),
+            "vencanja": Vencanje.objects.count(),
+            "svestenici": Svestenik.objects.count(),
+        },
         "calendar_cells": cells,
     }
 
