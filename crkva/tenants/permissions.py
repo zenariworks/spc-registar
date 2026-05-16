@@ -13,6 +13,8 @@ write. All authenticated users can read.
 
 Use the `tenant_role_required(resource)` decorator on write views and
 the `can_edit_*` flags exposed by the context processor in templates.
+For tenant-admin-only pages (e.g. user management), use
+`tenant_admin_required` instead.
 """
 
 from __future__ import annotations
@@ -56,6 +58,19 @@ def can_edit(user, tenant, resource: str) -> bool:
     return resource in WRITE_BY_ROLE.get(membership.role, frozenset())
 
 
+def is_tenant_admin(user, tenant) -> bool:
+    """True if `user` has Админ role in `tenant`, or is a superuser."""
+    if user is None or not user.is_authenticated:
+        return False
+    if user.is_superuser:
+        return True
+    if tenant is None:
+        return False
+    return UserMembership.objects.filter(
+        user=user, tenant=tenant, role=Role.ADMIN
+    ).exists()
+
+
 def tenant_role_required(resource: str):
     """Decorator: 403 if request.user can't write `resource` in request.tenant."""
 
@@ -70,3 +85,16 @@ def tenant_role_required(resource: str):
         return _wrapped
 
     return decorator
+
+
+def tenant_admin_required(view_func):
+    """Decorator: 403 if request.user is not Админ in request.tenant."""
+
+    @wraps(view_func)
+    @login_required
+    def _wrapped(request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        if not is_tenant_admin(request.user, getattr(request, "tenant", None)):
+            raise PermissionDenied
+        return view_func(request, *args, **kwargs)
+
+    return _wrapped
