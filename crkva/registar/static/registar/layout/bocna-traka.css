@@ -380,7 +380,14 @@ body.sidebar-collapsed .sidebar-toggle {
 }
 
 .sidebar-action-btn {
+  /* Used by both <button> elements (Претрага, Тема, Одјава) and the
+     <a> Пријава link. Without explicit resets, those two element types
+     don't render at the same dimensions: <button> has a UA-specified
+     font-family and box-sizing: border-box, while <a> defaults to
+     content-box, text-decoration: underline, and inherits color from the
+     parent stylesheet. */
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -388,10 +395,13 @@ body.sidebar-collapsed .sidebar-toggle {
   background: transparent;
   border: none;
   color: var(--sidebar-text-color);
+  text-decoration: none;
   cursor: pointer;
+  font: inherit;
   font-size: 15px;
-  transition: background 0.2s;
+  line-height: 1.4;
   text-align: left;
+  transition: background 0.2s;
 }
 
 .sidebar-action-btn:hover {
