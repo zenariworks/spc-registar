@@ -68,9 +68,9 @@
     </div>
 
     <div class="sidebar-menu-item">
-      <a href="{{ kalendar_url }}" class="{% if request.path == kalendar_url %}active{% endif %}" title="Календар слава">
+      <a href="{{ kalendar_url }}" class="{% if request.path == kalendar_url %}active{% endif %}" title="Календар">
         <i class="fa-solid fa-calendar-days"></i>
-        <span class="sidebar-text">Календар слава</span>
+        <span class="sidebar-text">Календар</span>
       </a>
     </div>
   </nav>
@@ -89,12 +89,13 @@
       <span class="sidebar-text">Тема</span>
     </button>
 
-    <!-- Toggle Button -->
-    <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
-      <i class="fa-solid fa-arrow-left"></i>
-    </button>
   </div>
 </aside>
+
+<!-- Sidebar toggle button (moved outside aside so overflow-x:hidden on .sidebar doesn't clip the half that's supposed to overflow onto the page) -->
+<button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar">
+  <i class="fa-solid fa-arrow-left"></i>
+</button>
 
 <!-- Search Overlay -->
 <div id="search-overlay" class="search-overlay" style="display: none;">
