@@ -8,6 +8,7 @@ from django.views.generic import DetailView, ListView
 from registar.forms import VencanjeForm
 from registar.models.vencanje import Vencanje
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from tenants.permissions import tenant_role_required
 from weasyprint import HTML
 
 VENCANJE_RELATED = (
@@ -129,6 +130,7 @@ class PrikazVencanja(DetailView):
 
 
 # @login_required
+@tenant_role_required("vencanje")
 def unos_vencanja(request):
     """Обрада уноса новог венчања."""
     if request.method == "POST":

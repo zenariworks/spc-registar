@@ -27,9 +27,11 @@
           <i class="fa-solid fa-users"></i>
           <span class="sidebar-text">Парохијани</span>
         </a>
+        {% if can_edit_osoba %}
         <a href="{{ unos_parohijana_url }}" class="sidebar-add-btn {% if request.path == unos_parohijana_url %}active{% endif %}" title="Додај парохијана" aria-label="Додај парохијана">
           <i class="fa-solid fa-circle-plus"></i>
         </a>
+        {% endif %}
       </div>
 
       <div class="sidebar-menu-item sidebar-submenu-item">
@@ -45,9 +47,11 @@
         <i class="fa-solid fa-droplet"></i>
         <span class="sidebar-text">Крштења</span>
       </a>
+      {% if can_edit_krstenje %}
       <a href="{{ unos_krstenja_url }}" class="sidebar-add-btn {% if request.path == unos_krstenja_url %}active{% endif %}" title="Додај крштење" aria-label="Додај крштење">
         <i class="fa-solid fa-circle-plus"></i>
       </a>
+      {% endif %}
     </div>
 
     <div class="sidebar-menu-item">
@@ -55,9 +59,11 @@
         <i class="icon-rings"></i>
         <span class="sidebar-text">Венчања</span>
       </a>
+      {% if can_edit_vencanje %}
       <a href="{{ unos_vencanja_url }}" class="sidebar-add-btn {% if request.path == unos_vencanja_url %}active{% endif %}" title="Додај венчање" aria-label="Додај венчање">
         <i class="fa-solid fa-circle-plus"></i>
       </a>
+      {% endif %}
     </div>
 
     <div class="sidebar-menu-item">

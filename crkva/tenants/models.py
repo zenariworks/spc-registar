@@ -89,9 +89,12 @@ class Domain(DomainMixin):
 
 
 class Role(models.TextChoices):
-    ADMIN = "admin", "Администратор парохије"
-    MEMBER = "member", "Члан парохије"
-    VIEWER = "viewer", "Преглед без измена"
+    # Канцеларија editirá parohijane/domaćinstva/krštenja/venčanja.
+    # Свештенство editirá svestenike. Преглед је read-only за све.
+    ADMIN = "admin", "Администратор"
+    KANCELARIJA = "kancelarija", "Канцеларија"
+    SVESTENSTVO = "svestenstvo", "Свештенство"
+    PREGLED = "pregled", "Преглед"
 
 
 class UserMembership(models.Model):
@@ -110,7 +113,7 @@ class UserMembership(models.Model):
     role = models.CharField(
         max_length=20,
         choices=Role.choices,
-        default=Role.MEMBER,
+        default=Role.PREGLED,
     )
     is_default = models.BooleanField(
         default=False,

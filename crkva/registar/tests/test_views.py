@@ -4,6 +4,7 @@
 
 import datetime
 
+from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Hram, Krstenje, Osoba
@@ -224,6 +225,10 @@ class UnosKrstenjaViewTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_superuser(
+            username="krst-tester", email="t@x.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_unos_krstenja_get_returns_200(self):
         """GET захтев за унос крштења враћа статус 200."""
