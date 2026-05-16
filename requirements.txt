@@ -27,3 +27,6 @@ uWSGI>=2.0.19.1,<2.1
 
 # PDF Generation
 WeasyPrint~=62.3
+
+# Static file serving
+whitenoise~=6.12
