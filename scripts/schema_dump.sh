@@ -1,7 +1,7 @@
 #!/bin/bash
 # Dump schema for dbdiagram.io import.
 #
-# Tenant-aware: per-tenant tables live in `tenant_cukarica` schema by
+# Tenant-aware: per-tenant tables live in `crkva_sv_petke_cukarica` schema by
 # default; SHARED tenants_* tables live in `public`. Override the
 # tenant schema with TENANT_SCHEMA=tenant_xxx if needed.
 #
@@ -10,7 +10,7 @@
 
 set -euo pipefail
 
-TENANT_SCHEMA=${TENANT_SCHEMA:-tenant_cukarica}
+TENANT_SCHEMA=${TENANT_SCHEMA:-crkva_sv_petke_cukarica}
 
 # Per-tenant tables (one set per tenant schema)
 TENANT_TABLES=(

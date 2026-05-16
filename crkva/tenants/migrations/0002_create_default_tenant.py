@@ -19,12 +19,12 @@ def create_default_tenant(apps, schema_editor):
         settings.AUTH_USER_MODEL.split(".")[1],
     )
 
-    if Tenant.objects.filter(schema_name="tenant_cukarica").exists():
-        tenant = Tenant.objects.get(schema_name="tenant_cukarica")
+    if Tenant.objects.filter(schema_name="crkva_sv_petke_cukarica").exists():
+        tenant = Tenant.objects.get(schema_name="crkva_sv_petke_cukarica")
     else:
         # save() triggers create_schema() because auto_create_schema=True.
         tenant = Tenant(
-            schema_name="tenant_cukarica",
+            schema_name="crkva_sv_petke_cukarica",
             naziv="Парохија Чукарица",
             parohija_naziv="Парохија Чукарица",
             is_active=True,
@@ -48,7 +48,7 @@ def create_default_tenant(apps, schema_editor):
 def remove_default_tenant(apps, schema_editor):
     from tenants.models import Tenant
 
-    Tenant.objects.filter(schema_name="tenant_cukarica").delete()
+    Tenant.objects.filter(schema_name="crkva_sv_petke_cukarica").delete()
 
 
 class Migration(migrations.Migration):
