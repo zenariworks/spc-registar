@@ -8,126 +8,222 @@
 {% block content %}
 
 <div class="u-page-header">
-    <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+    <a href="{% url 'krstenja' %}" class="back-button" aria-label="Назад" title="Назад">
         <i class="fa-solid fa-arrow-left"></i>
     </a>
-    <h1 class="u-page-title">Крштеница</h1>
-    <a href="{% url 'krstenje_pdf' krstenje.uid %}" target="_blank" class="u-link-primary">
-        <button class="button button--primary" type="button" title="Штампај">
-          <i class="fa-solid fa-print u-mr-2"></i> Штампај
-        </button>
+    <h1 class="u-page-title">Крштење — {{ krstenje.ime_deteta }} {{ krstenje.prezime_oca }}</h1>
+    <a href="{% url 'krstenje_pdf' krstenje.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај">
+        <i class="fa-solid fa-print"></i>
     </a>
 </div>
 
+<div class="tabs tabs--segmented">
+    <div class="tabs__nav">
+        <input type="radio" id="krst-tab-podaci" name="krst-view" class="tabs__radio" checked>
+        <label for="krst-tab-podaci" class="tabs__tab"><i class="tabs__icon fa-solid fa-table-list"></i> Подаци</label>
+        <input type="radio" id="krst-tab-pregled" name="krst-view" class="tabs__radio">
+        <label for="krst-tab-pregled" class="tabs__tab"><i class="tabs__icon fa-solid fa-file-lines"></i> Крштеница</label>
+    </div>
+
+    <!-- ============ STANDARD DATA VIEW ============ -->
+    <section class="tabs__panel">
+
+        <div class="detail-section">
+            <h2 class="detail-section__title">Дете</h2>
+            <div class="card">
+                <ul class="u-kv-list">
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Име</span>
+                        <span>{% if krstenje.dete %}<a href="{% url 'parohijan_detail' uid=krstenje.dete.uid %}" class="u-link-primary">{{ krstenje.ime_deteta }}{% if krstenje.gradjansko_ime_deteta %} ({{ krstenje.gradjansko_ime_deteta }}){% endif %}</a>{% else %}{{ krstenje.ime_deteta }}{% if krstenje.gradjansko_ime_deteta %} ({{ krstenje.gradjansko_ime_deteta }}){% endif %}{% endif %}</span>
+                    </li>
+                    {% if krstenje.dete.get_pol_display %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Пол</span>
+                        <span>{{ krstenje.dete.get_pol_display }}</span>
+                    </li>
+                    {% endif %}
+                    {% if krstenje.datum_rodjenja %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Датум рођења</span>
+                        <span>{{ krstenje.datum_rodjenja }}</span>
+                    </li>
+                    {% endif %}
+                    {% if krstenje.mesto_rodjenja %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Место рођења</span>
+                        <span>{{ krstenje.mesto_rodjenja }}</span>
+                    </li>
+                    {% endif %}
+                    {% if krstenje.dete_po_redu_po_majci %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Дете по реду (по мајци)</span>
+                        <span>{{ krstenje.dete_po_redu_po_majci }}</span>
+                    </li>
+                    {% endif %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Брачно</span>
+                        <span>{{ krstenje.dete_vanbracno|yesno:"није,јесте" }}</span>
+                    </li>
+                    {% if krstenje.dete_blizanac %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Близанац</span>
+                        <span>Да{% if krstenje.drugo_dete_blizanac_ime %} ({{ krstenje.drugo_dete_blizanac_ime }}){% endif %}</span>
+                    </li>
+                    {% endif %}
+                    {% if krstenje.dete_sa_telesnom_manom %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Телесна мана</span>
+                        <span>Да</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2 class="detail-section__title">Родитељи</h2>
+            <div class="card">
+                <ul class="u-kv-list">
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Отац</span>
+                        <span>{% if krstenje.otac %}<a href="{% url 'parohijan_detail' uid=krstenje.otac.uid %}" class="u-link-primary">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}</a>{% else %}{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}{% endif %}{% if krstenje.zanimanje_oca %}, {{ krstenje.zanimanje_oca|lower }}{% endif %}</span>
+                    </li>
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Мајка</span>
+                        <span>{% if krstenje.majka %}<a href="{% url 'parohijan_detail' uid=krstenje.majka.uid %}" class="u-link-primary">{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}</a>{% else %}{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}{% endif %}{% if krstenje.zanimanje_majke %}, {{ krstenje.zanimanje_majke|lower }}{% endif %}</span>
+                    </li>
+                    {% if krstenje.veroispovest_oca %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Вероисповест</span>
+                        <span>{{ krstenje.veroispovest_oca }}</span>
+                    </li>
+                    {% endif %}
+                    {% if krstenje.adresa_deteta %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Адреса</span>
+                        <span>{{ krstenje.adresa_deteta }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2 class="detail-section__title">Кум</h2>
+            <div class="card">
+                <ul class="u-kv-list">
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Име</span>
+                        <span>{% if krstenje.kum %}<a href="{% url 'parohijan_detail' uid=krstenje.kum.uid %}" class="u-link-primary">{{ krstenje.ime_kuma }}</a>{% else %}{{ krstenje.ime_kuma }}{% endif %}{% if krstenje.zanimanje_kuma %}, {{ krstenje.zanimanje_kuma|lower }}{% endif %}</span>
+                    </li>
+                    {% if krstenje.adresa_kuma_mesto %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Место</span>
+                        <span>{{ krstenje.adresa_kuma_mesto }}</span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2 class="detail-section__title">Крштење</h2>
+            <div class="card">
+                <ul class="u-kv-list">
+                    {% if krstenje.datum %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Датум</span>
+                        <span>{{ krstenje.datum }}{% if krstenje.vreme %}, {{ krstenje.vreme }} час{% endif %}</span>
+                    </li>
+                    {% endif %}
+                    {% if krstenje.hram %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Храм</span>
+                        <span>{{ krstenje.hram }}{% if krstenje.hram.mesto %}, {{ krstenje.hram.mesto }}{% endif %}</span>
+                    </li>
+                    {% endif %}
+                    {% if krstenje.svestenik %}
+                    <li class="u-kv-item">
+                        <span class="u-kv-label">Свештеник</span>
+                        <span><a href="{% url 'svestenik_detail' uid=krstenje.svestenik.uid %}" class="u-link-primary">{{ krstenje.svestenik }}</a></span>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="detail-section">
+            <h2 class="detail-section__title">Запис</h2>
+            <div class="card">
+                <ul class="u-kv-list">
+                    <li class="u-kv-item"><span class="u-kv-label">Књига</span><span>{{ krstenje.knjiga }}</span></li>
+                    <li class="u-kv-item"><span class="u-kv-label">Страна</span><span>{{ krstenje.strana }}</span></li>
+                    <li class="u-kv-item"><span class="u-kv-label">Текући број</span><span>{{ krstenje.broj }}</span></li>
+                    {% if krstenje.godina_registracije %}
+                    <li class="u-kv-item"><span class="u-kv-label">Година регистрације</span><span>{{ krstenje.godina_registracije }}</span></li>
+                    {% endif %}
+                    {% if krstenje.primedba %}
+                    <li class="u-kv-item"><span class="u-kv-label">Примедба</span><span>{{ krstenje.primedba }}</span></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- ============ CERTIFICATE PREVIEW ============ -->
+    <section class="tabs__panel">
+
 <div class="krstenica">
     <div class="krstenica-frame">
-
-        <!-- ============================================================
-        HEADER
-        ============================================================ -->
-
-        <!-- Књига / Страна / Број -->
         <div class="krst-field-knjiga">{{ krstenje.knjiga }}</div>
         <div class="krst-field-strana">{{ krstenje.strana }}</div>
         <div class="krst-field-broj">{{ krstenje.broj }}</div>
-
-        <!-- Епархије -->
         <div class="krst-field-eparhija">БЕОГРАДСКО - КАРЛОВАЧКЕ</div>
-
-        <!-- Храм / Место / Година -->
         <div class="krst-field-hram">{{ krstenje.hram }}</div>
-        <div class="krst-field-mesto">{{ krstenje.mesto }}у</div>
+        <div class="krst-field-mesto">{{ krstenje.hram.mesto }}у</div>
         <div class="krst-field-godina">{{ krstenje.datum|date:"y" }}</div>
-
-        <!-- ============================================================
-        MAIN TABLE FIELDS
-        ============================================================ -->
-
-        <!-- 1: Година, месец, дан и време рођења -->
         <div class="krst-table-field krst-field-rodjenje_datum">
             {{ krstenje.datum_rodjenja|julian_date }}, {{ krstenje.vreme_rodjenja }} часова
         </div>
-
-        <!-- 2: Место и општина рођења -->
         <div class="krst-table-field krst-field-rodjenje_mesto">
             {{ krstenje.mesto_rodjenja }}
         </div>
-
-        <!-- 3: Година, месец, дан и време крштења -->
         <div class="krst-table-field krst-field-krstenje_datum">
             {{ krstenje.datum|julian_date|default_if_none:"" }}{% if krstenje.vreme is not none %}, {{ krstenje.vreme }} часова{% endif %}
         </div>
-
-        <!-- 4: Место и храм крштења -->
         <div class="krst-table-field krst-field-krstenje_mesto">
-            {{ krstenje.mesto }}, {{ krstenje.hram }}
+            {{ krstenje.hram.mesto }}, {{ krstenje.hram }}
         </div>
-
-        <!-- 5: Име и пол детета -->
         <div class="krst-table-field krst-field-ime_pol">
             {{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}
         </div>
-
-        <!-- 6: Родитељи -->
         <div class="krst-table-field krst-field-roditelji">
             {{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>
             {{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>
-            {{ krstenje.mesto }}, {{ krstenje.adresa_deteta_ulica }} {{ krstenje.adresa_deteta_broj }}<br>
+            {{ krstenje.hram.mesto }}, {{ krstenje.adresa_deteta }}<br>
             {{ krstenje.veroispovest_oca }}
         </div>
-
-        <!-- 7: Које је дете по рођењу матери -->
-        <div class="krst-table-field krst-field-dete_po_redu">
-            {{ krstenje.dete_po_redu_po_majci }}
-        </div>
-
-        <!-- 8: Је ли дете црквено брачно -->
-        <div class="krst-table-field krst-field-bracno">
-            {{ krstenje.dete_vanbracno|yesno:"није,јесте" }}
-        </div>
-
-        <!-- 9: Је ли дете близанац -->
-        <div class="krst-table-field krst-field-blizanac">
-            {{ krstenje.dete_blizanac|yesno:"јесте,није" }}
-        </div>
-
-        <!-- 10: Је ли дете рођено са телесним недостатком -->
-        <div class="krst-table-field krst-field-telesna_mana">
-            {{ krstenje.dete_sa_telesnom_manom|yesno:"јесте,није,непознато" }}
-        </div>
-
-        <!-- 11: Име и презиме свештеника -->
-        <div class="krst-table-field krst-field-svestenik">
-            {{ krstenje.svestenik|default_if_none:"" }}
-        </div>
-
-        <!-- 12: Име и презиме кума -->
+        <div class="krst-table-field krst-field-dete_po_redu">{{ krstenje.dete_po_redu_po_majci }}</div>
+        <div class="krst-table-field krst-field-bracno">{{ krstenje.dete_vanbracno|yesno:"није,јесте" }}</div>
+        <div class="krst-table-field krst-field-blizanac">{{ krstenje.dete_blizanac|yesno:"јесте,није" }}</div>
+        <div class="krst-table-field krst-field-telesna_mana">{{ krstenje.dete_sa_telesnom_manom|yesno:"јесте,није,непознато" }}</div>
+        <div class="krst-table-field krst-field-svestenik">{{ krstenje.svestenik|default_if_none:"" }}</div>
         <div class="krst-table-field krst-field-kum">
             {{ krstenje.ime_kuma }}, {{ krstenje.zanimanje_kuma }}<br>
             {{ krstenje.adresa_kuma_mesto }}
         </div>
-
-        <!-- 13: Страна домовника - анаграфа -->
-        <div class="krst-table-field krst-field-domovnik">
-            <!-- Empty -->
-        </div>
-
-        <!-- 14: Примедба -->
-        <div class="krst-table-field krst-field-primedba">
-            {{ krstenje.primedba|default_if_none:"" }}
-        </div>
-
-        <!-- ============================================================
-        FOOTER
-        ============================================================ -->
-
+        <div class="krst-table-field krst-field-domovnik"></div>
+        <div class="krst-table-field krst-field-primedba">{{ krstenje.primedba|default_if_none:"" }}</div>
         <div class="krst-field-footer_br">{% now "d.m" %}</div>
         <div class="krst-field-footer_godina">{% now "y" %}</div>
         <div class="krst-field-footer_u">Београду</div>
         <div class="krst-field-footer_parohija">{% if krstenje.svestenik %}{{ krstenje.svestenik.parohija }}{% endif %}</div>
         <div class="krst-field-footer_paroh">{% if krstenje.svestenik %}{{ krstenje.svestenik }}{% endif %}</div>
-
     </div>
+</div>
+
+    </section>
 </div>
 
 {% endblock %}
