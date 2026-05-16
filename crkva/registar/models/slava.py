@@ -21,12 +21,14 @@ class Slava(TimeStampedModel):
         validators=[MinValueValidator(1), MaxValueValidator(31)],
         null=True,
         blank=True,
+        db_index=True,
     )
     mesec = models.IntegerField(
         verbose_name="месец",
         validators=[MinValueValidator(1), MaxValueValidator(12)],
         null=True,
         blank=True,
+        db_index=True,
     )
 
     # Покретни празници

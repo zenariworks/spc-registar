@@ -18,7 +18,6 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "strana",
         "datum",
         "vreme",
-        "mesto",
         "hram",
         # Особе (FK)
         "dete",
@@ -26,13 +25,6 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "majka",
         "kum",
         "svestenik",
-        # Адресе (специфичне за догађај)
-        "adresa_deteta_grad",
-        "adresa_deteta_ulica",
-        "adresa_deteta_broj",
-        "gradjansko_ime_deteta",
-        "adresa_oca_mesto",
-        "adresa_majke_mesto",
         # Остали подаци о детету
         "dete_rodjeno_zivo",
         "dete_po_redu_po_majci",
@@ -40,8 +32,6 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "dete_blizanac",
         "drugo_dete_blizanac_ime",
         "dete_sa_telesnom_manom",
-        # Кум адреса
-        "adresa_kuma_mesto",
         # Регистрација
         "mesto_registracije",
         "datum_registracije",

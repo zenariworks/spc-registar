@@ -18,12 +18,12 @@ class VencanjeAdmin(admin.ModelAdmin):
     )
 
     def knjiga_strana_broj(self, obj):
-        return f"{obj.knjiga}.{obj.strana}.{obj.tekuci_broj}"
+        return f"{obj.knjiga}.{obj.strana}.{obj.broj}"
 
     knjiga_strana_broj.short_description = "Књига.страна.број"
 
     fieldsets = (
-        (None, {"fields": (("knjiga", "strana", "tekuci_broj"),)}),
+        (None, {"fields": (("knjiga", "strana", "broj"),)}),
         (
             "Информације о венчању",
             {

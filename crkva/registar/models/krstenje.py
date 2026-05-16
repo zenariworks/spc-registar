@@ -7,6 +7,7 @@ import uuid
 from django.core.validators import MinValueValidator
 from django.db import models
 from model_utils.models import TimeStampedModel
+from simple_history.models import HistoricalRecords
 
 from .hram import Hram
 from .parohijan import Osoba
@@ -21,6 +22,7 @@ class Krstenje(TimeStampedModel):
     godina_registracije = models.IntegerField(
         verbose_name="година регистрације",
         validators=[MinValueValidator(1900)],
+        db_index=True,
     )
     redni_broj = models.IntegerField(
         verbose_name="редни број крштења",
@@ -37,11 +39,8 @@ class Krstenje(TimeStampedModel):
         verbose_name="текући број", validators=[MinValueValidator(1)], default=1
     )
 
-    datum = models.DateField(verbose_name="датум", null=True, blank=True)
+    datum = models.DateField(verbose_name="датум", null=True, blank=True, db_index=True)
     vreme = models.TimeField(verbose_name="време", null=True, blank=True)
-    mesto = models.CharField(
-        max_length=255, verbose_name="место", null=True, blank=True
-    )
     hram = models.ForeignKey(
         Hram, on_delete=models.SET_NULL, null=True, verbose_name="храм"
     )
@@ -54,19 +53,6 @@ class Krstenje(TimeStampedModel):
         related_name="krstenja_kao_dete",
         verbose_name="дете",
     )
-    # podaci o detetu (adresa je specifična za događaj)
-    adresa_deteta_grad = models.CharField(
-        max_length=255, verbose_name="адреса детета град"
-    )
-    adresa_deteta_ulica = models.CharField(
-        max_length=255, verbose_name="адреса детета улица", null=True, blank=True
-    )
-    adresa_deteta_broj = models.CharField(
-        max_length=255, verbose_name="адреса детета број", null=True, blank=True
-    )
-    gradjansko_ime_deteta = models.CharField(
-        max_length=255, verbose_name="грађанско име детета", null=True, blank=True
-    )
 
     otac = models.ForeignKey(
         Osoba,
@@ -75,10 +61,6 @@ class Krstenje(TimeStampedModel):
         blank=True,
         related_name="krstenja_kao_otac",
         verbose_name="отац",
-    )
-    # adrese roditelja (specifične za događaj)
-    adresa_oca_mesto = models.CharField(
-        max_length=255, verbose_name="адреса оца место", null=True, blank=True
     )
 
     majka = models.ForeignKey(
@@ -89,9 +71,6 @@ class Krstenje(TimeStampedModel):
         related_name="krstenja_kao_majka",
         verbose_name="мајка",
     )
-    adresa_majke_mesto = models.CharField(
-        max_length=255, verbose_name="адреса мајке место", null=True, blank=True
-    )
     kum = models.ForeignKey(
         Osoba,
         on_delete=models.SET_NULL,
@@ -99,10 +78,6 @@ class Krstenje(TimeStampedModel):
         blank=True,
         related_name="krstenja_kao_kum",
         verbose_name="кум",
-    )
-    # adresa kuma (specifična za događaj)
-    adresa_kuma_mesto = models.CharField(
-        max_length=255, verbose_name="адреса кума место", null=True, blank=True
     )
     # ostali podaci o detetu
     dete_rodjeno_zivo = models.BooleanField(
@@ -143,6 +118,8 @@ class Krstenje(TimeStampedModel):
 
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
+    history = HistoricalRecords()
+
     @property
     def ime_deteta(self):
         """Име детета из везаног Osoba objekta."""
@@ -181,7 +158,7 @@ class Krstenje(TimeStampedModel):
     @property
     def zanimanje_oca(self):
         """Занимање оца из везаног Osoba objekta."""
-        return self.otac.zanimanje if self.otac and self.otac.zanimanje else ""
+        return str(self.otac.zanimanje) if self.otac and self.otac.zanimanje_id else ""
 
     @property
     def veroispovest_oca(self):
@@ -206,7 +183,9 @@ class Krstenje(TimeStampedModel):
     @property
     def zanimanje_majke(self):
         """Занимање мајке из везаног Osoba objekta."""
-        return self.majka.zanimanje if self.majka and self.majka.zanimanje else ""
+        return (
+            str(self.majka.zanimanje) if self.majka and self.majka.zanimanje_id else ""
+        )
 
     @property
     def veroispovest_majke(self):
@@ -231,10 +210,51 @@ class Krstenje(TimeStampedModel):
     @property
     def zanimanje_kuma(self):
         """Занимање кума из везаног Osoba objekta."""
-        return self.kum.zanimanje if self.kum and self.kum.zanimanje else ""
+        return str(self.kum.zanimanje) if self.kum and self.kum.zanimanje_id else ""
+
+    @property
+    def gradjansko_ime_deteta(self):
+        """Грађанско име детета из везаног Osoba objekta."""
+        return (
+            self.dete.gradjansko_ime if self.dete and self.dete.gradjansko_ime else ""
+        )
+
+    @property
+    def adresa_deteta(self):
+        """Адреса детета из везаног Osoba objekta."""
+        return self.dete.adresa if self.dete else None
+
+    @property
+    def adresa_oca(self):
+        """Адреса оца из везаног Osoba objekta."""
+        return self.otac.adresa if self.otac else None
+
+    @property
+    def adresa_majke(self):
+        """Адреса мајке из везаног Osoba objekta."""
+        return self.majka.adresa if self.majka else None
+
+    @property
+    def adresa_kuma(self):
+        """Адреса кума из везаног Osoba objekta."""
+        return self.kum.adresa if self.kum else None
+
+    @property
+    def adresa_kuma_mesto(self):
+        """Место адресе кума из везаног Osoba objekta."""
+        return str(self.kum.adresa) if self.kum and self.kum.adresa else ""
+
+    @property
+    def get_pol_deteta_display(self):
+        """Приказ пола детета."""
+        if not self.dete or not self.dete.pol:
+            return ""
+        return "мушки" if self.dete.pol == "М" else "женски"
 
     def __str__(self):
-        return f"{self.uid}"
+        ime = self.ime_deteta or ""
+        datum = self.datum or ""
+        return f"Крштење {ime} ({datum})" if ime else f"Крштење {self.uid}"
 
     class Meta:
         managed = True

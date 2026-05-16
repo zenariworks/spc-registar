@@ -18,7 +18,7 @@ class Command(MigrationCommand):
     """
 
     help = "Migracija tabele svestenika iz PostgreSQL staging tabele 'hsp_svestenici'"
-    staging_table_name = "hsp_svestenici"
+    staging_table = "hsp_svestenici"
     target_model = Svestenik
 
     def handle(self, *args, **kwargs):
