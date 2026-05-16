@@ -2,7 +2,7 @@
 
 from django.contrib import admin
 
-from .models import Tenant, UserMembership
+from .models import Domain, Tenant, UserMembership
 
 
 @admin.register(Tenant)
@@ -26,3 +26,10 @@ class UserMembershipAdmin(admin.ModelAdmin):
     list_filter = ("tenant", "role", "is_default")
     search_fields = ("user__username", "tenant__naziv")
     raw_id_fields = ("user",)
+
+
+@admin.register(Domain)
+class DomainAdmin(admin.ModelAdmin):
+    list_display = ("domain", "tenant", "is_primary")
+    list_filter = ("is_primary",)
+    search_fields = ("domain",)

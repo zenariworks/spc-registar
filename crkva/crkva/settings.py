@@ -40,6 +40,13 @@ ALLOWED_HOSTS.extend(filter(None, os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 # Application definition
 
+# Phase 2a: django-tenants is installed and the Domain model is wired up
+# (TENANT_MODEL below), but the SHARED/TENANT app split,
+# django_tenants.postgresql_backend, and migrate_schemas all wait for
+# Phase 2b — when registar tables actually move into per-tenant schemas.
+# For now the runtime is already "schema-aware" via raw SET search_path
+# in the middleware, without changing the engine or the test runner.
+
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -47,16 +54,23 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "tenants",
     "django_extensions",
     "compressor",
     "registar",
-    "tenants",
     "import_export",
     "django_select2",
     "admin_searchable_dropdown",
     "django_filters",
     "phonenumber_field",
 ]
+
+# Phase 2b will additionally activate:
+#   DATABASES['default']['ENGINE'] = 'django_tenants.postgresql_backend'
+#   TENANT_DOMAIN_MODEL = "tenants.Domain"
+#   DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
+#   split INSTALLED_APPS into SHARED_APPS + TENANT_APPS
+TENANT_MODEL = "tenants.Tenant"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
