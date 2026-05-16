@@ -9,14 +9,14 @@ from .models import Domain, Tenant, UserMembership
 class TenantAdmin(admin.ModelAdmin):
     list_display = (
         "naziv",
-        "parohija",
+        "parohija_naziv",
         "schema_name",
         "is_active",
         "is_default",
         "created_at",
     )
     list_filter = ("is_active", "is_default")
-    search_fields = ("naziv", "schema_name", "parohija__naziv")
+    search_fields = ("naziv", "schema_name", "parohija_naziv")
     readonly_fields = ("created_at",)
 
 

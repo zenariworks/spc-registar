@@ -40,24 +40,19 @@ ALLOWED_HOSTS.extend(filter(None, os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 # Application definition
 
-# Phase 2a: django-tenants is installed and the Domain model is wired up
-# (TENANT_MODEL below), but the SHARED/TENANT app split,
-# django_tenants.postgresql_backend, and migrate_schemas all wait for
-# Phase 2b — when registar tables actually move into per-tenant schemas.
-# For now the runtime is already "schema-aware" via raw SET search_path
-# in the middleware, without changing the engine or the test runner.
-
-INSTALLED_APPS = [
+# django-tenants: SHARED_APPS live in the public schema (visible to every
+# tenant); TENANT_APPS get their own copy in each tenant's Postgres schema.
+SHARED_APPS = [
+    "django_tenants",  # MUST be first
+    "tenants",  # Tenant + Domain + UserMembership
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "tenants",
     "django_extensions",
     "compressor",
-    "registar",
     "import_export",
     "django_select2",
     "admin_searchable_dropdown",
@@ -65,12 +60,16 @@ INSTALLED_APPS = [
     "phonenumber_field",
 ]
 
-# Phase 2b will additionally activate:
-#   DATABASES['default']['ENGINE'] = 'django_tenants.postgresql_backend'
-#   TENANT_DOMAIN_MODEL = "tenants.Domain"
-#   DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
-#   split INSTALLED_APPS into SHARED_APPS + TENANT_APPS
+TENANT_APPS = [
+    "registar",
+]
+
+INSTALLED_APPS = list(SHARED_APPS) + [a for a in TENANT_APPS if a not in SHARED_APPS]
+
 TENANT_MODEL = "tenants.Tenant"
+TENANT_DOMAIN_MODEL = "tenants.Domain"
+
+DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -113,9 +112,8 @@ WSGI_APPLICATION = "crkva.wsgi.application"
 SCHEMA = os.environ.get("DB_SCHEMA")
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
+        "ENGINE": "django_tenants.postgresql_backend",
         "OPTIONS": {
-            "options": f"-c search_path={SCHEMA}",
             "client_encoding": "UTF8",
         },
         "HOST": os.environ.get("DB_HOST"),
@@ -206,3 +204,5 @@ LOGGING = {
         "level": "DEBUG",
     },
 }
+
+TEST_RUNNER = "tenants.test_runner.TenantTestRunner"

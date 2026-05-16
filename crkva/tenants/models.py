@@ -1,14 +1,13 @@
-"""Tenant + Domain + UserMembership models.
+"""Tenant + Domain + UserMembership models — Phase 2b.
 
-Phase 2a: Tenant now subclasses django-tenants' TenantMixin so the
-library can create / drop the Postgres schema. A minimal Domain model
-(DomainMixin) is added because django-tenants requires TENANT_DOMAIN_MODEL,
-even though our routing is session-based (the Domain rows are unused at
-runtime; they exist only to satisfy the library's checks).
+Phase 2b: registar moves to TENANT_APPS, so its tables (including Parohija)
+live in per-tenant schemas. A FK from `public.tenants_tenant` to
+`tenant_cukarica.parohije` is impossible to model cleanly in Postgres,
+so `Tenant.parohija` was replaced with a plain `parohija_naziv` CharField.
 
-Phase 2b will move registar tables into per-tenant schemas; until then
-the `parohija` FK to `registar.Parohija` still works because both tables
-live in `public`.
+`auto_create_schema = True` so creating a Tenant row automatically
+creates the corresponding Postgres schema and runs TENANT_APPS migrations
+against it.
 """
 
 from __future__ import annotations
@@ -18,7 +17,6 @@ import re
 from django.conf import settings
 from django.db import models
 from django_tenants.models import DomainMixin, TenantMixin
-from registar.models import Parohija
 
 
 def _slugify_ascii(value: str) -> str:
@@ -27,26 +25,22 @@ def _slugify_ascii(value: str) -> str:
 
 
 class Tenant(TenantMixin):
-    """One parish acting as a tenant in the system.
+    """One parish acting as a tenant. Owns a Postgres schema."""
 
-    Inherits `schema_name` (the Postgres schema name) and the
-    auto-create-on-save behaviour from TenantMixin. Save() will create
-    the schema via the DATABASE_ROUTERS migration mechanism, unless
-    auto_create_schema is False.
-    """
+    # Inherited from TenantMixin: schema_name (unique CharField + validator)
 
-    # Inherited from TenantMixin: schema_name (unique CharField)
-
-    parohija = models.OneToOneField(
-        Parohija,
-        on_delete=models.PROTECT,
-        related_name="tenant",
-        verbose_name="парохија",
-    )
     naziv = models.CharField(
         max_length=200,
         verbose_name="назив тенанта",
         help_text="Кориснички видљив назив (нпр. „Парохија Чукарица“).",
+    )
+    parohija_naziv = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
+        verbose_name="парохија (име)",
+        help_text="Име парохије за приказ. У сваком тенантовом шеми "
+        "постоји сопствена Parohija инстанца; ово је само display label.",
     )
     is_active = models.BooleanField(default=True, verbose_name="активан")
     is_default = models.BooleanField(
@@ -56,10 +50,10 @@ class Tenant(TenantMixin):
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Don't auto-create the schema on save — Phase 2b will manage the
-    # initial schema creation explicitly during the data-move migration.
-    auto_create_schema = False
-    auto_drop_schema = False
+    # Creating a Tenant row auto-creates its Postgres schema and runs
+    # TENANT_APPS migrations against it.
+    auto_create_schema = True
+    auto_drop_schema = False  # Manual drop only — protects against accidents.
 
     class Meta:
         db_table = "tenants_tenant"
@@ -85,13 +79,8 @@ class Tenant(TenantMixin):
 
 
 class Domain(DomainMixin):
-    """Required by django-tenants but not actually used for routing.
-
-    Our `SessionTenantMiddleware` picks the tenant from the session,
-    not from the request host. We still need this model so
-    django-tenants' setup checks pass and `manage.py create_tenant` /
-    `tenant_command` keep working in case we use them.
-    """
+    """Required by django-tenants for setup, but not used at runtime
+    (we route by session, not by host)."""
 
     class Meta:
         db_table = "tenants_domain"
