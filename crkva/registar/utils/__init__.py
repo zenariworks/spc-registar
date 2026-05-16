@@ -193,17 +193,128 @@ def cyrillic_to_latin(text: str) -> str:
     return "".join(single_map.get(ch, ch) for ch in text)
 
 
+# --- Експанзија варијанти за латиницу без дијакритика ---
+# Корисници често куцају "kalicanin" уместо "kaličanin" / "Каличанин".
+# Када латиница нема дијакритике, једно слово (c, s, z, d) може стајати
+# за више ћириличних знакова. Овде генеришемо све смислене варијанте.
+
+_LATIN_DIGRAPH_REPLACEMENTS = [
+    ("DŽ", "Џ"),
+    ("Dž", "Џ"),
+    ("dž", "џ"),
+    ("NJ", "Њ"),
+    ("Nj", "Њ"),
+    ("nj", "њ"),
+    ("LJ", "Љ"),
+    ("Lj", "Љ"),
+    ("lj", "љ"),
+    ("Đ", "Ђ"),
+    ("đ", "ђ"),
+    ("DJ", "Ђ"),
+    ("Dj", "Ђ"),
+    ("dj", "ђ"),
+    ("Š", "Ш"),
+    ("š", "ш"),
+    ("Č", "Ч"),
+    ("č", "ч"),
+    ("Ć", "Ћ"),
+    ("ć", "ћ"),
+    ("Ž", "Ж"),
+    ("ž", "ж"),
+]
+
+_LATIN_AMBIGUOUS_LETTERS = {
+    "c": ["ц", "ч", "ћ"],
+    "C": ["Ц", "Ч", "Ћ"],
+    "s": ["с", "ш"],
+    "S": ["С", "Ш"],
+    "z": ["з", "ж"],
+    "Z": ["З", "Ж"],
+    "d": ["д", "ђ"],
+    "D": ["Д", "Ђ"],
+}
+
+_LATIN_SIMPLE_MAP = {
+    "A": "А",
+    "a": "а",
+    "B": "Б",
+    "b": "б",
+    "V": "В",
+    "v": "в",
+    "G": "Г",
+    "g": "г",
+    "E": "Е",
+    "e": "е",
+    "I": "И",
+    "i": "и",
+    "J": "Ј",
+    "j": "ј",
+    "K": "К",
+    "k": "к",
+    "L": "Л",
+    "l": "л",
+    "M": "М",
+    "m": "м",
+    "N": "Н",
+    "n": "н",
+    "O": "О",
+    "o": "о",
+    "P": "П",
+    "p": "п",
+    "R": "Р",
+    "r": "р",
+    "T": "Т",
+    "t": "т",
+    "U": "У",
+    "u": "у",
+    "F": "Ф",
+    "f": "ф",
+    "H": "Х",
+    "h": "х",
+}
+
+_LATIN_VARIANT_CAP = 64
+
+
+def _latin_to_cyrillic_variants(text: str) -> list[str]:
+    """Враћа све смислене ћириличне варијанте за латинични унос који може
+    бити без дијакритика. Дводелна слова (dž/nj/lj/đ/š/č/ć/ž) се прво
+    замењују, а онда се појединачна двосмислена слова (c, s, z, d)
+    разгранавају у све могуће ћириличне еквиваленте.
+    """
+    if not text:
+        return [text]
+    intermediate = text
+    for src, dst in _LATIN_DIGRAPH_REPLACEMENTS:
+        intermediate = intermediate.replace(src, dst)
+
+    variants: list[str] = [""]
+    for ch in intermediate:
+        if ch in _LATIN_AMBIGUOUS_LETTERS:
+            variants = [
+                v + opt for v in variants for opt in _LATIN_AMBIGUOUS_LETTERS[ch]
+            ]
+        elif ch in _LATIN_SIMPLE_MAP:
+            mapped = _LATIN_SIMPLE_MAP[ch]
+            variants = [v + mapped for v in variants]
+        else:
+            variants = [v + ch for v in variants]
+        if len(variants) > _LATIN_VARIANT_CAP:
+            variants = variants[:_LATIN_VARIANT_CAP]
+            break
+    return variants
+
+
 def get_query_variants(text: str) -> list[str]:
     """
     Враћа јединствене варијанте упита за претрагу:
     - оригинал
-    - латиница → ћирилица
+    - све ћириличне варијанте за латиницу без дијакритика (c/s/z/d → ц,ч,ћ / с,ш / з,ж / д,ђ)
     - ћирилица → латиница
     """
     if not text:
         return []
     variants = {text}
-    variants.add(latin_to_cyrillic(text))
+    variants.update(_latin_to_cyrillic_variants(text))
     variants.add(cyrillic_to_latin(text))
-    # Уклони празне и идентичне варијанте
     return [v for v in variants if v]

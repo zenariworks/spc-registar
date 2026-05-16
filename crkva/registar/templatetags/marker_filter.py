@@ -5,6 +5,7 @@
 import re
 
 from django import template
+from django.utils.html import escape
 from django.utils.safestring import mark_safe
 from registar.utils import get_query_variants
 
@@ -28,11 +29,14 @@ def markiraj(value, upit):
     pattern = re.compile(r"({})".format("|".join(termini)), re.IGNORECASE)
 
     def replace(match):
-        return f'<span style="background-color: peachpuff;">{match.group()}</span>'
+        return (
+            f'<span style="background-color: peachpuff;">{escape(match.group())}</span>'
+        )
 
     try:
         original = "" if value is None else str(value)
-        highlighted = pattern.sub(replace, original)
+        escaped = escape(original)
+        highlighted = pattern.sub(replace, escaped)
         return mark_safe(highlighted)
     except Exception:
         # Fallback to original value on any error
