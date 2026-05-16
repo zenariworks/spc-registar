@@ -1,11 +1,18 @@
 """Овај модул дефинише URL обрасце за апликацију регистар."""
 
+from django.contrib.auth import views as auth_views
 from django.urls import include, path
 
 from . import views
 
 handler404 = "registar.views.custom_404"
 urlpatterns = [
+    path(
+        "prijava/",
+        auth_views.LoginView.as_view(template_name="registar/login.html"),
+        name="login",
+    ),
+    path("odjava/", auth_views.LogoutView.as_view(next_page="/"), name="logout"),
     path("", views.index, name="pocetna"),
     path("select2/", include("django_select2.urls")),
     path("slava-kalendar/", views.kalendar, name="kalendar"),
