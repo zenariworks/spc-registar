@@ -75,7 +75,7 @@ def index(request) -> HttpResponse:
             by_day[(datum.month, datum.day)].append(s)
 
     # Build cells for template
-    weekday_labels = ["Пон", "Уто", "Сре", "Чет", "Пет", "Суб", "Нед"]
+    weekday_labels = ["пон", "уто", "сре", "чет", "пет", "суб", "нед"]
 
     # Major feast days
     major_feasts = {

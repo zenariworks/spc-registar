@@ -54,9 +54,10 @@
 
 /* Toggle Button */
 .sidebar-toggle {
-  position: absolute;
+  position: fixed;
   bottom: 20px;
-  right: -20px;
+  left: var(--sidebar-width-expanded);
+  transform: translateX(-50%);
   width: 40px;
   height: 40px;
   display: flex;
@@ -68,14 +69,24 @@
   color: var(--sidebar-text-color);
   cursor: pointer;
   font-size: 18px;
-  transition: all 0.3s ease;
+  transition: left 0.3s ease, transform 0.2s ease, background 0.2s ease;
   z-index: 1001;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-toggle:hover {
   background: rgba(255, 255, 255, 0.15);
-  transform: scale(1.1);
+  transform: translateX(-50%) scale(1.1);
+}
+
+/* Toggle follows sidebar width when collapsed */
+body.sidebar-collapsed .sidebar-toggle {
+  left: var(--sidebar-width-collapsed);
+}
+
+/* Hide the desktop toggle on mobile (hamburger handles it) */
+@media (max-width: 768px) {
+  .sidebar-toggle { display: none; }
 }
 
 .sidebar-toggle i {

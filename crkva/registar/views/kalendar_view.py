@@ -48,7 +48,7 @@ def kalendar(
 
     # Обогаћени подаци за темплат
     # Weekday labels (Mon..Sun) in Serbian abbreviations
-    weekday_labels = ["Пон", "Уто", "Сре", "Чет", "Пет", "Суб", "Нед"]
+    weekday_labels = ["пон", "уто", "сре", "чет", "пет", "суб", "нед"]
 
     # Major feast days (important observances)
     major_feasts = {
