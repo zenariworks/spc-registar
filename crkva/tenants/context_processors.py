@@ -9,15 +9,17 @@ from tenants.permissions import (
     SVESTENIK,
     VENCANJE,
     can_edit,
+    is_tenant_admin,
 )
 
 
 def current_tenant(request):
-    """Make request.tenant and a `can_edit_<resource>` flag available."""
+    """Make request.tenant, can_edit_<resource>, and is_admin available."""
     tenant = getattr(request, "tenant", None)
     user = getattr(request, "user", None)
     return {
         "tenant": tenant,
+        "is_tenant_admin": is_tenant_admin(user, tenant),
         "can_edit_osoba": can_edit(user, tenant, OSOBA),
         "can_edit_domacinstvo": can_edit(user, tenant, DOMACINSTVO),
         "can_edit_krstenje": can_edit(user, tenant, KRSTENJE),
