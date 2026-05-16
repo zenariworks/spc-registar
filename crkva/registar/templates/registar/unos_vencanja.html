@@ -1,11 +1,15 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+  {{ form.media.css }}
+{% endblock %}
+
 {% block content %}
   <form method="post" class="form">
     {% csrf_token %}
 
 <div class="u-page-header">
-      <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+      <a href="{% url 'vencanja' %}" class="back-button" aria-label="Назад" title="Назад">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
 <h1 class="u-page-title">Унос венчања</h1>
@@ -17,6 +21,19 @@
     {% if form.non_field_errors %}
       <div class="form-row">{{ form.non_field_errors }}</div>
     {% endif %}
+
+{% if form.errors %}
+  <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);color:#991b1b;">
+    <strong><i class="fa-solid fa-exclamation-circle"></i> Исправите следеће грешке:</strong>
+    <ul style="margin:8px 0 0;padding-left:20px;">
+      {% for field, errors in form.errors.items %}
+        {% for error in errors %}
+          <li>{{ field }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
 
     <fieldset class="form-section">
       <legend>Регистар</legend>
@@ -35,66 +52,58 @@
       <legend>Детаљи венчања</legend>
       <div class="form-row">
         <div class="form-field">{{ form.datum.label_tag }} {{ form.datum }}</div>
-        <div class="form-field">{{ form.hram.label_tag }} {{ form.hram }}</div>
-        <div class="form-field">{{ form.svestenik.label_tag }} {{ form.svestenik }}</div>
+        <div class="form-field">
+          {{ form.hram.label_tag }}
+          {{ form.hram }}
+        </div>
+        <div class="form-field">
+          {{ form.svestenik.label_tag }}
+          {{ form.svestenik }}
+        </div>
       </div>
     </fieldset>
 
     <fieldset class="form-section">
       <legend>Женик</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.ime_zenika.label_tag }} {{ form.ime_zenika }}</div>
-        <div class="form-field">{{ form.prezime_zenika.label_tag }} {{ form.prezime_zenika }}</div>
-        <div class="form-field">{{ form.zanimanje_zenika.label_tag }} {{ form.zanimanje_zenika }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.mesto_zenika.label_tag }} {{ form.mesto_zenika }}</div>
-        <div class="form-field">{{ form.veroispovest_zenika.label_tag }} {{ form.veroispovest_zenika }}</div>
-        <div class="form-field">{{ form.narodnost_zenika.label_tag }} {{ form.narodnost_zenika }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.adresa_zenika.label_tag }} {{ form.adresa_zenika }}</div>
+        <div class="form-field" style="grid-column: 1 / -1;">
+          {{ form.zenik.label_tag }}
+          {{ form.zenik }}
+        </div>
       </div>
     </fieldset>
 
     <fieldset class="form-section">
       <legend>Невеста</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.ime_neveste.label_tag }} {{ form.ime_neveste }}</div>
-        <div class="form-field">{{ form.prezime_neveste.label_tag }} {{ form.prezime_neveste }}</div>
-        <div class="form-field">{{ form.zanimanje_neveste.label_tag }} {{ form.zanimanje_neveste }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.mesto_neveste.label_tag }} {{ form.mesto_neveste }}</div>
-        <div class="form-field">{{ form.veroispovest_neveste.label_tag }} {{ form.veroispovest_neveste }}</div>
-        <div class="form-field">{{ form.narodnost_neveste.label_tag }} {{ form.narodnost_neveste }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.adresa_neveste.label_tag }} {{ form.adresa_neveste }}</div>
+        <div class="form-field" style="grid-column: 1 / -1;">
+          {{ form.nevesta.label_tag }}
+          {{ form.nevesta }}
+        </div>
       </div>
     </fieldset>
 
     <fieldset class="form-section">
       <legend>Родитељи</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.svekar.label_tag }} {{ form.svekar }}</div>
-        <div class="form-field">{{ form.svekrva.label_tag }} {{ form.svekrva }}</div>
+        <div class="form-field">
+          {{ form.svekar.label_tag }}
+          {{ form.svekar }}
+        </div>
+        <div class="form-field">
+          {{ form.svekrva.label_tag }}
+          {{ form.svekrva }}
+        </div>
       </div>
       <div class="form-row">
-        <div class="form-field">{{ form.tast.label_tag }} {{ form.tast }}</div>
-        <div class="form-field">{{ form.tasta.label_tag }} {{ form.tasta }}</div>
-      </div>
-    </fieldset>
-
-    <fieldset class="form-section">
-      <legend>Рођење</legend>
-      <div class="form-row">
-        <div class="form-field">{{ form.datum_rodjenja_zenika.label_tag }} {{ form.datum_rodjenja_zenika }}</div>
-        <div class="form-field">{{ form.mesto_rodjenja_zenika.label_tag }} {{ form.mesto_rodjenja_zenika }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.datum_rodjenja_neveste.label_tag }} {{ form.datum_rodjenja_neveste }}</div>
-        <div class="form-field">{{ form.mesto_rodjenja_neveste.label_tag }} {{ form.mesto_rodjenja_neveste }}</div>
+        <div class="form-field">
+          {{ form.tast.label_tag }}
+          {{ form.tast }}
+        </div>
+        <div class="form-field">
+          {{ form.tasta.label_tag }}
+          {{ form.tasta }}
+        </div>
       </div>
     </fieldset>
 
@@ -116,8 +125,14 @@
     <fieldset class="form-section">
       <legend>Кум и стари сват</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.kum.label_tag }} {{ form.kum }}</div>
-        <div class="form-field">{{ form.stari_svat.label_tag }} {{ form.stari_svat }}</div>
+        <div class="form-field">
+          {{ form.kum.label_tag }}
+          {{ form.kum }}
+        </div>
+        <div class="form-field">
+          {{ form.stari_svat.label_tag }}
+          {{ form.stari_svat }}
+        </div>
       </div>
     </fieldset>
 
@@ -133,4 +148,5 @@
 
     <!-- Bottom save removed as per request: action button is now at the top -->
   </form>
+{{ form.media.js }}
 {% endblock %}
