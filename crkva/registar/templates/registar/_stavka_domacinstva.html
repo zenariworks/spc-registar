@@ -1,0 +1,45 @@
+{% load marker_filter %}
+{% for domacinstvo in domacinstva %}
+<li class="stavka stavka--expandable" data-id="{{ domacinstvo.uid }}">
+    <div class="stavka__header" onclick="toggleStavka(this)">
+        <div class="stavka__toggle">
+            <i class="fa-solid fa-chevron-right"></i>
+        </div>
+        <div class="stavka-veza">
+            <span class="stavka__primary">{{ domacinstvo.domacin.ime|markiraj:upit|safe }} {{ domacinstvo.domacin.prezime|markiraj:upit|safe }}</span>
+            <span class="stavka__secondary">{% if domacinstvo.slava %}{{ domacinstvo.slava }} &middot; {% endif %}{% if domacinstvo.adresa %}{{ domacinstvo.adresa }} &middot; {% endif %}{{ domacinstvo.ukucani.count }} чл.</span>
+        </div>
+    </div>
+    <div class="stavka__expandable-section">
+        {% with ukucani=domacinstvo.ukucani.all %}
+        {% if ukucani %}
+        {% for ukucanin in ukucani %}
+        <div class="stavka__member {% if ukucanin.preminuo %}stavka__member--deceased{% endif %}">
+            <div class="stavka__member-name">
+                {% if ukucanin.osoba %}
+                <a href="{% url 'parohijan_detail' uid=ukucanin.osoba.uid %}">
+                    {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
+                </a>
+                {% else %}
+                {{ ukucanin.ime_ukucana }}
+                {% endif %}
+                {% if ukucanin.preminuo %} <span class="u-text-muted"><i class="fa-solid fa-cross"></i></span>{% endif %}
+            </div>
+            <div class="stavka__member-role">
+                <span class="stavka__member-role-badge">{{ ukucanin.get_uloga_display }}</span>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <p class="u-text-muted u-mt-3">Нема података о члановима.</p>
+        {% endif %}
+        {% endwith %}
+        <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}" class="button button--primary u-mt-3">
+            Детаљи
+        </a>
+    </div>
+</li>
+{% empty %}
+{% if page_obj.number == 1 %}<li class="spisak__empty">Нема уписаних домаћинстава у бази.</li>{% endif %}
+{% endfor %}
+{% if page_obj.has_next %}<div class="next-page-marker" data-next-page="{{ page_obj.next_page_number }}"></div>{% endif %}

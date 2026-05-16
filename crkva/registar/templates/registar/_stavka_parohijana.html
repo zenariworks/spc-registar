@@ -1,0 +1,13 @@
+{% load marker_filter %}
+{% for parohijan in parohijani %}
+<li class="stavka">
+    <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza">
+        <span class="stavka__primary">{{ parohijan.ime|markiraj:upit|safe }} {{ parohijan.prezime|markiraj:upit|safe }}</span>
+        <span class="stavka__secondary">{% if parohijan.datum_rodjenja %}{{ parohijan.datum_rodjenja }}{% endif %}{% if parohijan.adresa %}{% if parohijan.datum_rodjenja %} &middot; {% endif %}{{ parohijan.adresa }}{% endif %}</span>
+    </a>
+    <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
+</li>
+{% empty %}
+{% if page_obj.number == 1 %}<li class="spisak__empty">Нема уписаних парохијана у бази.</li>{% endif %}
+{% endfor %}
+{% if page_obj.has_next %}<div class="next-page-marker" data-next-page="{{ page_obj.next_page_number }}"></div>{% endif %}

@@ -4,7 +4,7 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0;
 }
 
 .stavka {
@@ -15,6 +15,7 @@
     align-items: center;
     padding: 12px 16px;
     border: 1px solid var(--color-border);
+    border-left: 3px solid transparent;
     border-radius: 12px;
     background: var(--color-surface);
     transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
@@ -23,7 +24,8 @@
 .stavka:hover {
     background-color: var(--color-surface-2);
     border-color: color-mix(in oklab, var(--color-primary) 30%, var(--color-border));
-    box-shadow: 0 8px 14px -6px rgba(0,0,0,0.15);
+    border-left: 3px solid var(--color-primary);
+    box-shadow: var(--shadow-hover);
     transform: translateY(-1px);
     cursor: pointer;
 }
@@ -35,10 +37,8 @@
 .stavka-veza {
     text-decoration: none;
     color: var(--color-text);
-    display: flex;
+    display: block;
     flex-grow: 1;
-    align-items: center;
-    gap: 10px;
     padding: 4px 0;
     cursor: pointer;
 }
@@ -133,28 +133,7 @@
     border-radius: 3px;
 }
 
-/* BEM aliases for lists and items */
-.list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; }
-.list__item {
-  list-style-type: none;
-  margin: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: var(--color-surface);
-  transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-}
-.list__item:hover {
-  background-color: var(--color-surface-2);
-  border-color: color-mix(in oklab, var(--color-primary) 30%, var(--color-border));
-  box-shadow: 0 8px 14px -6px rgba(0,0,0,0.15);
-  transform: translateY(-1px);
-  cursor: pointer;
-}
-.list__link { text-decoration: none; color: var(--color-text); display: flex; flex-grow: 1; align-items: center; gap: 10px; padding: 4px 0; cursor: pointer; }
+
 
 /* Спискови */
 .header-container {
@@ -225,7 +204,7 @@
 
 /* Diskretno prugasto pozadinsko isticanje parnih redova */
 /* Remove zebra striping with card rows */
-.spisak .stavka:nth-child(even) { background-color: var(--color-surface); }
+.spisak .stavka:nth-child(even) { background-color: var(--color-surface-2); }
 
 /* Mobile-friendly list and filters */
 @media (max-width: 768px) {
@@ -242,7 +221,7 @@
     .stavka {
         flex-direction: column;
         align-items: flex-start;
-        gap: 10px;
+        gap: 0;
         padding: 16px;
     }
 
@@ -345,10 +324,406 @@
 .u-section-title {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0;
     margin-bottom: var(--space-4);
 }
 
 .u-section-title--success {
     color: var(--color-success);
+}
+
+/* ==========================================================================
+   ICON BUTTON – compact square for action icons in lists
+   ========================================================================== */
+
+.stavka .button.button--primary {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0;
+    font-size: 14px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-2);
+}
+
+/* ==========================================================================
+   EMPTY STATE – nicer look when no records
+   ========================================================================== */
+
+.spisak li:only-child:not(.stavka) {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-text-muted);
+    font-style: italic;
+    background: var(--color-surface-2);
+    border-radius: 12px;
+    border: 1px dashed var(--color-border);
+}
+
+}
+
+/* ==========================================================================
+   LIST CONTROLS BAR (sort + per-page dropdowns)
+   ========================================================================== */
+
+.list-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+    padding: 6px 0;
+    flex-wrap: wrap;
+}
+
+.list-controls__group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.list-controls__group--right {
+    margin-left: auto;
+}
+
+.list-controls__label {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.list-controls__select {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 7px 32px 7px 14px;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 16 16%27 fill=%27%23888%27%3E%3Cpath d=%27M3.204 5h9.592L8 10.481 3.204 5zm-.753.659l4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z%27/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+    min-height: 36px;
+}
+
+.list-controls__select:hover {
+    background-color: var(--color-surface-2);
+    border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
+}
+
+.list-controls__select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent);
+}
+
+@media (max-width: 640px) {
+    .list-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .list-controls__group--right {
+        margin-left: 0;
+    }
+    .list-controls__select {
+        width: 100%;
+    }
+}
+
+/* Flex layout for items with structured metadata (parohijani) */
+.stavka-veza--meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    row-gap: 2px;
+}
+
+/* ==========================================================================
+   TWO-LINE LIST ITEM LAYOUT
+   ========================================================================== */
+
+.stavka__primary {
+    display: block;
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.3;
+}
+
+.stavka__secondary {
+    display: block;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    line-height: 1.3;
+    margin-top: 2px;
+}
+
+.stavka__secondary:empty {
+    display: none;
+}
+
+/* ==========================================================================
+   PRINT BUTTON – show only on row hover
+   ========================================================================== */
+
+.stavka .button.button--primary {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0;
+    font-size: 14px;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-2);
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.stavka:hover .button.button--primary {
+    opacity: 1;
+}
+
+@media (hover: none) {
+    .stavka .button.button--primary {
+        opacity: 1;
+    }
+}
+
+/* ==========================================================================
+   SEARCH RESULTS PAGE
+   ========================================================================== */
+
+.search-section {
+    margin-bottom: var(--space-5);
+}
+
+.search-show-all {
+    display: inline-block;
+    margin-top: var(--space-2);
+    font-size: 14px;
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.search-show-all:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================================================
+   LIST TOOLBAR (search + sort + per-page in one row)
+   ========================================================================== */
+
+.list-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 8px 0 10px;
+    flex-wrap: wrap;
+}
+
+.list-toolbar__search {
+    position: relative;
+    flex: 1 1 320px;
+    min-width: 0;
+}
+
+.list-toolbar__search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    font-size: 14px;
+    pointer-events: none;
+}
+
+input.list-toolbar__search-input {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    font-size: 14px;
+    line-height: 20px;
+    min-height: 36px;
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+    box-shadow: none;
+    margin: 0;
+}
+
+input.list-toolbar__search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent);
+}
+
+input.list-toolbar__search-input::placeholder {
+    color: var(--color-text-muted);
+}
+
+.list-toolbar__select {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 7px 32px 7px 14px;
+    min-height: 36px;
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2);
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 16 16%27 fill=%27%23888%27%3E%3Cpath d=%27M3.204 5h9.592L8 10.481 3.204 5zm-.753.659l4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z%27/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    font-family: inherit;
+}
+
+.list-toolbar__select:hover {
+    background-color: var(--color-surface-2);
+    border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
+}
+
+.list-toolbar__select:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent);
+}
+
+@media (max-width: 640px) {
+    .list-toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .list-toolbar__search,
+    .list-toolbar__select {
+        width: 100%;
+    }
+}
+
+/* ==========================================================================
+   FILTER CHIPS
+   ========================================================================== */
+
+.filter-chips {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 0 0 12px;
+}
+
+.filter-chips__label {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px 4px 12px;
+    font-size: 13px;
+    line-height: 18px;
+    color: var(--color-text);
+    background: color-mix(in oklab, var(--color-primary) 10%, var(--color-surface));
+    border: 1px solid color-mix(in oklab, var(--color-primary) 30%, var(--color-border));
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.filter-chip:hover {
+    background: color-mix(in oklab, var(--color-primary) 18%, var(--color-surface));
+    border-color: var(--color-primary);
+}
+
+.filter-chip__label {
+    color: var(--color-text-muted);
+    font-size: 12px;
+}
+
+.filter-chip__value {
+    font-weight: 600;
+}
+
+.filter-chip__remove {
+    font-size: 11px;
+    margin-left: 2px;
+    opacity: 0.7;
+}
+
+.filter-chip:hover .filter-chip__remove {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   SCROLL SENTINEL (infinite scroll loading indicator)
+   ========================================================================== */
+
+.scroll-sentinel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px 0;
+    min-height: 48px;
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.scroll-sentinel--loading {
+    opacity: 1;
+}
+
+.scroll-sentinel__spinner i {
+    font-size: 18px;
+}
+
+/* Hide server-rendered pagination when JS-driven infinite scroll is active */
+body.has-infinite-scroll .pagination {
+    display: none;
+}
+
+/* Page title with count suffix */
+.u-page-title__count {
+    color: var(--color-text-muted);
+    font-weight: 400;
+    font-size: 0.7em;
+    margin-left: 4px;
+}
+
+/* Empty list state for spisak */
+.spisak__empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--color-text-muted);
+    font-style: italic;
+    background: var(--color-surface-2);
+    border-radius: 12px;
+    border: 1px dashed var(--color-border);
+    list-style: none;
 }

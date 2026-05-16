@@ -5,13 +5,22 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
-from django_filters.views import FilterView
-from registar.filters import KrstenjeFilter
-from registar.forms import KrstenjeForm, SearchForm
+from registar.forms import KrstenjeForm
 from registar.models import Krstenje
+from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from weasyprint import HTML
 
+KRSTENJE_RELATED = (
+    "dete",
+    "otac",
+    "majka",
+    "kum",
+    "hram",
+    "svestenik",
+)
 
+
+# @login_required
 def unos_krstenja(request):
     """
     Обрађује захтеве за унос новог крштења. Ако је захтев POST,
@@ -27,31 +36,34 @@ def unos_krstenja(request):
     return render(request, "registar/unos_krstenja.html", {"form": form})
 
 
-class SpisakKrstenja(FilterView, ListView):
+class SpisakKrstenja(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
     """Приказује списак крштења са могућностима претраге и пагинације."""
 
     model = Krstenje
     template_name = "registar/spisak_krstenja.html"
+    partial_template_name = "registar/_stavka_krstenja.html"
     context_object_name = "krstenja"
     paginate_by = 10
-    filterset_class = KrstenjeFilter
+    search_fields = [
+        "dete__ime",
+        "dete__gradjansko_ime",
+        "otac__ime",
+        "otac__prezime",
+        "majka__ime",
+        "majka__prezime",
+        "kum__ime",
+        "kum__prezime",
+    ]
+    search_date_field = "datum"
+    sort_options = [
+        ("datum", "Датум растуће"),
+        ("-datum", "Датум опадајуће"),
+    ]
 
     def get_queryset(self):
-        """Филтрира податке на основу захтева корисника."""
-        queryset = super().get_queryset()
-        filtered_queryset = self.filterset_class(self.request.GET, queryset=queryset).qs
-        return filtered_queryset.order_by("datum")
-
-    def get_context_data(self, **kwargs):
-        """Додаје филтер и претражени текст у контекст шаблона."""
-        context = super().get_context_data(**kwargs)
-        context["filter"] = self.filterset_class(
-            self.request.GET, queryset=self.get_queryset()
+        return self.get_search_queryset(
+            Krstenje.objects.select_related(*KRSTENJE_RELATED).order_by("datum")
         )
-        # Uniform search form used across list pages
-        context["form"] = SearchForm(self.request.GET)
-        context["upit"] = self.request.GET.get("search", "")
-        return context
 
 
 class KrstenjePDF(DetailView):
@@ -64,7 +76,29 @@ class KrstenjePDF(DetailView):
     def get_object(self, queryset=None):
         """Враћа објекат крштења на основу UID-а."""
         uid = self.kwargs.get("uid")
-        return get_object_or_404(Krstenje, uid=uid)
+        return get_object_or_404(
+            Krstenje.objects.select_related(*KRSTENJE_RELATED),
+            uid=uid,
+        )
+
+    def get_context_data(self, **kwargs):
+        """Додаје историјске снимке особа у контекст."""
+        context = super().get_context_data(**kwargs)
+        krstenje = context["krstenje"]
+        event_date = krstenje.datum or krstenje.created
+
+        for role in ["dete", "otac", "majka", "kum"]:
+            osoba = getattr(krstenje, role)
+            if osoba:
+                try:
+                    historical = osoba.history.as_of(event_date)
+                    context[f"{role}_snapshot"] = historical
+                except type(osoba).DoesNotExist:
+                    context[f"{role}_snapshot"] = osoba
+            else:
+                context[f"{role}_snapshot"] = None
+
+        return context
 
     def render_to_response(self, context, **response_kwargs):
         """Претвара HTML садржај у PDF и враћа HTTP одговор са PDF документом."""
@@ -92,9 +126,13 @@ class PrikazKrstenja(DetailView):
     def get_object(self) -> Krstenje:
         """Враћа објекат крштења на основу UID-а."""
         uid = self.kwargs.get("uid")
-        return get_object_or_404(Krstenje, uid=uid)
+        return get_object_or_404(
+            Krstenje.objects.select_related(*KRSTENJE_RELATED),
+            uid=uid,
+        )
 
 
+# @login_required
 def calibrate_krstenje(request):
     """Калибрациона страница за подешавање позиција поља на крштеници."""
     return render(request, "registar/calibrate_krstenje.html")

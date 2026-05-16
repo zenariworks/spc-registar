@@ -2,52 +2,34 @@
 Модул за приказ, претрагу и генерисање PDF докумената за свештенике.
 """
 
-from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView, ListView
-from registar.forms import SearchForm
 from registar.models.svestenik import Svestenik
-from registar.utils import get_query_variants
+from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from weasyprint import HTML
 
 
-class SpisakSvestenika(ListView):
+class SpisakSvestenika(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
     """Приказује списак свештеника са могућностима претраге и пагинације."""
 
     model = Svestenik
     template_name = "registar/spisak_svestenika.html"
+    partial_template_name = "registar/_stavka_svestenika.html"
     context_object_name = "svestenici"
     paginate_by = 10
+    search_fields = ["ime", "prezime", "zvanje"]
+    sort_options = [
+        ("prezime", "Презиме А-Ш"),
+        ("-prezime", "Презиме Ш-А"),
+        ("zvanje", "Звање"),
+    ]
+    ordering = ["prezime", "ime"]
 
     def get_queryset(self):
-        """Филтрира податке на основу унетог појма у форми за претрагу."""
-        form = SearchForm(self.request.GET)
-        if form.is_valid():
-            query = form.cleaned_data.get("search", "")
-            if not query:
-                return Svestenik.objects.all()
-            q = None
-            for v in get_query_variants(query):
-                clause = (
-                    Q(ime__icontains=v)
-                    | Q(prezime__icontains=v)
-                    | Q(zvanje__icontains=v)
-                )
-                q = clause if q is None else (q | clause)
-            return (
-                Svestenik.objects.filter(q)
-                if q is not None
-                else Svestenik.objects.all()
-            )
-        return Svestenik.objects.all()
-
-    def get_context_data(self, **kwargs):
-        """Додаје формулар за претрагу у контекст шаблона."""
-        context = super().get_context_data(**kwargs)
-        context["form"] = SearchForm(self.request.GET)
-        context["upit"] = self.request.GET.get("search", "")
-        return context
+        return self.get_search_queryset(
+            Svestenik.objects.select_related("parohija").all()
+        )
 
 
 class SvestenikPDF(DetailView):
@@ -87,4 +69,17 @@ class PrikazSvestenika(DetailView):
     def get_object(self):
         """Враћа објекат свештеника на основу UID-а."""
         uid = self.kwargs.get("uid")
-        return get_object_or_404(Svestenik, uid=uid)
+        return get_object_or_404(Svestenik.objects.select_related("parohija"), uid=uid)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        s = self.object
+        context["krstenja"] = s.свештеник_крститељ.select_related(
+            "dete", "otac"
+        ).order_by("-datum")[:20]
+        context["krstenja_count"] = s.свештеник_крститељ.count()
+        context["vencanja"] = s.свештеник_венчани.select_related(
+            "zenik", "nevesta"
+        ).order_by("-datum")[:20]
+        context["vencanja_count"] = s.свештеник_венчани.count()
+        return context

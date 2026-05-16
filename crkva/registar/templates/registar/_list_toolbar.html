@@ -1,0 +1,14 @@
+<form method="get" action="" class="list-toolbar">
+    <div class="list-toolbar__search">
+        <i class="fa-solid fa-magnifying-glass list-toolbar__search-icon"></i>
+        <input type="search" name="search" value="{{ upit }}" placeholder="Претражи..." class="list-toolbar__search-input" autocomplete="off" aria-label="Претрага">
+    </div>
+    {% if sort_options %}
+    <select name="sort" class="list-toolbar__select" onchange="this.form.submit()" data-tooltip="Сортирање">
+        {% for value, label in sort_options %}
+        <option value="{{ value }}"{% if current_sort == value %} selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+    </select>
+    {% endif %}
+
+</form>
