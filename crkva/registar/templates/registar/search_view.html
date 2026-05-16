@@ -1,40 +1,117 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load marker_filter %}
+
 {% block content %}
-<div class="container">
 <div class="u-page-header">
-    <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
-      <i class="fa-solid fa-arrow-left"></i>
+    <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад">
+        <i class="fa-solid fa-arrow-left"></i>
     </a>
-<h1 class="u-page-title">Резултати претраге за "{{ query }}"</h1>
-  </div>
-  {% if veroisposvest_results or parohijan_results or domacinstvo_results %}
-  <h2>Вероисповести</h2>
-  <ul>
-    {% for item in veroisposvest_results %}
-    <li>{{ item.naziv|markiraj:query }}</li>
-    {% empty %}
-    <li>Нема резултата</li>
-    {% endfor %}
-  </ul>
-  <h2>Парохијани</h2>
-  <ul>
-    {% for item in parohijan_results %}
-    <li>{{ item.ime|markiraj:query }} {{ item.prezime|markiraj:query }}</li>
-    {% empty %}
-    <li>Нема резултата</li>
-    {% endfor %}
-  </ul>
-  <h2>Домаћинства</h2>
-  <ul>
-    {% for item in domacinstvo_results %}
-    <li>{{ item.oznaka }}</li>
-    {% empty %}
-    <li>Нема резултата</li>
-    {% endfor %}
-  </ul>
-  {% else %}
-  <p>Нема пронађених резултата.</p>
-  {% endif %}
+    <h1 class="u-page-title">Претрага{% if total %} ({{ total }}){% endif %}</h1>
+    <form method="get" action="" class="form-container">
+        <input type="search" name="query" value="{{ query }}" placeholder="Претрага..." class="search-input" autofocus>
+        <input type="submit" class="hidden-submit">
+    </form>
 </div>
+
+{% if not query %}
+<p class="u-text-muted" style="text-align:center; padding:40px 0;">Унесите појам за претрагу.</p>
+{% elif not total %}
+<p class="u-text-muted" style="text-align:center; padding:40px 0;">Нема резултата за "{{ query }}".</p>
+{% endif %}
+
+{% if parohijani_count %}
+<div class="search-section">
+    <h2 class="u-section-title">Парохијани ({{ parohijani_count }})</h2>
+    <ul class="spisak">
+        {% for p in parohijani %}
+        <li class="stavka">
+            <a href="{% url 'parohijan_detail' uid=p.uid %}" class="stavka-veza">
+                <span class="stavka__primary">{{ p.ime|markiraj:query }} {{ p.prezime|markiraj:query }}</span>
+                <span class="stavka__secondary">{% if p.datum_rodjenja %}{{ p.datum_rodjenja }}{% endif %}{% if p.adresa %}{% if p.datum_rodjenja %} &middot; {% endif %}{{ p.adresa }}{% endif %}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if parohijani_count > parohijani|length %}
+    <a href="{% url 'parohijani' %}?search={{ query }}" class="search-show-all">Прикажи све {{ parohijani_count }} &rarr;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if svestenici_count %}
+<div class="search-section">
+    <h2 class="u-section-title">Свештеници ({{ svestenici_count }})</h2>
+    <ul class="spisak">
+        {% for s in svestenici %}
+        <li class="stavka">
+            <a href="{% url 'svestenik_detail' uid=s.uid %}" class="stavka-veza">
+                <span class="stavka__primary">{{ s.ime|markiraj:query }} {{ s.prezime|markiraj:query }}</span>
+                <span class="stavka__secondary">{{ s.zvanje }}{% if s.parohija %} &middot; {{ s.parohija }}{% endif %}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if svestenici_count > svestenici|length %}
+    <a href="{% url 'svestenici' %}?search={{ query }}" class="search-show-all">Прикажи све {{ svestenici_count }} &rarr;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if krstenja_count %}
+<div class="search-section">
+    <h2 class="u-section-title">Крштења ({{ krstenja_count }})</h2>
+    <ul class="spisak">
+        {% for k in krstenja %}
+        <li class="stavka">
+            <a href="{% url 'krstenje_detail' uid=k.uid %}" class="stavka-veza">
+                <span class="stavka__primary">{{ k.ime_deteta|markiraj:query|safe }} {{ k.prezime_oca|markiraj:query|safe }}</span>
+                <span class="stavka__secondary">{{ k.datum }} &middot; {{ k.ime_oca|markiraj:query|safe }} и {{ k.ime_majke|markiraj:query|safe }} {{ k.prezime_majke|markiraj:query|safe }}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if krstenja_count > krstenja|length %}
+    <a href="{% url 'krstenja' %}?search={{ query }}" class="search-show-all">Прикажи све {{ krstenja_count }} &rarr;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if vencanja_count %}
+<div class="search-section">
+    <h2 class="u-section-title">Венчања ({{ vencanja_count }})</h2>
+    <ul class="spisak">
+        {% for v in vencanja %}
+        <li class="stavka">
+            <a href="{% url 'vencanje_detail' uid=v.uid %}" class="stavka-veza">
+                <span class="stavka__primary">{{ v.ime_zenika|markiraj:query|safe }} и {{ v.ime_neveste|markiraj:query|safe }} {{ v.prezime_zenika|markiraj:query|safe }}</span>
+                <span class="stavka__secondary">{{ v.datum }}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if vencanja_count > vencanja|length %}
+    <a href="{% url 'vencanja' %}?search={{ query }}" class="search-show-all">Прикажи све {{ vencanja_count }} &rarr;</a>
+    {% endif %}
+</div>
+{% endif %}
+
+{% if domacinstva_count %}
+<div class="search-section">
+    <h2 class="u-section-title">Домаћинства ({{ domacinstva_count }})</h2>
+    <ul class="spisak">
+        {% for d in domacinstva %}
+        <li class="stavka">
+            <a href="{% url 'domacinstvo_detail' uid=d.uid %}" class="stavka-veza">
+                <span class="stavka__primary">{{ d.domacin.ime|markiraj:query }} {{ d.domacin.prezime|markiraj:query }}</span>
+                <span class="stavka__secondary">{% if d.slava %}{{ d.slava }} &middot; {% endif %}{% if d.adresa %}{{ d.adresa }}{% endif %}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% if domacinstva_count > domacinstva|length %}
+    <a href="{% url 'domacinstva' %}?search={{ query }}" class="search-show-all">Прикажи све {{ domacinstva_count }} &rarr;</a>
+    {% endif %}
+</div>
+{% endif %}
+
 {% endblock %}

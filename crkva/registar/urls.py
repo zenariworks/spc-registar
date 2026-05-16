@@ -60,6 +60,7 @@ urlpatterns = [
         name="svestenik_pdf",
     ),
     path("search/", views.search_view, name="search_view"),
+    path("api/search/", views.search_autocomplete, name="search_autocomplete"),
     path("unos/parohijan/", views.unos_parohijana, name="unos_parohijana"),
     path("unos/krstenje/", views.unos_krstenja, name="unos_krstenja"),
     path("unos/vencanje/", views.unos_vencanja, name="unos_vencanja"),

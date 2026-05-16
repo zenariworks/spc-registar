@@ -273,16 +273,16 @@ class SearchIntegrationTest(TestCase):
         """Тест функционалности претраге"""
         response = self.client.get(reverse("search_view"), {"query": "Никола"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("parohijan_results", response.context)
-        results = list(response.context["parohijan_results"])
+        self.assertIn("parohijani", response.context)
+        results = list(response.context["parohijani"])
         self.assertIn(self.osoba1, results)
 
     def test_search_with_no_results(self):
         """Тест претраге без резултата"""
         response = self.client.get(reverse("search_view"), {"query": "Непостојећеиме"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("parohijan_results", response.context)
-        results = list(response.context["parohijan_results"])
+        self.assertIn("parohijani", response.context)
+        results = list(response.context["parohijani"])
         self.assertEqual(len(results), 0)
 
     def test_search_with_empty_query(self):
@@ -290,8 +290,7 @@ class SearchIntegrationTest(TestCase):
         response = self.client.get(reverse("search_view"), {"query": ""})
         self.assertEqual(response.status_code, 200)
         # Очекујемо празне резултате
-        self.assertIn("parohijan_results", response.context)
-        self.assertIn("veroisposvest_results", response.context)
+        self.assertIn("parohijani", response.context)
 
 
 class ModelRelationshipsIntegrationTest(TestCase):

@@ -172,7 +172,7 @@ class SearchViewTestCase(TestCase):
         """Претрага са упитом."""
         response = self.client.get(reverse("search_view"), {"query": "Никола"})
         self.assertEqual(response.status_code, 200)
-        self.assertIn("parohijan_results", response.context)
+        self.assertIn("parohijani", response.context)
 
     def test_search_latin_finds_cyrillic(self):
         """Латинична претрага проналази ћирилични запис."""

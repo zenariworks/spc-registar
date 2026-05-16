@@ -100,17 +100,17 @@
 <!-- Search Overlay -->
 <div id="search-overlay" class="search-overlay" style="display: none;">
   <div class="search-overlay-content">
-    <form method="get" action="{% url 'search_view' %}" class="search-form">
+    <form method="get" action="{% url 'search_view' %}" class="search-form" id="search-form">
       <div class="search-box">
-        <button type="submit" class="search-icon-button">
-          <i class="fa-solid fa-magnifying-glass"></i>
-        </button>
-        <input type="text" name="query" placeholder="Претрага..." autofocus>
-        <button type="button" id="close-search" class="close-search">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
+        <i class="fa-solid fa-magnifying-glass search-box__icon"></i>
+        <input type="text" name="query" id="search-input" placeholder="Претрага парохијана, крштења, венчања..." autocomplete="off">
+        <kbd class="search-box__kbd">ESC</kbd>
       </div>
     </form>
+    <div id="search-results" class="search-results"></div>
+    <div class="search-hint">
+      <span>Enter за пуну претрагу</span>
+    </div>
   </div>
 </div>
 
@@ -192,37 +192,98 @@
 })();
 
 
-// Search Overlay
+// Search Overlay with Autocomplete
 (function() {
-  const searchTrigger = document.getElementById('search-trigger');
-  const searchOverlay = document.getElementById('search-overlay');
-  const closeSearch = document.getElementById('close-search');
+  const trigger = document.getElementById('search-trigger');
+  const overlay = document.getElementById('search-overlay');
+  const input = document.getElementById('search-input');
+  const results = document.getElementById('search-results');
+  let timer = null;
+  let selectedIdx = -1;
 
-  searchTrigger.addEventListener('click', function(e) {
-    e.preventDefault();
-    searchOverlay.style.display = 'flex';
-    const input = searchOverlay.querySelector('input');
-    if (input) input.focus();
-  });
+  function openSearch() {
+    overlay.style.display = 'flex';
+    input.value = '';
+    results.innerHTML = '';
+    selectedIdx = -1;
+    setTimeout(function() { input.focus(); }, 50);
+  }
 
-  closeSearch.addEventListener('click', function(e) {
-    e.preventDefault();
-    searchOverlay.style.display = 'none';
-  });
+  function closeSearch() {
+    overlay.style.display = 'none';
+    results.innerHTML = '';
+    selectedIdx = -1;
+  }
 
-  // ESC key closes search
+  trigger.addEventListener('click', function(e) { e.preventDefault(); openSearch(); });
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) closeSearch(); });
+
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && searchOverlay.style.display === 'flex') {
-      searchOverlay.style.display = 'none';
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+    if (e.key === 'Escape' && overlay.style.display === 'flex') closeSearch();
+  });
+
+  input.addEventListener('input', function() {
+    clearTimeout(timer);
+    var q = input.value.trim();
+    if (q.length < 2) { results.innerHTML = ''; selectedIdx = -1; return; }
+    timer = setTimeout(function() { fetchResults(q); }, 200);
+  });
+
+  input.addEventListener('keydown', function(e) {
+    var items = results.querySelectorAll('.search-result-item');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedIdx = Math.min(selectedIdx + 1, items.length - 1);
+      updateSelection(items);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedIdx = Math.max(selectedIdx - 1, -1);
+      updateSelection(items);
+    } else if (e.key === 'Enter' && selectedIdx >= 0 && items[selectedIdx]) {
+      e.preventDefault();
+      window.location.href = items[selectedIdx].getAttribute('href');
     }
   });
 
-  // Click outside closes search
-  searchOverlay.addEventListener('click', function(e) {
-    if (e.target === searchOverlay) {
-      searchOverlay.style.display = 'none';
+  function updateSelection(items) {
+    for (var i = 0; i < items.length; i++) {
+      if (i === selectedIdx) items[i].classList.add('search-result-item--active');
+      else items[i].classList.remove('search-result-item--active');
     }
-  });
+    if (selectedIdx >= 0 && items[selectedIdx]) items[selectedIdx].scrollIntoView({ block: 'nearest' });
+  }
+
+  function escapeHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function fetchResults(q) {
+    fetch('/api/search/?q=' + encodeURIComponent(q))
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        selectedIdx = -1;
+        if (!data.groups || !data.groups.length) {
+          results.innerHTML = '<div class="search-no-results">Нема резултата</div>';
+          return;
+        }
+        var html = '';
+        for (var g = 0; g < data.groups.length; g++) {
+          var group = data.groups[g];
+          html += '<div class="search-result-group">' + escapeHtml(group.label) + '</div>';
+          for (var i = 0; i < group.items.length; i++) {
+            var item = group.items[i];
+            html += '<a href="' + item.url + '" class="search-result-item">' +
+              '<span class="search-result-item__text">' + escapeHtml(item.text) + '</span>' +
+              (item.sub ? '<span class="search-result-item__type">' + escapeHtml(item.sub) + '</span>' : '') +
+            '</a>';
+          }
+        }
+        results.innerHTML = html;
+      });
+  }
 })();
 
 // Theme Toggle
