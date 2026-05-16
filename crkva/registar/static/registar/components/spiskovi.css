@@ -555,6 +555,9 @@
 }
 
 input.list-toolbar__search-input {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
     width: 100%;
     padding: 8px 12px 8px 36px;
     font-size: 14px;
@@ -568,6 +571,22 @@ input.list-toolbar__search-input {
     font-family: inherit;
     box-shadow: none;
     margin: 0;
+}
+
+input.list-toolbar__search-input::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 14px;
+    width: 14px;
+    background: var(--color-text-muted);
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M18.3 5.71 12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.3 6.3 1.41-1.41-6.3-6.3 6.3-6.3z'/></svg>") center/contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M18.3 5.71 12 12.01l-6.3-6.3-1.41 1.41 6.3 6.3-6.3 6.3 1.41 1.41 6.3-6.3 6.3 6.3 1.41-1.41-6.3-6.3 6.3-6.3z'/></svg>") center/contain no-repeat;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+input.list-toolbar__search-input::-webkit-search-cancel-button:hover {
+    opacity: 1;
 }
 
 input.list-toolbar__search-input:focus {
