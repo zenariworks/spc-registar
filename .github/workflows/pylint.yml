@@ -20,5 +20,6 @@ jobs:
           pip install -r requirements.txt
           pip install pylint pylint-junit pylint-django
       - name: Analysing the code with pylint
+        working-directory: crkva
         run: |
-          pylint --rcfile=.pylintrc --django-settings-module=crkva.settings $(git ls-files '*.py')
+          pylint --rcfile=../.pylintrc --django-settings-module=crkva.settings $(git ls-files '*.py')

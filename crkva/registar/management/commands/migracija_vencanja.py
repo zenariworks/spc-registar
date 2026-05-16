@@ -1,29 +1,114 @@
-"""
-Migracija tabele venčanja iz PostgreSQL staging tabele 'hsp_vencanja' u tabelu 'vencanja'
-Poboljšana verzija: brža (bulk_create), robusnija, čišća.
+"""Миграција табеле венчања из staging табеле 'hsp_vencanja' у Vencanje.
+
+Структура фајла:
+  1. SOURCE_COLUMNS  — колоне из staging табеле, по реду
+  2. VencanjeRecord  — dataclass који представља један парсиран ред
+  3. parse_row()     — претвара ред (tuple) у VencanjeRecord
+  4. build_vencanje_data() — претвара VencanjeRecord у kwargs за Vencanje()
+  5. Command         — оркестрација: fetch → transform → batch insert
+
+Заједничка логика (clean_prezime, find_or_create_osoba, get/cache за
+Veroispovest/Narodnost/Zanimanje/Hram, split_adresa) живи у пакету
+`registar.migracija`.
 """
 
-import re
+# pylint: disable=missing-function-docstring,missing-class-docstring,attribute-defined-outside-init,too-many-locals,broad-exception-caught,not-callable
+
+from __future__ import annotations
+
 from dataclasses import dataclass
 from datetime import date
-from typing import Optional
+from typing import Iterator, Optional
 
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
 from registar.management.commands.base_migration import MigrationCommand
-from registar.management.commands.convert_utils import Konvertor
-from registar.models import Hram, Osoba, Svestenik, Vencanje
+from registar.migracija.address import set_adresa_if_empty, split_adresa
+from registar.migracija.cache import (
+    LookupCache,
+    normalise_hram_naziv,
+    normalise_zanimanje,
+)
+from registar.migracija.errors import RecordContext, RecordSkipped
+from registar.migracija.helpers import (
+    clean_prezime,
+    cyr,
+    cyr_int,
+    safe_date,
+    split_full_name,
+)
+from registar.migracija.osoba_repo import find_or_create_osoba
+from registar.models import (
+    Hram,
+    Narodnost,
+    Osoba,
+    Svestenik,
+    Vencanje,
+    Veroispovest,
+    Zanimanje,
+)
+from registar.utils_parser import parse_vera_narodnost
+
+SOURCE_COLUMNS = (
+    "V_SIFRA",
+    "V_AKTGOD",
+    "V_KNJIGA",
+    "V_STRANA",
+    "V_TEKBROJ",
+    "V_DATUM",
+    "V_GODINA",
+    "V_MESEC",
+    "V_DAN",
+    "V_Z_IME",
+    "V_Z_PREZ",
+    "V_Z_ZANIM",
+    "V_Z_MESTO",
+    "V_Z_ADRESA",
+    "V_Z_VEROIS",
+    "V_Z_NARODN",
+    "V_Z_RODJG",
+    "V_Z_RODJM",
+    "V_Z_RODJD",
+    "V_Z_RODJME",
+    "V_N_IME",
+    "V_N_PREZ",
+    "V_N_ZANIM",
+    "V_N_MESTO",
+    "V_N_ADRESA",
+    "V_N_VEROIS",
+    "V_N_NARODN",
+    "V_N_RODJG",
+    "V_N_RODJM",
+    "V_N_RODJD",
+    "V_N_RODJME",
+    "V_ZR_OTAC",
+    "V_ZR_MAJKA",
+    "V_NR_OTAC",
+    "V_NR_MAJKA",
+    "V_Z_BRAK",
+    "V_N_BRAK",
+    "V_ISPITGOD",
+    "V_ISPITMES",
+    "V_ISPITDAN",
+    "V_HRIME",
+    "V_HRMESTO",
+    "V_RBRSVEST",
+    "V_KUM",
+    "V_SSVAT",
+    "V_RAZRDN",
+    "V_RAZRTXT",
+)
 
 
 @dataclass
-class VencanjeRecord:
+class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
+    """One parsed staging row, fully transliterated and date-typed."""
+
     redni_broj: int
     godina: int
-
     knjiga: str
     strana: str
     broj: str
-
     datum: Optional[date]
 
     zenik_ime: str
@@ -31,6 +116,8 @@ class VencanjeRecord:
     zenik_zanimanje: str
     zenik_mesto: str
     zenik_adresa: str
+    zenik_veroispovest: str
+    zenik_narodnost: str
     zenik_datum_rodj: Optional[date]
     zenik_mesto_rodj: str
 
@@ -39,6 +126,8 @@ class VencanjeRecord:
     nevesta_zanimanje: str
     nevesta_mesto: str
     nevesta_adresa: str
+    nevesta_veroispovest: str
+    nevesta_narodnost: str
     nevesta_datum_rodj: Optional[date]
     nevesta_mesto_rodj: str
 
@@ -53,301 +142,242 @@ class VencanjeRecord:
     datum_ispita: Optional[date]
 
     hram_naziv: str
+    hram_mesto: str
     svestenik_id: int
 
     kum_puno_ime: str
-    stari_svat: str
+    stari_svat_ime: str
 
     razresenje: str
-    razresenje_txt: str
+    primedba: str
+
+    @property
+    def context(self) -> RecordContext:
+        return RecordContext(
+            table="hsp_vencanja",
+            redni_broj=self.redni_broj,
+            godina=self.godina,
+            knjiga=self.knjiga,
+            strana=self.strana,
+            broj=self.broj,
+        )
+
+
+def parse_row(row: tuple) -> VencanjeRecord:
+    """Tuple from cursor.fetchall() → VencanjeRecord. Pure, no DB access."""
+    return VencanjeRecord(
+        redni_broj=cyr_int(row[0]),
+        godina=cyr_int(row[1], 1900),
+        knjiga=cyr(row[2]),
+        strana=cyr(row[3]),
+        broj=cyr(row[4]),
+        datum=safe_date(cyr_int(row[6]), cyr_int(row[7]), cyr_int(row[8])),
+        zenik_ime=cyr(row[9]),
+        zenik_prezime=cyr(row[10]),
+        zenik_zanimanje=cyr(row[11]),
+        zenik_mesto=cyr(row[12]),
+        zenik_adresa=cyr(row[13]),
+        zenik_veroispovest=cyr(row[14]),
+        zenik_narodnost=cyr(row[15]),
+        zenik_datum_rodj=safe_date(
+            cyr_int(row[16]), cyr_int(row[17]), cyr_int(row[18])
+        ),
+        zenik_mesto_rodj=cyr(row[19]),
+        nevesta_ime=cyr(row[20]),
+        nevesta_prezime=cyr(row[21]),
+        nevesta_zanimanje=cyr(row[22]),
+        nevesta_mesto=cyr(row[23]),
+        nevesta_adresa=cyr(row[24]),
+        nevesta_veroispovest=cyr(row[25]),
+        nevesta_narodnost=cyr(row[26]),
+        nevesta_datum_rodj=safe_date(
+            cyr_int(row[27]), cyr_int(row[28]), cyr_int(row[29])
+        ),
+        nevesta_mesto_rodj=cyr(row[30]),
+        svekar=cyr(row[31]),
+        svekrva=cyr(row[32]),
+        tast=cyr(row[33]),
+        tasta=cyr(row[34]),
+        zenik_rb_braka=max(cyr_int(row[35]), 1),
+        nevesta_rb_braka=max(cyr_int(row[36]), 1),
+        datum_ispita=safe_date(cyr_int(row[37]), cyr_int(row[38]), cyr_int(row[39])),
+        hram_naziv=cyr(row[40]),
+        hram_mesto=cyr(row[41]),
+        svestenik_id=cyr_int(row[42]),
+        kum_puno_ime=cyr(row[43]),
+        stari_svat_ime=cyr(row[44]),
+        razresenje=cyr(row[45]),
+        primedba=cyr(row[46]),
+    )
 
 
 class Command(MigrationCommand):
-    help = "Migracija tabele venčanja iz PostgreSQL staging tabele 'hsp_vencanja'"
+    help = "Миграција табеле венчања из staging табеле 'hsp_vencanja'"
     staging_table = "hsp_vencanja"
     target_model = Vencanje
 
     BATCH_SIZE = 500
 
-    def handle(self, *args, **kwargs):
-        self.clear_target_table()
-        records = list(self._fetch_records())
-        self.stdout.write(f"Учитано {len(records)} записа из staging табеле.")
+    def handle(self, *args, **opts):
+        self._verbose = opts.get("verbose_errors", False)
+        self._dry_run = opts.get("dry_run", False)
+        limit: int = opts.get("limit", 0) or 0
 
-        created_count = self._migrate_records(records)
-        self.log_success(created_count, "венчања")
-        self.drop_staging_table()
+        # Caches
+        self._vera = LookupCache(Veroispovest, "naziv")
+        self._narod = LookupCache(Narodnost, "naziv")
+        self._zanimanje = LookupCache(
+            Zanimanje,
+            "naziv",
+            key_normaliser=normalise_zanimanje,
+            extra_defaults={"sifra": ""},
+        )
+        self._hram = LookupCache(Hram, "naziv", key_normaliser=normalise_hram_naziv)
+        self._vera.warm()
+        self._narod.warm()
+        self._svestenici = {s.uid: s for s in Svestenik.objects.all()}
 
-    def _fetch_records(self):
-        columns = (
-            "V_SIFRA",
-            "V_AKTGOD",
-            "V_KNJIGA",
-            "V_STRANA",
-            "V_TEKBROJ",
-            "V_DATUM",
-            "V_Z_IME",
-            "V_Z_PREZ",
-            "V_Z_ZANIM",
-            "V_Z_MESTO",
-            "V_Z_ADRESA",
-            "V_Z_RODJG",
-            "V_Z_RODJM",
-            "V_Z_RODJD",
-            "V_Z_RODJME",
-            "V_N_IME",
-            "V_N_PREZ",
-            "V_N_ZANIM",
-            "V_N_MESTO",
-            "V_N_ADRESA",
-            "V_N_RODJG",
-            "V_N_RODJM",
-            "V_N_RODJD",
-            "V_N_RODJME",
-            "V_ZR_OTAC",
-            "V_ZR_MAJKA",
-            "V_NR_OTAC",
-            "V_NR_MAJKA",
-            "V_Z_BRAK",
-            "V_N_BRAK",
-            "V_ISPITGOD",
-            "V_ISPITMES",
-            "V_ISPITDAN",
-            "V_HRIME",
-            "V_RBRSVEST",
-            "V_KUM",
-            "V_SSVAT",
-            "V_RAZRDN",
-            "V_RAZRTXT",
+        if not self._dry_run:
+            self.clear_target_table()
+
+        records = list(self.take(self._fetch_records(), limit))
+        self.stdout.write(
+            f"Учитано {len(records)} записа из staging табеле"
+            + (f" (--limit {limit})" if limit else "")
+            + "."
         )
 
-        query = f"""
-            SELECT {', '.join(f'"{col}"' for col in columns)}
-            FROM {self.staging_table}
-            ORDER BY "V_SIFRA"
-        """
+        created = self._build_and_save(records)
+        self.log_success(created, "венчања")
+        if self._dry_run:
+            self.log_warning("DRY RUN — ништа није уписано у базу.")
+        else:
+            self.drop_staging_table()
 
+    # ---------------- Pipeline ----------------
+
+    def _fetch_records(self) -> Iterator[VencanjeRecord]:
+        col_list = ", ".join(f'"{c}"' for c in SOURCE_COLUMNS)
+        query = f'SELECT {col_list} FROM {self.staging_table} ORDER BY "V_SIFRA"'
         with connection.cursor() as cursor:
             cursor.execute(query)
             for row in cursor.fetchall():
-                yield self._parse_record(row)
-
-    def _parse_record(self, row) -> VencanjeRecord:
-        s = Konvertor.string
-
-        def i(v, default=0):
-            return Konvertor.int(v, default) if v is not None else default
-
-        def _safe_date(y: int, m: int, d: int) -> Optional[date]:
-            y = y or 1900
-            m = m or 1
-            d = d or 1
-            if y < 1900:
-                return None
-            try:
-                return date(y, m, d)
-            except ValueError:
-                return None
-
-        return VencanjeRecord(
-            redni_broj=i(row[0]),
-            godina=i(row[1], 1900),
-            knjiga=s(row[2]),
-            strana=s(row[3]),
-            broj=s(row[4]),
-            datum=row[5],
-            zenik_ime=s(row[6]),
-            zenik_prezime=s(row[7]),
-            zenik_zanimanje=s(row[8]),
-            zenik_mesto=s(row[9]),
-            zenik_adresa=s(row[10]),
-            zenik_datum_rodj=_safe_date(i(row[11]), i(row[12]), i(row[13])),
-            zenik_mesto_rodj=s(row[14]),
-            nevesta_ime=s(row[15]),
-            nevesta_prezime=s(row[16]),
-            nevesta_zanimanje=s(row[17]),
-            nevesta_mesto=s(row[18]),
-            nevesta_adresa=s(row[19]),
-            nevesta_datum_rodj=_safe_date(i(row[20]), i(row[21]), i(row[22])),
-            nevesta_mesto_rodj=s(row[23]),
-            svekar=s(row[24]),
-            svekrva=s(row[25]),
-            tast=s(row[26]),
-            tasta=s(row[27]),
-            zenik_rb_braka=max(i(row[28]), 1),
-            nevesta_rb_braka=max(i(row[29]), 1),
-            datum_ispita=_safe_date(i(row[30]), i(row[31]), i(row[32])),
-            hram_naziv=s(row[33]),
-            svestenik_id=i(row[34]),
-            kum_puno_ime=s(row[35]),
-            stari_svat=s(row[36]),
-            razresenje=s(row[37]),
-            razresenje_txt=s(row[38]),
-        )
+                yield parse_row(row)
 
     @atomic
-    def _migrate_records(self, records):
-        created_count = 0
-        objekti = []
+    def _build_and_save(self, records: list[VencanjeRecord]) -> int:
+        objects: list[Vencanje] = []
+        created = 0
 
-        # Predkeširaj objekte koji se često koriste
-        svestenici = {s.uid: s for s in Svestenik.objects.all()}
-        hramovi = {}
-
-        for idx, record in enumerate(records, 1):
+        for idx, r in enumerate(records, 1):
             try:
-                data = self._build_vencanje_data(record, svestenici, hramovi)
-                if data is None:
-                    continue
-
-                objekti.append(Vencanje(**data))
-                created_count += 1
-
-                if len(objekti) >= self.BATCH_SIZE:
-                    Vencanje.objects.bulk_create(objekti, ignore_conflicts=False)
-                    objekti.clear()
-                    self.stdout.write(f"Обрађено {idx} записа...")
-
-            except Exception as e:
-                self.log_error(
-                    f"Грешка на запису {record.redni_broj}/{record.godina}: {e}"
-                )
+                data = self._build_vencanje_data(r)
+            except RecordSkipped as skip:
+                self.log_skip(skip.ctx, skip.reason)
+                continue
+            except Exception as e:  # pylint: disable=broad-except
+                self.log_error(r.context, str(e))
                 continue
 
-        if objekti:
-            try:
-                Vencanje.objects.bulk_create(objekti)
-            except IntegrityError as e:
-                self.log_error(f"IntegrityError при bulk_create последњег batch-а: {e}")
-                # Opcionalno: pojedinačno umetanje za debagovanje
-                for objekat in objekti:
-                    try:
-                        objekat.save()
-                    except Exception as ie:
-                        self.log_error(f"Пропао појединачни save: {ie}")
+            if data is None:
+                continue
+            objects.append(Vencanje(**data))
+            created += 1
 
-        return created_count
+            if len(objects) >= self.BATCH_SIZE:
+                self._flush(objects)
+                objects.clear()
+                self.stdout.write(f"Обрађено {idx} записа...")
 
-    def _get_or_create_hram(self, naziv: str, cache: dict) -> Hram:
-        if not naziv:
-            naziv = "Непознат храм"
-        else:
-            naziv = re.sub(r"(?i)\bhram\b", "", naziv).strip()
-            naziv = naziv or "Непознат храм"
+        if objects:
+            self._flush(objects)
+        return created
 
-        if naziv not in cache:
-            hram, _ = Hram.objects.get_or_create(naziv=naziv)
-            cache[naziv] = hram
-        return cache[naziv]
+    def _flush(self, objects: list[Vencanje]) -> None:
+        if self._dry_run:
+            return
+        try:
+            Vencanje.objects.bulk_create(objects, ignore_conflicts=False)
+        except IntegrityError as e:
+            self.log_error(f"bulk_create failed: {e}; retrying individually")
+            for o in objects:
+                try:
+                    o.save()
+                except Exception as ie:  # pylint: disable=broad-except
+                    self.log_error(f"individual save failed: {ie}")
 
-    def _find_or_create_osoba(self, ime: str, prezime: str, **extra) -> Optional[Osoba]:
-        if not ime or not prezime:
-            return None
+    # ---------------- Transform ----------------
 
-        ime = ime.strip()
-        prezime = prezime.strip()
-        if not ime or not prezime:
-            return None
-
-        osoba = Osoba.objects.filter(ime__iexact=ime, prezime__iexact=prezime).first()
-        if osoba:
-            # Ažuriraj samo prazna polja
-            updates = {
-                k: v for k, v in extra.items() if v and not getattr(osoba, k, None)
-            }
-            if updates:
-                Osoba.objects.filter(pk=osoba.pk).update(**updates)
-            return osoba
-
-        create_data = {"ime": ime, "prezime": prezime, "parohijan": False}
-        create_data.update({k: v for k, v in extra.items() if v is not None})
-        return Osoba.objects.create(**create_data)
-
-    def _clean_prezime(self, prezime: str) -> str:
-        """Очисти презиме од префикса као што су 'р.', 'р ', 'r.', итд."""
-        if not prezime:
-            return prezime
-        # Уклони префикс р. (рођена) са почетка презимена
-        prezime = re.sub(r"^р\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
-        prezime = re.sub(r"^r\.?\s*", "", prezime, flags=re.IGNORECASE).strip()
-        return prezime
-
-    def _build_vencanje_data(
-        self, r: VencanjeRecord, svestenici_cache: dict, hramovi_cache: dict
-    ) -> Optional[dict]:
+    def _build_vencanje_data(self, r: VencanjeRecord) -> Optional[dict]:
         zenik_ime = r.zenik_ime.strip()
-        zenik_prezime = self._clean_prezime(r.zenik_prezime.strip())
+        zenik_prezime = clean_prezime(r.zenik_prezime.strip())
         nevesta_ime = r.nevesta_ime.strip()
-        nevesta_prezime = self._clean_prezime(r.nevesta_prezime.strip())
+        nevesta_prezime = clean_prezime(r.nevesta_prezime.strip())
 
         if not (zenik_ime and zenik_prezime and nevesta_ime and nevesta_prezime):
-            self.log_warning(
-                f"Прескочено венчање {r.redni_broj}/{r.godina}: "
-                f"непотпуна имена женика/невесте"
-            )
-            return None
+            raise RecordSkipped(r.context, "непотпуна имена женика/невесте")
 
-        hram = self._get_or_create_hram(r.hram_naziv, hramovi_cache)
-        svestenik = svestenici_cache.get(r.svestenik_id)
+        hram = self._hram.get(r.hram_naziv) or self._hram.get("Непознат храм")
+        svestenik = self._svestenici.get(r.svestenik_id)
 
-        zenik = self._find_or_create_osoba(
+        zenik_vera, zenik_narod = self._parse_vera_narod(
+            r.zenik_veroispovest, r.zenik_narodnost
+        )
+        nevesta_vera, nevesta_narod = self._parse_vera_narod(
+            r.nevesta_veroispovest, r.nevesta_narodnost
+        )
+
+        zenik = find_or_create_osoba(
             ime=zenik_ime,
             prezime=zenik_prezime,
             pol="М",
             datum_rodjenja=r.zenik_datum_rodj,
             mesto_rodjenja=r.zenik_mesto_rodj or None,
-            zanimanje=r.zenik_zanimanje or None,
+            zanimanje=self._zanimanje.get(r.zenik_zanimanje),
+            veroispovest=zenik_vera,
+            narodnost=zenik_narod,
         )
 
-        nevesta = self._find_or_create_osoba(
+        nevesta = find_or_create_osoba(
             ime=nevesta_ime,
-            prezime=zenik_prezime,
+            prezime=zenik_prezime,  # married surname
             pol="Ж",
             datum_rodjenja=r.nevesta_datum_rodj,
             mesto_rodjenja=r.nevesta_mesto_rodj or None,
-            zanimanje=r.nevesta_zanimanje or None,
+            zanimanje=self._zanimanje.get(r.nevesta_zanimanje),
             devojacko_prezime=nevesta_prezime,
+            veroispovest=nevesta_vera,
+            narodnost=nevesta_narod,
         )
 
-        kum = None
-        if kum_full := r.kum_puno_ime.strip():
-            kum_ime, kum_prez = self.split_full_name(kum_full)
-            if kum_ime and kum_prez:
-                kum = self._find_or_create_osoba(ime=kum_ime, prezime=kum_prez)
-            else:
-                self.log_warning(
-                    f"Неуспело цепање имена кума: '{kum_full}' (ред {r.redni_broj})"
-                )
+        kum = self._parse_person(r.kum_puno_ime, label="кум")
+        svekar = self._parse_parent(r.svekar)
+        svekrva = self._parse_parent(r.svekrva)
+        tast = self._parse_parent(r.tast)
+        tasta = self._parse_parent(r.tasta)
+        stari_svat = self._parse_person(
+            r.stari_svat_ime.split(",")[0] if r.stari_svat_ime else "",
+            label="стари сват",
+        )
 
-        # Roditelji
-        svekar = self._parse_and_create_parent(r.svekar)
-        svekrva = self._parse_and_create_parent(r.svekrva)
-        tast = self._parse_and_create_parent(r.tast)
-        tasta = self._parse_and_create_parent(r.tasta)
-
-        # Stari svat
-        stari_svat = None
-        if ss_str := r.stari_svat.strip():
-            ss_ime, ss_prez = self.split_full_name(ss_str.split(",")[0].strip())
-            if ss_ime and ss_prez:
-                stari_svat = self._find_or_create_osoba(ime=ss_ime, prezime=ss_prez)
-            else:
-                self.log_warning(f"Неуспело цепање старог свата: '{ss_str}'")
+        # Addresses (only attach if Osoba doesn't already have one)
+        if zenik and (r.zenik_adresa or r.zenik_mesto):
+            set_adresa_if_empty(zenik, split_adresa(r.zenik_adresa, r.zenik_mesto))
+        if nevesta and (r.nevesta_adresa or r.nevesta_mesto):
+            set_adresa_if_empty(
+                nevesta, split_adresa(r.nevesta_adresa, r.nevesta_mesto)
+            )
 
         return {
             "godina_registracije": r.godina if r.godina >= 1900 else 2000,
             "redni_broj": r.redni_broj,
-            "knjiga": Konvertor.int(r.knjiga, 1),
-            "strana": Konvertor.int(r.strana, 1),
-            "broj": Konvertor.int(r.broj, 1),
+            "knjiga": cyr_int(r.knjiga, 1),
+            "strana": cyr_int(r.strana, 1),
+            "broj": cyr_int(r.broj, 1),
             "datum": r.datum,
             "zenik": zenik,
             "nevesta": nevesta,
             "kum": kum,
-            "mesto_zenika": r.zenik_mesto or "",
-            "adresa_zenika": r.zenik_adresa or "",
-            "mesto_neveste": r.nevesta_mesto or "",
-            "adresa_neveste": r.nevesta_adresa or "",
             "zenik_rb_brak": r.zenik_rb_braka,
             "nevesta_rb_brak": r.nevesta_rb_braka,
             "svekar": svekar,
@@ -359,14 +389,40 @@ class Command(MigrationCommand):
             "hram": hram,
             "svestenik": svestenik,
             "razresenje": (r.razresenje or "").strip().upper() == "D",
-            "primedba": (r.razresenje_txt or "").strip(),
+            "primedba": (r.primedba or "").strip(),
         }
 
-    def _parse_and_create_parent(self, full_str: str) -> Optional[Osoba]:
+    # ---------------- Person sub-parsing ----------------
+
+    def _parse_vera_narod(self, vera_text: str, narod_text: str):
+        """Parse blended vera/narodnost text (one column may contain both)."""
+        vera_obj = None
+        narod_obj = None
+        if vera_text and vera_text.strip():
+            parsed, _ = parse_vera_narodnost(vera_text)
+            vera_obj = self._vera.get(parsed["veroispovest"])
+            if not (narod_text and narod_text.strip()):
+                narod_obj = self._narod.get(parsed["narodnost"])
+        if narod_text and narod_text.strip():
+            narod_parsed, _ = parse_vera_narodnost(narod_text)
+            if narod_parsed["narodnost"]:
+                narod_obj = self._narod.get(narod_parsed["narodnost"])
+        return vera_obj, narod_obj
+
+    def _parse_person(self, full_str: str, *, label: str) -> Optional[Osoba]:
+        if not full_str or not full_str.strip():
+            return None
+        ime, prezime = split_full_name(full_str.split(",")[0].strip())
+        if ime and prezime:
+            return find_or_create_osoba(ime=ime, prezime=prezime)
+        if self._verbose:
+            self.log_warning(f"Неуспело цепање имена ({label}): '{full_str}'")
+        return None
+
+    def _parse_parent(self, full_str: str) -> Optional[Osoba]:
         if not full_str:
             return None
-        name_part = full_str.split(",")[0].strip()
-        ime, prezime = self.split_full_name(name_part)
+        ime, prezime = split_full_name(full_str.split(",")[0].strip())
         if ime and prezime:
-            return self._find_or_create_osoba(ime=ime, prezime=prezime)
+            return find_or_create_osoba(ime=ime, prezime=prezime)
         return None

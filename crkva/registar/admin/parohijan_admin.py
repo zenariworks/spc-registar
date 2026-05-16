@@ -23,14 +23,15 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
     search_fields = [
         "ime",
         "prezime",
-        "zanimanje",
-        "narodnost",
+        "zanimanje__naziv",
+        "narodnost__naziv",
         "adresa__naziv",
-        "veroispovest",
+        "veroispovest__naziv",
     ]
     # list_filter = [ZanimanjeFilter]
 
     def get_full_name(self, obj):
+        """Врати пуно име особе."""
         devojacko = f", ({obj.devojacko_prezime})" if obj.devojacko_prezime else ""
         return f"{obj.ime} {obj.prezime}{devojacko}"
 
@@ -66,7 +67,7 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
             "Додатне информације",
             {
                 "fields": (
-                    "zanimanje",
+                    "zanimanje__naziv",
                     "veroispovest",
                     "narodnost",
                 )

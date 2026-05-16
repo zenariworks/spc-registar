@@ -7,7 +7,7 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from registar.models import Hram, Krstenje, Osoba
+from registar.models import Hram, Krstenje, Narodnost, Osoba, Veroispovest, Zanimanje
 
 
 class KrstenjeModelTestCase(TestCase):
@@ -15,6 +15,9 @@ class KrstenjeModelTestCase(TestCase):
 
     def setUp(self):
         """Постављање тест података."""
+        self.vera = Veroispovest.objects.create(naziv="Православна")
+        self.narod = Narodnost.objects.create(naziv="Српска")
+
         self.dete = Osoba.objects.create(
             ime="Петар",
             prezime="Петровић",
@@ -23,23 +26,25 @@ class KrstenjeModelTestCase(TestCase):
             mesto_rodjenja="Београд",
             pol="М",
         )
+        self.z_inzenjer = Zanimanje.objects.create(naziv="инжењер", sifra="")
+        self.z_advokat = Zanimanje.objects.create(naziv="адвокат", sifra="")
         self.otac = Osoba.objects.create(
             ime="Марко",
             prezime="Петровић",
-            zanimanje="инжењер",
-            veroispovest="православна",
-            narodnost="српска",
+            zanimanje=self.z_inzenjer,
+            veroispovest=self.vera,
+            narodnost=self.narod,
         )
         self.majka = Osoba.objects.create(
             ime="Ана",
             prezime="Петровић",
             devojacko_prezime="Јовановић",
-            zanimanje="лекар",
+            zanimanje=None,
         )
         self.kum = Osoba.objects.create(
             ime="Стефан",
             prezime="Стефановић",
-            zanimanje="адвокат",
+            zanimanje=self.z_advokat,
         )
         self.hram = Hram.objects.create(naziv="Храм Светог Саве")
 
@@ -58,8 +63,6 @@ class KrstenjeModelTestCase(TestCase):
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
             vreme=datetime.time(11, 0),
-            mesto="Београд",
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -68,20 +71,21 @@ class KrstenjeModelTestCase(TestCase):
         self.assertEqual(krstenje.knjiga, 1)
 
     def test_krstenje_str(self):
-        """Стринг репрезентација крштења је UID."""
+        """Стринг репрезентација крштења."""
         krstenje = Krstenje.objects.create(
+            dete=self.dete,
             knjiga=1,
             broj=1,
             strana=1,
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
         )
-        self.assertEqual(str(krstenje), str(krstenje.uid))
+        self.assertIn("Крштење", str(krstenje))
+        self.assertIn("Петар", str(krstenje))
 
     def test_property_ime_deteta(self):
         """Проперти за име детета."""
@@ -93,7 +97,6 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -110,7 +113,6 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -127,7 +129,6 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -144,7 +145,6 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -163,7 +163,6 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -181,7 +180,6 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -198,7 +196,6 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -216,7 +213,6 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,

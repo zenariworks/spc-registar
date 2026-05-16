@@ -5,7 +5,7 @@
 import datetime
 
 from django.test import TestCase
-from registar.models import Osoba
+from registar.models import Narodnost, Osoba, Veroispovest
 
 
 class OsobaModelTestCase(TestCase):
@@ -33,6 +33,8 @@ class OsobaModelTestCase(TestCase):
 
     def test_osoba_with_full_data(self):
         """Креирање особе са свим подацима."""
+        vera = Veroispovest.objects.create(naziv="Православна")
+        narod = Narodnost.objects.create(naziv="Српска")
         osoba = Osoba.objects.create(
             ime="Јован",
             prezime="Јовановић",
@@ -42,13 +44,15 @@ class OsobaModelTestCase(TestCase):
             datum_rodjenja=datetime.date(1990, 5, 15),
             vreme_rodjenja=datetime.time(10, 30),
             pol="М",
-            zanimanje="инжењер",
-            veroispovest="православна",
-            narodnost="српска",
+            zanimanje=None,
+            veroispovest=vera,
+            narodnost=narod,
         )
         self.assertEqual(osoba.pol, "М")
         self.assertEqual(osoba.datum_rodjenja, datetime.date(1990, 5, 15))
         self.assertTrue(osoba.parohijan)
+        self.assertEqual(str(osoba.veroispovest), "Православна")
+        self.assertEqual(str(osoba.narodnost), "Српска")
 
     def test_pol_choices(self):
         """Пол може бити само М или Ж."""

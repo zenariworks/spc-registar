@@ -7,7 +7,16 @@ import uuid
 
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from registar.models import Hram, Osoba, Svestenik, Vencanje
+from registar.models import (
+    Adresa,
+    Hram,
+    Narodnost,
+    Osoba,
+    Svestenik,
+    Vencanje,
+    Veroispovest,
+    Zanimanje,
+)
 
 
 class VencanjeModelTestCase(TestCase):
@@ -15,14 +24,19 @@ class VencanjeModelTestCase(TestCase):
 
     def setUp(self):
         """Постављање тест података."""
+        self.vera = Veroispovest.objects.create(naziv="Православна")
+        self.narod = Narodnost.objects.create(naziv="Српска")
+
+        self.z_inzenjer = Zanimanje.objects.create(naziv="инжењер", sifra="")
+        self.z_ucitelj = Zanimanje.objects.create(naziv="учитељ", sifra="")
         self.zenik = Osoba.objects.create(
             ime="Марко",
             prezime="Марковић",
             datum_rodjenja=datetime.date(1990, 5, 15),
             mesto_rodjenja="Београд",
-            zanimanje="инжењер",
-            veroispovest="православна",
-            narodnost="српска",
+            zanimanje=self.z_inzenjer,
+            veroispovest=self.vera,
+            narodnost=self.narod,
         )
         self.nevesta = Osoba.objects.create(
             ime="Ана",
@@ -30,14 +44,14 @@ class VencanjeModelTestCase(TestCase):
             devojacko_prezime="Јовановић",
             datum_rodjenja=datetime.date(1992, 8, 20),
             mesto_rodjenja="Нови Сад",
-            zanimanje="учитељ",
-            veroispovest="православна",
-            narodnost="српска",
+            zanimanje=self.z_ucitelj,
+            veroispovest=self.vera,
+            narodnost=self.narod,
         )
         self.kum = Osoba.objects.create(
             ime="Стефан",
             prezime="Петровић",
-            zanimanje="адвокат",
+            zanimanje=None,
         )
         self.hram = Hram.objects.create(naziv="Храм Светог Саве")
         self.svestenik = Svestenik.objects.create(
@@ -63,8 +77,10 @@ class VencanjeModelTestCase(TestCase):
         self.assertEqual(vencanje.redni_broj, 1)
 
     def test_vencanje_str_representation(self):
-        """Стринг репрезентација венчања је UID."""
+        """Стринг репрезентација венчања."""
         vencanje = Vencanje.objects.create(
+            zenik=self.zenik,
+            nevesta=self.nevesta,
             godina_registracije=2024,
             redni_broj=1,
             knjiga=1,
@@ -72,7 +88,9 @@ class VencanjeModelTestCase(TestCase):
             broj=1,
             datum=datetime.date(2024, 6, 15),
         )
-        self.assertEqual(str(vencanje), str(vencanje.uid))
+        self.assertIn("Венчање", str(vencanje))
+        self.assertIn("Марко", str(vencanje))
+        self.assertIn("Ана", str(vencanje))
 
     def test_vencanje_properties_zenik(self):
         """Тест пропертија за податке о женику."""
@@ -90,8 +108,8 @@ class VencanjeModelTestCase(TestCase):
         self.assertEqual(vencanje.ime_zenika, "Марко")
         self.assertEqual(vencanje.prezime_zenika, "Марковић")
         self.assertEqual(vencanje.zanimanje_zenika, "инжењер")
-        self.assertEqual(vencanje.veroispovest_zenika, "православна")
-        self.assertEqual(vencanje.narodnost_zenika, "српска")
+        self.assertEqual(str(vencanje.veroispovest_zenika), "Православна")
+        self.assertEqual(str(vencanje.narodnost_zenika), "Српска")
         self.assertEqual(vencanje.datum_rodjenja_zenika, datetime.date(1990, 5, 15))
         self.assertEqual(vencanje.mesto_rodjenja_zenika, "Београд")
 
@@ -109,10 +127,10 @@ class VencanjeModelTestCase(TestCase):
         )
 
         self.assertEqual(vencanje.ime_neveste, "Ана")
-        self.assertEqual(vencanje.prezime_neveste, "Јовановић")  # девојачко презиме
+        self.assertEqual(vencanje.prezime_neveste, "Јовановић")
         self.assertEqual(vencanje.zanimanje_neveste, "учитељ")
-        self.assertEqual(vencanje.veroispovest_neveste, "православна")
-        self.assertEqual(vencanje.narodnost_neveste, "српска")
+        self.assertEqual(str(vencanje.veroispovest_neveste), "Православна")
+        self.assertEqual(str(vencanje.narodnost_neveste), "Српска")
         self.assertEqual(vencanje.datum_rodjenja_neveste, datetime.date(1992, 8, 20))
         self.assertEqual(vencanje.mesto_rodjenja_neveste, "Нови Сад")
 
@@ -182,7 +200,7 @@ class VencanjeModelTestCase(TestCase):
     def test_vencanje_validators_godina_registracije(self):
         """Валидација минималне вредности за годину регистрације."""
         vencanje = Vencanje(
-            godina_registracije=1800,  # Неважећа година
+            godina_registracije=1800,
             redni_broj=1,
             knjiga=1,
             strana=1,
@@ -196,7 +214,7 @@ class VencanjeModelTestCase(TestCase):
         """Валидација минималне вредности за редни број."""
         vencanje = Vencanje(
             godina_registracije=2024,
-            redni_broj=0,  # Неважећи редни број
+            redni_broj=0,
             knjiga=1,
             strana=1,
             broj=1,
@@ -210,7 +228,7 @@ class VencanjeModelTestCase(TestCase):
         vencanje = Vencanje(
             godina_registracije=2024,
             redni_broj=1,
-            knjiga=0,  # Неважећа књига
+            knjiga=0,
             strana=1,
             broj=1,
             datum=datetime.date(2024, 6, 15),
@@ -224,7 +242,7 @@ class VencanjeModelTestCase(TestCase):
             godina_registracije=2024,
             redni_broj=1,
             knjiga=1,
-            strana=0,  # Неважећа страна
+            strana=0,
             broj=1,
             datum=datetime.date(2024, 6, 15),
         )
@@ -238,7 +256,7 @@ class VencanjeModelTestCase(TestCase):
             redni_broj=1,
             knjiga=1,
             strana=1,
-            broj=0,  # Неважећи текући број
+            broj=0,
             datum=datetime.date(2024, 6, 15),
         )
         with self.assertRaises(ValidationError):
@@ -257,19 +275,25 @@ class VencanjeModelTestCase(TestCase):
             datum=datetime.date(2024, 6, 15),
         )
 
-        # Сачувај UID пре брисања
         vencanje_uid = vencanje.uid
-
-        # Обриши женика
         self.zenik.delete()
-
-        # Освежи објекат из базе
         vencanje.refresh_from_db()
         self.assertIsNone(vencanje.zenik)
-        self.assertEqual(vencanje.uid, vencanje_uid)  # UID треба да буде исти
+        self.assertEqual(vencanje.uid, vencanje_uid)
 
     def test_vencanje_with_additional_fields(self):
         """Креирање венчања са додатним пољима."""
+        adresa_z = Adresa.objects.create(
+            mesto="Београд", ulica="ул. Николе Пашића", broj="10"
+        )
+        adresa_n = Adresa.objects.create(
+            mesto="Нови Сад", ulica="ул. Змаја од ноћаја", broj="15"
+        )
+        self.zenik.adresa = adresa_z
+        self.zenik.save()
+        self.nevesta.adresa = adresa_n
+        self.nevesta.save()
+
         vencanje = Vencanje.objects.create(
             zenik=self.zenik,
             nevesta=self.nevesta,
@@ -279,10 +303,6 @@ class VencanjeModelTestCase(TestCase):
             strana=1,
             broj=1,
             datum=datetime.date(2024, 6, 15),
-            mesto_zenika="Београд",
-            adresa_zenika="ул. Николе Пашића 10",
-            mesto_neveste="Нови Сад",
-            adresa_neveste="ул. Змаја од ноћаја 15",
             zenik_rb_brak=1,
             nevesta_rb_brak=1,
             datum_ispita=datetime.date(2024, 6, 1),
@@ -292,10 +312,8 @@ class VencanjeModelTestCase(TestCase):
             primedba="Напомена за венчање",
         )
 
-        self.assertEqual(vencanje.mesto_zenika, "Београд")
-        self.assertEqual(vencanje.adresa_zenika, "ул. Николе Пашића 10")
-        self.assertEqual(vencanje.mesto_neveste, "Нови Сад")
-        self.assertEqual(vencanje.adresa_neveste, "ул. Змаја од ноћаја 15")
+        self.assertEqual(vencanje.adresa_zenika.mesto, "Београд")
+        self.assertEqual(vencanje.adresa_neveste.mesto, "Нови Сад")
         self.assertEqual(vencanje.zenik_rb_brak, 1)
         self.assertEqual(vencanje.nevesta_rb_brak, 1)
         self.assertEqual(vencanje.datum_ispita, datetime.date(2024, 6, 1))
@@ -312,22 +330,22 @@ class VencanjeModelTestCase(TestCase):
             datum=datetime.date(2024, 6, 15),
         )
 
-        # Провери подразумеване вредности
-        self.assertEqual(vencanje.godina_registracije, 2000)  # подразумевана вредност
-        self.assertEqual(vencanje.redni_broj, 1)  # подразумевана вредност
-        self.assertEqual(vencanje.knjiga, 1)  # подразумевана вредност
-        self.assertEqual(vencanje.strana, 1)  # подразумевана вредност
-        self.assertEqual(vencanje.broj, 1)  # подразумевана вредност
-        self.assertTrue(vencanje.razresenje)  # подразумевана вредност
-        self.assertEqual(vencanje.primedba, "")  # подразумевана вредност
+        self.assertEqual(vencanje.godina_registracije, 2000)
+        self.assertEqual(vencanje.redni_broj, 1)
+        self.assertEqual(vencanje.knjiga, 1)
+        self.assertEqual(vencanje.strana, 1)
+        self.assertEqual(vencanje.broj, 1)
+        self.assertTrue(vencanje.razresenje)
+        self.assertEqual(vencanje.primedba, "")
 
 
 class VencanjeModelEdgeCasesTestCase(TestCase):
     """Тестови за граничне случајеве модела венчања."""
 
-    def test_vencanje_with_long_text_fields(self):
-        """Тест венчања са дугим текстуалним пољима."""
-        long_text = "x" * 255  # Максимална дужина за CharField
+    def test_vencanje_with_adresa_on_osoba(self):
+        """Тест венчања са адресом на Osoba."""
+        adresa = Adresa.objects.create(mesto="Тест", ulica="Тест улица", broj="1")
+        zenik = Osoba.objects.create(ime="Тест", prezime="Тестић", adresa=adresa)
         vencanje = Vencanje.objects.create(
             godina_registracije=2024,
             redni_broj=1,
@@ -335,12 +353,9 @@ class VencanjeModelEdgeCasesTestCase(TestCase):
             strana=1,
             broj=1,
             datum=datetime.date(2024, 6, 15),
-            mesto_zenika=long_text,
-            adresa_zenika=long_text,
-            mesto_neveste=long_text,
-            adresa_neveste=long_text,
+            zenik=zenik,
         )
-        self.assertEqual(vencanje.mesto_zenika, long_text)
+        self.assertEqual(vencanje.adresa_zenika.mesto, "Тест")
 
     def test_vencanje_with_future_date(self):
         """Тест венчања са датумом у будућности."""
@@ -363,7 +378,6 @@ class VencanjeModelEdgeCasesTestCase(TestCase):
             knjiga=1,
             strana=1,
             broj=1,
-            # datum је nullable, тако да га не постављамо
         )
         self.assertIsNone(vencanje.datum)
 
@@ -376,7 +390,7 @@ class VencanjeModelEdgeCasesTestCase(TestCase):
             strana=1,
             broj=1,
             datum=datetime.date(2024, 6, 15),
-            zenik_rb_brak=0,  # Ово би требало да буде 1 као минимум, али ако је nullable онда OK
+            zenik_rb_brak=0,
             nevesta_rb_brak=0,
         )
         self.assertEqual(vencanje.zenik_rb_brak, 0)

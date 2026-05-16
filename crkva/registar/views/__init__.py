@@ -245,7 +245,7 @@ def search_view(request) -> HttpResponse:
         )
         domacinstva_qs = (
             Domacinstvo.objects.filter(
-                build_q(["domacin__ime", "domacin__prezime", "adresa__ulica__naziv"])
+                build_q(["domacin__ime", "domacin__prezime", "adresa__ulica"])
             )
             .select_related("domacin", "adresa", "slava")
             .distinct()

@@ -1,59 +1,80 @@
-"""
-Миграција домаћинстава и укућана из hsp_domacini + hsp_ukucani.
-Креира Domacinstvo за сваког парохијана и Ukucanin за све чланове (преко Osoba).
-Опција А: сваки укућанин има Osoba запис (чак и преминули).
+"""Миграција домаћинстава и укућана из hsp_domacini + hsp_ukucani.
+
+Креира Osoba (домаћин), Adresa, Domacinstvo, и Ukucanin записе. За разлику
+од miграcija_vencanja/krstenja, овде имамо два изворна table-а; код је
+донекле линеаран, али сада дели исте помоћнике из `registar.migracija`.
 """
 
-import re
+# pylint: disable=missing-function-docstring,missing-class-docstring,attribute-defined-outside-init,too-many-locals,broad-exception-caught,not-callable
+
+from __future__ import annotations
+
 from typing import Dict, Iterable
 
 from django.db import connection
 from registar.management.commands.base_migration import MigrationCommand
-from registar.management.commands.convert_utils import Konvertor
-from registar.models import Adresa, Domacinstvo, Osoba, Slava, Ukucanin, Ulica
+from registar.migracija.helpers import clean_prezime, cyr
+from registar.migracija.osoba_repo import find_or_create_osoba
+from registar.models import Adresa, Domacinstvo, Osoba, Slava, Ukucanin
 
 
 class Command(MigrationCommand):
     help = "Миграција домаћинстава и укућана из hsp_domacini и hsp_ukucani"
 
     staging_tables = ["hsp_domacini", "hsp_ukucani"]
-    target_model = Ukucanin  # за логовање
+    target_model = Ukucanin
 
-    def handle(self, *args, **kwargs) -> None:
-        self.stdout.write("Чишћење постојећих података...")
-        Ukucanin.objects.all().delete()
-        Domacinstvo.objects.all().delete()
+    def handle(self, *args, **opts) -> None:
+        self._dry_run = opts.get("dry_run", False)
+        limit: int = opts.get("limit", 0) or 0
 
-        # Не бришемо све Osobe, само оне које су биле креиране као укућани
-        # Задржавамо Osobe из Krstenja/Vencanja
-        self.stdout.write("Учитавам податке о домаћинима и укућанима...")
+        if not self._dry_run:
+            self.stdout.write("Чишћење постојећих података...")
+            Ukucanin.objects.all().delete()
+            Domacinstvo.objects.all().delete()
 
-        # 1. Прво креирамо Parohijane (Osobe) и Domacinstva
-        self._create_parohijani_and_domacinstva()
+        self.stdout.write("Учитавам називе улица из hsp_ulice...")
+        self.ulice_cache = self._build_ulice_cache()
+        self.stdout.write(f"Учитано {len(self.ulice_cache)} улица.")
 
-        # 2. Онда мигрирамо укућане
-        records = self._prepare_ukucanin_records()
-        created_count = self.migrate_in_batches(records, batch_size=1000)
+        self.stdout.write("Креирам парохијане и домаћинства...")
+        self._create_parohijani_and_domacinstva(limit=limit)
 
-        self.log_success(created_count, table_name="укућана")
-        self._drop_staging_tables()
+        if not self._dry_run:
+            with connection.cursor() as cursor:
+                cursor.execute(
+                    "SELECT setval(pg_get_serial_sequence('osobe', 'uid'), "
+                    "(SELECT COALESCE(MAX(uid), 1) FROM osobe))"
+                )
+            self.stdout.write("Ресетован аутоинкремент за осoбе.")
 
-    def _clean_prezime(self, prezime: str) -> str:
-        """Очисти презиме од префикса као што су 'р.', 'r.', 'рођена'."""
-        if not prezime:
-            return prezime
-        # Match only 'р.' or 'р ' (lowercase р followed by period or space)
-        prezime = re.sub(r"^р\.\s*", "", prezime, flags=re.IGNORECASE).strip()
-        prezime = re.sub(r"^р\s+", "", prezime, flags=re.IGNORECASE).strip()
-        # Match 'r.' or 'r ' (Latin r)
-        prezime = re.sub(r"^r\.\s*", "", prezime, flags=re.IGNORECASE).strip()
-        prezime = re.sub(r"^r\s+", "", prezime, flags=re.IGNORECASE).strip()
-        # Match 'рођена ' followed by space
-        prezime = re.sub(r"^рођена\s+", "", prezime, flags=re.IGNORECASE).strip()
-        return prezime
+        self.stdout.write("Креирам укућане...")
+        records = self.take(self._prepare_ukucanin_records(), limit)
+        created = self.migrate_in_batches(
+            records, batch_size=1000, dry_run=self._dry_run
+        )
+        self.log_success(created, table_name="укућана")
+        if self._dry_run:
+            self.log_warning("DRY RUN — ништа није уписано у базу.")
+        else:
+            self._drop_staging_tables()
 
-    def _create_parohijani_and_domacinstva(self) -> None:
-        """Креира Parohijan (Osoba) + Adresa + Domacinstvo за сваког домаћина."""
+    # ---------------- Ulice cache ----------------
+
+    def _build_ulice_cache(self) -> Dict[int, str]:
+        cache: Dict[int, str] = {}
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT "UL_SIFRA", "UL_NAZIV" FROM hsp_ulice')
+            for sifra_raw, naziv_raw in cursor.fetchall():
+                sifra = int(sifra_raw) if sifra_raw else 0
+                naziv = cyr(naziv_raw or "")
+                if sifra and naziv:
+                    cache[sifra] = naziv
+        return cache
+
+    # ---------------- Domaćin pass ----------------
+
+    def _create_parohijani_and_domacinstva(self, limit: int = 0) -> None:
         created_parohijani = 0
         created_domacinstva = 0
 
@@ -68,143 +89,118 @@ class Command(MigrationCommand):
                 ORDER BY "DOM_RBR"
                 """
             )
+            rows = cursor.fetchall()
 
-            for row in cursor.fetchall():
-                (
-                    uid_raw,
-                    puno_ime,
-                    ulica_uid_raw,
-                    broj_ulice,
-                    oznaka_ulice,
-                    broj_stana,
-                    telefon_fiksni,
-                    telefon_mobilni,
-                    slava_uid_raw,
-                    slavska_vodica,
-                    uskrsnja_vodica,
-                    napomena,
-                ) = row
+        if limit:
+            rows = rows[:limit]
 
-                try:
-                    parohijan_uid = int(uid_raw)
-                    ulica_uid = int(ulica_uid_raw) if ulica_uid_raw else None
-                    slava_uid = int(slava_uid_raw) if slava_uid_raw else None
+        for row in rows:
+            (
+                uid_raw,
+                puno_ime,
+                ulica_uid_raw,
+                broj_ulice,
+                _oznaka_ulice,
+                broj_stana,
+                telefon_fiksni,
+                telefon_mobilni,
+                slava_uid_raw,
+                slavska_vodica,
+                uskrsnja_vodica,
+                napomena,
+            ) = row
 
-                    if not ulica_uid:
-                        self.log_skip(f"Парохијан UID {parohijan_uid}: нема улицу")
-                        continue
+            try:
+                parohijan_uid = int(uid_raw)
+                ulica_uid = int(ulica_uid_raw) if ulica_uid_raw else None
+                slava_uid = int(slava_uid_raw) if slava_uid_raw else None
 
-                    # Parse full name
-                    puno_ime = Konvertor.string(puno_ime).strip()
-                    if not puno_ime:
-                        continue
-
-                    ime, prezime = (puno_ime.split(" ", 1) + [""])[:2]
-                    prezime = self._clean_prezime(prezime)
-
-                    if not ime or not prezime:
-                        self.log_skip(
-                            f"Парохијан UID {parohijan_uid}: непотпуно име '{puno_ime}'"
-                        )
-                        continue
-
-                    # Create Adresa
-                    try:
-                        ulica = Ulica.objects.get(uid=ulica_uid)
-                    except Ulica.DoesNotExist:
-                        self.log_skip(
-                            f"Парохијан UID {parohijan_uid}: улица {ulica_uid} не постоји"
-                        )
-                        continue
-
-                    adresa = Adresa.objects.create(
-                        broj=Konvertor.string(broj_ulice or ""),
-                        sprat=None,
-                        broj_stana=Konvertor.string(broj_stana or ""),
-                        dodatak=Konvertor.string(oznaka_ulice or ""),
-                        postkod=None,
-                        primedba=Konvertor.string(napomena or ""),
-                        ulica=ulica,
-                    )
-
-                    # Get or create Slava
-                    slava = None
-                    if slava_uid:
-                        try:
-                            slava = Slava.objects.get(uid=slava_uid)
-                        except Slava.DoesNotExist:
-                            pass
-
-                    # Create or get Parohijan (Osoba)
-                    osoba, created = Osoba.objects.get_or_create(
-                        uid=parohijan_uid,
-                        defaults={
-                            "ime": ime,
-                            "prezime": prezime,
-                            "parohijan": True,
-                            "adresa": adresa,
-                            "slava": slava,
-                            "tel_fiksni": Konvertor.string(telefon_fiksni or ""),
-                            "tel_mobilni": Konvertor.string(telefon_mobilni or ""),
-                            "slavska_vodica": slavska_vodica
-                            and slavska_vodica.strip() == "D",
-                            "uskrsnja_vodica": uskrsnja_vodica
-                            and uskrsnja_vodica.strip() == "D",
-                        },
-                    )
-
-                    if created:
-                        created_parohijani += 1
-
-                    # Create Domacinstvo
-                    domacinstvo, created = Domacinstvo.objects.get_or_create(
-                        domacin=osoba,
-                        defaults={
-                            "adresa": adresa,
-                            "slava": slava,
-                            "tel_fiksni": Konvertor.string(telefon_fiksni or ""),
-                            "tel_mobilni": Konvertor.string(telefon_mobilni or ""),
-                            "slavska_vodica": slavska_vodica
-                            and slavska_vodica.strip() == "D",
-                            "vaskrsnja_vodica": uskrsnja_vodica
-                            and uskrsnja_vodica.strip() == "D",
-                            "napomena": Konvertor.string(napomena or ""),
-                        },
-                    )
-
-                    if created:
-                        created_domacinstva += 1
-
-                except Exception as e:
-                    self.log_error(f"Грешка за домаћина UID {uid_raw}: {e}")
+                puno_ime = cyr(puno_ime)
+                if not puno_ime:
                     continue
+
+                ime, prezime = (puno_ime.split(" ", 1) + [""])[:2]
+                prezime = clean_prezime(prezime)
+                if not ime or not prezime:
+                    self.log_skip(
+                        f"Парохијан UID {parohijan_uid}: непотпуно име '{puno_ime}'"
+                    )
+                    continue
+
+                if self._dry_run:
+                    created_parohijani += 1
+                    created_domacinstva += 1
+                    continue
+
+                ulica_naziv = self.ulice_cache.get(ulica_uid, "") if ulica_uid else ""
+                adresa = Adresa.objects.create(
+                    ulica=ulica_naziv,
+                    broj=cyr(str(broj_ulice or "")),
+                    sprat="",
+                    broj_stana=cyr(str(broj_stana or "")),
+                    mesto="Чукарица",
+                    primedba=cyr(napomena or ""),
+                )
+
+                slava = None
+                if slava_uid:
+                    slava = Slava.objects.filter(uid=slava_uid).first()
+
+                osoba, p_created = Osoba.objects.get_or_create(
+                    uid=parohijan_uid,
+                    defaults={
+                        "ime": ime,
+                        "prezime": prezime,
+                        "parohijan": True,
+                        "adresa": adresa,
+                        "tel_fiksni": (telefon_fiksni or "").strip() or None,
+                        "tel_mobilni": (telefon_mobilni or "").strip() or None,
+                    },
+                )
+                if p_created:
+                    created_parohijani += 1
+
+                _, d_created = Domacinstvo.objects.get_or_create(
+                    domacin=osoba,
+                    defaults={
+                        "adresa": adresa,
+                        "slava": slava,
+                        "tel_fiksni": (telefon_fiksni or "").strip() or None,
+                        "tel_mobilni": (telefon_mobilni or "").strip() or None,
+                        "slavska_vodica": slavska_vodica
+                        and slavska_vodica.strip() == "D",
+                        "vaskrsnja_vodica": uskrsnja_vodica
+                        and uskrsnja_vodica.strip() == "D",
+                        "napomena": cyr(napomena or ""),
+                    },
+                )
+                if d_created:
+                    created_domacinstva += 1
+
+            except Exception as e:  # pylint: disable=broad-except
+                self.log_error(f"Грешка за домаћина UID {uid_raw}: {e}")
+                continue
 
         self.stdout.write(
             f"Креирано {created_parohijani} парохијана и {created_domacinstva} домаћинстава."
         )
 
+    # ---------------- Ukucanin pass ----------------
+
     def _prepare_ukucanin_records(self) -> Iterable[dict | None]:
-        """Припрема записе за Ukucanin (bulk_create)."""
-        # Кеш: domacinstvo по uid парохијана
         domacinstva_cache: Dict[int, Domacinstvo] = {
             d.domacin.uid: d for d in Domacinstvo.objects.select_related("domacin")
         }
 
-        query = 'SELECT "UK_RBRDOM", "UK_IME" FROM hsp_ukucani ORDER BY "UK_RBRDOM"'
-
         with connection.cursor() as cursor:
-            cursor.execute(query)
+            cursor.execute(
+                'SELECT "UK_RBRDOM", "UK_IME" FROM hsp_ukucani ORDER BY "UK_RBRDOM"'
+            )
             for uid_raw, ime_raw in cursor.fetchall():
                 uid = int(uid_raw) if uid_raw else 0
-                raw_ime = Konvertor.string(ime_raw or "").strip()
+                raw_ime = cyr(ime_raw or "")
 
-                if uid == 0 or uid not in domacinstva_cache:
-                    # Skip orphaned records
-                    yield None
-                    continue
-
-                if not raw_ime:
-                    # Skip empty names
+                if uid == 0 or uid not in domacinstva_cache or not raw_ime:
                     yield None
                     continue
 
@@ -214,9 +210,7 @@ class Command(MigrationCommand):
                 preminuo = raw_ime.startswith("+")
                 ime = raw_ime[1:].strip() if preminuo else raw_ime
 
-                # Проналазимо или креирамо Osoba using base_migration helper
-                osoba = self.get_or_create_osoba(ime, prezime, parohijan=False)
-
+                osoba = find_or_create_osoba(ime, prezime, parohijan=False)
                 if not osoba:
                     self.log_skip(f"Не могу креирати особу: {ime} {prezime}")
                     yield None
@@ -229,8 +223,9 @@ class Command(MigrationCommand):
                     "preminuo": preminuo,
                 }
 
-    def _drop_staging_tables(self):
-        """Брише све staging табеле."""
+    # ---------------- Cleanup ----------------
+
+    def _drop_staging_tables(self) -> None:
         with connection.cursor() as cursor:
             for table in self.staging_tables:
                 cursor.execute(f"DROP TABLE IF EXISTS {table}")

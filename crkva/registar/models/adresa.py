@@ -4,43 +4,39 @@ import uuid
 
 from django.db import models
 
-from .ulica import Ulica
-
 
 class Adresa(models.Model):
     """Класа која представља адресе."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
-    broj = models.CharField(max_length=10, verbose_name="број")
-    sprat = models.CharField(max_length=10, verbose_name="спрат", null=True, blank=True)
-    broj_stana = models.CharField(
-        max_length=10, verbose_name="број_стана", null=True, blank=True
+    ulica = models.CharField(
+        max_length=255, verbose_name="улица", blank=True, default=""
     )
-    dodatak = models.CharField(
-        max_length=10, blank=True, null=True, verbose_name="додатак"
+    broj = models.CharField(max_length=10, verbose_name="број", blank=True, default="")
+    sprat = models.CharField(
+        max_length=10, verbose_name="спрат", blank=True, default=""
+    )
+    broj_stana = models.CharField(
+        max_length=10, verbose_name="број стана", blank=True, default=""
+    )
+    mesto = models.CharField(
+        max_length=100, verbose_name="место", blank=True, default=""
     )
     postkod = models.CharField(
-        max_length=10, verbose_name="поштански број", null=True, blank=True
+        max_length=10, verbose_name="поштански број", blank=True, default=""
     )
-    primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
-    ulica = models.ForeignKey(Ulica, on_delete=models.CASCADE, verbose_name="улица")
-
-    def clean(self):
-        """Валидација поштанског броја."""
-        if self.postkod and self.ulica and self.ulica.drzava:
-            self.ulica.drzava.provera_postkoda(self.postkod)
+    primedba = models.TextField(blank=True, default="", verbose_name="примедба")
 
     def __str__(self):
-        detalji = f"{self.ulica.naziv} {self.broj}"
-        detalji += f"/{self.sprat}" if self.sprat else ""
-        detalji += f"/{self.broj_stana}" if self.broj_stana else ""
-        detalji += f"/{self.dodatak}" if self.dodatak else ""
-        detalji += f", {self.postkod}" if self.postkod else ""
-        detalji += f", {self.ulica.mesto}" if self.ulica.mesto else ""
-        detalji += f", {self.ulica.opstina}" if self.ulica.opstina else ""
-        detalji += f", {self.ulica.drzava}" if self.ulica.drzava else ""
-        detalji += f" (Примедба: {self.primedba})" if self.primedba else ""
-        return detalji
+        parts = [self.ulica, self.broj]
+        if self.sprat:
+            parts.append(f"спрат {self.sprat}")
+        if self.broj_stana:
+            parts.append(f"стан {self.broj_stana}")
+        result = " ".join(p for p in parts if p)
+        if self.mesto:
+            result = f"{result}, {self.mesto}" if result else self.mesto
+        return result or "—"
 
     class Meta:
         managed = True

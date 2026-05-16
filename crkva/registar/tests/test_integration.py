@@ -8,7 +8,15 @@ import datetime
 from django.contrib.auth.models import User
 from django.test import Client, TestCase, TransactionTestCase
 from django.urls import reverse
-from registar.models import Hram, Krstenje, Osoba, Svestenik, Vencanje
+from registar.models import (
+    Hram,
+    Krstenje,
+    Narodnost,
+    Osoba,
+    Svestenik,
+    Vencanje,
+    Veroispovest,
+)
 
 
 class KrstenjeCreationIntegrationTest(TransactionTestCase):
@@ -23,10 +31,11 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
         self.svestenik = Svestenik.objects.create(
             ime="Петар", prezime="Петровић", zvanje="Протојереј"
         )
+        self.vera = Veroispovest.objects.create(naziv="Православна")
+        self.narod = Narodnost.objects.create(naziv="Српска")
 
     def test_complete_krstenje_creation_workflow(self):
         """Тест комплетног воркфлоуа креирања крштења"""
-        # Пријава као администратор
         self.client.login(username="testadmin", password="testpass123")
 
         # Креирање особе детета
@@ -38,32 +47,28 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
             "parohijan": True,
         }
         response = self.client.post(reverse("unos_parohijana"), dete_data)
-        self.assertEqual(response.status_code, 302)  # Редирект након креирања
+        self.assertEqual(response.status_code, 302)
 
-        # Добијање креиране особе
         dete = Osoba.objects.get(ime="Марко", prezime="Марковић")
 
         # Креирање родитеља
         otac = Osoba.objects.create(
             ime="Стефан",
             prezime="Стефановић",
-            zanimanje="инжењер",
-            veroispovest="православна",
-            narodnost="српска",
+            zanimanje=None,
+            veroispovest=self.vera,
+            narodnost=self.narod,
         )
         majka = Osoba.objects.create(
             ime="Јелена",
             prezime="Стефановић",
             devojacko_prezime="Јовановић",
-            zanimanje="учитељ",
-            veroispovest="православна",
-            narodnost="српска",
+            zanimanje=None,
+            veroispovest=self.vera,
+            narodnost=self.narod,
         )
-        kum = Osoba.objects.create(
-            ime="Милош", prezime="Милошевић", zanimanje="адвокат"
-        )
+        kum = Osoba.objects.create(ime="Милош", prezime="Милошевић", zanimanje=None)
 
-        # Креирање крштења са свим потребним подацима
         krstenje_data = {
             "dete": dete.uid,
             "otac": otac.uid,
@@ -77,9 +82,6 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
             "datum": "2024-02-10",
             "vreme": "10:00",
             "mesto": "Београд",
-            "adresa_deteta_grad": "Београд",
-            "adresa_deteta_ulica": "ул. Николе Пашића",
-            "adresa_deteta_broj": "10",
             "dete_vanbracno": False,
             "dete_blizanac": False,
             "dete_sa_telesnom_manom": False,
@@ -88,9 +90,8 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
         }
 
         response = self.client.post(reverse("unos_krstenja"), krstenje_data)
-        self.assertEqual(response.status_code, 302)  # Редирект након креирања
+        self.assertEqual(response.status_code, 302)
 
-        # Верификација да је крштење креирано
         krstenje = Krstenje.objects.get(redni_broj=1)
         self.assertEqual(krstenje.dete, dete)
         self.assertEqual(krstenje.otac, otac)
@@ -99,36 +100,30 @@ class KrstenjeCreationIntegrationTest(TransactionTestCase):
         self.assertEqual(krstenje.hram, self.hram)
         self.assertEqual(krstenje.svestenik, self.svestenik)
         self.assertEqual(krstenje.datum, datetime.date(2024, 2, 10))
-        self.assertEqual(krstenje.adresa_deteta_grad, "Београд")
 
     def test_krstenje_creation_page_accessible(self):
         """Тест да је страница за креирање крштења доступна"""
         response = self.client.get(reverse("unos_krstenja"))
-        # Страница је доступна без пријаве (тренутна имплементација)
         self.assertEqual(response.status_code, 200)
 
     def test_krstenje_creation_with_invalid_data(self):
         """Тест креирања крштења са неважећим подацима"""
         self.client.login(username="testadmin", password="testpass123")
 
-        # Покушај креирања крштења са неважећим подацима
         krstenje_data = {
-            "knjiga": 0,  # Неважећа вредност - мора бити >= 1
+            "knjiga": 0,
             "broj": 1,
             "strana": 1,
             "redni_broj": 1,
             "godina_registracije": 2024,
             "datum": "2024-02-10",
-            "adresa_deteta_grad": "Београд",
             "dete_vanbracno": False,
             "dete_blizanac": False,
             "dete_sa_telesnom_manom": False,
         }
 
         response = self.client.post(reverse("unos_krstenja"), krstenje_data)
-        # Требало би да остане на истој страници због грешке
         self.assertEqual(response.status_code, 200)
-        # Ниједно крштење не би требало да буде креирано због валидације
         self.assertEqual(Krstenje.objects.count(), 0)
 
 
@@ -144,10 +139,11 @@ class VencanjeCreationIntegrationTest(TransactionTestCase):
         self.svestenik = Svestenik.objects.create(
             ime="Петар", prezime="Петровић", zvanje="Протојереј"
         )
+        self.vera = Veroispovest.objects.create(naziv="Православна")
+        self.narod = Narodnost.objects.create(naziv="Српска")
 
     def test_complete_vencanje_creation_workflow(self):
         """Тест комплетног воркфлоуа креирања венчања"""
-        # Пријава као администратор
         self.client.login(username="testadmin", password="testpass123")
 
         # Креирање женика
@@ -156,9 +152,8 @@ class VencanjeCreationIntegrationTest(TransactionTestCase):
             "prezime": "Марковић",
             "datum_rodjenja": "1990-05-15",
             "mesto_rodjenja": "Београд",
-            "zanimanje": "инжењер",
-            "veroispovest": "православна",
-            "narodnost": "српска",
+            "veroispovest": str(self.vera.uid),
+            "narodnost": str(self.narod.uid),
             "parohijan": True,
         }
         response = self.client.post(reverse("unos_parohijana"), zenik_data)
@@ -171,24 +166,18 @@ class VencanjeCreationIntegrationTest(TransactionTestCase):
             "devojacko_prezime": "Јовановић",
             "datum_rodjenja": "1992-08-20",
             "mesto_rodjenja": "Нови Сад",
-            "zanimanje": "учитељ",
-            "veroispovest": "православна",
-            "narodnost": "српска",
+            "veroispovest": str(self.vera.uid),
+            "narodnost": str(self.narod.uid),
             "parohijan": True,
         }
         response = self.client.post(reverse("unos_parohijana"), nevesta_data)
         self.assertEqual(response.status_code, 302)
 
-        # Добијање креираних особа
         zenik = Osoba.objects.get(ime="Марко", prezime="Марковић")
         nevesta = Osoba.objects.get(ime="Ана", prezime="Јовановић")
 
-        # Креирање кума
-        kum = Osoba.objects.create(
-            ime="Стефан", prezime="Петровић", zanimanje="адвокат"
-        )
+        kum = Osoba.objects.create(ime="Стефан", prezime="Петровић", zanimanje=None)
 
-        # Креирање венчања са свим потребним подацима
         vencanje_data = {
             "zenik": zenik.uid,
             "nevesta": nevesta.uid,
@@ -199,10 +188,6 @@ class VencanjeCreationIntegrationTest(TransactionTestCase):
             "strana": 1,
             "broj": 1,
             "datum": "2024-06-15",
-            "mesto_zenika": "Београд",
-            "adresa_zenika": "ул. Николе Пашића 10",
-            "mesto_neveste": "Нови Сад",
-            "adresa_neveste": "ул. Змаја од ноћаја 15",
             "zenik_rb_brak": 1,
             "nevesta_rb_brak": 1,
             "hram": self.hram.uid,
@@ -211,9 +196,8 @@ class VencanjeCreationIntegrationTest(TransactionTestCase):
         }
 
         response = self.client.post(reverse("unos_vencanja"), vencanje_data)
-        self.assertEqual(response.status_code, 302)  # Редирект након креирања
+        self.assertEqual(response.status_code, 302)
 
-        # Верификација да је венчање креирано
         vencanje = Vencanje.objects.get(redni_broj=1)
         self.assertEqual(vencanje.zenik, zenik)
         self.assertEqual(vencanje.nevesta, nevesta)
@@ -221,35 +205,18 @@ class VencanjeCreationIntegrationTest(TransactionTestCase):
         self.assertEqual(vencanje.hram, self.hram)
         self.assertEqual(vencanje.svestenik, self.svestenik)
         self.assertEqual(vencanje.datum, datetime.date(2024, 6, 15))
-        self.assertEqual(vencanje.mesto_zenika, "Београд")
 
     def test_vencanje_creation_page_accessible(self):
         """Тест да је страница за креирање венчања доступна"""
         response = self.client.get(reverse("unos_vencanja"))
-        # Страница је доступна без пријаве (тренутна имплементација)
         self.assertEqual(response.status_code, 200)
 
 
 class SearchIntegrationTest(TestCase):
     """Интеграциони тестови за претрагу."""
 
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        # Креирање табеле veroispovesti ако не постоји (unmanaged model)
-        from django.db import connection
-
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS veroispovesti (
-                    uid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                    naziv VARCHAR(255)
-                )
-            """)
-
     def setUp(self):
         self.client = Client()
-        # Креирање тест података
         self.osoba1 = Osoba.objects.create(
             ime="Никола", prezime="Петровић", parohijan=True
         )
@@ -263,7 +230,6 @@ class SearchIntegrationTest(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
@@ -289,8 +255,8 @@ class SearchIntegrationTest(TestCase):
         """Тест претраге са празним упитом"""
         response = self.client.get(reverse("search_view"), {"query": ""})
         self.assertEqual(response.status_code, 200)
-        # Очекујемо празне резултате
         self.assertIn("parohijani", response.context)
+        self.assertIn("svestenici", response.context)
 
 
 class ModelRelationshipsIntegrationTest(TestCase):
@@ -308,13 +274,13 @@ class ModelRelationshipsIntegrationTest(TestCase):
             pol="М",
         )
         self.otac = Osoba.objects.create(
-            ime="Стефан", prezime="Марковић", zanimanje="инжењер"
+            ime="Стефан", prezime="Марковић", zanimanje=None
         )
         self.majka = Osoba.objects.create(
             ime="Ана",
             prezime="Марковић",
             devojacko_prezime="Јовановић",
-            zanimanje="учитељ",
+            zanimanje=None,
         )
 
     def test_krstenje_model_relationships(self):
@@ -331,20 +297,17 @@ class ModelRelationshipsIntegrationTest(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
         )
 
-        # Провера свих релација
         self.assertEqual(krstenje.dete, self.dete)
         self.assertEqual(krstenje.otac, self.otac)
         self.assertEqual(krstenje.majka, self.majka)
         self.assertEqual(krstenje.hram, self.hram)
         self.assertEqual(krstenje.svestenik, self.svestenik)
 
-        # Провера пропертија
         self.assertEqual(krstenje.ime_deteta, "Марко")
         self.assertEqual(krstenje.ime_oca, "Стефан")
         self.assertEqual(krstenje.ime_majke, "Ана")
@@ -363,22 +326,14 @@ class ModelRelationshipsIntegrationTest(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
         )
 
-        # Брисање особе детета
         self.dete.delete()
-
-        # Освежавање објекта из базе
         krstenje.refresh_from_db()
-
-        # Провера да је референца постављена на NULL
         self.assertIsNone(krstenje.dete)
-
-        # Остали подаци остају нетакнути
         self.assertEqual(krstenje.otac, self.otac)
         self.assertEqual(krstenje.majka, self.majka)
         self.assertEqual(krstenje.hram, self.hram)
@@ -398,31 +353,27 @@ class FormValidationIntegrationTest(TestCase):
         """Тест валидације форме крштења са негативним вредностима"""
         self.client.login(username="testadmin", password="testpass123")
 
-        # Покушај са негативним вредностима које би требало да буду позитивне
         krstenje_data = {
-            "knjiga": -1,  # Негативна вредност
+            "knjiga": -1,
             "broj": 1,
             "strana": 1,
             "redni_broj": 1,
             "godina_registracije": 2024,
             "datum": "2024-02-10",
-            "adresa_deteta_grad": "Београд",
             "dete_vanbracno": False,
             "dete_blizanac": False,
             "dete_sa_telesnom_manom": False,
         }
 
         response = self.client.post(reverse("unos_krstenja"), krstenje_data)
-        # Форма треба да буде поново приказана са грешкама
         self.assertEqual(response.status_code, 200)
-        # Ниједно крштење не би требало да буде креирано због валидације
         self.assertEqual(Krstenje.objects.count(), 0)
 
     def test_vencanje_form_validation_past_year(self):
         """Тест валидације форме венчања са прошлом годином"""
         self.client.login(username="testadmin", password="testpass123")
 
-        past_year = 1800  # Неважећа година
+        past_year = 1800
         vencanje_data = {
             "godina_registracije": past_year,
             "redni_broj": 1,
@@ -433,9 +384,7 @@ class FormValidationIntegrationTest(TestCase):
         }
 
         response = self.client.post(reverse("unos_vencanja"), vencanje_data)
-        # Форма треба да буде поново приказана са грешкама
         self.assertEqual(response.status_code, 200)
-        # Ниједно венчање не би требало да буде креирано због валидације
         self.assertEqual(Vencanje.objects.count(), 0)
 
 
@@ -455,7 +404,6 @@ class CrossModelReferenceTest(TestCase):
 
     def test_osoba_used_in_multiple_contexts(self):
         """Тест да се иста особа може користити у више контекста"""
-        # Особа је женик у венчању
         vencanje = Vencanje.objects.create(
             zenik=self.zenik,
             nevesta=self.nevesta,
@@ -467,25 +415,20 @@ class CrossModelReferenceTest(TestCase):
             datum=datetime.date(2024, 6, 15),
         )
 
-        # Иста особа је дете у крштењу
         krstenje = Krstenje.objects.create(
-            dete=self.zenik,  # Исто лице као женик
+            dete=self.zenik,
             knjiga=1,
             broj=1,
             strana=1,
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            adresa_deteta_grad="Београд",
             dete_vanbracno=False,
             dete_blizanac=False,
             dete_sa_telesnom_manom=False,
         )
 
-        # Провера да су оба креирана
         self.assertIsNotNone(vencanje)
         self.assertIsNotNone(krstenje)
-
-        # Провера да је особа повезана са оба
         self.assertEqual(vencanje.zenik, self.zenik)
         self.assertEqual(krstenje.dete, self.zenik)

@@ -3,9 +3,12 @@
 from django.db import models
 from model_utils.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
+from simple_history.models import HistoricalRecords
 
 from .adresa import Adresa
-from .slava import Slava
+from .narodnost import Narodnost
+from .veroispovest import Veroispovest
+from .zanimanje import Zanimanje
 
 
 class Osoba(TimeStampedModel):
@@ -13,11 +16,19 @@ class Osoba(TimeStampedModel):
 
     uid = models.AutoField(primary_key=True, unique=True, editable=False)
 
-    ime = models.CharField(max_length=100, verbose_name="име")
-    prezime = models.CharField(max_length=100, verbose_name="презиме")
+    ime = models.CharField(max_length=100, verbose_name="име", db_index=True)
+    prezime = models.CharField(max_length=100, verbose_name="презиме", db_index=True)
 
     devojacko_prezime = models.CharField(
         max_length=100, verbose_name="девојачко презиме", blank=True, null=True
+    )
+
+    gradjansko_ime = models.CharField(
+        max_length=100,
+        verbose_name="грађанско име",
+        blank=True,
+        null=True,
+        help_text="Грађанско (световно) име ако се разликује од крштеног",
     )
 
     parohijan = models.BooleanField(
@@ -28,17 +39,12 @@ class Osoba(TimeStampedModel):
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="адреса"
     )
-    slava = models.ForeignKey(
-        Slava, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="слава"
-    )
     tel_fiksni = PhoneNumberField(
         region="RS", verbose_name="фиксни телефон", blank=True, null=True
     )
     tel_mobilni = PhoneNumberField(
         region="RS", verbose_name="мобилни телефон", blank=True, null=True
     )
-    slavska_vodica = models.BooleanField(default=False, verbose_name="славска водица")
-    uskrsnja_vodica = models.BooleanField(default=False, verbose_name="ускршња водица")
 
     # Основни подаци о особи
     mesto_rodjenja = models.CharField(
@@ -58,15 +64,29 @@ class Osoba(TimeStampedModel):
         null=True,
     )
 
-    zanimanje = models.CharField(
-        max_length=100, verbose_name="занимање", blank=True, null=True
+    zanimanje = models.ForeignKey(
+        Zanimanje,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="занимање",
     )
-    veroispovest = models.CharField(
-        max_length=50, verbose_name="вероисповест", blank=True, null=True
+    veroispovest = models.ForeignKey(
+        Veroispovest,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="вероисповест",
     )
-    narodnost = models.CharField(
-        max_length=50, verbose_name="народност", blank=True, null=True
+    narodnost = models.ForeignKey(
+        Narodnost,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="народност",
     )
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"{self.ime} {self.prezime}"
@@ -76,6 +96,7 @@ class Osoba(TimeStampedModel):
         db_table = "osobe"
         verbose_name = "Особа"
         verbose_name_plural = "Особе"
+        ordering = ["prezime", "ime"]
 
 
 # Alias за компатибилност уназад

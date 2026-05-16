@@ -5,6 +5,7 @@ import uuid
 from django.core.validators import MinValueValidator
 from django.db import models
 from model_utils.models import TimeStampedModel
+from simple_history.models import HistoricalRecords
 
 from .hram import Hram
 from .parohijan import Osoba
@@ -20,6 +21,7 @@ class Vencanje(TimeStampedModel):
         verbose_name="година регистрације",
         validators=[MinValueValidator(1900)],
         default=2000,
+        db_index=True,
     )
     redni_broj = models.IntegerField(
         verbose_name="редни број венчања",
@@ -37,7 +39,7 @@ class Vencanje(TimeStampedModel):
         verbose_name="текући број", validators=[MinValueValidator(1)], default=1
     )
 
-    datum = models.DateField(verbose_name="датум", null=True, blank=True)
+    datum = models.DateField(verbose_name="датум", null=True, blank=True, db_index=True)
 
     zenik = models.ForeignKey(
         Osoba,
@@ -46,13 +48,6 @@ class Vencanje(TimeStampedModel):
         blank=True,
         related_name="vencanja_kao_zenik",
         verbose_name="женик",
-    )
-    # adrese (specifične za događaj venčanja)
-    mesto_zenika = models.CharField(
-        max_length=255, verbose_name="место женика", null=True, blank=True
-    )
-    adresa_zenika = models.CharField(
-        max_length=255, verbose_name="адреса женика", null=True, blank=True
     )
     zenik_rb_brak = models.PositiveSmallIntegerField(
         verbose_name="брак по реду женика", validators=[MinValueValidator(1)], default=1
@@ -65,12 +60,6 @@ class Vencanje(TimeStampedModel):
         blank=True,
         related_name="vencanja_kao_nevesta",
         verbose_name="невеста",
-    )
-    mesto_neveste = models.CharField(
-        max_length=255, verbose_name="место невесте", null=True, blank=True
-    )
-    adresa_neveste = models.CharField(
-        max_length=255, verbose_name="адреса невесте", null=True, blank=True
     )
     nevesta_rb_brak = models.PositiveSmallIntegerField(
         verbose_name="брак по реду невесте",
@@ -155,6 +144,8 @@ class Vencanje(TimeStampedModel):
     razresenje = models.BooleanField(verbose_name="разрешење", default=True)
     primedba = models.TextField(verbose_name="примедба", blank=True, default="")
 
+    history = HistoricalRecords()
+
     @property
     def ime_zenika(self):
         """Име женика из везаног Osoba objekta."""
@@ -168,7 +159,9 @@ class Vencanje(TimeStampedModel):
     @property
     def zanimanje_zenika(self):
         """Занимање женика из везаног Osoba objekta."""
-        return self.zenik.zanimanje if self.zenik and self.zenik.zanimanje else ""
+        return (
+            str(self.zenik.zanimanje) if self.zenik and self.zenik.zanimanje_id else ""
+        )
 
     @property
     def veroispovest_zenika(self):
@@ -207,7 +200,11 @@ class Vencanje(TimeStampedModel):
     @property
     def zanimanje_neveste(self):
         """Занимање невесте из везаног Osoba objekta."""
-        return self.nevesta.zanimanje if self.nevesta else ""
+        return (
+            str(self.nevesta.zanimanje)
+            if self.nevesta and self.nevesta.zanimanje_id
+            else ""
+        )
 
     @property
     def veroispovest_neveste(self):
@@ -229,8 +226,22 @@ class Vencanje(TimeStampedModel):
         """Место рођења невесте из везаног Osoba objekta."""
         return self.nevesta.mesto_rodjenja if self.nevesta else ""
 
+    @property
+    def adresa_zenika(self):
+        """Адреса женика из везаног Osoba objekta."""
+        return self.zenik.adresa if self.zenik else None
+
+    @property
+    def adresa_neveste(self):
+        """Адреса невесте из везаног Osoba objekta."""
+        return self.nevesta.adresa if self.nevesta else None
+
     def __str__(self):
-        return f"{self.uid}"
+        z = self.ime_zenika or ""
+        n = self.ime_neveste or ""
+        if z or n:
+            return f"Венчање {z} и {n} ({self.datum or ''})"
+        return f"Венчање {self.uid}"
 
     class Meta:
         managed = True
