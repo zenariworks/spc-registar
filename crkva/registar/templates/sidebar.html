@@ -21,6 +21,7 @@
     {% url 'unos_vencanja' as unos_vencanja_url %}
     {% url 'unos_parohijana' as unos_parohijana_url %}
     {% url 'unos_svestenika' as unos_svestenika_url %}
+    {% url 'unos_domacinstva' as unos_domacinstva_url %}
 
     <div class="sidebar-menu-group">
       <div class="sidebar-menu-item">
@@ -40,6 +41,11 @@
           <i class="fa-solid fa-house"></i>
           <span class="sidebar-text">Домаћинства</span>
         </a>
+        {% if can_edit_domacinstvo %}
+        <a href="{{ unos_domacinstva_url }}" class="sidebar-add-btn {% if request.path == unos_domacinstva_url %}active{% endif %}" title="Додај домаћинство" aria-label="Додај домаћинство">
+          <i class="fa-solid fa-circle-plus"></i>
+        </a>
+        {% endif %}
       </div>
     </div>
 

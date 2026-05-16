@@ -11,7 +11,7 @@ from registar.utils import get_query_variants
 from registar.utils_fasting import get_fasting_type
 from tenants.permissions import tenant_role_required
 
-from .domacinstvo_view import PrikazDomacinstva, SpisakDomacinsta
+from .domacinstvo_view import PrikazDomacinstva, SpisakDomacinsta, unos_domacinstva
 from .kalendar_view import kalendar
 from .krstenje_view import (
     KrstenjePDF,
@@ -46,6 +46,7 @@ __all__ = [
     # Re-exports for url config and other modules
     "PrikazDomacinstva",
     "SpisakDomacinsta",
+    "unos_domacinstva",
     "kalendar",
     "KrstenjePDF",
     "PrikazKrstenja",

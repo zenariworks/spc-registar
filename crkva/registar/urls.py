@@ -73,4 +73,5 @@ urlpatterns = [
     path("unos/krstenje/", views.unos_krstenja, name="unos_krstenja"),
     path("unos/vencanje/", views.unos_vencanja, name="unos_vencanja"),
     path("unos/svestenik/", views.unos_svestenika, name="unos_svestenika"),
+    path("unos/domacinstvo/", views.unos_domacinstva, name="unos_domacinstva"),
 ]
