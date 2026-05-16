@@ -1,0 +1,88 @@
+name: Auto-tag on merge
+
+# Bumps the version tag on every PR merge into main, following our convention:
+#   feature/<slug>  → minor bump (0.X.0 → 0.(X+1).0)
+#   fix/<slug>      → patch bump (0.X.Y → 0.X.(Y+1))
+# Any other branch shape: skipped (a notice is logged).
+#
+# The baseline is whatever's the latest semver tag reachable from main. Legacy
+# tags that aren't reachable (e.g. 1.0.0 / 2.0.0 on the pre-divergence history)
+# are ignored. When the team wants to bump the major (e.g. 1.0.0), tag manually
+# once and this workflow picks it up from there.
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Determine bump type
+        id: bump
+        run: |
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+          echo "head branch: $BRANCH"
+          if [[ "$BRANCH" == feature/* ]]; then
+            echo "type=minor" >> "$GITHUB_OUTPUT"
+          elif [[ "$BRANCH" == fix/* ]]; then
+            echo "type=patch" >> "$GITHUB_OUTPUT"
+          else
+            echo "type=none" >> "$GITHUB_OUTPUT"
+            echo "::notice::Branch '$BRANCH' is not feature/* or fix/* — no tag created"
+          fi
+
+      - name: Compute next version
+        if: steps.bump.outputs.type != 'none'
+        id: ver
+        run: |
+          git fetch --tags --quiet
+          # Only consider semver tags that are ancestors of the current main HEAD.
+          # This intentionally ignores legacy tags (e.g. 1.0.0 / 2.0.0) sitting
+          # on a divergent history.
+          LATEST=$(git tag --merged HEAD --sort=-v:refname \
+                   | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+                   | head -n 1)
+          [ -z "$LATEST" ] && LATEST="0.0.0"
+
+          IFS='.' read -r MAJOR MINOR PATCH <<<"$LATEST"
+          case "${{ steps.bump.outputs.type }}" in
+            minor) MINOR=$((MINOR+1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH+1)) ;;
+          esac
+          NEW="${MAJOR}.${MINOR}.${PATCH}"
+
+          echo "from=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "new=$NEW"   >> "$GITHUB_OUTPUT"
+          echo "::notice::Tagging $LATEST → $NEW (${{ steps.bump.outputs.type }} bump)"
+
+      - name: Create + push tag
+        if: steps.bump.outputs.type != 'none'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          NEW="${{ steps.ver.outputs.new }}"
+          TITLE="${{ github.event.pull_request.title }}"
+          NUM="${{ github.event.pull_request.number }}"
+          SHA="${{ github.event.pull_request.merge_commit_sha }}"
+
+          if git rev-parse "$NEW" >/dev/null 2>&1; then
+            echo "::error::Tag $NEW already exists — racing PR or misconfiguration"
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$NEW" "$SHA" -m "$NEW — $TITLE (#$NUM)"
+          git push origin "$NEW"
+          echo "::notice::Pushed tag $NEW at $SHA"
