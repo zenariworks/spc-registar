@@ -2,7 +2,7 @@
 
 Phase 2b: registar moves to TENANT_APPS, so its tables (including Parohija)
 live in per-tenant schemas. A FK from `public.tenants_tenant` to
-`tenant_cukarica.parohije` is impossible to model cleanly in Postgres,
+`crkva_sv_petke_cukarica.parohije` is impossible to model cleanly in Postgres,
 so `Tenant.parohija` was replaced with a plain `parohija_naziv` CharField.
 
 `auto_create_schema = True` so creating a Tenant row automatically
