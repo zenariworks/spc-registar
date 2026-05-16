@@ -1,14 +1,14 @@
-{% load history_extras %}
-<details class="history-panel" style="margin-top:var(--space-5);">
-  <summary style="cursor:pointer;font-size:15px;font-weight:600;padding:var(--space-2) 0;">
-    <i class="fa-solid fa-clock-rotate-left" style="margin-right:6px;"></i>
+<details id="history-panel" class="history-panel" style="margin-top:var(--space-5);">
+  <summary class="visually-hidden">Историја измена</summary>
+  <h2 style="font-size:18px;margin:0 0 var(--space-3);">
+    <i class="fa-solid fa-clock-rotate-left" style="margin-right:6px;color:var(--color-text-muted);"></i>
     Историја измена
-    <span style="color:var(--color-text-muted);font-weight:400;">({{ history_entries|length }})</span>
-  </summary>
+    <span style="color:var(--color-text-muted);font-weight:400;font-size:15px;">({{ history_entries|length }})</span>
+  </h2>
   {% if not history_entries %}
-    <p style="color:var(--color-text-muted);padding:var(--space-3) 0;">Нема записа.</p>
+    <p style="color:var(--color-text-muted);">Нема записа.</p>
   {% else %}
-    <ol class="history-list" style="list-style:none;padding:0;margin:var(--space-3) 0 0;">
+    <ol class="history-list" style="list-style:none;padding:0;margin:0;">
       {% for entry in history_entries %}
         <li style="border-left:3px solid var(--color-border);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
           <div style="display:flex;justify-content:space-between;gap:var(--space-3);color:var(--color-text-muted);font-size:13px;">
@@ -41,3 +41,16 @@
     </ol>
   {% endif %}
 </details>
+
+<script>
+  (function () {
+    const btn = document.getElementById("history-toggle");
+    const panel = document.getElementById("history-panel");
+    if (!btn || !panel) return;
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      panel.open = !panel.open;
+      if (panel.open) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  })();
+</script>
