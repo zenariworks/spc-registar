@@ -1,18 +1,17 @@
-"""Tenant switching view.
-
-A logged-in user POSTs to /tenant/switch/<id>/ and the active tenant is
-swapped on their session. Superusers can pick any active tenant; regular
-users only the ones they have a UserMembership for.
-"""
+"""Tenant switching + self-edit profile views."""
 
 from __future__ import annotations
 
+from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.decorators.http import require_POST
 from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
+from tenants.forms import ProfileForm
 from tenants.middleware import SESSION_TENANT_KEY
 from tenants.models import Tenant, UserMembership
 
@@ -41,3 +40,33 @@ def switch_tenant(request: HttpRequest, tenant_id: int) -> HttpResponse:
     ):
         next_url = fallback_url
     return HttpResponseRedirect(next_url)
+
+
+@login_required
+def profile(request: HttpRequest) -> HttpResponse:
+    """Self-edit profile. Two forms in one page: info + password."""
+    info_form = ProfileForm(instance=request.user)
+    password_form = PasswordChangeForm(user=request.user)
+
+    if request.method == "POST":
+        action = request.POST.get("action")
+        if action == "info":
+            info_form = ProfileForm(request.POST, instance=request.user)
+            if info_form.is_valid():
+                info_form.save()
+                messages.success(request, "Подаци сачувани.")
+                return redirect("tenants:profile")
+        elif action == "password":
+            password_form = PasswordChangeForm(user=request.user, data=request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                # keep the user logged in after their password changes
+                update_session_auth_hash(request, user)
+                messages.success(request, "Лозинка промењена.")
+                return redirect("tenants:profile")
+
+    return render(
+        request,
+        "registar/profile.html",
+        {"info_form": info_form, "password_form": password_form},
+    )

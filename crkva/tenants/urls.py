@@ -7,4 +7,5 @@ app_name = "tenants"
 
 urlpatterns = [
     path("switch/<int:tenant_id>/", views.switch_tenant, name="switch"),
+    path("profile/", views.profile, name="profile"),
 ]
