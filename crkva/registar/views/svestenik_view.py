@@ -3,11 +3,26 @@
 """
 
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
+from registar.forms import SvestenikForm
 from registar.models.svestenik import Svestenik
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from tenants.permissions import tenant_role_required
 from weasyprint import HTML
+
+
+@tenant_role_required("svestenik")
+def unos_svestenika(request):
+    """Обрађује захтев за додавање новог свештеника."""
+    if request.method == "POST":
+        form = SvestenikForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("svestenici")
+    else:
+        form = SvestenikForm()
+    return render(request, "registar/unos_svestenika.html", {"form": form})
 
 
 class SpisakSvestenika(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):

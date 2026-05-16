@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <form method="post" class="form">
+    {% csrf_token %}
+    <div class="u-page-header">
+      <a href="{% url 'svestenici' %}" class="back-button" aria-label="Назад" title="Назад">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+      <h1 class="u-page-title">Додавање новог свештеника</h1>
+      <button class="button button--primary" type="submit" title="Сачувај">
+        <i class="fa-solid fa-floppy-disk" style="margin-right: 6px;"></i> Сачувај
+      </button>
+    </div>
+
+    {% if form.errors %}
+      <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);color:#991b1b;">
+        <strong><i class="fa-solid fa-exclamation-circle"></i> Исправите следеће грешке:</strong>
+        <ul style="margin:8px 0 0;padding-left:20px;">
+          {% for field, errors in form.errors.items %}
+            {% for error in errors %}
+              <li>{{ field }}: {{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    <fieldset class="form-section">
+      <legend>Основни подаци</legend>
+      <div class="form-row">
+        <div class="form-field">{{ form.zvanje.label_tag }} {{ form.zvanje }}</div>
+        <div class="form-field">{{ form.ime.label_tag }} {{ form.ime }}</div>
+        <div class="form-field">{{ form.prezime.label_tag }} {{ form.prezime }}</div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">{{ form.mesto_rodjenja.label_tag }} {{ form.mesto_rodjenja }}</div>
+        <div class="form-field">{{ form.datum_rodjenja.label_tag }} {{ form.datum_rodjenja }}</div>
+      </div>
+    </fieldset>
+
+    <fieldset class="form-section">
+      <legend>Парохија</legend>
+      <div class="form-row">
+        <div class="form-field">{{ form.parohija.label_tag }} {{ form.parohija }}</div>
+      </div>
+    </fieldset>
+  </form>
+{% endblock %}
