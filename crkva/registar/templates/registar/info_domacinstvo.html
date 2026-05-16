@@ -22,7 +22,7 @@
         {% if domacinstvo.adresa %}
         <div>
             <strong class="u-label">Адреса:</strong><br>
-            📍 {{ domacinstvo.adresa }}
+            <i class="fa-solid fa-location-dot"></i> {{ domacinstvo.adresa }}
         </div>
         {% endif %}
 
@@ -55,8 +55,8 @@
 
         <div>
             <strong class="u-label">Водице:</strong><br>
-            {% if domacinstvo.slavska_vodica %}✅ Славска водица<br>{% endif %}
-            {% if domacinstvo.vaskrsnja_vodica %}✅ Васкршња водица{% endif %}
+            {% if domacinstvo.slavska_vodica %}<i class="fa-solid fa-circle-check" style="color: var(--color-success)"></i> Славска водица<br>{% endif %}
+            {% if domacinstvo.vaskrsnja_vodica %}<i class="fa-solid fa-circle-check" style="color: var(--color-success)"></i> Васкршња водица{% endif %}
             {% if not domacinstvo.slavska_vodica and not domacinstvo.vaskrsnja_vodica %}—{% endif %}
         </div>
     </div>
@@ -72,14 +72,12 @@
 {% if ukucani_zivi or ukucani_preminuli %}
 <div class="u-mt-6">
     <h2 class="u-section-title u-mb-5">
-        <i class="fa-solid fa-users"></i>
-        Чланови домаћинства
+        Чланови
     </h2>
 
     {% if ukucani_zivi %}
     <div class="u-mb-6">
         <h3 class="u-section-title u-section-title--success">
-            <i class="fa-solid fa-circle u-text-small"></i>
             Живи чланови ({{ ukucani_zivi|length }})
         </h3>
         <ul class="spisak">
@@ -110,20 +108,19 @@
     {% if ukucani_preminuli %}
     <div>
         <h3 class="u-section-title u-text-muted">
-            <i class="fa-solid fa-circle u-text-small"></i>
             Преминули чланови ({{ ukucani_preminuli|length }})
         </h3>
         <ul class="spisak">
             {% for ukucanin in ukucani_preminuli %}
             <li class="stavka u-border-left-muted u-opacity-70">
                 <div class="u-flex-1">
-                    <div class="u-font-medium u-mb-2 u-text-strikethrough">
+                    <div class="u-font-medium u-mb-2">
                         {% if ukucanin.osoba %}
                             {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
                         {% else %}
                             {{ ukucanin.ime_ukucana }}
                         {% endif %}
-                        †
+                        <i class="fa-solid fa-cross u-text-muted"></i>
                     </div>
                     <div class="u-text-muted u-text-small">
                         <span class="u-badge u-badge--role">

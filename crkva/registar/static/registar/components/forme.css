@@ -250,3 +250,18 @@ input[name="vreme_rodjenja"]:focus {
 .form__actions { display: flex; gap: 8px; }
 .form__help-text { color: var(--color-text-muted); font-size: 14px; margin-top: 6px; }
 .form__error-text { color: #b91c1c; font-size: 14px; margin-top: 6px; }
+
+
+/* FK поље са акцијским дугметом (+ за додавање) */
+.form-field-with-action {
+  display: flex;
+  gap: 8px;
+  align-items: start;
+}
+.form-field-with-action__input {
+  flex: 1;
+}
+.form-field-with-action__btn {
+  min-height: 38px;
+  white-space: nowrap;
+}
