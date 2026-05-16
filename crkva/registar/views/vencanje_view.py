@@ -5,38 +5,52 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
-from django_filters.views import FilterView
-from registar.filters import VencanjeFilter
-from registar.forms import SearchForm, VencanjeForm
+from registar.forms import VencanjeForm
 from registar.models.vencanje import Vencanje
+from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from weasyprint import HTML
 
+VENCANJE_RELATED = (
+    "zenik",
+    "nevesta",
+    "kum",
+    "svekar",
+    "svekrva",
+    "tast",
+    "tasta",
+    "stari_svat",
+    "hram",
+    "svestenik",
+)
 
-class SpisakVencanja(FilterView, ListView):
+
+class SpisakVencanja(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
     """Приказује списак венчања са могућностима претраге и пагинације."""
 
     model = Vencanje
     template_name = "registar/spisak_vencanja.html"
+    partial_template_name = "registar/_stavka_vencanja.html"
     context_object_name = "vencanja"
     paginate_by = 10
-    filterset_class = VencanjeFilter
+    search_fields = [
+        "zenik__ime",
+        "zenik__prezime",
+        "nevesta__ime",
+        "nevesta__prezime",
+        "kum__ime",
+        "stari_svat__ime",
+        "hram__naziv",
+    ]
+    search_date_field = "datum"
+    sort_options = [
+        ("datum", "Датум растуће"),
+        ("-datum", "Датум опадајуће"),
+    ]
 
     def get_queryset(self):
-        """Филтрира податке на основу захтева корисника."""
-        queryset = super().get_queryset()
-        filtered_queryset = self.filterset_class(self.request.GET, queryset=queryset).qs
-        return filtered_queryset.order_by("datum")
-
-    def get_context_data(self, **kwargs):
-        """Додаје филтер и претражени текст у контекст шаблона."""
-        context = super().get_context_data(**kwargs)
-        context["filter"] = self.filterset_class(
-            self.request.GET, queryset=self.get_queryset()
+        return self.get_search_queryset(
+            Vencanje.objects.select_related(*VENCANJE_RELATED).order_by("datum")
         )
-        # Uniform search form used across list pages
-        context["form"] = SearchForm(self.request.GET)
-        context["upit"] = self.request.GET.get("search", "")
-        return context
 
 
 class VencanjePDF(DetailView):
@@ -49,7 +63,38 @@ class VencanjePDF(DetailView):
     def get_object(self, queryset=None):
         """Враћа објекат венчања на основу UID-а."""
         uid = self.kwargs.get("uid")
-        return get_object_or_404(Vencanje, uid=uid)
+        return get_object_or_404(
+            Vencanje.objects.select_related(*VENCANJE_RELATED),
+            uid=uid,
+        )
+
+    def get_context_data(self, **kwargs):
+        """Додаје историјске снимке особа у контекст."""
+        context = super().get_context_data(**kwargs)
+        vencanje = context["vencanje"]
+        event_date = vencanje.datum or vencanje.created
+
+        for role in [
+            "zenik",
+            "nevesta",
+            "kum",
+            "svekar",
+            "svekrva",
+            "tast",
+            "tasta",
+            "stari_svat",
+        ]:
+            osoba = getattr(vencanje, role)
+            if osoba:
+                try:
+                    historical = osoba.history.as_of(event_date)
+                    context[f"{role}_snapshot"] = historical
+                except type(osoba).DoesNotExist:
+                    context[f"{role}_snapshot"] = osoba
+            else:
+                context[f"{role}_snapshot"] = None
+
+        return context
 
     def render_to_response(self, context, **response_kwargs):
         """Претвара HTML садржај у PDF и враћа HTTP одговор са PDF документом."""
@@ -77,15 +122,15 @@ class PrikazVencanja(DetailView):
     def get_object(self) -> Vencanje:
         """Враћа објекат венчања на основу UID-а."""
         uid = self.kwargs.get("uid")
-        return get_object_or_404(Vencanje, uid=uid)
+        return get_object_or_404(
+            Vencanje.objects.select_related(*VENCANJE_RELATED),
+            uid=uid,
+        )
 
 
+# @login_required
 def unos_vencanja(request):
-    """Обрада уноса новог венчања.
-
-    Ако је захтев POST и форма валидна – чува запис и враћа на списак венчања.
-    У супротном приказује формулар за унос.
-    """
+    """Обрада уноса новог венчања."""
     if request.method == "POST":
         form = VencanjeForm(request.POST)
         if form.is_valid():
@@ -96,6 +141,7 @@ def unos_vencanja(request):
     return render(request, "registar/unos_vencanja.html", {"form": form})
 
 
+# @login_required
 def calibrate_vencanje(request):
     """Приказује страницу за калибрацију позиција поља на венчаници."""
     return render(request, "registar/calibrate_vencanje.html")

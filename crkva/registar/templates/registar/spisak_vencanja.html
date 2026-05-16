@@ -3,52 +3,15 @@
 
 {% block content %}
 <div class="u-page-header">
-        <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
-            <i class="fa-solid fa-arrow-left"></i>
-        </a>
-<h1 class="u-page-title">Венчања ({{ page_obj.paginator.count }})</h1>
-        <form method="get" action="" class="form-container">
-            <div>
-                {% for field in form.visible_fields %}
-                    {{ field }}
-                {% endfor %}
-                <input type="submit" class="hidden-submit">
-            </div>
-        </form>
-    </div>
-    <ul class="spisak">
-        {% for vencanje in vencanja %}
-            <li class="stavka">
-                <a href="{% url 'vencanje_detail' uid=vencanje.uid %}" class="stavka-veza">
-                    {{ vencanje.datum }}:
-                    {{ vencanje.ime_zenika|markiraj:upit|safe }}
-                    и
-                    {{ vencanje.ime_neveste|markiraj:upit|safe }} {{ vencanje.prezime_zenika|markiraj:upit|safe }}
-                </a>
-                        <a href="{% url 'vencanje_pdf' uid=vencanje.uid %}" target="_blank" style="text-decoration: none; margin-left: 10px;">
-<button class="button button--primary" type="button">Штампај</button>
-                        </a>
-            </li>
-        {% empty %}
-            <li>Нема уноса венчања у бази.</li>
-        {% endfor %}
-    </ul>
-
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">&laquo; прва</a>
-                <a href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">претходна</a>
-            {% endif %}
-
-            <span class="current">
-                страна {{ page_obj.number }} од {{ page_obj.paginator.num_pages }}.
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">следеђа</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}" class="page-link">последња &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
+    <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="u-page-title">Венчања <span class="u-page-title__count">· {{ page_obj.paginator.count }}</span></h1>
+</div>
+{% include "registar/_list_toolbar.html" %}
+{% include "registar/_filter_chips.html" %}
+<ul class="spisak" id="spisak-list">
+    {% include "registar/_stavka_vencanja.html" %}
+</ul>
+<div id="scroll-sentinel" class="scroll-sentinel" aria-hidden="true"><span class="scroll-sentinel__spinner"><i class="fa-solid fa-spinner fa-spin"></i></span></div>
 {% endblock %}

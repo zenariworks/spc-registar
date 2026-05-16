@@ -1,0 +1,10 @@
+{% if upit %}
+<div class="filter-chips">
+    <span class="filter-chips__label">Активно:</span>
+    <a href="?{% for k, v in request.GET.items %}{% if k != 'search' and k != 'page' %}{{ k }}={{ v }}&amp;{% endif %}{% endfor %}" class="filter-chip" data-tooltip="Уклони филтер">
+        <span class="filter-chip__label">претрага:</span>
+        <span class="filter-chip__value">{{ upit }}</span>
+        <i class="fa-solid fa-xmark filter-chip__remove"></i>
+    </a>
+</div>
+{% endif %}

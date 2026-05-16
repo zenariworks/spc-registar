@@ -2,16 +2,17 @@
 Модул за приказ, додавање и генерисање PDF докумената за парохијане.
 """
 
-from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
-from registar.forms import ParohijanForm, SearchForm
+from registar.forms import ParohijanForm
+from registar.models import Krstenje
 from registar.models.parohijan import Parohijan
-from registar.utils import get_query_variants
+from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from weasyprint import HTML
 
 
+# @login_required
 def unos_parohijana(request):
     """
     Обрађује захтев за додавање новог парохијана. Ако је метод POST,
@@ -27,39 +28,27 @@ def unos_parohijana(request):
     return render(request, "registar/unos_parohijana.html", {"form": form})
 
 
-class SpisakParohijana(ListView):
+class SpisakParohijana(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
     """Приказује списак парохијана са могућношћу претраге и пагинације."""
 
     model = Parohijan
     template_name = "registar/spisak_parohijana.html"
+    partial_template_name = "registar/_stavka_parohijana.html"
     context_object_name = "parohijani"
     paginate_by = 10
+    ordering = ["prezime", "ime"]
+    search_fields = ["ime", "prezime"]
+    sort_options = [
+        ("prezime", "Презиме А-Ш"),
+        ("-prezime", "Презиме Ш-А"),
+        ("ime", "Име А-Ш"),
+        ("-created", "Најновије"),
+    ]
 
     def get_queryset(self):
-        """Филтрира парохијане на основу унетог појма у форми за претрагу."""
-        form = SearchForm(data=self.request.GET)
-        if form.is_valid():
-            query = form.cleaned_data.get("search", "")
-            if not query:
-                return Parohijan.objects.all()
-            variants = get_query_variants(query)
-            q = None
-            for v in variants:
-                clause = Q(ime__icontains=v) | Q(prezime__icontains=v)
-                q = clause if q is None else (q | clause)
-            return (
-                Parohijan.objects.filter(q)
-                if q is not None
-                else Parohijan.objects.all()
-            )
-        return Parohijan.objects.all()
-
-    def get_context_data(self, **kwargs):
-        """Додаје форму за претрагу у контекст шаблона."""
-        context = super().get_context_data(**kwargs)
-        context["form"] = SearchForm(data=self.request.GET)
-        context["upit"] = self.request.GET.get("search", "")
-        return context
+        return self.get_search_queryset(
+            Parohijan.objects.select_related("adresa").all()
+        )
 
 
 class ParohijanPDF(DetailView):
@@ -103,3 +92,48 @@ class PrikazParohijana(DetailView):
         """Преузима парохијана на основу UID-а."""
         uid = self.kwargs.get(self.pk_url_kwarg)
         return get_object_or_404(Parohijan, uid=uid)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        p = self.object
+
+        # Крштења
+        context["krstenja_dete"] = p.krstenja_kao_dete.select_related(
+            "otac", "majka", "kum"
+        ).all()
+        context["krstenja_kum"] = p.krstenja_kao_kum.select_related("dete").all()
+
+        # Венчања
+        context["vencanja_zenik"] = p.vencanja_kao_zenik.select_related("nevesta").all()
+        context["vencanja_nevesta"] = p.vencanja_kao_nevesta.select_related(
+            "zenik"
+        ).all()
+        context["vencanja_kum"] = p.vencanja_kao_kum.select_related(
+            "zenik", "nevesta"
+        ).all()
+
+        # Родитељи (из крштења где је ова особа дете)
+        krstenje_kao_dete = p.krstenja_kao_dete.select_related("otac", "majka").first()
+        if krstenje_kao_dete:
+            context["otac"] = krstenje_kao_dete.otac
+            context["majka"] = krstenje_kao_dete.majka
+
+        # Деца (из крштења где је ова особа отац или мајка)
+        deca_kao_otac = Krstenje.objects.filter(otac=p).select_related("dete")
+        deca_kao_majka = Krstenje.objects.filter(majka=p).select_related("dete")
+        deca = []
+        seen = set()
+        for k in list(deca_kao_otac) + list(deca_kao_majka):
+            if k.dete and k.dete.uid not in seen:
+                deca.append(k.dete)
+                seen.add(k.dete.uid)
+        context["deca"] = deca
+
+        # Домаћинство (као укућанин)
+        from registar.models import Ukucanin
+
+        context["ukucanstva"] = Ukucanin.objects.filter(osoba=p).select_related(
+            "domacinstvo", "domacinstvo__domacin"
+        )
+
+        return context

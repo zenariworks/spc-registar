@@ -87,5 +87,83 @@
         }
       })();
     </script>
+    <script>
+      // Infinite scroll for list pages
+      (function() {
+        const list = document.getElementById('spisak-list');
+        const sentinel = document.getElementById('scroll-sentinel');
+        if (!list || !sentinel) return;
+
+        // Hide the server-rendered pagination when JS is active
+        document.body.classList.add('has-infinite-scroll');
+
+        let nextPage = null;
+        let loading = false;
+        let exhausted = false;
+
+        function readNextPage() {
+          const marker = list.querySelector('.next-page-marker');
+          if (marker) {
+            nextPage = marker.getAttribute('data-next-page');
+            marker.remove();
+          } else {
+            nextPage = null;
+            exhausted = true;
+          }
+        }
+
+        readNextPage();
+        if (exhausted) {
+          sentinel.style.display = 'none';
+          return;
+        }
+
+        async function loadMore() {
+          if (loading || exhausted || !nextPage) return;
+          loading = true;
+          sentinel.classList.add('scroll-sentinel--loading');
+
+          const url = new URL(window.location.href);
+          url.searchParams.set('page', nextPage);
+
+          try {
+            const resp = await fetch(url.toString(), {
+              headers: { 'X-Requested-With': 'XMLHttpRequest' },
+            });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            const html = await resp.text();
+            const tpl = document.createElement('template');
+            tpl.innerHTML = html.trim();
+
+            // Append new <li> items
+            const items = tpl.content.querySelectorAll('li.stavka');
+            items.forEach(li => list.appendChild(li));
+
+            // Read the next page marker from the response
+            const marker = tpl.content.querySelector('.next-page-marker');
+            if (marker) {
+              nextPage = marker.getAttribute('data-next-page');
+            } else {
+              nextPage = null;
+              exhausted = true;
+              sentinel.style.display = 'none';
+            }
+          } catch (err) {
+            console.error('infinite scroll load failed', err);
+            exhausted = true;
+            sentinel.style.display = 'none';
+          } finally {
+            loading = false;
+            sentinel.classList.remove('scroll-sentinel--loading');
+          }
+        }
+
+        const io = new IntersectionObserver(entries => {
+          if (entries.some(e => e.isIntersecting)) loadMore();
+        }, { rootMargin: '400px 0px' });
+
+        io.observe(sentinel);
+      })();
+    </script>
   </body>
 </html>
