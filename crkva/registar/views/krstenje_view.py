@@ -137,3 +137,10 @@ class PrikazKrstenja(DetailView):
 def calibrate_krstenje(request):
     """Калибрациона страница за подешавање позиција поља на крштеници."""
     return render(request, "registar/calibrate_krstenje.html")
+
+    def get_context_data(self, **kwargs):
+        from registar.history import history_for
+
+        context = super().get_context_data(**kwargs)
+        context["history_entries"] = history_for(self.object)
+        return context

@@ -6,6 +6,9 @@
     <a href="{% url 'domacinstva' %}" class="back-button" aria-label="Назад" title="Назад на списак">
         <i class="fa-solid fa-arrow-left"></i>
     </a>
+    <button type="button" id="history-toggle" class="button button--primary" data-tooltip="Историја измена">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+    </button>
     <h1 class="u-page-title">Домаћинство</h1>
 </div>
 
@@ -141,4 +144,5 @@
 </div>
 {% endif %}
 
+{% include "registar/_history_panel.html" %}
 {% endblock %}

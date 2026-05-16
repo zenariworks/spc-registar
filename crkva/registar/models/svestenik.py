@@ -2,6 +2,7 @@
 
 from django.db import models
 from model_utils.models import TimeStampedModel
+from simple_history.models import HistoricalRecords
 
 from .parohija import Parohija
 
@@ -41,6 +42,8 @@ class Svestenik(TimeStampedModel):
         blank=True,
         verbose_name="парохија",
     )
+
+    history = HistoricalRecords()
 
     def __str__(self) -> str:
         return f"{self.zvanje} {self.ime} {self.prezime}"

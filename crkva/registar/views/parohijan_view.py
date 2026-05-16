@@ -95,7 +95,10 @@ class PrikazParohijana(DetailView):
         return get_object_or_404(Parohijan, uid=uid)
 
     def get_context_data(self, **kwargs):
+        from registar.history import history_for
+
         context = super().get_context_data(**kwargs)
+        context["history_entries"] = history_for(self.object)
         p = self.object
 
         # Крштења

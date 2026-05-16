@@ -10,6 +10,9 @@
     <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај">
         <i class="fa-solid fa-print"></i>
     </a>
+    <button type="button" id="history-toggle" class="button button--primary" data-tooltip="Историја измена">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+    </button>
 </div>
 
 {% if parohijan.domacinstvo %}
@@ -219,4 +222,5 @@
 </ul>
 {% endif %}
 
+{% include "registar/_history_panel.html" %}
 {% endblock %}

@@ -15,6 +15,9 @@
     <a href="{% url 'vencanje_pdf' vencanje.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај">
         <i class="fa-solid fa-print"></i>
     </a>
+    <button type="button" id="history-toggle" class="button button--primary" data-tooltip="Историја измена">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+    </button>
 </div>
 
 <div class="tabs tabs--segmented">
@@ -231,4 +234,5 @@
     </section>
 </div>
 
+{% include "registar/_history_panel.html" %}
 {% endblock %}
