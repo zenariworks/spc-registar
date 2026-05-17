@@ -11,7 +11,7 @@ class OsobaSelect2Widget(ModelSelect2Widget):
 
     model = Osoba
     search_fields = ["ime__icontains", "prezime__icontains"]
-    attrs = {"data-minimum-input-length": 2}
+    attrs = {"data-minimum-input-length": 1}
 
 
 class SvestenikSelect2Widget(ModelSelect2Widget):
@@ -19,7 +19,7 @@ class SvestenikSelect2Widget(ModelSelect2Widget):
 
     model = Svestenik
     search_fields = ["ime__icontains", "prezime__icontains"]
-    attrs = {"data-minimum-input-length": 2}
+    attrs = {"data-minimum-input-length": 1}
 
 
 class HramSelect2Widget(ModelSelect2Widget):
@@ -27,7 +27,7 @@ class HramSelect2Widget(ModelSelect2Widget):
 
     model = Hram
     search_fields = ["naziv__icontains"]
-    attrs = {"data-minimum-input-length": 2}
+    attrs = {"data-minimum-input-length": 1}
 
 
 class KrstenjeForm(forms.ModelForm):
