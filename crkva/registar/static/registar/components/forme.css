@@ -314,19 +314,6 @@ input[name="vreme_rodjenja"]:focus {
 
 
 /* FK поље са акцијским дугметом (+ за додавање) */
-.form-field-with-action {
-  display: flex;
-  gap: 8px;
-  align-items: start;
-}
-.form-field-with-action__input {
-  flex: 1;
-}
-.form-field-with-action__btn {
-  min-height: 38px;
-  white-space: nowrap;
-}
-
 /* Single-column card layout used by the redesigned unos forms. */
 .form--single-column {
   max-width: 720px;

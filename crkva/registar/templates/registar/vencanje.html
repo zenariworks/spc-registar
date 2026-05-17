@@ -68,7 +68,7 @@
         <h2 class="info-section__title"><i class="fa-solid fa-person"></i> Женик</h2>
         <ul class="info-rows">
           {% if is_edit %}
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Особа"><i class="fa-solid fa-user"></i></div><div class="info-row__value"><div class="form-field-with-action"><div class="form-field-with-action__input">{{ form.zenik }}</div><button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_zenik')"><i class="fa-solid fa-plus"></i></button></div></div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Особа"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ form.zenik }}</div></li>
           <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Редни брак"><i class="fa-solid fa-list-ol"></i></div><div class="info-row__value">{{ form.zenik_rb_brak }}</div></li>
           {% else %}
           <li class="info-row"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{% if vencanje.zenik %}<a href="{% url 'parohijan_detail' uid=vencanje.zenik.uid %}">{{ vencanje.ime_zenika }} {{ vencanje.prezime_zenika }}</a>{% else %}{{ vencanje.ime_zenika }} {{ vencanje.prezime_zenika }}{% endif %}</div></li>
@@ -87,7 +87,7 @@
         <h2 class="info-section__title"><i class="fa-solid fa-person-dress"></i> Невеста</h2>
         <ul class="info-rows">
           {% if is_edit %}
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Особа"><i class="fa-solid fa-user"></i></div><div class="info-row__value"><div class="form-field-with-action"><div class="form-field-with-action__input">{{ form.nevesta }}</div><button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_nevesta')"><i class="fa-solid fa-plus"></i></button></div></div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Особа"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ form.nevesta }}</div></li>
           <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Редни брак"><i class="fa-solid fa-list-ol"></i></div><div class="info-row__value">{{ form.nevesta_rb_brak }}</div></li>
           {% else %}
           <li class="info-row"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{% if vencanje.nevesta %}<a href="{% url 'parohijan_detail' uid=vencanje.nevesta.uid %}">{{ vencanje.ime_neveste }} {{ vencanje.prezime_neveste }}</a>{% else %}{{ vencanje.ime_neveste }} {{ vencanje.prezime_neveste }}{% endif %}</div></li>
@@ -106,10 +106,10 @@
         <h2 class="info-section__title"><i class="fa-solid fa-people-group"></i> Родитељи</h2>
         <ul class="info-rows">
           {% if is_edit %}
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Свекар"><i class="fa-solid fa-person"></i></div><div class="info-row__value"><div class="form-field-with-action"><div class="form-field-with-action__input">{{ form.svekar }}</div><button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_svekar')"><i class="fa-solid fa-plus"></i></button></div></div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Свекрва"><i class="fa-solid fa-person-dress"></i></div><div class="info-row__value"><div class="form-field-with-action"><div class="form-field-with-action__input">{{ form.svekrva }}</div><button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_svekrva')"><i class="fa-solid fa-plus"></i></button></div></div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Таст"><i class="fa-solid fa-person"></i></div><div class="info-row__value"><div class="form-field-with-action"><div class="form-field-with-action__input">{{ form.tast }}</div><button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_tast')"><i class="fa-solid fa-plus"></i></button></div></div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Ташта"><i class="fa-solid fa-person-dress"></i></div><div class="info-row__value"><div class="form-field-with-action"><div class="form-field-with-action__input">{{ form.tasta }}</div><button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_tasta')"><i class="fa-solid fa-plus"></i></button></div></div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Свекар"><i class="fa-solid fa-person"></i></div><div class="info-row__value">{{ form.svekar }}</div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Свекрва"><i class="fa-solid fa-person-dress"></i></div><div class="info-row__value">{{ form.svekrva }}</div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Таст"><i class="fa-solid fa-person"></i></div><div class="info-row__value">{{ form.tast }}</div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Ташта"><i class="fa-solid fa-person-dress"></i></div><div class="info-row__value">{{ form.tasta }}</div></li>
           {% else %}
           {% if vencanje.svekar %}<li class="info-row"><div class="info-row__icon" data-tooltip="Свекар"><i class="fa-solid fa-person"></i></div><div class="info-row__value"><a href="{% url 'parohijan_detail' uid=vencanje.svekar.uid %}">{{ vencanje.svekar }}</a></div></li>{% endif %}
           {% if vencanje.svekrva %}<li class="info-row"><div class="info-row__icon" data-tooltip="Свекрва"><i class="fa-solid fa-person-dress"></i></div><div class="info-row__value"><a href="{% url 'parohijan_detail' uid=vencanje.svekrva.uid %}">{{ vencanje.svekrva }}</a></div></li>{% endif %}
@@ -124,8 +124,8 @@
         <h2 class="info-section__title"><i class="fa-solid fa-user-check"></i> Сведоци</h2>
         <ul class="info-rows">
           {% if is_edit %}
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Кум"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value"><div class="form-field-with-action"><div class="form-field-with-action__input">{{ form.kum }}</div><button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_kum')"><i class="fa-solid fa-plus"></i></button></div></div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Стари сват"><i class="fa-solid fa-user-tie"></i></div><div class="info-row__value"><div class="form-field-with-action"><div class="form-field-with-action__input">{{ form.stari_svat }}</div><button type="button" class="button button--primary form-field-with-action__btn" title="Додај нову особу" onclick="osobaModal.open('id_stari_svat')"><i class="fa-solid fa-plus"></i></button></div></div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Кум"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ form.kum }}</div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Стари сват"><i class="fa-solid fa-user-tie"></i></div><div class="info-row__value">{{ form.stari_svat }}</div></li>
           {% else %}
           {% if vencanje.kum %}<li class="info-row"><div class="info-row__icon" data-tooltip="Кум"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value"><a href="{% url 'parohijan_detail' uid=vencanje.kum.uid %}">{{ vencanje.kum }}</a></div></li>{% endif %}
           {% if vencanje.stari_svat %}<li class="info-row"><div class="info-row__icon" data-tooltip="Стари сват"><i class="fa-solid fa-user-tie"></i></div><div class="info-row__value"><a href="{% url 'parohijan_detail' uid=vencanje.stari_svat.uid %}">{{ vencanje.stari_svat }}</a></div></li>{% endif %}
