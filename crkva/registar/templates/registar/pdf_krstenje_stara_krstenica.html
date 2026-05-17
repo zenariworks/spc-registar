@@ -43,7 +43,7 @@
           {{ krstenje.hram }}
         </div>
         <div class="row" style="width: 39.5%; justify-content: flex-start; padding-left: 7.7%; letter-spacing: 1px; padding-bottom: 1%; height: 9mm">
-          {{ krstenje.hram.adresa.ulica.mesto }}
+          {{ krstenje.hram.mesto }}
         </div>
         <div class="row" style="width: 10.5%; padding-bottom: 1%; height: 9mm; justify-content: flex-start;">
           {{ krstenje.datum|date:"y" }}
@@ -62,7 +62,7 @@
         <!-- 2. Место и општина рођења -->
         <div style="width: 46%"></div>
         <div class="visible-div" style="width: 53%">
-          {{ krstenje.mesto }}
+          {{ krstenje.mesto_rodjenja }}
         </div>
       </div>
       <div class="row" style="height: 10mm">
@@ -78,7 +78,7 @@
         <!-- 4. Место и храм крштења и миропомазања -->
         <div style="width: 46%"></div>
         <div style="width: 53%">
-          {{ krstenje.hram }}, {{ krstenje.mesto }}
+          {{ krstenje.hram.naziv }}, {{ krstenje.hram.mesto }}
         </div>
       </div>
       <div class="row" style="height: 10mm">
@@ -122,7 +122,7 @@
         <!-- 9. Је ли дете близанац -->
         <div style="width: 55.5%"></div>
         <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">
-          {{ krstenje.blizanac|yesno:"јесте,није,непознато" }}
+          {{ krstenje.dete_blizanac|yesno:"јесте,није,непознато" }}
         </div>
       </div>
       <div class="row" style="height: 9mm">
@@ -156,7 +156,7 @@
         <!-- 13. Страна домовника - анаграфа -->
         <div style="width: 46%"></div>
         <div style="width: 53%">
-          {{ krstenje.anagraf|default_if_none:"" }}
+          {{ krstenje.strana_registracije|default_if_none:"" }}
         </div>
       </div>
       <div class="row" style="height: 13mm">

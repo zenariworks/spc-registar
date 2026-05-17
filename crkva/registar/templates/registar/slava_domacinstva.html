@@ -98,7 +98,7 @@
                       {{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
                     </a>
                   {% else %}
-                    <span class="u-text-muted">{{ ukucanin.ime_prezime|default:"Непознато" }}</span>
+                    <span class="u-text-muted">{{ ukucanin.ime_ukucana|default:"Непознато" }}</span>
                   {% endif %}
                   {% if ukucanin.uloga %}
                     <span class="u-role-tag">{{ ukucanin.uloga }}</span>
