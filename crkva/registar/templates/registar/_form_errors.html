@@ -1,0 +1,10 @@
+{% if form.errors %}
+  <div class="u-alert u-alert--error">
+    <strong><i class="fa-solid fa-exclamation-circle"></i> Исправите следеће грешке:</strong>
+    <ul style="margin:8px 0 0;padding-left:20px;">
+      {% for field, errors in form.errors.items %}
+        {% for error in errors %}<li>{{ field }}: {{ error }}</li>{% endfor %}
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}

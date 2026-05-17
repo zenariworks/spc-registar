@@ -28,10 +28,7 @@
   </div>
 
   {% if is_edit and form.errors %}
-    <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);color:#991b1b;">
-      <strong><i class="fa-solid fa-exclamation-circle"></i> Исправите следеће грешке:</strong>
-      <ul style="margin:8px 0 0;padding-left:20px;">{% for field, errors in form.errors.items %}{% for error in errors %}<li>{{ field }}: {{ error }}</li>{% endfor %}{% endfor %}</ul>
-    </div>
+    {% include 'registar/_form_errors.html' %}
   {% endif %}
 
   {% if not is_edit %}

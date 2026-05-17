@@ -47,7 +47,7 @@
         </li>
       </ul>
       {% if info_form.errors %}
-        <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-top:var(--space-3);color:#991b1b;">
+        <div class="u-alert u-alert--error" style="margin-top:var(--space-3);">
           {% for field, errors in info_form.errors.items %}{% for error in errors %}<div>{{ field }}: {{ error }}</div>{% endfor %}{% endfor %}
         </div>
       {% endif %}
@@ -80,7 +80,7 @@
         </li>
       </ul>
       {% if password_form.errors %}
-        <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-top:var(--space-3);color:#991b1b;">
+        <div class="u-alert u-alert--error" style="margin-top:var(--space-3);">
           <ul style="margin:0;padding-left:20px;">
             {% for field, errors in password_form.errors.items %}{% for error in errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
           </ul>
