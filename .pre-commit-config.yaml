@@ -54,7 +54,7 @@ repos:
         args:
           - --rcfile=.pylintrc
           - --django-settings-module=crkva.settings
-        exclude: ^.*/migrations/.*$
+        exclude: ^(.*/migrations/.*|scripts/gunicorn\.conf\.py)$
 
   # Django tests
   - repo: local
