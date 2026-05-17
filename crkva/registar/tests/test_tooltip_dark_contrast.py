@@ -210,8 +210,9 @@ class TooltipConsumerTests(TestCase):
 class TooltipBundleTests(TestCase):
     """Sanity check that the compressed bundle (if present) reflects the fix.
 
-    Skipped when no bundle has been built yet — the source-file tests above
-    are authoritative for CI.
+    The source-file tests above are authoritative. This test only fires
+    when there is a freshly built bundle (newer than the source CSS) on
+    disk — that's the post-deploy verification path; on dev/CI it skips.
     """
 
     def test_bundled_css_contains_tooltip_tokens(self):
@@ -223,14 +224,28 @@ class TooltipBundleTests(TestCase):
             key=lambda p: p.stat().st_mtime,
             reverse=True,
         )
-        # Find the first bundle that actually contains tooltip rules
+        # Find the most recent bundle that actually contains tooltip rules
         tooltip_bundle = next(
             (b for b in bundles if "data-tooltip" in b.read_text(encoding="utf-8")),
             None,
         )
         if tooltip_bundle is None:
             self.skipTest("no bundle currently contains tooltip rules")
+        # Skip when the bundle pre-dates the source — it's just stale, not
+        # broken. After deploy (collectstatic), the new bundle will be
+        # written and this test will assert the right contents.
+        source_mtime = max(
+            DUGMAD_CSS.stat().st_mtime,
+            SIDEBAR_CSS.stat().st_mtime,
+            KALENDAR_CSS.stat().st_mtime,
+            TOKENS_CSS.stat().st_mtime,
+            DARK_THEME_CSS.stat().st_mtime,
+        )
+        if tooltip_bundle.stat().st_mtime < source_mtime:
+            self.skipTest(
+                "tooltip CSS bundle is older than source — run collectstatic"
+            )
         text = tooltip_bundle.read_text(encoding="utf-8")
-        # The bundle must reference the tokens, not the broken --color-surface
+        # Bundle must reference the new tokens, not the broken --color-surface
         self.assertIn("--tooltip-bg", text)
         self.assertIn("--tooltip-text", text)
