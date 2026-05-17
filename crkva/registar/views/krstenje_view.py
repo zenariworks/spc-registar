@@ -125,7 +125,7 @@ class PrikazKrstenja(DetailView):
     """Приказује детаљне информације о појединачном крштењу."""
 
     model = Krstenje
-    template_name = "registar/info_krstenje.html"
+    template_name = "registar/krstenje.html"
     context_object_name = "krstenje"
 
     def get_object(self) -> Krstenje:
@@ -162,5 +162,6 @@ def izmena_krstenja(request, uid):
             "title": "Измена",
             "back_url": reverse("krstenje_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,
+            "krstenje": instance,
         },
     )

@@ -111,7 +111,7 @@ class PrikazKrstenjaViewTestCase(TestCase):
         response = self.client.get(
             reverse("krstenje_detail", kwargs={"uid": self.krstenje.uid})
         )
-        self.assertTemplateUsed(response, "registar/info_krstenje.html")
+        self.assertTemplateUsed(response, "registar/krstenje.html")
 
     def test_prikaz_krstenja_contains_krstenje_data(self):
         """Приказ крштења садржи податке о крштењу."""
