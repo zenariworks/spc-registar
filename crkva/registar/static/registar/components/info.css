@@ -160,3 +160,40 @@
     color: var(--color-text-muted);
     font-style: italic;
 }
+
+
+/* Horizontal compact variant — fields side-by-side for record/Запис sections */
+.info-rows--inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 18px;
+    margin: 0;
+    padding: 0;
+}
+.info-rows--inline .info-row {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    grid-template-columns: none;
+    border: none;
+    padding: 6px 0;
+    flex: 0 1 auto;
+}
+.info-rows--inline .info-row__icon {
+    width: auto;
+    text-align: left;
+    color: var(--color-text-muted);
+}
+.info-rows--inline .info-row__value {
+    font-weight: 500;
+}
+.info-rows--inline .info-row--editable {
+    flex: 1 1 140px;
+    min-width: 120px;
+    padding: 4px 0;
+}
+.info-rows--inline .info-row--editable .info-row__value > input,
+.info-rows--inline .info-row--editable .info-row__value > select,
+.info-rows--inline .info-row--editable .info-row__value > textarea {
+    min-width: 0;
+}
