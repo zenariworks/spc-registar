@@ -20,7 +20,7 @@ from typing import Iterator, Optional
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
 from registar.management.commands.base_migration import MigrationCommand
-from registar.migracija.address import set_adresa_if_empty
+from registar.migracija.address import find_or_create_adresa, set_adresa_if_empty
 from registar.migracija.cache import (
     LookupCache,
     normalise_hram_naziv,
@@ -44,7 +44,6 @@ from registar.models import (
     Veroispovest,
     Zanimanje,
 )
-from registar.models.adresa import Adresa
 from registar.utils_parser import parse_vera_narodnost
 
 SOURCE_COLUMNS = (
@@ -372,18 +371,20 @@ class Command(MigrationCommand):
 
         # Adrese
         if dete and (r.adresa_deteta_grad or r.adresa_deteta_ulica):
-            adr = Adresa.objects.create(
-                mesto=r.adresa_deteta_grad,
-                ulica=r.adresa_deteta_ulica or "",
-                broj=r.adresa_deteta_broj or "",
+            set_adresa_if_empty(
+                dete,
+                find_or_create_adresa(
+                    ulica=r.adresa_deteta_ulica or "",
+                    broj=r.adresa_deteta_broj or "",
+                    mesto=r.adresa_deteta_grad,
+                ),
             )
-            set_adresa_if_empty(dete, adr)
         if otac and r.otac_adresa:
-            set_adresa_if_empty(otac, Adresa.objects.create(mesto=r.otac_adresa))
+            set_adresa_if_empty(otac, find_or_create_adresa(mesto=r.otac_adresa))
         if majka and r.majka_adresa:
-            set_adresa_if_empty(majka, Adresa.objects.create(mesto=r.majka_adresa))
+            set_adresa_if_empty(majka, find_or_create_adresa(mesto=r.majka_adresa))
         if kum and r.kum_mesto:
-            set_adresa_if_empty(kum, Adresa.objects.create(mesto=r.kum_mesto))
+            set_adresa_if_empty(kum, find_or_create_adresa(mesto=r.kum_mesto))
 
         return {
             "dete": dete,

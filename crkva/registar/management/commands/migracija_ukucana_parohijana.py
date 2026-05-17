@@ -13,9 +13,10 @@ from typing import Dict, Iterable
 
 from django.db import connection
 from registar.management.commands.base_migration import MigrationCommand
+from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
 from registar.migracija.helpers import clean_prezime, cyr
-from registar.migracija.osoba_repo import find_or_create_osoba
-from registar.models import Adresa, Domacinstvo, Osoba, Slava, Ukucanin
+from registar.migracija.osoba_repo import find_or_create_osoba, warm_osoba_cache
+from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
 
 
 class Command(MigrationCommand):
@@ -32,6 +33,11 @@ class Command(MigrationCommand):
             self.stdout.write("Чишћење постојећих података...")
             Ukucanin.objects.all().delete()
             Domacinstvo.objects.all().delete()
+
+        # Warm in-memory caches so the hot loop hits dicts, not the DB.
+        n_adr = warm_adresa_cache()
+        n_os = warm_osoba_cache()
+        self.stdout.write(f"Загрејано: {n_adr} адреса, {n_os} особа у кешу.")
 
         self.stdout.write("Учитавам називе улица из hsp_ulice...")
         self.ulice_cache = self._build_ulice_cache()
@@ -133,12 +139,12 @@ class Command(MigrationCommand):
                     continue
 
                 ulica_naziv = self.ulice_cache.get(ulica_uid, "") if ulica_uid else ""
-                adresa = Adresa.objects.create(
+                adresa = find_or_create_adresa(
                     ulica=ulica_naziv,
                     broj=cyr(str(broj_ulice or "")),
-                    sprat="",
                     broj_stana=cyr(str(broj_stana or "")),
                     mesto="Чукарица",
+                    sprat="",
                     primedba=cyr(napomena or ""),
                 )
 
