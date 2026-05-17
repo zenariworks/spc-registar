@@ -170,7 +170,9 @@
     </script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="{% static 'registar/components/modal.js' %}"></script>
-    <script src="{% static 'registar/components/osoba_create.js' %}"></script>
+    {# form.media.js (select2.full.min.js + django_select2.js) is injected here; #}
+    {# osoba_create.js must follow so it can hook .on('select2:open') AFTER select2 is loaded. #}
     {% block extra_js %}{% endblock %}
+    <script src="{% static 'registar/components/osoba_create.js' %}"></script>
   </body>
 </html>
