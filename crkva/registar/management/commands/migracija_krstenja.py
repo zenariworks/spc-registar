@@ -31,6 +31,7 @@ from registar.migracija.helpers import (
     clean_prezime,
     cyr,
     cyr_int,
+    extract_maiden,
     parse_time,
     split_full_name_last_word,
 )
@@ -353,13 +354,20 @@ class Command(MigrationCommand):
             narodnost=otac_narod,
         )
 
+        # The mother's surname field in DBF often carries a "р.<X>" maiden
+        # marker. Split it: if a marker is present the married surname is
+        # blank in the source, so fall back to the father's surname
+        # (otac_prezime) as the most likely married name.
+        majka_married, majka_maiden = extract_maiden(r.majka_prezime.strip())
+        majka_prezime = majka_married or otac_prezime
         majka = find_or_create_osoba(
             ime=r.majka_ime.strip(),
-            prezime=clean_prezime(r.majka_prezime.strip()),
+            prezime=majka_prezime,
             pol="Ж",
             zanimanje=self._zanimanje.get(r.majka_zanimanje),
             veroispovest=majka_vera,
             narodnost=majka_narod,
+            devojacko_prezime=majka_maiden or None,
         )
 
         kum = self._parse_kum(r)

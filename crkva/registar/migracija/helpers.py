@@ -18,6 +18,13 @@ from registar.management.commands.convert_utils import Konvertor
 # original bug.
 _MARKER_R_CYR = re.compile(r"^р\.\s*|^р\s+", flags=re.IGNORECASE)
 _MARKER_R_LAT = re.compile(r"^r\.\s*|^r\s+", flags=re.IGNORECASE)
+# "рођ." marker with a period (in addition to the full word handled by
+# _MARKER_RODJENA below). Letters before the period: р + о + ђ. Latin
+# variants ("rodj." / "Rodj.") would collide with real surnames so we
+# don't strip those without an explicit period+letter context. Listed
+# BEFORE _MARKER_R_CYR in the extract loop so the longer prefix wins
+# over the shorter ``р.`` one.
+_MARKER_RODJ_DOT = re.compile(r"^рођ\.\s*|^рођ\s+", flags=re.IGNORECASE)
 _MARKER_RODJENA = re.compile(r"^рођена\s+", flags=re.IGNORECASE)
 
 
@@ -25,12 +32,53 @@ def clean_prezime(prezime: str | None) -> str:
     """Strip maiden-name markers and capitalise a sloppy lowercase first letter."""
     if not prezime:
         return prezime or ""
-    p = _MARKER_R_CYR.sub("", prezime).strip()
+    # Order matters: strip the longer "рођ." marker before "р." so we don't
+    # leave a stray "ођ." behind.
+    p = _MARKER_RODJ_DOT.sub("", prezime).strip()
+    p = _MARKER_R_CYR.sub("", p).strip()
     p = _MARKER_R_LAT.sub("", p).strip()
     p = _MARKER_RODJENA.sub("", p).strip()
     if p and p[0].islower():
         p = p[0].upper() + p[1:]
     return p
+
+
+def extract_maiden(prezime: str | None) -> tuple[str, str]:
+    """Split a surname field into (married_part, maiden_part).
+
+    The DBF sometimes stores female surnames as ``р.<X>`` / ``рођ. <X>`` /
+    ``r.<X>``. That ``<X>`` is the maiden surname (девојачко презиме); the
+    married surname is not encoded in the field at all.
+
+    Returns ``(married_part, maiden_part)``:
+
+      - When a marker is found, ``married_part`` is ``""`` (caller decides
+        what to do — keep blank for a clerk to fill in, or copy from the
+        husband / Domacinstvo). ``maiden_part`` is the cleaned surname
+        after the marker, with sloppy lowercase first-letter fixed.
+      - When no marker is found, ``married_part`` is the input (after
+        ``clean_prezime`` normalisation) and ``maiden_part`` is ``""``.
+      - Empty / None / a bare marker (``"р."``) yields ``("", "")``.
+
+    This is intentionally pure (no DB access) so callers can wire it into
+    importers and the post-hoc cleanup command alike.
+    """
+    if not prezime:
+        return "", ""
+    raw = prezime.strip()
+    if not raw:
+        return "", ""
+
+    # Order matters: try longer prefixes first ("рођена" / "рођ.") so
+    # "р." doesn't grab them mid-string.
+    for marker in (_MARKER_RODJENA, _MARKER_RODJ_DOT, _MARKER_R_CYR, _MARKER_R_LAT):
+        if marker.match(raw):
+            maiden = marker.sub("", raw).strip()
+            if maiden and maiden[0].islower():
+                maiden = maiden[0].upper() + maiden[1:]
+            return "", maiden
+
+    return clean_prezime(raw), ""
 
 
 # --- Раздвајање имена и презимена ---
@@ -124,4 +172,5 @@ def cyr(text: str | None) -> str:
 
 
 def cyr_int(value, default: int = 0) -> int:
+    """Convenience: Konvertor.int with a default fallback."""
     return Konvertor.int(value, default)
