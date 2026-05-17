@@ -85,6 +85,12 @@
     --color-black-alpha-90: rgba(0, 0, 0, 0.9);
     --color-white-alpha-20: rgba(255, 255, 255, 0.2);
 
+    /* Tooltip colors — kept theme-aware so contrast survives in both themes.
+       Light theme: dark bubble + white text. Dark theme overrides in themes/tamna.css. */
+    --tooltip-bg: #1f2937;
+    --tooltip-text: #ffffff;
+    --tooltip-shadow: rgba(0, 0, 0, 0.25);
+
     /* Fasting type colors */
     --fasting-dairy-bg: rgba(251, 191, 36, 0.15);
     --fasting-fish-bg: rgba(20, 184, 166, 0.2);

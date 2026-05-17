@@ -5,6 +5,12 @@
    underlying <select> carries `data-osoba-create`. Clicking it opens the
    shared #osoba-modal pre-filled by splitting the typed query on the first
    space (Име vs Презиме).
+
+   If the source <select> carries `data-osoba-default-pol="М"` or
+   `data-osoba-default-pol="Ж"` (gender-restricted lookups like majka /
+   otac), the matching Pol toggle button inside `#modal-pol-toggle` is
+   activated, so the user does not have to repeat what the field already
+   implied.
    ========================================================================== */
 
 (function ($) {
@@ -20,6 +26,24 @@
             ime: trimmed.slice(0, idx).trim(),
             prezime: trimmed.slice(idx + 1).trim(),
         };
+    }
+
+    function applyDefaultPol(defaultPol) {
+        if (defaultPol !== "М" && defaultPol !== "Ж") return;
+        var group = document.getElementById("modal-pol-toggle");
+        if (!group) return;
+        var buttons = group.querySelectorAll(".toggle-button");
+        var matched = null;
+        buttons.forEach(function (btn) {
+            btn.classList.remove("active");
+            if (btn.dataset && btn.dataset.value === defaultPol) {
+                matched = btn;
+            }
+        });
+        if (matched) {
+            // Trigger click so modal.js records the toggleState too.
+            matched.click();
+        }
     }
 
     function attach($select) {
@@ -55,6 +79,7 @@
                     e.preventDefault();
                     e.stopPropagation();
                     var parts = parseName($search.val());
+                    var defaultPol = $select.attr("data-osoba-default-pol") || "";
                     $select.select2("close");
                     if (!window.osobaModal || typeof window.osobaModal.open !== "function") return;
                     window.osobaModal.open($select.attr("id"));
@@ -63,6 +88,7 @@
                         var prezimeEl = document.getElementById("modal-prezime");
                         if (imeEl) imeEl.value = parts.ime;
                         if (prezimeEl) prezimeEl.value = parts.prezime;
+                        applyDefaultPol(defaultPol);
                         var focusEl = parts.prezime ? prezimeEl : imeEl;
                         if (focusEl) {
                             focusEl.focus();

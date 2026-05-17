@@ -87,19 +87,17 @@
       </div>
     </fieldset>
 
-    <fieldset class="form-section">
-      <legend>Податци о детету</legend>
-      <div class="form-row">
-        <div class="form-field">{{ form.dete_rodjeno_zivo.label_tag }} {{ form.dete_rodjeno_zivo }}</div>
-        <div class="form-field">{{ form.dete_po_redu_po_majci.label_tag }} {{ form.dete_po_redu_po_majci }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ form.dete_vanbracno.label_tag }} {{ form.dete_vanbracno }}</div>
-        <div class="form-field">{{ form.dete_blizanac.label_tag }} {{ form.dete_blizanac }}</div>
-        <div class="form-field">{{ form.drugo_dete_blizanac_ime.label_tag }} {{ form.drugo_dete_blizanac_ime }}</div>
-        <div class="form-field">{{ form.dete_sa_telesnom_manom.label_tag }} {{ form.dete_sa_telesnom_manom }}</div>
-      </div>
-    </fieldset>
+    <div class="info-section">
+      <h2 class="info-section__title"><i class="fa-solid fa-baby"></i> Подаци о детету</h2>
+      <ul class="info-rows">
+        <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Дете рођено живо"><i class="fa-solid fa-heart-pulse"></i></div><div class="info-row__value">{{ form.dete_rodjeno_zivo }}</div></li>
+        <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Дете по реду (по мајци)"><i class="fa-solid fa-list-ol"></i></div><div class="info-row__value">{{ form.dete_po_redu_po_majci }}</div></li>
+        <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Ванбрачно дете"><i class="fa-solid fa-ring"></i></div><div class="info-row__value">{{ form.dete_vanbracno }}</div></li>
+        <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Дете близанац"><i class="fa-solid fa-people-arrows"></i></div><div class="info-row__value">{{ form.dete_blizanac }}</div></li>
+        <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Име другог детета близанца"><i class="fa-solid fa-tag"></i></div><div class="info-row__value">{{ form.drugo_dete_blizanac_ime }}</div></li>
+        <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Дете са телесном маном"><i class="fa-solid fa-hand-holding-medical"></i></div><div class="info-row__value">{{ form.dete_sa_telesnom_manom }}</div></li>
+      </ul>
+    </div>
 
     <fieldset class="form-section">
       <legend><i class="fa-solid fa-user-tag"></i> Кум</legend>
