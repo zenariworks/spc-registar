@@ -34,6 +34,7 @@
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ form.ime }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ form.prezime }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Парохија"><i class="fa-solid fa-church"></i></div><div class="info-row__value">{{ form.parohija }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-house"></i></div><div class="info-row__value">{{ form.adresa }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ form.datum_rodjenja }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ form.mesto_rodjenja }}</div></li>
     {% else %}
@@ -41,6 +42,7 @@
     <li class="info-row"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ svestenik.ime }}</div></li>
     <li class="info-row"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ svestenik.prezime }}</div></li>
     {% if svestenik.parohija %}<li class="info-row"><div class="info-row__icon" data-tooltip="Парохија"><i class="fa-solid fa-church"></i></div><div class="info-row__value">{{ svestenik.parohija }}</div></li>{% endif %}
+    {% if svestenik.adresa %}<li class="info-row"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-house"></i></div><div class="info-row__value">{{ svestenik.adresa }}</div></li>{% endif %}
     {% if svestenik.datum_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ svestenik.datum_rodjenja }}</div></li>{% endif %}
     {% if svestenik.mesto_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ svestenik.mesto_rodjenja }}</div></li>{% endif %}
     {% endif %}

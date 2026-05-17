@@ -1,6 +1,7 @@
 """Django форма за унос крштења."""
 
 from django import forms
+from registar.forms.distinct_lookup import DistinctValuesCharField
 from django.db.models import Q
 from registar.forms.select2 import ScriptAwareModelSelect2Widget
 from registar.models import Hram, Krstenje, Svestenik
@@ -75,6 +76,13 @@ class KrstenjeForm(forms.ModelForm):
     Обухвата кључне податке из протокола, податке о детету, родитељима,
     месту/храму, куму и свештенику.
     """
+
+    mesto_registracije = DistinctValuesCharField(
+        required=False,
+        label="место регистрације",
+        model_label="registar.Krstenje",
+        source_fields=("mesto_registracije",),
+    )
 
     class Meta:
         model = Krstenje

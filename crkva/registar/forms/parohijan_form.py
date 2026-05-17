@@ -1,6 +1,7 @@
 """Django форма за унос парохијана."""
 
 from django import forms
+from registar.forms.distinct_lookup import DistinctValuesCharField
 from registar.forms.lookup import TaggableLookupField, TaggableLookupWidget
 from registar.forms.select2 import ScriptAwareModelSelect2Widget
 from registar.models import Adresa, Narodnost, Parohijan, Veroispovest, Zanimanje
@@ -35,6 +36,12 @@ class ParohijanForm(forms.ModelForm):
             model=Narodnost,
             search_fields=["naziv__icontains"],
         ),
+    )
+    mesto_rodjenja = DistinctValuesCharField(
+        required=False,
+        label="место рођења",
+        model_label="registar.Osoba",
+        source_fields=("mesto_rodjenja",),
     )
 
     class Meta:
