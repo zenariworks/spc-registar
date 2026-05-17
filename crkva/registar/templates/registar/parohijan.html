@@ -62,8 +62,11 @@
         </div>
       </div>
     </li>
-    {% elif parohijan.pol %}
-    <li class="info-row"><div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div><div class="info-row__value">{{ parohijan.get_pol_display }}</div></li>
+    {% else %}
+    {% if parohijan.pol %}<li class="info-row"><div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div><div class="info-row__value">{{ parohijan.get_pol_display }}</div></li>{% endif %}
+    <li class="info-row"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ parohijan.ime }}</div></li>
+    <li class="info-row"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ parohijan.prezime }}</div></li>
+    {% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %}<li class="info-row"><div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div><div class="info-row__value">{{ parohijan.devojacko_prezime }}</div></li>{% endif %}
     {% endif %}
 
     {% if is_edit %}
