@@ -72,9 +72,11 @@ class KrstenjeForm(forms.ModelForm):
             "primedba",
         ]
         widgets = {
-            "datum": forms.DateInput(attrs={"type": "date"}),
-            "vreme": forms.TimeInput(attrs={"type": "time"}),
-            "datum_registracije": forms.DateInput(attrs={"type": "date"}),
+            "datum": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+            "vreme": forms.TimeInput(attrs={"type": "time"}, format="%H:%M"),
+            "datum_registracije": forms.DateInput(
+                attrs={"type": "date"}, format="%Y-%m-%d"
+            ),
             "primedba": forms.Textarea(attrs={"rows": 4}),
             "dete": OsobaSelect2Widget,
             "otac": OsobaSelect2Widget,
