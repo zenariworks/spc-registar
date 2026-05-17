@@ -12,4 +12,5 @@ timeout = 120
 accesslog = "/var/log/spc-registar/access.log"
 errorlog = "/var/log/spc-registar/error.log"
 loglevel = "info"
-chdir = "/root/projects/spc-registar-main/crkva"
+
+# No chdir here — systemd unit sets WorkingDirectory=, and docker uses its own command (see docker-compose.prod.yml).
