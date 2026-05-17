@@ -4,6 +4,10 @@
   {{ form.media.css }}
 {% endblock %}
 
+{% block extra_js %}
+  {{ form.media.js }}
+{% endblock %}
+
 {% block content %}
   <form method="post" class="form form--single-column">
     {% csrf_token %}
@@ -127,5 +131,4 @@
     <!-- Bottom save removed as per request: action button is now at the top -->
   </form>
   {% include "registar/_modal_osoba.html" %}
-  {{ form.media.js }}
 {% endblock %}
