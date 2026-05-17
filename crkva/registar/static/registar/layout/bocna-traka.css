@@ -603,8 +603,11 @@ body.sidebar-collapsed {
   left: 100%;
   top: 50%;
   transform: translateY(-50%);
-  background: var(--color-black-alpha-90);
-  color: var(--color-surface);
+  /* Tooltip tokens are theme-aware (light: dark bg/white text, dark: slate
+     bg/near-white text). Do NOT use --color-surface for text here — in dark
+     mode it resolves to the page bg and the label disappears. */
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
   padding: 8px 12px;
   border-radius: 4px;
   white-space: nowrap;
@@ -621,8 +624,9 @@ body.sidebar-collapsed {
   left: 100%;
   top: 50%;
   transform: translateY(-50%);
-  background: var(--color-black-alpha-90);
-  color: var(--color-surface);
+  /* Same theme-aware tokens — see comment on sidebar-section-toggle above. */
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
   padding: 8px 12px;
   border-radius: 4px;
   white-space: nowrap;

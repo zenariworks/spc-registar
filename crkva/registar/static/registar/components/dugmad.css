@@ -218,8 +218,11 @@
     left: 50%;
     transform: translateX(-50%);
     padding: 6px 10px;
-    background: #1f2937;   /* fixed dark — readable on both themes */
-    color: #fff;
+    /* Theme-aware via dedicated tokens — see base/tokens.css + themes/tamna.css.
+       Never use --color-surface / --color-text here: they invert in dark mode
+       and produce dark-on-dark bubbles. */
+    background: var(--tooltip-bg);
+    color: var(--tooltip-text);
     font-size: 12px;
     font-weight: 400;
     line-height: 1.4;
@@ -233,7 +236,7 @@
     max-width: 240px;
     width: max-content;
     white-space: normal;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 2px 6px var(--tooltip-shadow);
 }
 [data-tooltip]:hover::after {
     opacity: 1;

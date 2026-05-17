@@ -500,8 +500,10 @@
   right: 0;
   margin-top: 8px;
   padding: 8px 12px;
-  background: var(--color-black-alpha-90);
-  color: var(--color-surface);
+  /* Theme-aware tooltip tokens — see base/tokens.css + themes/tamna.css.
+     Using --color-surface for text breaks dark mode (text == page bg). */
+  background: var(--tooltip-bg);
+  color: var(--tooltip-text);
   border-radius: 6px;
   font-size: 0.85rem;
   white-space: nowrap;
@@ -510,7 +512,7 @@
   transition: opacity 0.2s ease, visibility 0.2s ease;
   z-index: 1000;
   pointer-events: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px var(--tooltip-shadow);
 }
 
 
@@ -521,7 +523,7 @@
   bottom: 100%;
   right: 10px;
   border: 6px solid transparent;
-  border-bottom-color: var(--color-black-alpha-90);
+  border-bottom-color: var(--tooltip-bg);
 }
 
 /* Црвено слово (red letter days) - dark red like water fasting */
