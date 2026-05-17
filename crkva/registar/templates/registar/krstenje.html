@@ -70,12 +70,12 @@
         <ul class="info-rows">
           {% if is_edit %}
           <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Особа"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ form.dete }}</div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Дете рођено живо"><i class="fa-solid fa-heart-pulse"></i></div><div class="info-row__value">{{ form.dete_rodjeno_zivo }}</div></li>
           <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Дете по реду (по мајци)"><i class="fa-solid fa-list-ol"></i></div><div class="info-row__value">{{ form.dete_po_redu_po_majci }}</div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Брачно"><i class="fa-solid fa-ring"></i></div><div class="info-row__value"><label>{{ form.dete_vanbracno }} ванбрачно</label></div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Близанац"><i class="fa-solid fa-user-group"></i></div><div class="info-row__value"><label>{{ form.dete_blizanac }} близанац</label></div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Друго дете близанац"><i class="fa-solid fa-user-group"></i></div><div class="info-row__value">{{ form.drugo_dete_blizanac_ime }}</div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Телесна мана"><i class="fa-solid fa-hand-holding-medical"></i></div><div class="info-row__value"><label>{{ form.dete_sa_telesnom_manom }} са телесном маном</label></div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Рођено живо"><i class="fa-solid fa-heart-pulse"></i></div><div class="info-row__value"><label>{{ form.dete_rodjeno_zivo }} рођено живо</label></div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Ванбрачно дете"><i class="fa-solid fa-ring"></i></div><div class="info-row__value">{{ form.dete_vanbracno }}</div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Дете близанац"><i class="fa-solid fa-people-arrows"></i></div><div class="info-row__value">{{ form.dete_blizanac }}</div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Име другог детета близанца"><i class="fa-solid fa-tag"></i></div><div class="info-row__value">{{ form.drugo_dete_blizanac_ime }}</div></li>
+          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Дете са телесном маном"><i class="fa-solid fa-hand-holding-medical"></i></div><div class="info-row__value">{{ form.dete_sa_telesnom_manom }}</div></li>
           {% else %}
           <li class="info-row">
             <div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div>
@@ -84,10 +84,11 @@
           {% if krstenje.dete.get_pol_display %}<li class="info-row"><div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div><div class="info-row__value">{{ krstenje.dete.get_pol_display }}</div></li>{% endif %}
           {% if krstenje.datum_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ krstenje.datum_rodjenja }}</div></li>{% endif %}
           {% if krstenje.mesto_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ krstenje.mesto_rodjenja }}</div></li>{% endif %}
+          <li class="info-row"><div class="info-row__icon" data-tooltip="Дете рођено живо"><i class="fa-solid fa-heart-pulse"></i></div><div class="info-row__value">{{ krstenje.dete_rodjeno_zivo|yesno:"Да,Не" }}</div></li>
           {% if krstenje.dete_po_redu_po_majci %}<li class="info-row"><div class="info-row__icon" data-tooltip="Дете по реду (по мајци)"><i class="fa-solid fa-list-ol"></i></div><div class="info-row__value">{{ krstenje.dete_po_redu_po_majci }}</div></li>{% endif %}
-          <li class="info-row"><div class="info-row__icon" data-tooltip="Брачно"><i class="fa-solid fa-ring"></i></div><div class="info-row__value">{{ krstenje.dete_vanbracno|yesno:"није,јесте" }}</div></li>
-          {% if krstenje.dete_blizanac %}<li class="info-row"><div class="info-row__icon" data-tooltip="Близанац"><i class="fa-solid fa-user-group"></i></div><div class="info-row__value">Да{% if krstenje.drugo_dete_blizanac_ime %} ({{ krstenje.drugo_dete_blizanac_ime }}){% endif %}</div></li>{% endif %}
-          {% if krstenje.dete_sa_telesnom_manom %}<li class="info-row"><div class="info-row__icon" data-tooltip="Телесна мана"><i class="fa-solid fa-hand-holding-medical"></i></div><div class="info-row__value">Да</div></li>{% endif %}
+          <li class="info-row"><div class="info-row__icon" data-tooltip="Ванбрачно дете"><i class="fa-solid fa-ring"></i></div><div class="info-row__value">{{ krstenje.dete_vanbracno|yesno:"Да,Не" }}</div></li>
+          <li class="info-row"><div class="info-row__icon" data-tooltip="Дете близанац"><i class="fa-solid fa-people-arrows"></i></div><div class="info-row__value">{{ krstenje.dete_blizanac|yesno:"Да,Не" }}{% if krstenje.dete_blizanac and krstenje.drugo_dete_blizanac_ime %} <span class="info-row__sub">{{ krstenje.drugo_dete_blizanac_ime }}</span>{% endif %}</div></li>
+          <li class="info-row"><div class="info-row__icon" data-tooltip="Дете са телесном маном"><i class="fa-solid fa-hand-holding-medical"></i></div><div class="info-row__value">{{ krstenje.dete_sa_telesnom_manom|yesno:"Да,Не" }}</div></li>
           {% endif %}
         </ul>
       </div>
