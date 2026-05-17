@@ -135,6 +135,7 @@ fieldset.form-section legend {
    ========================================================================== */
 .toggle-group {
   display: inline-flex;
+  align-items: stretch;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-2);
   overflow: hidden;
@@ -142,12 +143,18 @@ fieldset.form-section legend {
   flex-wrap: wrap;
 }
 .toggle-button {
-  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 16px;
+  min-height: 36px;
   cursor: pointer;
   user-select: none;
+  font-family: inherit;
   font-weight: 500;
   font-size: 14px;
-  line-height: 1.4;
+  line-height: 1;
   color: var(--color-text-muted);
   background: transparent;
   border: none;
