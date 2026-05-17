@@ -4,10 +4,10 @@
   <form method="post" class="form form--single-column">
     {% csrf_token %}
     <div class="u-page-header">
-      <a href="{% url 'tenants:user_list' %}" class="back-button" aria-label="Назад" title="Назад">
+      <a href="{% url 'parohija:user_list' %}" class="back-button" aria-label="Назад" title="Назад">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
-      <h1 class="u-page-title">Нови корисник — {{ tenant.naziv }}</h1>
+      <h1 class="u-page-title">Нови корисник — {{ parohija.parohija_naziv|default:parohija.naziv }}</h1>
       <button class="button button--primary" type="submit" title="Сачувај">
         <i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i> Сачувај
       </button>

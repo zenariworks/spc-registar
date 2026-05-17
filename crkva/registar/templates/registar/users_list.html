@@ -2,8 +2,8 @@
 
 {% block content %}
   <div class="u-page-header">
-    <h1 class="u-page-title">Корисници — {{ tenant.naziv }}</h1>
-    <a href="{% url 'tenants:user_add' %}" class="button button--primary" title="Додај корисника">
+    <h1 class="u-page-title">Корисници — {{ parohija.parohija_naziv|default:parohija.naziv }}</h1>
+    <a href="{% url 'parohija:user_add' %}" class="button button--primary" title="Додај корисника">
       <i class="fa-solid fa-user-plus" style="margin-right:6px;"></i> Додај корисника
     </a>
   </div>
@@ -36,7 +36,7 @@
           <td style="padding:var(--space-3);">{{ m.user.first_name }} {{ m.user.last_name }}</td>
           <td style="padding:var(--space-3);">{{ m.user.email|default:"—" }}</td>
           <td style="padding:var(--space-3);">
-            <form method="post" action="{% url 'tenants:user_edit_role' m.user.pk %}" style="display:inline-flex;gap:8px;align-items:center;">
+            <form method="post" action="{% url 'parohija:user_edit_role' m.user.pk %}" style="display:inline-flex;gap:8px;align-items:center;">
               {% csrf_token %}
               <select name="role" onchange="this.form.submit()" class="list-toolbar__select">
                 {% for value, label in m.Role.choices %}{% endfor %}
@@ -56,7 +56,7 @@
           </td>
           <td style="padding:var(--space-3);text-align:right;">
             {% if m.user.pk != request.user.pk %}
-              <form method="post" action="{% url 'tenants:user_deactivate' m.user.pk %}" style="display:inline;" onsubmit="return confirm('{% if m.user.is_active %}Деактивирати{% else %}Активирати{% endif %} {{ m.user.username }}?');">
+              <form method="post" action="{% url 'parohija:user_deactivate' m.user.pk %}" style="display:inline;" onsubmit="return confirm('{% if m.user.is_active %}Деактивирати{% else %}Активирати{% endif %} {{ m.user.username }}?');">
                 {% csrf_token %}
                 <button type="submit" class="button button--ghost" title="{% if m.user.is_active %}Деактивирај{% else %}Активирај{% endif %}">
                   <i class="fa-solid {% if m.user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %}"></i>

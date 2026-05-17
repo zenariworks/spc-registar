@@ -58,14 +58,14 @@ def profile(request: HttpRequest) -> HttpResponse:
             if info_form.is_valid():
                 info_form.save()
                 messages.success(request, "Подаци сачувани.")
-                return redirect("tenants:profile")
+                return redirect("parohija:profile")
         elif action == "password":
             password_form = PasswordChangeForm(user=request.user, data=request.POST)
             if password_form.is_valid():
                 user = password_form.save()
                 update_session_auth_hash(request, user)
                 messages.success(request, "Лозинка промењена.")
-                return redirect("tenants:profile")
+                return redirect("parohija:profile")
 
     return render(
         request,
@@ -109,7 +109,7 @@ def user_add(request: HttpRequest) -> HttpResponse:
             is_default=data["is_default"],
         )
         messages.success(request, f"Корисник {user.username} креиран.")
-        return redirect("tenants:user_list")
+        return redirect("parohija:user_list")
     return render(request, "registar/users_add.html", {"form": form})
 
 
@@ -125,7 +125,7 @@ def user_edit_role(request: HttpRequest, user_id: int) -> HttpResponse:
         membership.role = form.cleaned_data["role"]
         membership.save(update_fields=["role"])
         messages.success(request, f"Улога ажурирана за {membership.user.username}.")
-    return redirect("tenants:user_list")
+    return redirect("parohija:user_list")
 
 
 @tenant_admin_required
@@ -138,9 +138,9 @@ def user_deactivate(request: HttpRequest, user_id: int) -> HttpResponse:
     target = membership.user
     if target.pk == request.user.pk:
         messages.error(request, "Не можете деактивирати свој налог.")
-        return redirect("tenants:user_list")
+        return redirect("parohija:user_list")
     target.is_active = not target.is_active
     target.save(update_fields=["is_active"])
     verb = "активиран" if target.is_active else "деактивиран"
     messages.success(request, f"Корисник {target.username} {verb}.")
-    return redirect("tenants:user_list")
+    return redirect("parohija:user_list")

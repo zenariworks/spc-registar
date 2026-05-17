@@ -11,7 +11,7 @@ User = get_user_model()
 
 
 class UserManagementViewTests(TestCase):
-    """Smoke tests for /tenant/users/ list, add, role-edit, deactivate."""
+    """Smoke tests for /parohija/users/ list, add, role-edit, deactivate."""
 
     @classmethod
     def setUpTestData(cls):
@@ -53,18 +53,18 @@ class UserManagementViewTests(TestCase):
     # ----- list -----
 
     def test_anonymous_redirects_to_login(self):
-        r = self.client.get(reverse("tenants:user_list"))
+        r = self.client.get(reverse("parohija:user_list"))
         self.assertEqual(r.status_code, 302)
         self.assertIn("/prijava/", r["Location"])
 
     def test_non_admin_forbidden(self):
         self.client.force_login(self.clerk)
-        r = self.client.get(reverse("tenants:user_list"))
+        r = self.client.get(reverse("parohija:user_list"))
         self.assertEqual(r.status_code, 403)
 
     def test_admin_sees_only_their_tenants_users(self):
         self.client.force_login(self.admin)
-        r = self.client.get(reverse("tenants:user_list"))
+        r = self.client.get(reverse("parohija:user_list"))
         self.assertEqual(r.status_code, 200)
         usernames = [m.user.username for m in r.context["memberships"]]
         self.assertIn("adm", usernames)
@@ -78,7 +78,7 @@ class UserManagementViewTests(TestCase):
         self.client.force_login(self.admin)
         before = User.objects.count()
         r = self.client.post(
-            reverse("tenants:user_add"),
+            reverse("parohija:user_add"),
             {
                 "username": "newuser",
                 "password": "veryStrong!Pass1",
@@ -99,7 +99,7 @@ class UserManagementViewTests(TestCase):
     def test_non_admin_cannot_add_user(self):
         self.client.force_login(self.clerk)
         r = self.client.post(
-            reverse("tenants:user_add"),
+            reverse("parohija:user_add"),
             {
                 "username": "nope",
                 "password": "veryStrong!Pass1",
@@ -111,7 +111,7 @@ class UserManagementViewTests(TestCase):
     def test_duplicate_username_rejected(self):
         self.client.force_login(self.admin)
         r = self.client.post(
-            reverse("tenants:user_add"),
+            reverse("parohija:user_add"),
             {
                 "username": "kanc",  # already exists
                 "password": "veryStrong!Pass1",
@@ -126,7 +126,7 @@ class UserManagementViewTests(TestCase):
     def test_admin_can_change_role(self):
         self.client.force_login(self.admin)
         r = self.client.post(
-            reverse("tenants:user_edit_role", kwargs={"user_id": self.clerk.pk}),
+            reverse("parohija:user_edit_role", kwargs={"user_id": self.clerk.pk}),
             {"role": Role.PREGLED},
         )
         self.assertEqual(r.status_code, 302)
@@ -137,7 +137,7 @@ class UserManagementViewTests(TestCase):
         self.client.force_login(self.admin)
         r = self.client.post(
             reverse(
-                "tenants:user_edit_role", kwargs={"user_id": self.foreign_clerk.pk}
+                "parohija:user_edit_role", kwargs={"user_id": self.foreign_clerk.pk}
             ),
             {"role": Role.PREGLED},
         )
@@ -152,7 +152,7 @@ class UserManagementViewTests(TestCase):
     def test_admin_can_deactivate_user(self):
         self.client.force_login(self.admin)
         r = self.client.post(
-            reverse("tenants:user_deactivate", kwargs={"user_id": self.clerk.pk}),
+            reverse("parohija:user_deactivate", kwargs={"user_id": self.clerk.pk}),
         )
         self.assertEqual(r.status_code, 302)
         self.clerk.refresh_from_db()
@@ -161,7 +161,7 @@ class UserManagementViewTests(TestCase):
     def test_admin_cannot_deactivate_self(self):
         self.client.force_login(self.admin)
         r = self.client.post(
-            reverse("tenants:user_deactivate", kwargs={"user_id": self.admin.pk}),
+            reverse("parohija:user_deactivate", kwargs={"user_id": self.admin.pk}),
         )
         self.assertEqual(r.status_code, 302)
         self.admin.refresh_from_db()
@@ -171,7 +171,7 @@ class UserManagementViewTests(TestCase):
         self.client.force_login(self.admin)
         r = self.client.post(
             reverse(
-                "tenants:user_deactivate", kwargs={"user_id": self.foreign_clerk.pk}
+                "parohija:user_deactivate", kwargs={"user_id": self.foreign_clerk.pk}
             ),
         )
         self.assertEqual(r.status_code, 404)

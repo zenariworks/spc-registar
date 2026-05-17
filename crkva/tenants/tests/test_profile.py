@@ -10,7 +10,7 @@ User = get_user_model()
 
 
 class ProfileViewTests(TestCase):
-    """Smoke tests for /tenant/profile/ info + password change."""
+    """Smoke tests for /parohija/profile/ info + password change."""
 
     @classmethod
     def setUpTestData(cls):
@@ -22,7 +22,7 @@ class ProfileViewTests(TestCase):
         self.client = Client()
 
     def url(self):
-        return reverse("tenants:profile")
+        return reverse("parohija:profile")
 
     def test_anonymous_redirects_to_login(self):
         r = self.client.get(self.url())

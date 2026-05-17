@@ -3,7 +3,7 @@
 from django.urls import path
 from tenants import views
 
-app_name = "tenants"
+app_name = "parohija"
 
 urlpatterns = [
     path("switch/<int:tenant_id>/", views.switch_tenant, name="switch"),
