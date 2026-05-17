@@ -5,6 +5,7 @@
 .info-page {
     max-width: 760px;
     margin: 0 auto;
+    min-width: 0;
 }
 
 .info-rows {
@@ -108,19 +109,21 @@
    so the input occupies the value column at full width.
    ========================================================================== */
 
-.info-row--editable .info-row__value > input[type="text"],
-.info-row--editable .info-row__value > input[type="search"],
-.info-row--editable .info-row__value > input[type="number"],
-.info-row--editable .info-row__value > input[type="date"],
-.info-row--editable .info-row__value > input[type="email"],
-.info-row--editable .info-row__value > input[type="time"],
-.info-row--editable .info-row__value > input[type="tel"],
-.info-row--editable .info-row__value > input[type="password"],
+.info-row--editable .info-row__value {
+    min-width: 0;
+}
+.info-row--editable .info-row__value > input,
 .info-row--editable .info-row__value > select,
 .info-row--editable .info-row__value > textarea,
 .info-row--editable .info-row__value > .select2,
-.info-row--editable .info-row__value > .select2-selection {
-    width: 100%;
+.info-row--editable .info-row__value > .select2-container {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+.info-row--editable .info-row__value > .toggle-group {
+    max-width: 100%;
+    flex-wrap: wrap;
 }
 
 .info-row--editable {
