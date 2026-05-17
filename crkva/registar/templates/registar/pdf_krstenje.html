@@ -47,7 +47,7 @@
       </div>
       <div class="row"
         style="width: 30%; justify-content: flex-start; padding-left: 6%; letter-spacing: 1px; padding-bottom: 2%; height: 9mm">
-        {{ krstenje.mesto }}у
+        {{ krstenje.hram.mesto }}у
       </div>
       <div class="row" style="width: 12%; padding-bottom: 2%; height: 9mm; justify-content: flex-start;">
         {{ krstenje.datum|date:"y" }}
@@ -83,7 +83,7 @@
       <!-- 4. Место и храм крштења и миропомазања -->
       <div style="width: 46%"></div>
       <div style="width: 53%">
-        {{ krstenje.mesto }}, {{ krstenje.hram }}
+        {{ krstenje.hram.mesto }}, {{ krstenje.hram.naziv }}
       </div>
     </div>
     <div class="row" style="height: 9mm">
@@ -101,7 +101,7 @@
       <div style="width: 53%; font-size: 12pt; letter-spacing: 0.2px;">
         {{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и <br>
         {{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>
-        {{ krstenje.mesto }}, {{ krstenje.adresa_deteta_ulica}} {{ krstenje.adresa_deteta_broj}} <br>
+        {{ krstenje.adresa_deteta.mesto }}, {{ krstenje.adresa_deteta.ulica }} {{ krstenje.adresa_deteta.broj }} <br>
         {{krstenje.veroispovest_oca }}<br>
       </div>
     </div>

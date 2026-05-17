@@ -38,7 +38,7 @@
       </div>
       <div class="row" style="height: 9mm">
         <div style="width: 50%; justify-content: center; padding-left: 20%; padding-bottom: 3%">
-          {{ vencanje.mesto_zenika }}
+          {{ vencanje.hram.mesto }}
         </div>
         <div style="width: 45%; padding-left: 6%; padding-bottom: 3%">
           {{ vencanje.datum|date:"y" }}
@@ -127,7 +127,7 @@
         <!-- 7. Mesto i hram gde je vencanje izvrseno-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          {{ vencanje.mesto_zenika }}, {{ vencanje.hram }}
+          {{ vencanje.hram.mesto }}, {{ vencanje.hram.naziv }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
