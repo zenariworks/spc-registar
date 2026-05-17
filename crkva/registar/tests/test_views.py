@@ -7,7 +7,7 @@ import datetime
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
-from registar.models import Hram, Krstenje, Osoba
+from registar.models import Domacinstvo, Hram, Krstenje, Osoba, Ukucanin
 
 
 class IndexViewTestCase(TestCase):
@@ -277,3 +277,96 @@ class ListSortTestCase(TestCase):
     def test_sort_ignored_when_value_not_in_options(self):
         response = self.client.get(reverse("parohijani"), {"sort": "evil; drop table"})
         self.assertEqual(response.status_code, 200)
+
+
+class SpisakParohijanaListTests(TestCase):
+    """Тестови за приказ домаћинства на списку парохијана."""
+
+    def setUp(self):
+        self.client = Client()
+        from registar.models import Adresa
+
+        self.adresa = Adresa.objects.create(
+            ulica="Поручника Спасића", broj="12", mesto="Београд"
+        )
+
+    def test_domacin_badge_renders(self):
+        """Парохијан који је домаћин има значку 'домаћин' и адресу домаћинства."""
+        domacin = Osoba.objects.create(ime="Драган", prezime="Станчић", parohijan=True)
+        Domacinstvo.objects.create(domacin=domacin, adresa=self.adresa)
+        response = self.client.get(reverse("parohijani"))
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        self.assertIn("Драган", html)
+        self.assertIn("Станчић", html)
+        self.assertIn("stavka__meta-badge--domacin", html)
+        self.assertIn("домаћин", html)
+        self.assertIn("Поручника Спасића", html)
+
+    def test_clan_badge_renders(self):
+        """Парохијан који је члан туђег домаћинства има значку 'члан' са именом домаћина."""
+        domacin = Osoba.objects.create(ime="Драган", prezime="Станчић", parohijan=True)
+        domacinstvo = Domacinstvo.objects.create(domacin=domacin, adresa=self.adresa)
+        clan = Osoba.objects.create(ime="Милица", prezime="Станчић", parohijan=True)
+        Ukucanin.objects.create(domacinstvo=domacinstvo, osoba=clan, uloga="дете")
+        response = self.client.get(reverse("parohijani"))
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        # 'члан' значка треба да буде испред имена домаћина у Миличином реду
+        self.assertIn("stavka__meta-badge--clan", html)
+        self.assertIn("члан", html)
+        # Драган Станчић је и домаћин, и приказан као домаћин код Милице
+        idx_milica = html.find("Милица")
+        idx_clan_after = html.find("члан", idx_milica)
+        idx_dragan_after = html.find("Драган", idx_milica)
+        self.assertGreater(idx_clan_after, idx_milica)
+        self.assertGreater(idx_dragan_after, idx_milica)
+
+    def test_no_household_renders_no_badge(self):
+        """Парохијан без везе са домаћинством нема никакву значку."""
+        Osoba.objects.create(ime="Самосталан", prezime="Без-Дома", parohijan=True)
+        response = self.client.get(reverse("parohijani"))
+        self.assertEqual(response.status_code, 200)
+        html = response.content.decode()
+        self.assertIn("Самосталан", html)
+        # Никаква meta значка не сме да се појави
+        self.assertNotIn("stavka__meta-badge", html)
+
+    def test_list_query_count_does_not_grow_with_n(self):
+        """Број SQL упита не сме да расте са бројем парохијана/домаћинстава (no N+1)."""
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        def page_size_5_setup():
+            h1 = Osoba.objects.create(ime="Х1", prezime="Х", parohijan=True)
+            d1 = Domacinstvo.objects.create(domacin=h1, adresa=self.adresa)
+            h2 = Osoba.objects.create(ime="Х2", prezime="Х", parohijan=True)
+            d2 = Domacinstvo.objects.create(domacin=h2, adresa=self.adresa)
+            c1 = Osoba.objects.create(ime="Ч1", prezime="Ч", parohijan=True)
+            Ukucanin.objects.create(domacinstvo=d1, osoba=c1, uloga="дете")
+            c2 = Osoba.objects.create(ime="Ч2", prezime="Ч", parohijan=True)
+            Ukucanin.objects.create(domacinstvo=d2, osoba=c2, uloga="дете")
+            Osoba.objects.create(ime="Н1", prezime="Н", parohijan=True)
+
+        page_size_5_setup()
+        # Прва страна (10 парохијана по страни): измери укупан број упита.
+        with CaptureQueriesContext(connection) as ctx_small:
+            response = self.client.get(reverse("parohijani"))
+        self.assertEqual(response.status_code, 200)
+        small_n = len(ctx_small.captured_queries)
+
+        # Утростручи број парохијана (углавном без домаћинстава) — упити не смеју расти.
+        for i in range(20):
+            extra = Osoba.objects.create(ime=f"Е{i}", prezime="Е", parohijan=True)
+            if i % 3 == 0:
+                Domacinstvo.objects.create(domacin=extra, adresa=self.adresa)
+
+        with CaptureQueriesContext(connection) as ctx_big:
+            response = self.client.get(reverse("parohijani"))
+        self.assertEqual(response.status_code, 200)
+        big_n = len(ctx_big.captured_queries)
+
+        # Број упита мора остати константан (евентуално +1 за пагинацију — допуштамо мали зазор).
+        self.assertLessEqual(
+            big_n, small_n + 1, f"Упити расту са N: {small_n} -> {big_n}"
+        )

@@ -52,8 +52,23 @@ class SpisakParohijana(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
     ]
 
     def get_queryset(self):
+        from django.db.models import Prefetch
+        from registar.models import Ukucanin
+
+        ukucanin_qs = Ukucanin.objects.select_related(
+            "domacinstvo", "domacinstvo__domacin", "domacinstvo__adresa"
+        )
         return self.get_search_queryset(
-            Parohijan.objects.select_related("adresa").all()
+            Parohijan.objects.select_related("adresa")
+            .select_related("domacinstvo", "domacinstvo__adresa")
+            .prefetch_related(
+                Prefetch(
+                    "ukucanin_set",
+                    queryset=ukucanin_qs,
+                    to_attr="prefetched_ukucanstva",
+                )
+            )
+            .all()
         )
 
 
