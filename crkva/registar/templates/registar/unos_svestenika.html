@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <form method="post" class="form">
+  <form method="post" class="form form--single-column">
     {% csrf_token %}
     <div class="u-page-header">
       <a href="{% url 'svestenici' %}" class="back-button" aria-label="Назад" title="Назад">
@@ -27,7 +27,7 @@
     {% endif %}
 
     <fieldset class="form-section">
-      <legend>Основни подаци</legend>
+      <legend><i class="fa-solid fa-user"></i> Основни подаци</legend>
       <div class="form-row">
         <div class="form-field">{{ form.zvanje.label_tag }} {{ form.zvanje }}</div>
         <div class="form-field">{{ form.ime.label_tag }} {{ form.ime }}</div>
@@ -40,7 +40,7 @@
     </fieldset>
 
     <fieldset class="form-section">
-      <legend>Парохија</legend>
+      <legend><i class="fa-solid fa-church"></i> Парохија</legend>
       <div class="form-row">
         <div class="form-field">{{ form.parohija.label_tag }} {{ form.parohija }}</div>
       </div>

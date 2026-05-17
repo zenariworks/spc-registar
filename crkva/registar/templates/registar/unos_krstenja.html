@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post" class="form">
+  <form method="post" class="form form--single-column">
     {% csrf_token %}
 
 <div class="u-page-header">
@@ -38,7 +38,7 @@
 {% endif %}
 
     <fieldset class="form-section">
-      <legend>Регистар</legend>
+      <legend><i class="fa-solid fa-list-ol"></i> Регистар</legend>
       <div class="form-row">
         <div class="form-field">{{ form.redni_broj.label_tag }} {{ form.redni_broj }}</div>
         <div class="form-field">{{ form.godina_registracije.label_tag }} {{ form.godina_registracije }}</div>
@@ -51,7 +51,7 @@
     </fieldset>
 
     <fieldset class="form-section">
-      <legend>Детаљи крштења</legend>
+      <legend><i class="fa-solid fa-droplet"></i> Детаљи крштења</legend>
       <div class="form-row">
         <div class="form-field">{{ form.datum.label_tag }} {{ form.datum }}</div>
         <div class="form-field">{{ form.vreme.label_tag }} {{ form.vreme }}</div>
@@ -69,7 +69,7 @@
     </fieldset>
 
     <fieldset class="form-section">
-      <legend>Дете</legend>
+      <legend><i class="fa-solid fa-baby"></i> Дете</legend>
       <div class="form-row">
         <div class="form-field" style="grid-column: 1 / -1;">
           {{ form.dete.label_tag }}
@@ -118,7 +118,7 @@
     </fieldset>
 
     <fieldset class="form-section">
-      <legend>Кум</legend>
+      <legend><i class="fa-solid fa-user-tag"></i> Кум</legend>
       <div class="form-row">
         <div class="form-field" style="grid-column: 1 / -1;">
           {{ form.kum.label_tag }}
