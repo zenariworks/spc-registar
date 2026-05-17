@@ -4,10 +4,10 @@
   <form method="post" class="form form--single-column">
     {% csrf_token %}
     <div class="u-page-header">
-      <a href="{% url 'svestenici' %}" class="back-button" aria-label="Назад" title="Назад">
+      <a href="{% if back_url %}{{ back_url }}{% else %}{% url 'svestenici' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад">
         <i class="fa-solid fa-arrow-left"></i>
       </a>
-      <h1 class="u-page-title">Додавање новог свештеника</h1>
+      <h1 class="u-page-title">{{ title|default:"Додавање новог свештеника" }}</h1>
       <button class="button button--primary" type="submit" title="Сачувај">
         <i class="fa-solid fa-floppy-disk" style="margin-right: 6px;"></i> Сачувај
       </button>

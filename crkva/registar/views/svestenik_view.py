@@ -4,6 +4,7 @@
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import SvestenikForm
 from registar.models.svestenik import Svestenik
@@ -101,3 +102,26 @@ class PrikazSvestenika(DetailView):
         ).order_by("-datum")[:20]
         context["vencanja_count"] = s.свештеник_венчани.count()
         return context
+
+
+@tenant_role_required("svestenik")
+def izmena_svestenika(request, uid):
+    """Измена постојеће инстанце."""
+    instance = get_object_or_404(Svestenik, uid=uid)
+    if request.method == "POST":
+        form = SvestenikForm(request.POST, instance=instance)
+        if form.is_valid():
+            form.save()
+            return redirect("svestenik_detail", uid=instance.uid)
+    else:
+        form = SvestenikForm(instance=instance)
+    return render(
+        request,
+        "registar/unos_svestenika.html",
+        {
+            "form": form,
+            "title": "Измена",
+            "back_url": reverse("svestenik_detail", kwargs={"uid": instance.uid}),
+            "is_edit": True,
+        },
+    )
