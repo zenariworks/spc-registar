@@ -11,7 +11,12 @@ class OsobaSelect2Widget(ModelSelect2Widget):
 
     model = Osoba
     search_fields = ["ime__icontains", "prezime__icontains"]
-    attrs = {"data-minimum-input-length": 1}
+
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs["data-minimum-input-length"] = 1
+        attrs["data-osoba-create"] = "1"
+        return attrs
 
 
 class SvestenikSelect2Widget(ModelSelect2Widget):

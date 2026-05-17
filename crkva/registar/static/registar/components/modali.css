@@ -118,3 +118,29 @@
     font-size: 13px;
     margin-top: 8px;
 }
+
+
+/* Inline create row injected into select2 dropdowns for Osoba autocompletes. */
+.select2-create-new {
+    padding: 10px 14px;
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+    color: var(--color-primary, #a21514);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    user-select: none;
+}
+.select2-create-new:hover,
+.select2-create-new:focus {
+    background: var(--color-surface-3, var(--color-surface));
+    outline: none;
+}
+.select2-create-new__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
