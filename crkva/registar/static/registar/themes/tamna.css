@@ -161,13 +161,6 @@
   background: rgba(0, 0, 0, 0.7);
 }
 
-/* Tooltip on dark surface */
-[data-theme="dark"] [data-tooltip]::after {
-  background: var(--color-surface-1);
-  color: var(--color-text);
-  border: 1px solid var(--color-border-strong);
-}
-
 /* Page-size selector pills */
 [data-theme="dark"] .page-size-link--active {
   background: var(--color-primary) !important;
