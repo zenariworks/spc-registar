@@ -1,88 +1,98 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="info-page">
+
   <div class="u-page-header">
-    <h1 class="u-page-title">Профил корисника</h1>
+    <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="u-page-title">Профил</h1>
   </div>
 
   {% if messages %}
     <div class="form-messages" style="margin-bottom:var(--space-4);">
       {% for message in messages %}
-        <div class="alert alert-{{ message.tags|default:'info' }}" style="background:#ecfdf5;border:1px solid #6ee7b7;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);color:#065f46;">
+        <div class="alert" style="background:color-mix(in oklab, var(--color-success) 12%, var(--color-surface));border:1px solid color-mix(in oklab, var(--color-success) 35%, var(--color-border));border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);color:var(--color-success);font-weight:500;">
           <i class="fa-solid fa-check-circle"></i> {{ message }}
         </div>
       {% endfor %}
     </div>
   {% endif %}
 
-  <form method="post" class="form" style="margin-bottom:var(--space-6);">
+  <form method="post" autocomplete="off">
     {% csrf_token %}
     <input type="hidden" name="action" value="info">
-    <fieldset class="form-section">
-      <legend>Подаци</legend>
-      <div class="form-row">
-        <div class="form-field">
-          <label>Корисничко име</label>
-          <input type="text" value="{{ user.username }}" disabled style="background:var(--color-surface-muted);">
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ info_form.first_name.label_tag }} {{ info_form.first_name }}</div>
-        <div class="form-field">{{ info_form.last_name.label_tag }} {{ info_form.last_name }}</div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">{{ info_form.email.label_tag }} {{ info_form.email }}</div>
-      </div>
+
+    <div class="info-section">
+      <h2 class="info-section__title"><i class="fa-solid fa-id-card"></i> Подаци</h2>
+      <ul class="info-rows">
+        <li class="info-row info-row--editable">
+          <div class="info-row__icon" data-tooltip="Корисничко име"><i class="fa-solid fa-at"></i></div>
+          <div class="info-row__value">
+            <input type="text" value="{{ user.username }}" disabled style="opacity:0.75;cursor:not-allowed;">
+          </div>
+        </li>
+        <li class="info-row info-row--editable">
+          <div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div>
+          <div class="info-row__value">{{ info_form.first_name }}</div>
+        </li>
+        <li class="info-row info-row--editable">
+          <div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div>
+          <div class="info-row__value">{{ info_form.last_name }}</div>
+        </li>
+        <li class="info-row info-row--editable">
+          <div class="info-row__icon" data-tooltip="Е-маил"><i class="fa-solid fa-envelope"></i></div>
+          <div class="info-row__value">{{ info_form.email }}</div>
+        </li>
+      </ul>
       {% if info_form.errors %}
-        <div style="color:#991b1b;">{{ info_form.errors }}</div>
+        <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-top:var(--space-3);color:#991b1b;">
+          {% for field, errors in info_form.errors.items %}{% for error in errors %}<div>{{ field }}: {{ error }}</div>{% endfor %}{% endfor %}
+        </div>
       {% endif %}
       <div style="margin-top:var(--space-3);">
         <button class="button button--primary" type="submit">
-          <i class="fa-solid fa-floppy-disk" style="margin-right:6px;"></i>
-          Сачувај податке
+          <i class="fa-solid fa-floppy-disk"></i> Сачувај
         </button>
       </div>
-    </fieldset>
+    </div>
   </form>
 
-  <form method="post" class="form">
+  <form method="post" autocomplete="off">
     {% csrf_token %}
     <input type="hidden" name="action" value="password">
-    <fieldset class="form-section">
-      <legend>Промена лозинке</legend>
-      <div class="form-row">
-        <div class="form-field">
-          <label for="id_old_password">Тренутна лозинка</label>
-          {{ password_form.old_password }}
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          <label for="id_new_password1">Нова лозинка</label>
-          {{ password_form.new_password1 }}
-        </div>
-        <div class="form-field">
-          <label for="id_new_password2">Поново нова лозинка</label>
-          {{ password_form.new_password2 }}
-        </div>
-      </div>
+
+    <div class="info-section">
+      <h2 class="info-section__title"><i class="fa-solid fa-key"></i> Промена лозинке</h2>
+      <ul class="info-rows">
+        <li class="info-row info-row--editable">
+          <div class="info-row__icon" data-tooltip="Тренутна лозинка"><i class="fa-solid fa-lock"></i></div>
+          <div class="info-row__value">{{ password_form.old_password }}</div>
+        </li>
+        <li class="info-row info-row--editable">
+          <div class="info-row__icon" data-tooltip="Нова лозинка"><i class="fa-solid fa-key"></i></div>
+          <div class="info-row__value">{{ password_form.new_password1 }}</div>
+        </li>
+        <li class="info-row info-row--editable">
+          <div class="info-row__icon" data-tooltip="Поново нова лозинка"><i class="fa-solid fa-key"></i></div>
+          <div class="info-row__value">{{ password_form.new_password2 }}</div>
+        </li>
+      </ul>
       {% if password_form.errors %}
-        <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin:var(--space-3) 0;color:#991b1b;">
+        <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-top:var(--space-3);color:#991b1b;">
           <ul style="margin:0;padding-left:20px;">
-            {% for field, errors in password_form.errors.items %}
-              {% for error in errors %}
-                <li>{{ error }}</li>
-              {% endfor %}
-            {% endfor %}
+            {% for field, errors in password_form.errors.items %}{% for error in errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
           </ul>
         </div>
       {% endif %}
       <div style="margin-top:var(--space-3);">
         <button class="button button--primary" type="submit">
-          <i class="fa-solid fa-key" style="margin-right:6px;"></i>
-          Промени лозинку
+          <i class="fa-solid fa-key"></i> Промени
         </button>
       </div>
-    </fieldset>
+    </div>
   </form>
+
+</div>
 {% endblock %}

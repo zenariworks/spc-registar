@@ -56,17 +56,25 @@
 }
 
 .info-section {
-    margin-top: 32px;
+    margin-top: 24px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-2);
+    padding: 16px 20px 10px;
 }
 .info-section__title {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--color-text-muted);
-    margin: 0 0 10px;
-    padding-bottom: 6px;
+    margin: -8px -4px 8px;
+    padding: 0 0 8px;
     border-bottom: 1px solid var(--color-border);
+}
+.info-section__title i {
+    margin-right: 6px;
+    opacity: 0.75;
 }
 
 .info-list {
