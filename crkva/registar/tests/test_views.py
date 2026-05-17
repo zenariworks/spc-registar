@@ -244,3 +244,36 @@ class UnosKrstenjaViewTestCase(TestCase):
         """Унос крштења садржи форму."""
         response = self.client.get(reverse("unos_krstenja"))
         self.assertIn("form", response.context)
+
+
+class ListSortTestCase(TestCase):
+    """Sort parameter must reorder the parohijani list."""
+
+    def setUp(self):
+        self.client = Client()
+        Osoba.objects.create(ime="Ана", prezime="Аћимовић", parohijan=True)
+        Osoba.objects.create(ime="Марко", prezime="Марковић", parohijan=True)
+        Osoba.objects.create(ime="Зорица", prezime="Шушић", parohijan=True)
+
+    def _first_primary(self, response):
+        import re
+
+        m = re.search(
+            r'<span class="stavka__primary">([^<]+)</span>',
+            response.content.decode(),
+        )
+        return m.group(1).strip() if m else None
+
+    def test_sort_prezime_ascending(self):
+        response = self.client.get(reverse("parohijani"), {"sort": "prezime"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self._first_primary(response), "Ана Аћимовић")
+
+    def test_sort_prezime_descending(self):
+        response = self.client.get(reverse("parohijani"), {"sort": "-prezime"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self._first_primary(response), "Зорица Шушић")
+
+    def test_sort_ignored_when_value_not_in_options(self):
+        response = self.client.get(reverse("parohijani"), {"sort": "evil; drop table"})
+        self.assertEqual(response.status_code, 200)

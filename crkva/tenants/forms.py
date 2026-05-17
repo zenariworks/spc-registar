@@ -40,7 +40,7 @@ class AddUserForm(forms.Form):
     )
     role = forms.ChoiceField(choices=Role.choices, label="Улога")
     is_default = forms.BooleanField(
-        required=False, initial=True, label="Подразумевани тенант"
+        required=False, initial=True, label="Подразумевана парохија"
     )
 
     def clean_username(self):
