@@ -29,14 +29,14 @@
     <li class="info-row info-row--editable">
       <div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div>
       <div class="info-row__value">
-        <div class="toggle-wrapper">
-          <div class="toggle-group" id="pol-toggle">
-            {% for value, label in form.pol.field.choices %}
-              <button type="button" class="toggle-button{% if form.pol.value == value %} active{% endif %}" data-value="{{ value }}">{{ label }}</button>
-            {% endfor %}
-          </div>
+        <div class="toggle-group" role="radiogroup" aria-label="Пол">
+          {% for value, label in form.pol.field.choices %}{% if value %}
+            <label class="toggle-button">
+              <input type="radio" name="pol" value="{{ value }}"{% if form.pol.value == value %} checked{% endif %}>
+              <span>{{ label }}</span>
+            </label>
+          {% endif %}{% endfor %}
         </div>
-        <div class="visually-hidden">{{ form.pol }}</div>
       </div>
     </li>
     <li class="info-row info-row--editable">
