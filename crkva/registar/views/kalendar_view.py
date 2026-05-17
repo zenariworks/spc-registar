@@ -6,6 +6,7 @@ import calendar
 import datetime as dt
 from collections import defaultdict
 
+from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from registar.models import Slava
@@ -31,15 +32,21 @@ def kalendar(
     days = [dt.date(year, month, d) for d in range(1, days_in_month + 1)]
 
     # Фиксне славе за тражени месец, груписане по дану
-    slave_za_mesec = Slava.objects.filter(mesec=month).order_by("dan", "naziv")
+    slave_za_mesec = (
+        Slava.objects.filter(mesec=month)
+        .annotate(dom_count=Count("domacinstvo"))
+        .order_by("dan", "naziv")
+    )
     by_day: dict[int, list[Slava]] = defaultdict(list)
     for s in slave_za_mesec:
         if s.dan:
             by_day[s.dan].append(s)
 
     # Покретне славе - рачунамо за сваку и проверавамо да ли пада у тражени месец
-    pokretne_slave = Slava.objects.filter(pokretni=True).order_by(
-        "offset_nedelje", "offset_dani", "naziv"
+    pokretne_slave = (
+        Slava.objects.filter(pokretni=True)
+        .annotate(dom_count=Count("domacinstvo"))
+        .order_by("offset_nedelje", "offset_dani", "naziv")
     )
     for s in pokretne_slave:
         datum = s.get_datum(year)

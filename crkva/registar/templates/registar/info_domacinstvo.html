@@ -50,9 +50,9 @@
         {% if domacinstvo.slava %}
         <div>
             <strong class="u-label">Слава:</strong><br>
-            <span class="u-badge u-badge--slava u-inline-block">
+            <a href="{% url 'slava_detail' uid=domacinstvo.slava.uid %}" class="u-badge u-badge--slava u-inline-block u-link-primary">
                 {{ domacinstvo.slava }}
-            </span>
+            </a>
         </div>
         {% endif %}
 
