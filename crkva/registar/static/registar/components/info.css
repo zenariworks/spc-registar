@@ -197,3 +197,6 @@
 .info-rows--inline .info-row--editable .info-row__value > textarea {
     min-width: 0;
 }
+.info-rows--inline .info-row--full {
+    flex: 1 0 100%;
+}
