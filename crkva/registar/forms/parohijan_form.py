@@ -49,6 +49,9 @@ class ParohijanForm(forms.ModelForm):
             "zanimanje",
             "veroispovest",
             "narodnost",
+            "adresa",
+            "tel_mobilni",
+            "tel_fiksni",
         ]
         widgets = {
             "datum_rodjenja": forms.DateInput(
