@@ -4,13 +4,12 @@
         <input type="search" name="search" value="{{ upit }}" placeholder="Претражи..." class="list-toolbar__search-input" autocomplete="off" aria-label="Претрага">
     </div>
     {% if sort_options %}
-    <div class="toggle-group toggle-group--sm" role="radiogroup" aria-label="Сортирање">
-        {% for value, label in sort_options %}
-        <label class="toggle-button">
-            <input type="radio" name="sort" value="{{ value }}"{% if current_sort == value %} checked{% endif %} onchange="this.form.submit()">
-            <span>{{ label }}</span>
-        </label>
-        {% endfor %}
+    <div class="list-toolbar__sort">
+        <select id="sort-select" name="sort" class="list-toolbar__sort-select" aria-label="Сортирање" onchange="this.form.submit()">
+            {% for value, label in sort_options %}
+            <option value="{{ value }}"{% if current_sort == value %} selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
     </div>
     {% endif %}
 
