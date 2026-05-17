@@ -4,6 +4,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from simple_history.models import HistoricalRecords
 
+from .adresa import Adresa
 from .parohija import Parohija
 
 zvanja = [
@@ -41,6 +42,13 @@ class Svestenik(TimeStampedModel):
         null=True,
         blank=True,
         verbose_name="парохија",
+    )
+    adresa = models.ForeignKey(
+        Adresa,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="адреса",
     )
 
     history = HistoricalRecords()
