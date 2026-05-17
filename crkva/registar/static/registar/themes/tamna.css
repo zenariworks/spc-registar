@@ -88,6 +88,15 @@
   --shadow-md:    0 4px 12px rgba(0, 0, 0, 0.55);
   --shadow-lg:    0 8px 24px rgba(0, 0, 0, 0.6);
   --shadow-hover: 0 8px 14px -6px rgba(0, 0, 0, 0.7);
+
+  /* ---------- Tooltip — keep readable bubble on dark page ----------
+     Lighter slate bg + near-white text so the bubble pops over the
+     dark page and the label stays high-contrast. Crucially this does
+     NOT reuse --color-surface (which is dark here) or --color-text
+     (which can resolve dark on certain components). */
+  --tooltip-bg:     #374151;   /* slate-700, sits above page bg */
+  --tooltip-text:   #f9fafb;   /* near-white */
+  --tooltip-shadow: rgba(0, 0, 0, 0.6);
 }
 
 /* ==========================================================================
