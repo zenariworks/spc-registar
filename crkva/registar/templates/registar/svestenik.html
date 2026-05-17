@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% block extra_css %}{% if is_edit %}{{ form.media.css }}{% endif %}{% endblock %}
+{% block extra_js %}{% if is_edit %}{{ form.media.js }}{% endif %}{% endblock %}
+
 {% block content %}
 {% if is_edit %}<form method="post" class="info-page">{% csrf_token %}{% else %}<div class="info-page">{% endif %}
 
