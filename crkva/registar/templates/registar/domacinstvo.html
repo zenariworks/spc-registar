@@ -12,10 +12,10 @@
       {% else %}Домаћинство · {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}{% endif %}
     </h1>
     {% if is_edit %}
-      <button class="button button--primary" type="submit" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+      <button class="button button--primary button--icon" type="submit" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% else %}
-      {% if can_edit_domacinstvo %}<a href="{% url 'izmena_domacinstva' uid=domacinstvo.uid %}" class="button button--primary" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-      <button type="button" id="history-toggle" class="button button--primary" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      {% if can_edit_domacinstvo %}<a href="{% url 'izmena_domacinstva' uid=domacinstvo.uid %}" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
+      <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
     {% endif %}
   </div>
 
