@@ -145,7 +145,8 @@
 }
 
 .u-info-header {
-    background: var(--color-gray-800);
+    background: var(--color-surface-2);
+    border: 1px solid var(--color-border);
     padding: 20px;
     border-radius: 8px;
     margin-bottom: 30px;

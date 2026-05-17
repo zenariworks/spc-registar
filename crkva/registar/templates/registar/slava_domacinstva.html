@@ -55,12 +55,7 @@
             {% if domacinstvo.adresa %}
               <div class="u-text-muted u-mb-2" data-theme-text-secondary>
                 <i class="fa-solid fa-location-dot u-icon-w u-text-muted"></i>
-                {% if domacinstvo.adresa.ulica %}
-                  {{ domacinstvo.adresa.ulica.naziv }}
-                  {% if domacinstvo.adresa.broj %}{{ domacinstvo.adresa.broj }}{% endif %}
-                {% else %}
-                  {{ domacinstvo.adresa }}
-                {% endif %}
+                {{ domacinstvo.adresa }}
               </div>
             {% endif %}
 
