@@ -7,7 +7,8 @@ label {
 }
 
 input[type="text"], input[type="search"], input[type="number"], input[type="date"],
-input[type="email"], select, textarea {
+input[type="email"], input[type="password"], input[type="tel"], input[type="url"],
+input[type="time"], input[type="datetime-local"], select, textarea {
   width: 100%;
   padding: 8px 10px;
   font-size: 16px;
@@ -87,7 +88,8 @@ fieldset.form-section legend i {
 
   /* Better input sizing for mobile */
   input[type="text"], input[type="number"], input[type="date"],
-  input[type="email"], select, textarea {
+  input[type="email"], input[type="password"], input[type="tel"], input[type="url"],
+  input[type="time"], input[type="datetime-local"], select, textarea {
     font-size: 16px; /* Prevent zoom on iOS */
     padding: 12px;
     min-height: 44px;

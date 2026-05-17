@@ -31,6 +31,9 @@
     --color-warning-border: #ffc107;
     --color-info-bg: #f8f9fa;
     --color-info-border: #dee2e6;
+    --color-error-text: #991b1b;
+    --color-error-bg: #fef2f2;
+    --color-error-border: #fca5a5;
 
     /* Gray shades */
     --color-gray-100: #f8f9fa;

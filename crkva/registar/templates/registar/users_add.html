@@ -13,38 +13,49 @@
       </button>
     </div>
 
-    {% if form.errors %}
-      <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);color:#991b1b;">
-        <strong><i class="fa-solid fa-exclamation-circle"></i> Исправите следеће грешке:</strong>
-        <ul style="margin:8px 0 0;padding-left:20px;">
-          {% for field, errors in form.errors.items %}
-            {% for error in errors %}<li>{{ field }}: {{ error }}</li>{% endfor %}
-          {% endfor %}
-        </ul>
-      </div>
+    {% if form.non_field_errors %}
+      <div class="u-alert u-alert--error">{{ form.non_field_errors }}</div>
     {% endif %}
 
     <fieldset class="form-section">
       <legend>Налог</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.username.label_tag }} {{ form.username }}</div>
-        <div class="form-field">{{ form.password.label_tag }} {{ form.password }}</div>
+        <div class="form-field">
+          {{ form.username.label_tag }} {{ form.username }}
+          {% if form.username.errors %}<div class="error-text">{{ form.username.errors|join:" " }}</div>{% endif %}
+        </div>
+        <div class="form-field">
+          {{ form.password.label_tag }} {{ form.password }}
+          {% if form.password.errors %}<div class="error-text">{{ form.password.errors|join:" " }}</div>{% endif %}
+        </div>
       </div>
       <div class="form-row">
-        <div class="form-field">{{ form.first_name.label_tag }} {{ form.first_name }}</div>
-        <div class="form-field">{{ form.last_name.label_tag }} {{ form.last_name }}</div>
+        <div class="form-field">
+          {{ form.first_name.label_tag }} {{ form.first_name }}
+          {% if form.first_name.errors %}<div class="error-text">{{ form.first_name.errors|join:" " }}</div>{% endif %}
+        </div>
+        <div class="form-field">
+          {{ form.last_name.label_tag }} {{ form.last_name }}
+          {% if form.last_name.errors %}<div class="error-text">{{ form.last_name.errors|join:" " }}</div>{% endif %}
+        </div>
       </div>
       <div class="form-row">
-        <div class="form-field">{{ form.email.label_tag }} {{ form.email }}</div>
+        <div class="form-field">
+          {{ form.email.label_tag }} {{ form.email }}
+          {% if form.email.errors %}<div class="error-text">{{ form.email.errors|join:" " }}</div>{% endif %}
+        </div>
       </div>
     </fieldset>
 
     <fieldset class="form-section">
       <legend>Приступ у парохији</legend>
       <div class="form-row">
-        <div class="form-field">{{ form.role.label_tag }} {{ form.role }}</div>
         <div class="form-field">
-          <label>{{ form.is_default }} {{ form.is_default.label }}</label>
+          {{ form.role.label_tag }} {{ form.role }}
+          {% if form.role.errors %}<div class="error-text">{{ form.role.errors|join:" " }}</div>{% endif %}
+        </div>
+        <div class="form-field">
+          {{ form.is_default }} <label for="{{ form.is_default.id_for_label }}">{{ form.is_default.label }}</label>
         </div>
       </div>
     </fieldset>
