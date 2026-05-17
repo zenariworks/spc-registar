@@ -54,13 +54,13 @@
           <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Текући број"><i class="fa-solid fa-hashtag"></i></div><div class="info-row__value">{{ form.broj }}</div></li>
           <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Редни број"><i class="fa-solid fa-hashtag"></i></div><div class="info-row__value">{{ form.redni_broj }}</div></li>
           <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Година регистрације"><i class="fa-solid fa-calendar"></i></div><div class="info-row__value">{{ form.godina_registracije }}</div></li>
-          <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Примедба"><i class="fa-solid fa-note-sticky"></i></div><div class="info-row__value">{{ form.primedba }}</div></li>
+          <li class="info-row info-row--full info-row--editable"><div class="info-row__icon" data-tooltip="Примедба"><i class="fa-solid fa-note-sticky"></i></div><div class="info-row__value">{{ form.primedba }}</div></li>
           {% else %}
           <li class="info-row"><div class="info-row__icon" data-tooltip="Књига"><i class="fa-solid fa-book"></i></div><div class="info-row__value">{{ vencanje.knjiga }}</div></li>
           <li class="info-row"><div class="info-row__icon" data-tooltip="Страна"><i class="fa-solid fa-file"></i></div><div class="info-row__value">{{ vencanje.strana }}</div></li>
           <li class="info-row"><div class="info-row__icon" data-tooltip="Текући број"><i class="fa-solid fa-hashtag"></i></div><div class="info-row__value">{{ vencanje.broj }}</div></li>
           {% if vencanje.godina_registracije %}<li class="info-row"><div class="info-row__icon" data-tooltip="Година регистрације"><i class="fa-solid fa-calendar"></i></div><div class="info-row__value">{{ vencanje.godina_registracije }}</div></li>{% endif %}
-          {% if vencanje.primedba %}<li class="info-row"><div class="info-row__icon" data-tooltip="Примедба"><i class="fa-solid fa-note-sticky"></i></div><div class="info-row__value">{{ vencanje.primedba }}</div></li>{% endif %}
+          {% if vencanje.primedba %}<li class="info-row info-row--full"><div class="info-row__icon" data-tooltip="Примедба"><i class="fa-solid fa-note-sticky"></i></div><div class="info-row__value">{{ vencanje.primedba }}</div></li>{% endif %}
           {% endif %}</ul>
       </div>
 
