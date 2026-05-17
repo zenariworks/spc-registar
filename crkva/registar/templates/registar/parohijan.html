@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block extra_css %}{% if is_edit %}{{ form.media.css }}{% endif %}{% endblock %}
+{% block extra_js %}{% if is_edit %}{{ form.media.js }}{% endif %}{% endblock %}
 {% load phone_filters %}
 
 {% comment %}
@@ -23,7 +26,7 @@
     <h1 class="u-page-title">
       {% if is_edit and not parohijan %}Додавање парохијана
       {% elif is_edit %}Измена: {{ parohijan.ime }} {{ parohijan.prezime }}
-      {% else %}{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime %} <span style="color:var(--color-text-muted);font-weight:400;">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}{% endif %}
+      {% else %}{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span style="color:var(--color-text-muted);font-weight:400;">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}{% endif %}
     </h1>
     {% if is_edit %}
       <button class="button button--primary button--icon" type="submit" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
@@ -66,7 +69,7 @@
     {% if is_edit %}
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ form.ime }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ form.prezime }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div><div class="info-row__value">{{ form.devojacko_prezime }}</div></li>
+    <li class="info-row info-row--editable" id="row-devojacko-prezime"{% if parohijan and parohijan.pol == "М" %} style="display:none;"{% endif %}><div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div><div class="info-row__value">{{ form.devojacko_prezime }}</div></li>
     {% endif %}
 
     {% if is_edit %}
@@ -147,6 +150,22 @@
     {% endif %}
   {% endif %}
 
-{% if is_edit %}</form>{% else %}</div>{% endif %}
+{% if is_edit %}
+<script>
+  (function () {
+    var row = document.getElementById("row-devojacko-prezime");
+    if (!row) return;
+    function sync() {
+      var checked = document.querySelector('input[name="pol"]:checked');
+      var val = checked ? checked.value : "";
+      row.style.display = (val === "М") ? "none" : "";
+    }
+    document.querySelectorAll('input[name="pol"]').forEach(function (r) {
+      r.addEventListener("change", sync);
+    });
+    sync();
+  })();
+</script>
+</form>{% else %}</div>{% endif %}
 {% if not is_edit %}{% include "registar/_history_panel.html" %}{% endif %}
 {% endblock %}

@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+
+{% block extra_css %}{% if is_edit %}{{ form.media.css }}{% endif %}{% endblock %}
+{% block extra_js %}{% if is_edit %}{{ form.media.js }}{% endif %}{% endblock %}
 {% load phone_filters %}
 
 {% block content %}
