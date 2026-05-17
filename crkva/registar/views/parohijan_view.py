@@ -59,7 +59,8 @@ class SpisakParohijana(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
             "domacinstvo", "domacinstvo__domacin", "domacinstvo__adresa"
         )
         return self.get_search_queryset(
-            Parohijan.objects.select_related("adresa")
+            Parohijan.objects.filter(parohijan=True)
+            .select_related("adresa")
             .select_related("domacinstvo", "domacinstvo__adresa")
             .prefetch_related(
                 Prefetch(
