@@ -74,6 +74,9 @@ class SearchMixin:
         """Филтрира queryset на основу претраге."""
         query = self.request.GET.get("search", "").strip()
         if not query:
+            ordering = getattr(self, "get_ordering", lambda: None)()
+            if ordering:
+                queryset = queryset.order_by(*ordering)
             return queryset
 
         terms = query.split()
@@ -94,12 +97,11 @@ class SearchMixin:
                     term_q |= models.Q(datum_str__icontains=v)
             combined &= term_q
 
-        return queryset.filter(combined).distinct()
-
-    def get_queryset(self):
-        """Примењује претрагу на подразумевани queryset."""
-        queryset = super().get_queryset()
-        return self.get_search_queryset(queryset)
+        queryset = queryset.filter(combined).distinct()
+        ordering = getattr(self, "get_ordering", lambda: None)()
+        if ordering:
+            queryset = queryset.order_by(*ordering)
+        return queryset
 
     def get_context_data(self, **kwargs):
         """Додаје форму за претрагу и упит у контекст."""
