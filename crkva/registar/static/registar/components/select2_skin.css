@@ -101,26 +101,40 @@
 
 /* Selection box (the closed-state pill) keeps the standard form-input look,
    inheriting forme.css selectors for height/border/padding. */
+/* Closed-state pill matches the list-toolbar sort dropdown — shared chevron, padding, hover/focus rings. */
 .select2-container--default .select2-selection--single {
     height: auto;
-    min-height: 38px;
-    padding: 4px 6px;
+    min-height: 36px;
+    padding: 0;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-2);
-    background: var(--color-surface);
+    background-color: var(--color-surface);
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 16 16%27 fill=%27%23888%27%3E%3Cpath d=%27M3.204 5h9.592L8 10.481 3.204 5zm-.753.659l4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z%27/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.select2-container--default .select2-selection--single:hover {
+    background-color: var(--color-surface-2);
+    border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
 }
 
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: var(--color-text);
-    line-height: 28px;
-    padding-left: 4px;
+    line-height: 20px;
+    padding: 8px 36px 8px 14px;
+    font-size: 14px;
 }
 
+/* Hide select2's built-in arrow — we use a background-image chevron like .list-toolbar__sort-select */
 .select2-container--default .select2-selection--single .select2-selection__arrow {
-    height: 36px;
+    display: none;
 }
 
 .select2-container--default.select2-container--open .select2-selection--single {
     border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent);
+    outline: none;
 }
