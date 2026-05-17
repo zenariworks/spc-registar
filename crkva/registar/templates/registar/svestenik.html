@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if is_edit %}<form method="post" class="info-page">{% csrf_token %}{% else %}<div class="info-page">{% endif %}
+
+  <div class="u-page-header">
+    <a href="{% if is_edit and svestenik %}{% url 'svestenik_detail' uid=svestenik.uid %}{% else %}{% url 'svestenici' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="u-page-title">
+      {% if is_edit and not svestenik %}Додавање свештеника
+      {% elif is_edit %}Измена: {{ svestenik.ime }} {{ svestenik.prezime }}
+      {% else %}{{ svestenik.ime }} {{ svestenik.prezime }}{% endif %}
+    </h1>
+    {% if is_edit %}
+      <button class="button button--primary" type="submit" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+    {% else %}
+      {% if can_edit_svestenik %}<a href="{% url 'izmena_svestenika' uid=svestenik.uid %}" class="button button--primary" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
+      <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
+      <button type="button" id="history-toggle" class="button button--primary" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
+    {% endif %}
+  </div>
+
+  {% if is_edit and form.errors %}
+    <div class="form-errors" style="background:#fef2f2;border:1px solid #fca5a5;border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);margin-bottom:var(--space-4);color:#991b1b;">
+      <strong><i class="fa-solid fa-exclamation-circle"></i> Исправите следеће грешке:</strong>
+      <ul style="margin:8px 0 0;padding-left:20px;">
+        {% for field, errors in form.errors.items %}{% for error in errors %}<li>{{ field }}: {{ error }}</li>{% endfor %}{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <ul class="info-rows">
+    {% if is_edit %}
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Звање"><i class="fa-solid fa-id-badge"></i></div><div class="info-row__value">{{ form.zvanje }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ form.ime }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ form.prezime }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Парохија"><i class="fa-solid fa-church"></i></div><div class="info-row__value">{{ form.parohija }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ form.datum_rodjenja }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ form.mesto_rodjenja }}</div></li>
+    {% else %}
+    <li class="info-row"><div class="info-row__icon" data-tooltip="Звање"><i class="fa-solid fa-id-badge"></i></div><div class="info-row__value">{{ svestenik.zvanje }}</div></li>
+    {% if svestenik.parohija %}<li class="info-row"><div class="info-row__icon" data-tooltip="Парохија"><i class="fa-solid fa-church"></i></div><div class="info-row__value">{{ svestenik.parohija }}</div></li>{% endif %}
+    {% if svestenik.datum_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ svestenik.datum_rodjenja }}</div></li>{% endif %}
+    {% if svestenik.mesto_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ svestenik.mesto_rodjenja }}</div></li>{% endif %}
+    {% endif %}
+  </ul>
+
+  {% if not is_edit %}
+    {% if krstenja %}
+    <div class="info-section">
+      <h2 class="info-section__title">Крштења ({{ krstenja_count }})</h2>
+      <ul class="info-list">{% for k in krstenja %}<li class="info-list__item"><span><a href="{% url 'krstenje_detail' uid=k.uid %}">{{ k.dete }}</a></span><span class="info-list__role">{{ k.datum|default:"—" }}</span></li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    {% if vencanja %}
+    <div class="info-section">
+      <h2 class="info-section__title">Венчања ({{ vencanja_count }})</h2>
+      <ul class="info-list">{% for v in vencanja %}<li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">{{ v.datum|default:"—" }}</span></li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+  {% endif %}
+
+{% if is_edit %}</form>{% else %}</div>{% endif %}
+{% if not is_edit %}{% include "registar/_history_panel.html" %}{% endif %}
+{% endblock %}

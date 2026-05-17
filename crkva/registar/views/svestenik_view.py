@@ -23,7 +23,11 @@ def unos_svestenika(request):
             return redirect("svestenici")
     else:
         form = SvestenikForm()
-    return render(request, "registar/unos_svestenika.html", {"form": form})
+    return render(
+        request,
+        "registar/svestenik.html",
+        {"form": form, "is_edit": True, "svestenik": None},
+    )
 
 
 class SpisakSvestenika(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
@@ -79,7 +83,7 @@ class PrikazSvestenika(DetailView):
     """Приказује детаљне информације о одређеном свештенику."""
 
     model = Svestenik
-    template_name = "registar/info_svestenik.html"
+    template_name = "registar/svestenik.html"
     context_object_name = "svestenik"
 
     def get_object(self):
@@ -117,11 +121,12 @@ def izmena_svestenika(request, uid):
         form = SvestenikForm(instance=instance)
     return render(
         request,
-        "registar/unos_svestenika.html",
+        "registar/svestenik.html",
         {
             "form": form,
             "title": "Измена",
             "back_url": reverse("svestenik_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,
+            "svestenik": instance,
         },
     )

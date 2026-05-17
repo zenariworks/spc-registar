@@ -101,3 +101,45 @@
     margin-top: 12px;
     white-space: pre-line;
 }
+
+/* ==========================================================================
+   INFO + EDIT shared row form fields
+   When .info-row contains an <input>, <select>, or <textarea>, swap layout
+   so the input occupies the value column at full width.
+   ========================================================================== */
+
+.info-row--editable .info-row__value > input[type="text"],
+.info-row--editable .info-row__value > input[type="search"],
+.info-row--editable .info-row__value > input[type="number"],
+.info-row--editable .info-row__value > input[type="date"],
+.info-row--editable .info-row__value > input[type="email"],
+.info-row--editable .info-row__value > input[type="time"],
+.info-row--editable .info-row__value > input[type="tel"],
+.info-row--editable .info-row__value > input[type="password"],
+.info-row--editable .info-row__value > select,
+.info-row--editable .info-row__value > textarea,
+.info-row--editable .info-row__value > .select2,
+.info-row--editable .info-row__value > .select2-selection {
+    width: 100%;
+}
+
+.info-row--editable {
+    padding: 6px 0;
+    align-items: center;
+}
+
+.info-row--editable .info-row__value > .visually-hidden + .toggle-group,
+.info-row--editable .info-row__value > .toggle-wrapper {
+    margin: 0;
+}
+
+.info-row--placeholder {
+    color: var(--color-text-muted);
+}
+
+/* When no rows actually rendered, show a placeholder */
+.info-empty {
+    padding: 24px 0;
+    color: var(--color-text-muted);
+    font-style: italic;
+}

@@ -27,7 +27,11 @@ def unos_parohijana(request):
             return redirect("parohijani")
     else:
         form = ParohijanForm()
-    return render(request, "registar/unos_parohijana.html", {"form": form})
+    return render(
+        request,
+        "registar/parohijan.html",
+        {"form": form, "is_edit": True, "parohijan": None},
+    )
 
 
 class SpisakParohijana(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
@@ -86,7 +90,7 @@ class PrikazParohijana(DetailView):
     """Приказује детаљне информације о одређеном парохијану."""
 
     model = Parohijan
-    template_name = "registar/info_parohijan.html"
+    template_name = "registar/parohijan.html"
     context_object_name = "parohijan"
     pk_url_kwarg = "uid"
 
@@ -157,11 +161,12 @@ def izmena_parohijana(request, uid):
         form = ParohijanForm(instance=instance)
     return render(
         request,
-        "registar/unos_parohijana.html",
+        "registar/parohijan.html",
         {
             "form": form,
             "title": "Измена",
             "back_url": reverse("parohijan_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,
+            "parohijan": instance,
         },
     )
