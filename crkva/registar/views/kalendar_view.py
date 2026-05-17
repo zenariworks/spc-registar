@@ -9,7 +9,7 @@ from collections import defaultdict
 from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
-from registar.models import Slava
+from kalendar.models import Slava
 from registar.utils import MESECI
 from registar.utils_fasting import get_fasting_type
 

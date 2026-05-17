@@ -9,7 +9,6 @@ from .krstenje import Krstenje
 from .narodnost import Narodnost
 from .parohija import Parohija
 from .parohijan import Osoba, Parohijan
-from .slava import Slava
 from .svestenik import Svestenik
 from .ukucanin import Ukucanin
 from .vencanje import Vencanje
@@ -27,10 +26,11 @@ __all__ = [
     "Parohija",
     "Osoba",
     "Parohijan",
-    "Slava",
     "Svestenik",
     "Ukucanin",
     "Vencanje",
     "Veroispovest",
     "Zanimanje",
 ]
+# Re-export the now-shared Slava model so legacy imports still work.
+from kalendar.models import Slava  # noqa: E402,F401

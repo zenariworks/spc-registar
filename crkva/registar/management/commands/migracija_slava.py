@@ -5,8 +5,8 @@ Migracija tabele slava iz PostgreSQL staging tabele 'hsp_slave' u tabelu 'slave'
 from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db.utils import IntegrityError
+from kalendar.models import Slava
 from registar.management.commands.convert_utils import Konvertor
-from registar.models import Slava
 
 
 class Command(BaseCommand):

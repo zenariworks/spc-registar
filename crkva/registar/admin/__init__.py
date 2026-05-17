@@ -9,7 +9,6 @@ from .krstenje_admin import KrstenjeAdmin
 from .narodnost_admin import NarodnostAdmin
 from .parohija_admin import ParohijaAdmin
 from .parohijan_admin import ParohijanAdmin
-from .slava_admin import SlavaAdmin
 from .svestenik_admin import SvestenikAdmin
 from .ukucanin_admin import UkucaninAdmin
 from .vencanje_admin import VencanjeAdmin
@@ -26,7 +25,6 @@ __all__ = [
     "NarodnostAdmin",
     "ParohijaAdmin",
     "ParohijanAdmin",
-    "SlavaAdmin",
     "SvestenikAdmin",
     "UkucaninAdmin",
     "VencanjeAdmin",

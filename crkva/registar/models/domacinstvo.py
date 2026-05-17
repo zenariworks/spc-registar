@@ -3,13 +3,13 @@
 import uuid
 
 from django.db import models
+from kalendar.models import Slava
 from model_utils.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
 from simple_history.models import HistoricalRecords
 
 from .adresa import Adresa
 from .parohijan import Osoba
-from .slava import Slava
 
 
 class Domacinstvo(TimeStampedModel):
@@ -35,6 +35,10 @@ class Domacinstvo(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        # Cross-schema FK: Slava lives in the public schema; Postgres cannot
+        # enforce FK constraints across schemas in django-tenants, so we drop
+        # the DB-level constraint and keep only the Python-level relationship.
+        db_constraint=False,
         verbose_name="слава домаћинства",
     )
 

@@ -1,7 +1,7 @@
 """Django management command to mark major feast days (crveno slovo)."""
 
 from django.core.management.base import BaseCommand
-from registar.models import Slava
+from kalendar.models import Slava
 
 
 class Command(BaseCommand):

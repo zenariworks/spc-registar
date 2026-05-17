@@ -1,8 +1,8 @@
-"""Модул админ интерфејса модела Слава са опцијама увоз и извоз."""
+"""Админ интерфејс за shared Slava модел."""
 
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
-from registar.models import Slava
+from kalendar.models import Slava
 
 
 @admin.register(Slava)

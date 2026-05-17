@@ -4,7 +4,7 @@
 
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from registar.models import Slava
+from kalendar.models import Slava
 
 
 class Command(BaseCommand):
