@@ -26,11 +26,11 @@
       {% else %}{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime %} <span style="color:var(--color-text-muted);font-weight:400;">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}{% endif %}
     </h1>
     {% if is_edit %}
-      <button class="button button--primary" type="submit" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+      <button class="button button--primary button--icon" type="submit" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% else %}
-      {% if can_edit_osoba %}<a href="{% url 'izmena_parohijana' uid=parohijan.uid %}" class="button button--primary" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-      <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
-      <button type="button" id="history-toggle" class="button button--primary" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      {% if can_edit_osoba %}<a href="{% url 'izmena_parohijana' uid=parohijan.uid %}" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
+      <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" class="button button--primary button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
+      <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
     {% endif %}
   </div>
 
