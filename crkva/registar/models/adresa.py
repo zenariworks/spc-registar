@@ -3,6 +3,7 @@
 import uuid
 
 from django.db import models
+from django.db.models.functions import Lower
 
 
 class Adresa(models.Model):
@@ -43,3 +44,12 @@ class Adresa(models.Model):
         db_table = "adrese"
         verbose_name = "Адреса"
         verbose_name_plural = "Адресе"
+        constraints = [
+            models.UniqueConstraint(
+                Lower("ulica"),
+                Lower("broj"),
+                Lower("broj_stana"),
+                Lower("mesto"),
+                name="unique_adresa_normalized",
+            ),
+        ]
