@@ -12,7 +12,7 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
     # Get all households celebrating this slava
     domacinstva = (
         Domacinstvo.objects.filter(slava=slava)
-        .select_related("domacin", "adresa", "adresa__ulica")
+        .select_related("domacin", "adresa")
         .prefetch_related("ukucani", "ukucani__osoba")
         .order_by("domacin__prezime", "domacin__ime")
     )
