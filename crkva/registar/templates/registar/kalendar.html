@@ -67,7 +67,7 @@
           <div class="slavas">
             {% if day.moveable_slavas %}
               {% for s in day.moveable_slavas %}
-                <a href="{% url 'slava_detail' uid=s.uid %}" class="slava-moveable slava-link">{{ s.naziv }}</a>
+                <a href="{% url 'slava_detail' uid=s.uid %}" class="slava-moveable slava-link {% if s.dom_count %}slava-link--has-domacinstva{% endif %}">{{ s.naziv }}{% if s.dom_count %} <span class="slava-link__count">{{ s.dom_count }}</span>{% endif %}</a>
               {% endfor %}
             {% endif %}
             {% if day.fixed_slavas and day.moveable_slavas %}
@@ -75,7 +75,7 @@
             {% endif %}
             {% if day.fixed_slavas %}
               {% for s in day.fixed_slavas %}
-                <a href="{% url 'slava_detail' uid=s.uid %}" class="slava-fixed slava-link">{{ s.naziv }}</a>
+                <a href="{% url 'slava_detail' uid=s.uid %}" class="slava-fixed slava-link {% if s.dom_count %}slava-link--has-domacinstva{% endif %}">{{ s.naziv }}{% if s.dom_count %} <span class="slava-link__count">{{ s.dom_count }}</span>{% endif %}</a>
               {% endfor %}
             {% endif %}
           </div>
