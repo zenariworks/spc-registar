@@ -24,12 +24,12 @@ class DomacinstvoForm(forms.ModelForm):
             "domacin": ModelSelect2Widget(
                 model=Osoba,
                 search_fields=["ime__icontains", "prezime__icontains"],
-                attrs={"data-minimum-input-length": 2},
+                attrs={"data-minimum-input-length": 1},
             ),
             "adresa": ModelSelect2Widget(
                 model=Adresa,
                 search_fields=["ulica__icontains", "mesto__icontains"],
-                attrs={"data-minimum-input-length": 2},
+                attrs={"data-minimum-input-length": 1},
             ),
             "slava": ModelSelect2Widget(
                 model=Slava,
