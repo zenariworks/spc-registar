@@ -24,5 +24,7 @@ class SvestenikForm(forms.ModelForm):
                 search_fields=["naziv__icontains"],
                 attrs={"data-minimum-input-length": 0},
             ),
-            "datum_rodjenja": forms.DateInput(attrs={"type": "date"}),
+            "datum_rodjenja": forms.DateInput(
+                attrs={"type": "date"}, format="%Y-%m-%d"
+            ),
         }

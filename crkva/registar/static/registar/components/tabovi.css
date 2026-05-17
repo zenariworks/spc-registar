@@ -132,19 +132,25 @@
    ========================================================================== */
 
 .tabs--segmented .tabs__nav {
+    display: inline-flex;
+    align-items: stretch;
+    vertical-align: top;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-2);
     overflow: hidden;
     background: var(--color-surface-1);
+    line-height: 1;
 }
 
 .tabs--segmented .tabs__tab {
+    box-sizing: border-box;
     background: transparent;
     color: var(--color-text-muted);
     font-weight: 500;
     border-radius: 0;
-    padding: 8px 18px;
-    min-height: 38px;
+    padding: 0 18px;
+    min-height: 36px;
+    line-height: 1;
     transition: background 0.15s ease, color 0.15s ease;
 }
 

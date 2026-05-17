@@ -51,7 +51,9 @@ class ParohijanForm(forms.ModelForm):
             "narodnost",
         ]
         widgets = {
-            "datum_rodjenja": forms.DateInput(attrs={"type": "date"}),
-            "vreme_rodjenja": forms.TimeInput(attrs={"type": "time"}),
+            "datum_rodjenja": forms.DateInput(
+                attrs={"type": "date"}, format="%Y-%m-%d"
+            ),
+            "vreme_rodjenja": forms.TimeInput(attrs={"type": "time"}, format="%H:%M"),
             "pol": forms.RadioSelect,
         }

@@ -69,8 +69,8 @@ class VencanjeForm(forms.ModelForm):
             "primedba",
         ]
         widgets = {
-            "datum": forms.DateInput(attrs={"type": "date"}),
-            "datum_ispita": forms.DateInput(attrs={"type": "date"}),
+            "datum": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
+            "datum_ispita": forms.DateInput(attrs={"type": "date"}, format="%Y-%m-%d"),
             "primedba": forms.Textarea(attrs={"rows": 3}),
             "zenik": OsobaSelect2Widget,
             "nevesta": OsobaSelect2Widget,
