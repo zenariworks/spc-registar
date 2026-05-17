@@ -1,227 +1,180 @@
 {% extends "base.html" %}
 {% load phone_filters %}
 {% block content %}
+<div class="info-page">
 
-<div class="u-page-header">
+  <div class="u-page-header">
     <a href="{% url 'parohijani' %}" class="back-button" aria-label="Назад" title="Назад">
-        <i class="fa-solid fa-arrow-left"></i>
+      <i class="fa-solid fa-arrow-left"></i>
     </a>
-    <h1 class="u-page-title">{{ parohijan.ime }} {{ parohijan.prezime }}</h1>
-    {% if can_edit_osoba %}<a href="{% url 'izmena_parohijana' parohijan.uid %}" class="button button--primary" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
+    <h1 class="u-page-title">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime %} <span style="color:var(--color-text-muted);font-weight:400;">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}</h1>
+    {% if can_edit_osoba %}<a href="{% url 'izmena_parohijana' uid=parohijan.uid %}" class="button button--primary" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
     <a href="{% url 'parohijan_pdf' parohijan.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај">
-        <i class="fa-solid fa-print"></i>
+      <i class="fa-solid fa-print"></i>
     </a>
     <button type="button" id="history-toggle" class="button button--primary" data-tooltip="Историја измена">
-        <i class="fa-solid fa-clock-rotate-left"></i>
+      <i class="fa-solid fa-clock-rotate-left"></i>
     </button>
-</div>
+  </div>
 
-{% if parohijan.domacinstvo %}
-<div class="card u-mb-4 u-border-left-primary">
-    <strong class="u-flex-center u-gap-2 u-mb-2">
-        <i class="fa-solid fa-house"></i>
-        Домаћин домаћинства
-    </strong>
-    <a href="{% url 'domacinstvo_detail' uid=parohijan.domacinstvo.uid %}" class="u-link-primary u-font-medium">
-        Прикажи домаћинство <i class="fa-solid fa-arrow-right u-text-small"></i>
-    </a>
-</div>
-{% endif %}
+  <ul class="info-rows">
+    {% if parohijan.pol %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div>
+      <div class="info-row__value">{{ parohijan.get_pol_display }}</div>
+    </li>
+    {% endif %}
+    {% if parohijan.gradjansko_ime %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Грађанско име"><i class="fa-solid fa-id-card"></i></div>
+      <div class="info-row__value">{{ parohijan.gradjansko_ime }}</div>
+    </li>
+    {% endif %}
+    {% if parohijan.datum_rodjenja %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div>
+      <div class="info-row__value">{{ parohijan.datum_rodjenja }}{% if parohijan.mesto_rodjenja %} <span class="info-row__sub">{{ parohijan.mesto_rodjenja }}</span>{% endif %}</div>
+    </li>
+    {% elif parohijan.mesto_rodjenja %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div>
+      <div class="info-row__value">{{ parohijan.mesto_rodjenja }}</div>
+    </li>
+    {% endif %}
+    {% if parohijan.zanimanje %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Занимање"><i class="fa-solid fa-briefcase"></i></div>
+      <div class="info-row__value">{{ parohijan.zanimanje }}</div>
+    </li>
+    {% endif %}
+    {% if parohijan.veroispovest %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Вероисповест"><i class="fa-solid fa-cross"></i></div>
+      <div class="info-row__value">{{ parohijan.veroispovest }}</div>
+    </li>
+    {% endif %}
+    {% if parohijan.narodnost %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Народност"><i class="fa-solid fa-flag"></i></div>
+      <div class="info-row__value">{{ parohijan.narodnost }}</div>
+    </li>
+    {% endif %}
+    {% if parohijan.adresa %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div>
+      <div class="info-row__value">
+        <a href="https://www.openstreetmap.org/search?query={{ parohijan.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">
+          {{ parohijan.adresa }}
+          <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em;opacity:0.55;margin-left:4px;"></i>
+        </a>
+      </div>
+    </li>
+    {% endif %}
+    {% if parohijan.tel_mobilni %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Мобилни"><i class="fa-solid {{ parohijan.tel_mobilni|phone_icon }}"></i></div>
+      <div class="info-row__value"><a href="tel:{{ parohijan.tel_mobilni|tel_link }}">{{ parohijan.tel_mobilni|format_phone }}</a></div>
+    </li>
+    {% endif %}
+    {% if parohijan.tel_fiksni %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Фиксни"><i class="fa-solid {{ parohijan.tel_fiksni|phone_icon }}"></i></div>
+      <div class="info-row__value"><a href="tel:{{ parohijan.tel_fiksni|tel_link }}">{{ parohijan.tel_fiksni|format_phone }}</a></div>
+    </li>
+    {% endif %}
+    {% if parohijan.domacinstvo %}
+    <li class="info-row">
+      <div class="info-row__icon" data-tooltip="Домаћин домаћинства"><i class="fa-solid fa-house"></i></div>
+      <div class="info-row__value">
+        <a href="{% url 'domacinstvo_detail' uid=parohijan.domacinstvo.uid %}">Прикажи домаћинство <i class="fa-solid fa-arrow-right" style="font-size:0.85em;"></i></a>
+      </div>
+    </li>
+    {% endif %}
+  </ul>
 
-<div class="card">
-    <ul class="u-kv-list">
-        {% if parohijan.devojacko_prezime %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Девојачко презиме</span>
-            <span>{{ parohijan.devojacko_prezime }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.gradjansko_ime %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Грађанско име</span>
-            <span>{{ parohijan.gradjansko_ime }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.datum_rodjenja %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Датум рођења</span>
-            <span>{{ parohijan.datum_rodjenja }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.mesto_rodjenja %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Место рођења</span>
-            <span>{{ parohijan.mesto_rodjenja }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.pol %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Пол</span>
-            <span>{{ parohijan.get_pol_display }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.zanimanje %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Занимање</span>
-            <span>{{ parohijan.zanimanje }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.veroispovest %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Вероисповест</span>
-            <span>{{ parohijan.veroispovest }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.narodnost %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Народност</span>
-            <span>{{ parohijan.narodnost }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.adresa %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Адреса</span>
-            <span>{{ parohijan.adresa }}</span>
-        </li>
-        {% endif %}
-        {% if parohijan.tel_mobilni or parohijan.tel_fiksni %}
-        <li class="u-kv-item">
-            <span class="u-kv-label">Телефон</span>
-            <span>
-                {% if parohijan.tel_mobilni %}
-                <a href="tel:{{ parohijan.tel_mobilni|tel_link }}" class="u-link-primary">
-                    <i class="fa-solid {{ parohijan.tel_mobilni|phone_icon }}"></i>
-                    {{ parohijan.tel_mobilni|format_phone }}
-                </a>{% if parohijan.tel_fiksni %}<br>{% endif %}
-                {% endif %}
-                {% if parohijan.tel_fiksni %}
-                <a href="tel:{{ parohijan.tel_fiksni|tel_link }}" class="u-link-primary">
-                    <i class="fa-solid {{ parohijan.tel_fiksni|phone_icon }}"></i>
-                    {{ parohijan.tel_fiksni|format_phone }}
-                </a>
-                {% endif %}
-            </span>
-        </li>
-        {% endif %}
+  {% if otac or majka %}
+  <div class="info-section">
+    <h2 class="info-section__title">Родитељи</h2>
+    <ul class="info-list">
+      {% if otac %}
+      <li class="info-list__item"><span><a href="{% url 'parohijan_detail' uid=otac.uid %}">{{ otac.ime }} {{ otac.prezime }}</a></span><span class="info-list__role">отац</span></li>
+      {% endif %}
+      {% if majka %}
+      <li class="info-list__item"><span><a href="{% url 'parohijan_detail' uid=majka.uid %}">{{ majka.ime }} {{ majka.prezime }}</a></span><span class="info-list__role">мајка{% if majka.devojacko_prezime %} · рођ. {{ majka.devojacko_prezime }}{% endif %}</span></li>
+      {% endif %}
     </ul>
+  </div>
+  {% endif %}
+
+  {% if deca %}
+  <div class="info-section">
+    <h2 class="info-section__title">Деца ({{ deca|length }})</h2>
+    <ul class="info-list">
+      {% for d in deca %}
+      <li class="info-list__item"><span><a href="{% url 'parohijan_detail' uid=d.uid %}">{{ d.ime }} {{ d.prezime }}</a></span><span class="info-list__role">{{ d.datum_rodjenja|default:"—" }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if krstenja_dete %}
+  <div class="info-section">
+    <h2 class="info-section__title">Крштење</h2>
+    <ul class="info-list">
+      {% for k in krstenja_dete %}
+      <li class="info-list__item"><span><a href="{% url 'krstenje_detail' uid=k.uid %}">{{ k.datum }}</a>{% if k.kum %} <span class="info-row__sub" style="display:inline;">кум: {{ k.kum.ime }} {{ k.kum.prezime }}</span>{% endif %}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if vencanja_zenik or vencanja_nevesta %}
+  <div class="info-section">
+    <h2 class="info-section__title">Венчање</h2>
+    <ul class="info-list">
+      {% for v in vencanja_zenik %}
+      <li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">са {{ v.nevesta.ime }} {{ v.nevesta.prezime }}</a></span><span class="info-list__role">{{ v.datum }}</span></li>
+      {% endfor %}
+      {% for v in vencanja_nevesta %}
+      <li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">са {{ v.zenik.ime }} {{ v.zenik.prezime }}</a></span><span class="info-list__role">{{ v.datum }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if krstenja_kum %}
+  <div class="info-section">
+    <h2 class="info-section__title">Кумовања — крштења</h2>
+    <ul class="info-list">
+      {% for k in krstenja_kum %}
+      <li class="info-list__item"><span><a href="{% url 'krstenje_detail' uid=k.uid %}">{{ k.dete }}</a></span><span class="info-list__role">{{ k.datum }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if vencanja_kum %}
+  <div class="info-section">
+    <h2 class="info-section__title">Кумовања — венчања</h2>
+    <ul class="info-list">
+      {% for v in vencanja_kum %}
+      <li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">{{ v.datum }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% if ukucanstva %}
+  <div class="info-section">
+    <h2 class="info-section__title">Домаћинства</h2>
+    <ul class="info-list">
+      {% for u in ukucanstva %}
+      <li class="info-list__item"><span><a href="{% url 'domacinstvo_detail' uid=u.domacinstvo.uid %}">{{ u.domacinstvo.domacin.ime }} {{ u.domacinstvo.domacin.prezime }}</a></span><span class="info-list__role">{{ u.get_uloga_display }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
 </div>
-
-{% if otac or majka %}
-<h2 class="u-section-title u-mt-5">Родитељи</h2>
-<ul class="spisak">
-    {% if otac %}
-    <li class="stavka">
-        <a href="{% url 'parohijan_detail' uid=otac.uid %}" class="stavka-veza">
-            <span class="stavka__primary">{{ otac.ime }} {{ otac.prezime }}</span>
-            <span class="stavka__secondary">Отац</span>
-        </a>
-    </li>
-    {% endif %}
-    {% if majka %}
-    <li class="stavka">
-        <a href="{% url 'parohijan_detail' uid=majka.uid %}" class="stavka-veza">
-            <span class="stavka__primary">{{ majka.ime }} {{ majka.prezime }}</span>
-            <span class="stavka__secondary">Мајка{% if majka.devojacko_prezime %} (рођ. {{ majka.devojacko_prezime }}){% endif %}</span>
-        </a>
-    </li>
-    {% endif %}
-</ul>
-{% endif %}
-
-{% if deca %}
-<h2 class="u-section-title u-mt-5">Деца</h2>
-<ul class="spisak">
-    {% for dete in deca %}
-    <li class="stavka">
-        <a href="{% url 'parohijan_detail' uid=dete.uid %}" class="stavka-veza">
-            <span class="stavka__primary">{{ dete.ime }} {{ dete.prezime }}</span>
-            <span class="stavka__secondary">{% if dete.datum_rodjenja %}{{ dete.datum_rodjenja }}{% endif %}</span>
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if krstenja_dete %}
-<h2 class="u-section-title u-mt-5">Крштење</h2>
-<ul class="spisak">
-    {% for k in krstenja_dete %}
-    <li class="stavka">
-        <a href="{% url 'krstenje_detail' uid=k.uid %}" class="stavka-veza">
-            <span class="stavka__primary">Крштен/а {{ k.datum }}</span>
-            <span class="stavka__secondary">{% if k.kum %}Кум: {{ k.kum.ime }} {{ k.kum.prezime }}{% endif %}</span>
-        </a>
-        <a href="{% url 'krstenje_pdf' uid=k.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if vencanja_zenik or vencanja_nevesta %}
-<h2 class="u-section-title u-mt-5">Венчање</h2>
-<ul class="spisak">
-    {% for v in vencanja_zenik %}
-    <li class="stavka">
-        <a href="{% url 'vencanje_detail' uid=v.uid %}" class="stavka-veza">
-            <span class="stavka__primary">Венчан/а са {{ v.nevesta.ime }} {{ v.nevesta.prezime }}</span>
-            <span class="stavka__secondary">{{ v.datum }}</span>
-        </a>
-        <a href="{% url 'vencanje_pdf' uid=v.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
-    </li>
-    {% endfor %}
-    {% for v in vencanja_nevesta %}
-    <li class="stavka">
-        <a href="{% url 'vencanje_detail' uid=v.uid %}" class="stavka-veza">
-            <span class="stavka__primary">Венчан/а са {{ v.zenik.ime }} {{ v.zenik.prezime }}</span>
-            <span class="stavka__secondary">{{ v.datum }}</span>
-        </a>
-        <a href="{% url 'vencanje_pdf' uid=v.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if krstenja_kum %}
-<h2 class="u-section-title u-mt-5">Кумовања (крштења)</h2>
-<ul class="spisak">
-    {% for k in krstenja_kum %}
-    <li class="stavka">
-        <a href="{% url 'krstenje_detail' uid=k.uid %}" class="stavka-veza">
-            <span class="stavka__primary">Кум/а на крштењу: {{ k.ime_deteta }} {{ k.prezime_oca }}</span>
-            <span class="stavka__secondary">{{ k.datum }}</span>
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if vencanja_kum %}
-<h2 class="u-section-title u-mt-5">Кумовања (венчања)</h2>
-<ul class="spisak">
-    {% for v in vencanja_kum %}
-    <li class="stavka">
-        <a href="{% url 'vencanje_detail' uid=v.uid %}" class="stavka-veza">
-            <span class="stavka__primary">Кум/а на венчању: {{ v.ime_zenika }} и {{ v.ime_neveste }} {{ v.prezime_zenika }}</span>
-            <span class="stavka__secondary">{{ v.datum }}</span>
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
-{% if ukucanstva %}
-<h2 class="u-section-title u-mt-5">Домаћинства</h2>
-<ul class="spisak">
-    {% for u in ukucanstva %}
-    <li class="stavka">
-        <a href="{% url 'domacinstvo_detail' uid=u.domacinstvo.uid %}" class="stavka-veza">
-            <span class="stavka__primary">{{ u.domacinstvo.domacin.ime }} {{ u.domacinstvo.domacin.prezime }}</span>
-            <span class="stavka__secondary">{{ u.get_uloga_display }}</span>
-        </a>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
-
 {% include "registar/_history_panel.html" %}
 {% endblock %}
