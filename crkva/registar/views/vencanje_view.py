@@ -73,6 +73,9 @@ class VencanjePDF(DetailView):
     def get_context_data(self, **kwargs):
         """Додаје историјске снимке особа у контекст."""
         context = super().get_context_data(**kwargs)
+        from registar.history import history_for
+
+        context["history_entries"] = history_for(self.object)
         vencanje = context["vencanje"]
         event_date = vencanje.datum or vencanje.created
 
@@ -148,13 +151,6 @@ def unos_vencanja(request):
 def calibrate_vencanje(request):
     """Приказује страницу за калибрацију позиција поља на венчаници."""
     return render(request, "registar/calibrate_vencanje.html")
-
-    def get_context_data(self, **kwargs):
-        from registar.history import history_for
-
-        context = super().get_context_data(**kwargs)
-        context["history_entries"] = history_for(self.object)
-        return context
 
 
 @tenant_role_required("vencanje")
