@@ -21,7 +21,11 @@ def unos_domacinstva(request):
             return redirect("domacinstva")
     else:
         form = DomacinstvoForm()
-    return render(request, "registar/unos_domacinstva.html", {"form": form})
+    return render(
+        request,
+        "registar/domacinstvo.html",
+        {"form": form, "is_edit": True, "domacinstvo": None},
+    )
 
 
 class SpisakDomacinsta(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
@@ -51,7 +55,7 @@ class PrikazDomacinstva(DetailView):
     """Приказује детаљне информације о одређеном домаћинству."""
 
     model = Domacinstvo
-    template_name = "registar/info_domacinstvo.html"
+    template_name = "registar/domacinstvo.html"
     context_object_name = "domacinstvo"
     pk_url_kwarg = "uid"
 
@@ -71,6 +75,8 @@ class PrikazDomacinstva(DetailView):
 
         context = super().get_context_data(**kwargs)
         context["history_entries"] = history_for(self.object)
+        context["domacinstvo"] = self.object
+        context["is_edit"] = False
         domacinstvo = self.object
         ukucani = domacinstvo.ukucani.all()
         context["ukucani_zivi"] = [u for u in ukucani if not u.preminuo]
@@ -91,11 +97,12 @@ def izmena_domacinstva(request, uid):
         form = DomacinstvoForm(instance=instance)
     return render(
         request,
-        "registar/unos_domacinstva.html",
+        "registar/domacinstvo.html",
         {
             "form": form,
             "title": "Измена",
             "back_url": reverse("domacinstvo_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,
+            "domacinstvo": instance,
         },
     )

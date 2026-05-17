@@ -37,7 +37,7 @@ class UnosSvestenikaViewTests(TestCase):
         self.client.force_login(self.priest)
         r = self.client.get(reverse("unos_svestenika"))
         self.assertEqual(r.status_code, 200)
-        self.assertTemplateUsed(r, "registar/unos_svestenika.html")
+        self.assertTemplateUsed(r, "registar/svestenik.html")
         self.assertIn("form", r.context)
 
     def test_clerk_cannot_open_form(self):

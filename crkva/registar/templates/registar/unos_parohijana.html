@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form method="post" class="form form--single-column">
+<form method="post" class="info-page">
   {% csrf_token %}
 
   <div class="u-page-header">
     <a href="{% if back_url %}{{ back_url }}{% else %}{% url 'parohijani' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад">
       <i class="fa-solid fa-arrow-left"></i>
     </a>
-    <h1 class="u-page-title">{{ title|default:"Додавање новог парохијана" }}</h1>
-    <button class="button button--primary" type="submit" title="Сачувај">
-      <i class="fa-solid fa-floppy-disk" style="margin-right: 6px;"></i> Сачувај
+    <h1 class="u-page-title">{{ title|default:"Додавање парохијана" }}</h1>
+    <button class="button button--primary" type="submit" data-tooltip="Сачувај">
+      <i class="fa-solid fa-floppy-disk"></i>
     </button>
   </div>
 
@@ -25,13 +25,11 @@
     </div>
   {% endif %}
 
-  <fieldset class="form-section">
-    <legend><i class="fa-solid fa-user"></i> Основни подаци</legend>
-
-    <div class="form-row">
-      <div class="form-field">
+  <ul class="info-rows">
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div>
+      <div class="info-row__value">
         <div class="toggle-wrapper">
-          <span class="toggle-label">{{ form.pol.label }}</span>
           <div class="toggle-group" id="pol-toggle">
             {% for value, label in form.pol.field.choices %}
               <button type="button" class="toggle-button{% if form.pol.value == value %} active{% endif %}" data-value="{{ value }}">{{ label }}</button>
@@ -40,25 +38,43 @@
         </div>
         <div class="visually-hidden">{{ form.pol }}</div>
       </div>
-    </div>
-
-    <div class="form-row"><div class="form-field">{{ form.ime.label_tag }} {{ form.ime }}</div></div>
-    <div class="form-row"><div class="form-field">{{ form.prezime.label_tag }} {{ form.prezime }}</div></div>
-    <div class="form-row"><div class="form-field">{{ form.devojacko_prezime.label_tag }} {{ form.devojacko_prezime }}</div></div>
-
-    <div class="form-row form-row--pair">
-      <div class="form-field">{{ form.datum_rodjenja.label_tag }} {{ form.datum_rodjenja }}</div>
-      <div class="form-field">{{ form.vreme_rodjenja.label_tag }} {{ form.vreme_rodjenja }}</div>
-    </div>
-
-    <div class="form-row"><div class="form-field">{{ form.mesto_rodjenja.label_tag }} {{ form.mesto_rodjenja }}</div></div>
-  </fieldset>
-
-  <fieldset class="form-section">
-    <legend><i class="fa-solid fa-id-card"></i> Детаљи</legend>
-    <div class="form-row"><div class="form-field">{{ form.zanimanje.label_tag }} {{ form.zanimanje }}</div></div>
-    <div class="form-row"><div class="form-field">{{ form.veroispovest.label_tag }} {{ form.veroispovest }}</div></div>
-    <div class="form-row"><div class="form-field">{{ form.narodnost.label_tag }} {{ form.narodnost }}</div></div>
-  </fieldset>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div>
+      <div class="info-row__value">{{ form.ime }}</div>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div>
+      <div class="info-row__value">{{ form.prezime }}</div>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div>
+      <div class="info-row__value">{{ form.devojacko_prezime }}</div>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div>
+      <div class="info-row__value">{{ form.datum_rodjenja }}</div>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Време рођења"><i class="fa-solid fa-clock"></i></div>
+      <div class="info-row__value">{{ form.vreme_rodjenja }}</div>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div>
+      <div class="info-row__value">{{ form.mesto_rodjenja }}</div>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Занимање"><i class="fa-solid fa-briefcase"></i></div>
+      <div class="info-row__value">{{ form.zanimanje }}</div>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Вероисповест"><i class="fa-solid fa-cross"></i></div>
+      <div class="info-row__value">{{ form.veroispovest }}</div>
+    </li>
+    <li class="info-row info-row--editable">
+      <div class="info-row__icon" data-tooltip="Народност"><i class="fa-solid fa-flag"></i></div>
+      <div class="info-row__value">{{ form.narodnost }}</div>
+    </li>
+  </ul>
 </form>
 {% endblock %}
