@@ -13,7 +13,7 @@
 import datetime as dt
 
 from django.test import TestCase
-from registar.models import Slava
+from kalendar.models import Slava
 from registar.utils_fasting import (
     get_apostles_fast,
     get_cheesefare_week,

@@ -45,6 +45,7 @@ ALLOWED_HOSTS.extend(filter(None, os.environ.get("ALLOWED_HOSTS", "").split(",")
 SHARED_APPS = [
     "django_tenants",  # MUST be first
     "tenants",  # Tenant + Domain + UserMembership
+    "kalendar",  # Slava (saint feast day) — canonical list, shared across tenants
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",

@@ -1,6 +1,6 @@
 [
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 1,
     "fields": {
       "naziv": "Свети мученик Бонифације",
@@ -17,7 +17,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 2,
     "fields": {
       "naziv": "Свети Игњатије Богоносац",
@@ -34,7 +34,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 3,
     "fields": {
       "naziv": "Света мученица Јулијана",
@@ -51,7 +51,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 4,
     "fields": {
       "naziv": "Света великомученица Анастасија",
@@ -68,7 +68,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 5,
     "fields": {
       "naziv": "Свети Наум охридски",
@@ -85,7 +85,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 6,
     "fields": {
       "naziv": "Света преподобномученица Евгенија",
@@ -102,7 +102,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 7,
     "fields": {
       "naziv": "Рождество Христово",
@@ -119,7 +119,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 8,
     "fields": {
       "naziv": "Сабор Пресвете Богородице",
@@ -136,7 +136,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 9,
     "fields": {
       "naziv": "Свети првомученик и архиЂакон Стефан",
@@ -153,7 +153,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 10,
     "fields": {
       "naziv": "Светих 20 000 мученика Никодијских",
@@ -170,7 +170,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 11,
     "fields": {
       "naziv": "Светих 14 000 младенаца Витлејемских",
@@ -187,7 +187,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 12,
     "fields": {
       "naziv": "Света мученица Анисија",
@@ -204,7 +204,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 13,
     "fields": {
       "naziv": "Преподобни Меланија",
@@ -221,7 +221,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 14,
     "fields": {
       "naziv": "Свети Василије Велики",
@@ -238,7 +238,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 15,
     "fields": {
       "naziv": "Преподобни Сарафим Саровски",
@@ -255,7 +255,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 16,
     "fields": {
       "naziv": "Свети пророк Малахија",
@@ -272,7 +272,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 17,
     "fields": {
       "naziv": "Сабор 70 светих апостола",
@@ -289,7 +289,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 18,
     "fields": {
       "naziv": "Свети Теопемт и Теона",
@@ -306,7 +306,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 19,
     "fields": {
       "naziv": "Богојављање",
@@ -323,7 +323,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 20,
     "fields": {
       "naziv": "Сабор светог Јована Крститеља",
@@ -340,7 +340,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 21,
     "fields": {
       "naziv": "Преподобни Георгије Хозевит",
@@ -357,7 +357,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 22,
     "fields": {
       "naziv": "Свети мученик Полиевкт",
@@ -374,7 +374,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 23,
     "fields": {
       "naziv": "Свети Григорије Ниски",
@@ -391,7 +391,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 24,
     "fields": {
       "naziv": "Преподобни Теодосије Велики",
@@ -408,7 +408,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 25,
     "fields": {
       "naziv": "Света мученица Татијана",
@@ -425,7 +425,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 26,
     "fields": {
       "naziv": "Свети мученици Ермило и Стратоник",
@@ -442,7 +442,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 27,
     "fields": {
       "naziv": "Свети Сава, први Архиепископ српски",
@@ -459,7 +459,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 28,
     "fields": {
       "naziv": "Преподобни Павле",
@@ -476,7 +476,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 29,
     "fields": {
       "naziv": "Часне вериге Апостола Петра",
@@ -493,7 +493,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 30,
     "fields": {
       "naziv": "Преподобни Антоније Велики",
@@ -510,7 +510,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 31,
     "fields": {
       "naziv": "Свети Атанасије Велики",
@@ -527,7 +527,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 32,
     "fields": {
       "naziv": "Преподобни Макарије Египатски",
@@ -544,7 +544,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 33,
     "fields": {
       "naziv": "Преподобни Јевтимије Велики",
@@ -561,7 +561,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 34,
     "fields": {
       "naziv": "Преподобни Максим Есповедник",
@@ -578,7 +578,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 35,
     "fields": {
       "naziv": "Свети апостол Тимотеј",
@@ -595,7 +595,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 36,
     "fields": {
       "naziv": "Свети свештеномученик Климент Анкирски",
@@ -612,7 +612,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 37,
     "fields": {
       "naziv": "Преподобна Ксенија Римљанка",
@@ -629,7 +629,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 38,
     "fields": {
       "naziv": "Свети Григорије Богослов",
@@ -646,7 +646,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 39,
     "fields": {
       "naziv": "Преподобни Ксенофонт и Марија",
@@ -663,7 +663,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 40,
     "fields": {
       "naziv": "Пренос моштију светог Јована Златоустог",
@@ -680,7 +680,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 41,
     "fields": {
       "naziv": "Преподобни Јефрем Сирин",
@@ -697,7 +697,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 42,
     "fields": {
       "naziv": "Пренос моштију Игњатија Богоносца",
@@ -714,7 +714,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 43,
     "fields": {
       "naziv": "Света Три Јерарха",
@@ -731,7 +731,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 44,
     "fields": {
       "naziv": "Свети бесребреници Кир и Јован",
@@ -748,7 +748,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 45,
     "fields": {
       "naziv": "Свети мученик Трифун",
@@ -765,7 +765,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 46,
     "fields": {
       "naziv": "Сретење Господње",
@@ -782,7 +782,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 47,
     "fields": {
       "naziv": "Свети Симеон Богопримац и Ана",
@@ -799,7 +799,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 48,
     "fields": {
       "naziv": "Преподобни исидор Пелусиот",
@@ -816,7 +816,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 49,
     "fields": {
       "naziv": "Света мученица Агатија",
@@ -833,7 +833,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 50,
     "fields": {
       "naziv": "Свети Фотије Цариградски",
@@ -850,7 +850,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 51,
     "fields": {
       "naziv": "Свети Партеније Ламсакијски",
@@ -867,7 +867,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 52,
     "fields": {
       "naziv": "Свети Теодор Стратилат",
@@ -884,7 +884,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 53,
     "fields": {
       "naziv": "Свети мученик Никифор",
@@ -901,7 +901,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 54,
     "fields": {
       "naziv": "Свети свештеномученик Харалампије",
@@ -918,7 +918,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 55,
     "fields": {
       "naziv": "Свети свештеномученик Власије",
@@ -935,7 +935,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 56,
     "fields": {
       "naziv": "Свети Мелетије Антиохијски",
@@ -952,7 +952,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 57,
     "fields": {
       "naziv": "Свети Симеон Мироточиви",
@@ -969,7 +969,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 58,
     "fields": {
       "naziv": "Свети Кирил Словенски",
@@ -986,7 +986,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 59,
     "fields": {
       "naziv": "Свети мученици Памфил, Порфирије и други",
@@ -1003,7 +1003,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 60,
     "fields": {
       "naziv": "Свети великомученик Теодор Тирон",
@@ -1020,7 +1020,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 61,
     "fields": {
       "naziv": "Свети Лав Римски",
@@ -1037,7 +1037,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 62,
     "fields": {
       "naziv": "Свети апостоли Архип, Филимон и Апфија",
@@ -1054,7 +1054,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 63,
     "fields": {
       "naziv": "Свети Лав Катански",
@@ -1071,7 +1071,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 64,
     "fields": {
       "naziv": "Преподобни Тимотеј",
@@ -1088,7 +1088,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 65,
     "fields": {
       "naziv": "Свети мученици у Евгенији",
@@ -1105,7 +1105,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 66,
     "fields": {
       "naziv": "Свети светомученик Поликарп Смирнски",
@@ -1122,7 +1122,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 67,
     "fields": {
       "naziv": "Прво и друго обретење главе светог Јована Крститеља",
@@ -1139,7 +1139,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 68,
     "fields": {
       "naziv": "Свети Тарасије Цариградски",
@@ -1156,7 +1156,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 69,
     "fields": {
       "naziv": "Свети Порфирије",
@@ -1173,7 +1173,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 70,
     "fields": {
       "naziv": "Преподобни Прокопије Декаполит",
@@ -1190,7 +1190,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 71,
     "fields": {
       "naziv": "Преподобни Василије Исповедник",
@@ -1207,7 +1207,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 72,
     "fields": {
       "naziv": "Преподобни Јован Касиан",
@@ -1224,7 +1224,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 73,
     "fields": {
       "naziv": "Света преподобномученика Евдокија",
@@ -1241,7 +1241,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 74,
     "fields": {
       "naziv": "Свети свештеномученик Теодор Киринејски",
@@ -1258,7 +1258,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 75,
     "fields": {
       "naziv": "Свети мученици Евтропије",
@@ -1275,7 +1275,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 76,
     "fields": {
       "naziv": "Преподобни Терасим Јордански",
@@ -1292,7 +1292,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 77,
     "fields": {
       "naziv": "Свети мученик Конон",
@@ -1309,7 +1309,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 78,
     "fields": {
       "naziv": "Света 42 мученика Аморејска",
@@ -1326,7 +1326,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 79,
     "fields": {
       "naziv": "Светих седам свештеномученика Херсконских",
@@ -1343,7 +1343,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 80,
     "fields": {
       "naziv": "Свети Теофилакт Исповедник",
@@ -1360,7 +1360,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 81,
     "fields": {
       "naziv": "Светих 40 мученика Севастијских",
@@ -1377,7 +1377,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 82,
     "fields": {
       "naziv": "Свети мученик Кодрат Коринтски",
@@ -1394,7 +1394,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 83,
     "fields": {
       "naziv": "Свети Софроније Јерусалимски",
@@ -1411,7 +1411,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 84,
     "fields": {
       "naziv": "Преподобни Симеон Нови Богослов",
@@ -1428,7 +1428,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 85,
     "fields": {
       "naziv": "Пренос моштију свети Никифора Цариградског",
@@ -1445,7 +1445,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 86,
     "fields": {
       "naziv": "Преподобни Венедикт Нурсијски",
@@ -1462,7 +1462,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 87,
     "fields": {
       "naziv": "Свети мученици Агапије, Пласије и други",
@@ -1479,7 +1479,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 88,
     "fields": {
       "naziv": "Свети Апостол Аристовул",
@@ -1496,7 +1496,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 89,
     "fields": {
       "naziv": "Свети Алексије Човек Божји",
@@ -1513,7 +1513,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 90,
     "fields": {
       "naziv": "Свети Кирил Јерусалимски",
@@ -1530,7 +1530,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 91,
     "fields": {
       "naziv": "Свети мученици Хризант, Дарија и други",
@@ -1547,7 +1547,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 92,
     "fields": {
       "naziv": "Преподобни Оци побијени у манастију Свети Саве Освећеног",
@@ -1564,7 +1564,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 93,
     "fields": {
       "naziv": "Лазарева субота",
@@ -1581,7 +1581,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 94,
     "fields": {
       "naziv": "Улазак Господа Исуса Христа у Јерусалим",
@@ -1598,7 +1598,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 95,
     "fields": {
       "naziv": "Свети преподобномученик Никон и други",
@@ -1615,7 +1615,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 96,
     "fields": {
       "naziv": "Преподобни Захарије",
@@ -1632,7 +1632,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 97,
     "fields": {
       "naziv": "Благовести",
@@ -1649,7 +1649,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 98,
     "fields": {
       "naziv": "Велики четвртак (Велико бденије)",
@@ -1666,7 +1666,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 99,
     "fields": {
       "naziv": "Велики петак",
@@ -1683,7 +1683,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 100,
     "fields": {
       "naziv": "Велика субота",
@@ -1700,7 +1700,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 101,
     "fields": {
       "naziv": "Васкрсење Господа исуса Христа",
@@ -1717,7 +1717,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 102,
     "fields": {
       "naziv": "Васкрски понедељак",
@@ -1734,7 +1734,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 103,
     "fields": {
       "naziv": "Васкрсни уторак",
@@ -1751,7 +1751,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 104,
     "fields": {
       "naziv": "Преподобна Марија Египћанка",
@@ -1768,7 +1768,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 105,
     "fields": {
       "naziv": "Преподобни Тит Чудотворац",
@@ -1785,7 +1785,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 106,
     "fields": {
       "naziv": "Преподобни Никита Исповедник",
@@ -1802,7 +1802,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 107,
     "fields": {
       "naziv": "Преподобни Јосиф Химнограф",
@@ -1819,7 +1819,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 108,
     "fields": {
       "naziv": "Свети мученици Агатопод и Теодул",
@@ -1836,7 +1836,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 109,
     "fields": {
       "naziv": "Свети Евтијије Цариградски",
@@ -1853,7 +1853,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 110,
     "fields": {
       "naziv": "Преподобни Георгије Митиленски",
@@ -1870,7 +1870,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 111,
     "fields": {
       "naziv": "Свети апостоли Иродион, Агав, Руф и други",
@@ -1887,7 +1887,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 112,
     "fields": {
       "naziv": "Свети мученик Евпсихије",
@@ -1904,7 +1904,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 113,
     "fields": {
       "naziv": "Свети мученик Терентије",
@@ -1921,7 +1921,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 114,
     "fields": {
       "naziv": "Свети свештеномученик Антипа",
@@ -1938,7 +1938,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 115,
     "fields": {
       "naziv": "Преподобни Василије Исповедник",
@@ -1955,7 +1955,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 116,
     "fields": {
       "naziv": "Свети свештеномученик Артемон Лаодикијски",
@@ -1972,7 +1972,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 117,
     "fields": {
       "naziv": "Свети Мартин Исповедник",
@@ -1989,7 +1989,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 118,
     "fields": {
       "naziv": "Свети апостоли Аристарх, Пуд и Трофим",
@@ -2006,7 +2006,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 119,
     "fields": {
       "naziv": "Свете мученице Агапија, Хионија и Ирина",
@@ -2023,7 +2023,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 120,
     "fields": {
       "naziv": "Свети свештеномученик Симеон Персијски",
@@ -2040,7 +2040,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 121,
     "fields": {
       "naziv": "Преподобни Јован",
@@ -2057,7 +2057,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 122,
     "fields": {
       "naziv": "Преподобни Јован Ветхопешчерник",
@@ -2074,7 +2074,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 123,
     "fields": {
       "naziv": "Преподобни Теодор",
@@ -2091,7 +2091,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 124,
     "fields": {
       "naziv": "Свети свештеномученик Јануарије",
@@ -2108,7 +2108,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 125,
     "fields": {
       "naziv": "Преподобни Теодор Сикеот",
@@ -2125,7 +2125,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 126,
     "fields": {
       "naziv": "Свети великомученик Георгије",
@@ -2142,7 +2142,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 127,
     "fields": {
       "naziv": "Свети Сава Стратилат",
@@ -2159,7 +2159,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 128,
     "fields": {
       "naziv": "Свети апостол и јеванЂелист Марко",
@@ -2176,7 +2176,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 129,
     "fields": {
       "naziv": "Свети свештеномученик Василије Амасијски",
@@ -2193,7 +2193,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 130,
     "fields": {
       "naziv": "Спаљење моштију Светог Саве на Врачару",
@@ -2210,7 +2210,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 131,
     "fields": {
       "naziv": "Свети апостоли Јасон и Сосипатр",
@@ -2227,7 +2227,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 132,
     "fields": {
       "naziv": "Свети Василије Острошки Чудотворац",
@@ -2244,7 +2244,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 133,
     "fields": {
       "naziv": "Свети апостол Јаков Заведејев",
@@ -2261,7 +2261,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 134,
     "fields": {
       "naziv": "Свети пророк Јеремија",
@@ -2278,7 +2278,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 135,
     "fields": {
       "naziv": "Свети Атанасије Велики",
@@ -2295,7 +2295,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 136,
     "fields": {
       "naziv": "Свети мученици Тимотеј и Мавра",
@@ -2312,7 +2312,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 137,
     "fields": {
       "naziv": "Света мученица Пелагија Тарсијска",
@@ -2329,7 +2329,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 138,
     "fields": {
       "naziv": "Света великомученица Ирина",
@@ -2346,7 +2346,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 139,
     "fields": {
       "naziv": "Праведни Јов",
@@ -2363,7 +2363,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 140,
     "fields": {
       "naziv": "Вазнесење Господње",
@@ -2380,7 +2380,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 141,
     "fields": {
       "naziv": "Свети апостол и јеванЂелист Јован Богослов",
@@ -2397,7 +2397,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 142,
     "fields": {
       "naziv": "Пренос моштију светог Николе",
@@ -2414,7 +2414,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 143,
     "fields": {
       "naziv": "Преподобни Симон Зилот",
@@ -2431,7 +2431,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 144,
     "fields": {
       "naziv": "Свети Кирило и Методије",
@@ -2448,7 +2448,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 145,
     "fields": {
       "naziv": "Свети Епифаније",
@@ -2465,7 +2465,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 146,
     "fields": {
       "naziv": "Света мученица Гликерија",
@@ -2482,7 +2482,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 147,
     "fields": {
       "naziv": "Свети мученик Исидор",
@@ -2499,7 +2499,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 148,
     "fields": {
       "naziv": "Преподобни Памохије Велики",
@@ -2516,7 +2516,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 149,
     "fields": {
       "naziv": "Преподобни Теодор",
@@ -2533,7 +2533,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 150,
     "fields": {
       "naziv": "Силазак Светог Духа на апостоле-Педесетница-Тројице",
@@ -2550,7 +2550,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 151,
     "fields": {
       "naziv": "Духовски понедељак",
@@ -2567,7 +2567,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 152,
     "fields": {
       "naziv": "Духовски уторак",
@@ -2584,7 +2584,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 153,
     "fields": {
       "naziv": "Свети мученик Талалеј",
@@ -2601,7 +2601,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 154,
     "fields": {
       "naziv": "Свети цар Константин и царица Јелена",
@@ -2618,7 +2618,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 155,
     "fields": {
       "naziv": "Свети мученик Јован Владимир",
@@ -2635,7 +2635,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 156,
     "fields": {
       "naziv": "Преподобни Михаило Исповедник",
@@ -2652,7 +2652,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 157,
     "fields": {
       "naziv": "Преподобни Симеон Дивногорац",
@@ -2669,7 +2669,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 158,
     "fields": {
       "naziv": "Треће обретење главе Светог Јована Крститеља",
@@ -2686,7 +2686,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 159,
     "fields": {
       "naziv": "Свети апостоли Карп и Алфеј",
@@ -2703,7 +2703,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 160,
     "fields": {
       "naziv": "Свети свештеномученик Терапонт",
@@ -2720,7 +2720,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 161,
     "fields": {
       "naziv": "Преподобни Никита Исповедник",
@@ -2737,7 +2737,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 162,
     "fields": {
       "naziv": "Преподобнаомученица Теодосија Тирска",
@@ -2754,7 +2754,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 163,
     "fields": {
       "naziv": "Преподобни Исакије Далматски",
@@ -2771,7 +2771,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 164,
     "fields": {
       "naziv": "Свети апостол Јерма",
@@ -2788,7 +2788,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 165,
     "fields": {
       "naziv": "Свети мученик Јустин Философ",
@@ -2805,7 +2805,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 166,
     "fields": {
       "naziv": "Свети Никифор",
@@ -2822,7 +2822,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 167,
     "fields": {
       "naziv": "Свети мученик Лукилијан и други с њим",
@@ -2839,7 +2839,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 168,
     "fields": {
       "naziv": "Мироточиви Марта и Марија",
@@ -2856,7 +2856,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 169,
     "fields": {
       "naziv": "Свештеномученик Доротеј",
@@ -2873,7 +2873,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 170,
     "fields": {
       "naziv": "Преподобни Васарион",
@@ -2890,7 +2890,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 171,
     "fields": {
       "naziv": "Свети мученик Теодот Анкирски",
@@ -2907,7 +2907,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 172,
     "fields": {
       "naziv": "Свети великомученик Теодор Стратилат",
@@ -2924,7 +2924,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 173,
     "fields": {
       "naziv": "Свети Кирило Александријски",
@@ -2941,7 +2941,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 174,
     "fields": {
       "naziv": "Свети свештеномученик Тимотеј Пруски",
@@ -2958,7 +2958,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 175,
     "fields": {
       "naziv": "Свети апостоли Вартоломеј и Варнава",
@@ -2975,7 +2975,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 176,
     "fields": {
       "naziv": "Преподобни Онуфрује Велики",
@@ -2992,7 +2992,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 177,
     "fields": {
       "naziv": "Света мученица Акилина",
@@ -3009,7 +3009,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 178,
     "fields": {
       "naziv": "Свети пророк Јелисеј",
@@ -3026,7 +3026,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 179,
     "fields": {
       "naziv": "Свети Кнез Лазар",
@@ -3043,7 +3043,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 180,
     "fields": {
       "naziv": "Свети Тихон Аматунтски Чудотворац",
@@ -3060,7 +3060,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 181,
     "fields": {
       "naziv": "Свети мученици Мануил, Савел и Исмаил",
@@ -3077,7 +3077,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 182,
     "fields": {
       "naziv": "Свети мученици Леонтије, ТЕодул и Ипатије",
@@ -3094,7 +3094,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 183,
     "fields": {
       "naziv": "Свети апостол Јуда",
@@ -3111,7 +3111,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 184,
     "fields": {
       "naziv": "Свети свештеномученик Методије",
@@ -3128,7 +3128,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 185,
     "fields": {
       "naziv": "Свети мученик Јулијан Тарсијски",
@@ -3145,7 +3145,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 186,
     "fields": {
       "naziv": "Свети свештеномученик Јевсевије",
@@ -3162,7 +3162,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 187,
     "fields": {
       "naziv": "Света мученица Агрипина",
@@ -3179,7 +3179,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 188,
     "fields": {
       "naziv": "РоЂење светог Јована Претече",
@@ -3196,7 +3196,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 189,
     "fields": {
       "naziv": "Света преподобномученица Февронија",
@@ -3213,7 +3213,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 190,
     "fields": {
       "naziv": "Преподобни Давид Солунски",
@@ -3230,7 +3230,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 191,
     "fields": {
       "naziv": "Преподобни Сампсон Странопримац",
@@ -3247,7 +3247,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 192,
     "fields": {
       "naziv": "Пренос моштију светих бесребреника Кира и Јована",
@@ -3264,7 +3264,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 193,
     "fields": {
       "naziv": "Свети апостоли Петар и Павле",
@@ -3281,7 +3281,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 194,
     "fields": {
       "naziv": "Сабор светих дванаест апостола",
@@ -3298,7 +3298,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 195,
     "fields": {
       "naziv": "Свети мученици  Козма и Дамјан",
@@ -3315,7 +3315,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 196,
     "fields": {
       "naziv": "Полагање ризе Пресвете Богородице",
@@ -3332,7 +3332,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 197,
     "fields": {
       "naziv": "Свети мученик Јакинт, преподобни Анатолије",
@@ -3349,7 +3349,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 198,
     "fields": {
       "naziv": "Свети Андреј Критски",
@@ -3366,7 +3366,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 199,
     "fields": {
       "naziv": "Преподобни Атанасије Атонски",
@@ -3383,7 +3383,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 200,
     "fields": {
       "naziv": "Преподобни Сисоје Велики",
@@ -3400,7 +3400,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 201,
     "fields": {
       "naziv": "Преподобни Тома Малеин",
@@ -3417,7 +3417,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 202,
     "fields": {
       "naziv": "Свети великомученик Прокопије",
@@ -3434,7 +3434,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 203,
     "fields": {
       "naziv": "Свети свештеномученик Панкратије, свети Теодор",
@@ -3451,7 +3451,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 204,
     "fields": {
       "naziv": "Светих 45 мученика из Никопоља",
@@ -3468,7 +3468,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 205,
     "fields": {
       "naziv": "Света великомученица Јефимија",
@@ -3485,7 +3485,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 206,
     "fields": {
       "naziv": "Свети мученици Прокло и Иларије",
@@ -3502,7 +3502,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 207,
     "fields": {
       "naziv": "Сабор светог архангела Гаврила",
@@ -3519,7 +3519,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 208,
     "fields": {
       "naziv": "Свети апостол Акила, преподобни Никодим",
@@ -3536,7 +3536,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 209,
     "fields": {
       "naziv": "Свети мученици Кирик и Јулита",
@@ -3553,7 +3553,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 210,
     "fields": {
       "naziv": "Свети свештеномученик Атиноген",
@@ -3570,7 +3570,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 211,
     "fields": {
       "naziv": "Света великомученица Марина",
@@ -3587,7 +3587,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 212,
     "fields": {
       "naziv": "Свети мученик Емилијан",
@@ -3604,7 +3604,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 213,
     "fields": {
       "naziv": "Свети Стефан (Лазаревић) и мајка му Евгенија",
@@ -3621,7 +3621,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 214,
     "fields": {
       "naziv": "Свети пророк Илија",
@@ -3638,7 +3638,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 215,
     "fields": {
       "naziv": "Свети пророк Језекиљ",
@@ -3655,7 +3655,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 216,
     "fields": {
       "naziv": "Света Марија Магдалина",
@@ -3672,7 +3672,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 217,
     "fields": {
       "naziv": "Свети мученици Трофим, Теофил и други с њима",
@@ -3689,7 +3689,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 218,
     "fields": {
       "naziv": "Света мученица Христина",
@@ -3706,7 +3706,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 219,
     "fields": {
       "naziv": "Успеније Свете Ане",
@@ -3723,7 +3723,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 220,
     "fields": {
       "naziv": "Препмученица Параскева (Трнова)",
@@ -3740,7 +3740,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 221,
     "fields": {
       "naziv": "Свети великомучник Пантелејмон",
@@ -3757,7 +3757,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 222,
     "fields": {
       "naziv": "Свети апостоли и Ђакони Никанор, Прохор, Тимој и Пармен",
@@ -3774,7 +3774,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 223,
     "fields": {
       "naziv": "Свети мученик Калиник, света мученица Серафима",
@@ -3791,7 +3791,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 224,
     "fields": {
       "naziv": "Преподобна мати Ангелина Српска (Госпојинске покладе)",
@@ -3808,7 +3808,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 225,
     "fields": {
       "naziv": "Свети мученик Евдоким, свети мученица Јулита (почетак поста)",
@@ -3825,7 +3825,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 226,
     "fields": {
       "naziv": "Изношење Часног Крста",
@@ -3842,7 +3842,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 227,
     "fields": {
       "naziv": "Пренос моштију свети првомученика и архиЂакона Срефана",
@@ -3859,7 +3859,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 228,
     "fields": {
       "naziv": "Преподобни Исакије, Далмат и Фауст",
@@ -3876,7 +3876,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 229,
     "fields": {
       "naziv": "Светих седам мученика у Ефесу",
@@ -3893,7 +3893,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 230,
     "fields": {
       "naziv": "Свети мученик Евсигније",
@@ -3910,7 +3910,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 231,
     "fields": {
       "naziv": "Преображење Господње",
@@ -3927,7 +3927,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 232,
     "fields": {
       "naziv": "Свети преподобномученик Дометије",
@@ -3944,7 +3944,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 233,
     "fields": {
       "naziv": "Свети Емилијан Исповедник",
@@ -3961,7 +3961,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 234,
     "fields": {
       "naziv": "Свети апостол Матија, свети мученик Антоније",
@@ -3978,7 +3978,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 235,
     "fields": {
       "naziv": "Свети мученик и архиЂакон Лаврентије",
@@ -3995,7 +3995,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 236,
     "fields": {
       "naziv": "Свети мученик и архиЂакон Евпло",
@@ -4012,7 +4012,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 237,
     "fields": {
       "naziv": "Свети мученици Фотије, Аникита и други с њима",
@@ -4029,7 +4029,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 238,
     "fields": {
       "naziv": "Свети мученик Иполит (Оданије Преображења)",
@@ -4046,7 +4046,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 239,
     "fields": {
       "naziv": "Свети пророк Михеј (Претпразништво Успенија)",
@@ -4063,7 +4063,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 240,
     "fields": {
       "naziv": "Успење Пресвете Богородице",
@@ -4080,7 +4080,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 241,
     "fields": {
       "naziv": "Свети Јевспатије, преподобни Роман, Рафаило Банатски",
@@ -4097,7 +4097,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 242,
     "fields": {
       "naziv": "Свети мученици Мирон и Патрокло",
@@ -4114,7 +4114,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 243,
     "fields": {
       "naziv": "Свети мученик Флор, преподобни Јован Рилски",
@@ -4131,7 +4131,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 244,
     "fields": {
       "naziv": "Свети мученик Андреј Стратилат",
@@ -4148,7 +4148,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 245,
     "fields": {
       "naziv": "Свети пророк Самуило, свештеномученик Филим Ираклијски",
@@ -4165,7 +4165,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 246,
     "fields": {
       "naziv": "Апостол Тадеј, мученик Васа са децом",
@@ -4182,7 +4182,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 247,
     "fields": {
       "naziv": "Свети мученик Агатоник",
@@ -4199,7 +4199,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 248,
     "fields": {
       "naziv": "Свети мученик Луп",
@@ -4216,7 +4216,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 249,
     "fields": {
       "naziv": "Свети свештмученик Евтихије, света мученица Сара",
@@ -4233,7 +4233,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 250,
     "fields": {
       "naziv": "Пренос моштију светог апостола Вартоломеја, свети апостол Тит",
@@ -4250,7 +4250,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 251,
     "fields": {
       "naziv": "Свети мученици Адријан и Наталија",
@@ -4267,7 +4267,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 252,
     "fields": {
       "naziv": "Преподобни Пимен Велики",
@@ -4284,7 +4284,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 253,
     "fields": {
       "naziv": "Преподобни Мојсеј Мурин, Сава Псковски",
@@ -4301,7 +4301,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 254,
     "fields": {
       "naziv": "Усековање главе светог Јована Крститеља",
@@ -4318,7 +4318,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 255,
     "fields": {
       "naziv": "Свети Александар Невски",
@@ -4335,7 +4335,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 256,
     "fields": {
       "naziv": "Полагање појаса Пресвете Богородице",
@@ -4352,7 +4352,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 257,
     "fields": {
       "naziv": "Симеон Столпник",
@@ -4369,7 +4369,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 258,
     "fields": {
       "naziv": "Свети мученик Мамант, свети Јова Постник",
@@ -4386,7 +4386,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 259,
     "fields": {
       "naziv": "Свети свештмученик Антим",
@@ -4403,7 +4403,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 260,
     "fields": {
       "naziv": "Свештмученик Вавила, пророк Мојсеј Боговидац",
@@ -4420,7 +4420,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 261,
     "fields": {
       "naziv": "Свети пророк Захарија и праведна Јелисавета",
@@ -4437,7 +4437,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 262,
     "fields": {
       "naziv": "Чудо светог архангела Мијаила, свети мученик Евдоксије",
@@ -4454,7 +4454,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 263,
     "fields": {
       "naziv": "Свети мученик Созонт (Претпразништво рождества Пресвете Богородице)",
@@ -4471,7 +4471,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 264,
     "fields": {
       "naziv": "РоЂење Пресвете Богородице",
@@ -4488,7 +4488,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 265,
     "fields": {
       "naziv": "Свети праведни Јоаким и Ана",
@@ -4505,7 +4505,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 266,
     "fields": {
       "naziv": "Свете мученице Минодора, Митродора и Нимфодора",
@@ -4522,7 +4522,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 267,
     "fields": {
       "naziv": "Преподобна Теодора, преподобни Сергије и Герман",
@@ -4539,7 +4539,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 268,
     "fields": {
       "naziv": "Свети свештмученик Автоном",
@@ -4556,7 +4556,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 269,
     "fields": {
       "naziv": "Свети свештеномученик Корнилије",
@@ -4573,7 +4573,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 270,
     "fields": {
       "naziv": "Воздвижење Часног Крста",
@@ -4590,7 +4590,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 271,
     "fields": {
       "naziv": "Свети великомученик Никита",
@@ -4607,7 +4607,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 272,
     "fields": {
       "naziv": "Преподобни Доротеј и Кипријан",
@@ -4624,7 +4624,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 273,
     "fields": {
       "naziv": "Свете мученице Вера, Нада и љубав и мати им Софија",
@@ -4641,7 +4641,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 274,
     "fields": {
       "naziv": "Свети Евменије Гортински, света мученица Ариадна",
@@ -4658,7 +4658,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 275,
     "fields": {
       "naziv": "Свети мученици Трофим, Саватије и Доримедонт",
@@ -4675,7 +4675,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 276,
     "fields": {
       "naziv": "Свети великомученик Јевстатије",
@@ -4692,7 +4692,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 277,
     "fields": {
       "naziv": "Свети апостол Кодрат (Оданије Воздвижења)",
@@ -4709,7 +4709,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 278,
     "fields": {
       "naziv": "Свети свештеномученик Фока, свети Јона",
@@ -4726,7 +4726,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 279,
     "fields": {
       "naziv": "Зачеће светог Јована Претече и Крститеља",
@@ -4743,7 +4743,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 280,
     "fields": {
       "naziv": "Света првомученица Текла",
@@ -4760,7 +4760,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 281,
     "fields": {
       "naziv": "Преподобна Ефросиније, свети Сергије Радоњешки",
@@ -4777,7 +4777,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 282,
     "fields": {
       "naziv": "Свети апостол и јеванЂелист Јован Богослов",
@@ -4794,7 +4794,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 283,
     "fields": {
       "naziv": "Свети мученик Калистрат",
@@ -4811,7 +4811,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 284,
     "fields": {
       "naziv": "Преподобни Харитон Исповедник",
@@ -4828,7 +4828,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 285,
     "fields": {
       "naziv": "Преподобни Киријак Отшелник",
@@ -4845,7 +4845,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 286,
     "fields": {
       "naziv": "Свети свештеномученик Григорије",
@@ -4862,7 +4862,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 287,
     "fields": {
       "naziv": "Покров Пресвете Богородице",
@@ -4879,7 +4879,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 288,
     "fields": {
       "naziv": "Свети свештеномученик Кипријан, преподобни Андреј",
@@ -4896,7 +4896,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 289,
     "fields": {
       "naziv": "Свети свештеномученик Дионисије Ареопагит",
@@ -4913,7 +4913,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 290,
     "fields": {
       "naziv": "Свети Стефан и Јелена (Штиљановић)",
@@ -4930,7 +4930,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 291,
     "fields": {
       "naziv": "Света мученица Харитина, свештеномученик Дионасије",
@@ -4947,7 +4947,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 292,
     "fields": {
       "naziv": "Свети апостол Тома",
@@ -4964,7 +4964,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 293,
     "fields": {
       "naziv": "Свети мученици Сергије и Вакхо",
@@ -4981,7 +4981,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 294,
     "fields": {
       "naziv": "Преподобна Пелагија и преподобна Таиса",
@@ -4998,7 +4998,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 295,
     "fields": {
       "naziv": "Свети апостол Јаков, свети Стефан Српски (Слепи)",
@@ -5015,7 +5015,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 296,
     "fields": {
       "naziv": "Свети мученици Евлампије и Евлампија",
@@ -5032,7 +5032,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 297,
     "fields": {
       "naziv": "Свети апостол Филип, свети Теофан Начертани",
@@ -5049,7 +5049,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 298,
     "fields": {
       "naziv": "Свети мученици Андроник, Пров и Тарах",
@@ -5066,7 +5066,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 299,
     "fields": {
       "naziv": "Свети мученик Карп, света мученица Злата Магленска",
@@ -5083,7 +5083,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 300,
     "fields": {
       "naziv": "Свети свештеномученик Лукијан, преподобни Јевтимије",
@@ -5100,7 +5100,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 301,
     "fields": {
       "naziv": "Свети мученик Лонгин Сотник",
@@ -5117,7 +5117,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 302,
     "fields": {
       "naziv": "Свети пророк Осија, преподобномученик Андреј Критски",
@@ -5134,7 +5134,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 303,
     "fields": {
       "naziv": "Свети апостол и јеванЂелист Лука",
@@ -5151,7 +5151,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 304,
     "fields": {
       "naziv": "Свети пророк Јоил",
@@ -5168,7 +5168,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 305,
     "fields": {
       "naziv": "Свети великомученик Артемије",
@@ -5185,7 +5185,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 306,
     "fields": {
       "naziv": "Преподобни Иларион",
@@ -5202,7 +5202,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 307,
     "fields": {
       "naziv": "Свети равноапостолни Аверкије Јаропољски",
@@ -5219,7 +5219,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 308,
     "fields": {
       "naziv": "Свети апостол Јаков, први епископ јерусалимски",
@@ -5236,7 +5236,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 309,
     "fields": {
       "naziv": "Свети великомученик Арета",
@@ -5253,7 +5253,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 310,
     "fields": {
       "naziv": "Свети мученици Маркијан и Мартирије",
@@ -5270,7 +5270,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 311,
     "fields": {
       "naziv": "Свети великомученик Димитрије",
@@ -5287,7 +5287,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 312,
     "fields": {
       "naziv": "Свети мученик Нестор",
@@ -5304,7 +5304,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 313,
     "fields": {
       "naziv": "Свети мученик Терентије",
@@ -5321,7 +5321,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 314,
     "fields": {
       "naziv": "Свети Аврамије Затворник",
@@ -5338,7 +5338,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 315,
     "fields": {
       "naziv": "Свети краљ Милутин, Теоктист и мати им Јелена",
@@ -5355,7 +5355,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 316,
     "fields": {
       "naziv": "Свети апостоли Стахије, Амплије и други с њим",
@@ -5372,7 +5372,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 317,
     "fields": {
       "naziv": "Свети Козма и Дамјан",
@@ -5389,7 +5389,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 318,
     "fields": {
       "naziv": "Свети мученици Акиндин, Пигасије и други с њима",
@@ -5406,7 +5406,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 319,
     "fields": {
       "naziv": "Обновљење храма светог Георгија",
@@ -5423,7 +5423,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 320,
     "fields": {
       "naziv": "Преподобни Јоаникије Велики, свештеномученик Никандар",
@@ -5440,7 +5440,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 321,
     "fields": {
       "naziv": "Свети преподобномученици Галиктион и Епистима",
@@ -5457,7 +5457,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 322,
     "fields": {
       "naziv": "Свети Павле Исповедник, преподобни Варлам Хутински",
@@ -5474,7 +5474,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 323,
     "fields": {
       "naziv": "Света 33 мученика у Мелитини, преподобни Лазар",
@@ -5491,7 +5491,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 324,
     "fields": {
       "naziv": "Сабор светог Архангела Михајла",
@@ -5508,7 +5508,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 325,
     "fields": {
       "naziv": "Свети мученик Онисифор и Порфириије, свети Нектарије Егински",
@@ -5525,7 +5525,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 326,
     "fields": {
       "naziv": "Свети апостоли Олимп, Ераст, Родион и други с њима",
@@ -5542,7 +5542,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 327,
     "fields": {
       "naziv": "Свети краљ Стефан Дечански",
@@ -5559,7 +5559,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 328,
     "fields": {
       "naziv": "Свети Јован Милостиви",
@@ -5576,7 +5576,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 329,
     "fields": {
       "naziv": "Свети Јован Златоусти",
@@ -5593,7 +5593,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 330,
     "fields": {
       "naziv": "Свети апостол Филип (Божићне покладе)",
@@ -5610,7 +5610,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 331,
     "fields": {
       "naziv": "Свети мученици Гурије, Само и Авив",
@@ -5627,7 +5627,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 332,
     "fields": {
       "naziv": "Свети апостол и јеваЂелист Матеј",
@@ -5644,7 +5644,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 333,
     "fields": {
       "naziv": "Свети Григорије Чудотворац, Никон Родоњешки",
@@ -5661,7 +5661,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 334,
     "fields": {
       "naziv": "Свети мученици Платон, Роман Варул Отрок",
@@ -5678,7 +5678,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 335,
     "fields": {
       "naziv": "Свети пророк Авдија, мученик Варлаам, преподобни Јосаф",
@@ -5695,7 +5695,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 336,
     "fields": {
       "naziv": "Преподобни Григорије Декаполит",
@@ -5712,7 +5712,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 337,
     "fields": {
       "naziv": "Ваведење Пресвете Богородице",
@@ -5729,7 +5729,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 338,
     "fields": {
       "naziv": "Свети апостоли Филимон, Апфија и Архип",
@@ -5746,7 +5746,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 339,
     "fields": {
       "naziv": "Свети Амфилохије Иконијски, свети Григорије",
@@ -5763,7 +5763,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 340,
     "fields": {
       "naziv": "Света великомученица Екатарина",
@@ -5780,7 +5780,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 341,
     "fields": {
       "naziv": "Свети свештеномученик Климент",
@@ -5797,7 +5797,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 342,
     "fields": {
       "naziv": "Преподобни Алимпије Столпник",
@@ -5814,7 +5814,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 343,
     "fields": {
       "naziv": "Свети мученик Јаков Персијанац, свети аков Ростовски",
@@ -5831,7 +5831,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 344,
     "fields": {
       "naziv": "Свети преподобномученик Стефан",
@@ -5848,7 +5848,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 345,
     "fields": {
       "naziv": "Свети мученици Парамон и Филумен",
@@ -5865,7 +5865,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 346,
     "fields": {
       "naziv": "Свети апостол Андреј Првозвани",
@@ -5882,7 +5882,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 347,
     "fields": {
       "naziv": "Свети пророк Наум, свети Филарет Милостиви",
@@ -5899,7 +5899,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 348,
     "fields": {
       "naziv": "Свети цар Урош, преподобни Јоаникије Девички",
@@ -5916,7 +5916,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 349,
     "fields": {
       "naziv": "Свети пророк Софонија, преподобни Јован Ћутљиви",
@@ -5933,7 +5933,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 350,
     "fields": {
       "naziv": "Света великомученица Варвара",
@@ -5950,7 +5950,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 351,
     "fields": {
       "naziv": "Преподобни Сава Освечћени",
@@ -5967,7 +5967,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 352,
     "fields": {
       "naziv": "Свети Никола",
@@ -5984,7 +5984,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 353,
     "fields": {
       "naziv": "Свети Амвросије, преподобни Григорије Горњачки",
@@ -6001,7 +6001,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 354,
     "fields": {
       "naziv": "Преподобни Патапоје, свети апостоли Состен, Апалос и други",
@@ -6018,7 +6018,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 355,
     "fields": {
       "naziv": "Зачеће свете Ане",
@@ -6035,7 +6035,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 356,
     "fields": {
       "naziv": "Свети мученици Мина и други, свети Јован Деспот Српски",
@@ -6052,7 +6052,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 357,
     "fields": {
       "naziv": "Преподобни Данило Столпник",
@@ -6069,7 +6069,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 358,
     "fields": {
       "naziv": "Преподобни Спиридон Чудотворац",
@@ -6086,7 +6086,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 359,
     "fields": {
       "naziv": "Светимученик Евстратије, свети Гаврило и Никодим Српски",
@@ -6103,7 +6103,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 360,
     "fields": {
       "naziv": "Свети мученик Тирс, Левкије, Филимон, Аполоније и други",
@@ -6120,7 +6120,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 361,
     "fields": {
       "naziv": "Свети свештеномученик Елевтерије, преподобни Павле",
@@ -6137,7 +6137,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 362,
     "fields": {
       "naziv": "Свети пророк Агеј, света Теофанија царица",
@@ -6154,7 +6154,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 363,
     "fields": {
       "naziv": "Свети пророк Данило, свети проподобномученик Ђакон Авакум",
@@ -6171,7 +6171,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 364,
     "fields": {
       "naziv": "Свети мученик Севастијан, свети Модест и други с њим",
@@ -6188,7 +6188,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 365,
     "fields": {
       "naziv": "Лазарева субота",
@@ -6205,7 +6205,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 366,
     "fields": {
       "naziv": "Улазак Господа Исуса Христа у Јерусалим",
@@ -6222,7 +6222,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 367,
     "fields": {
       "naziv": "Велики четвртак (Велико бденије)",
@@ -6239,7 +6239,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 368,
     "fields": {
       "naziv": "Велики петак",
@@ -6256,7 +6256,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 369,
     "fields": {
       "naziv": "Велика субота",
@@ -6273,7 +6273,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 370,
     "fields": {
       "naziv": "Васкрсење Господа Исуса Христа",
@@ -6290,7 +6290,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 371,
     "fields": {
       "naziv": "Васкрсни понедељак",
@@ -6307,7 +6307,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 372,
     "fields": {
       "naziv": "Васкрсни уторак",
@@ -6324,7 +6324,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 373,
     "fields": {
       "naziv": "Вазнесење Господње",
@@ -6341,7 +6341,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 374,
     "fields": {
       "naziv": "Силазак Светог Духа на апостоле",
@@ -6358,7 +6358,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 375,
     "fields": {
       "naziv": "Духовски понедељак",
@@ -6375,7 +6375,7 @@
     }
   },
   {
-    "model": "registar.slava",
+    "model": "kalendar.slava",
     "pk": 376,
     "fields": {
       "naziv": "Духовски уторак",
