@@ -1,8 +1,8 @@
 """Django форма за унос парохијана."""
 
 from django import forms
-from django_select2.forms import ModelSelect2Widget
 from registar.forms.lookup import TaggableLookupField, TaggableLookupWidget
+from registar.forms.select2 import ScriptAwareModelSelect2Widget
 from registar.models import Adresa, Narodnost, Parohijan, Veroispovest, Zanimanje
 
 
@@ -60,9 +60,9 @@ class ParohijanForm(forms.ModelForm):
             ),
             "vreme_rodjenja": forms.TimeInput(attrs={"type": "time"}, format="%H:%M"),
             "pol": forms.RadioSelect,
-            "adresa": ModelSelect2Widget(
+            "adresa": ScriptAwareModelSelect2Widget(
                 model=Adresa,
                 search_fields=["ulica__icontains", "mesto__icontains"],
-                attrs={"data-minimum-input-length": 1},
+                attrs={"data-minimum-input-length": 0},
             ),
         }

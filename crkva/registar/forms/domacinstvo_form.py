@@ -1,7 +1,7 @@
 """Django форма за унос домаћинства."""
 
 from django import forms
-from django_select2.forms import ModelSelect2Widget
+from registar.forms.select2 import ScriptAwareModelSelect2Widget
 from registar.models import Adresa, Domacinstvo, Osoba, Slava
 
 
@@ -21,17 +21,17 @@ class DomacinstvoForm(forms.ModelForm):
             "napomena",
         ]
         widgets = {
-            "domacin": ModelSelect2Widget(
+            "domacin": ScriptAwareModelSelect2Widget(
                 model=Osoba,
                 search_fields=["ime__icontains", "prezime__icontains"],
-                attrs={"data-minimum-input-length": 1},
+                attrs={"data-minimum-input-length": 0},
             ),
-            "adresa": ModelSelect2Widget(
+            "adresa": ScriptAwareModelSelect2Widget(
                 model=Adresa,
                 search_fields=["ulica__icontains", "mesto__icontains"],
-                attrs={"data-minimum-input-length": 1},
+                attrs={"data-minimum-input-length": 0},
             ),
-            "slava": ModelSelect2Widget(
+            "slava": ScriptAwareModelSelect2Widget(
                 model=Slava,
                 search_fields=["naziv__icontains"],
                 attrs={"data-minimum-input-length": 0},

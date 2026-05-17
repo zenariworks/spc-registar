@@ -1,7 +1,7 @@
 """Django форма за унос свештеника."""
 
 from django import forms
-from django_select2.forms import ModelSelect2Widget
+from registar.forms.select2 import ScriptAwareModelSelect2Widget
 from registar.models import Parohija, Svestenik
 
 
@@ -19,7 +19,7 @@ class SvestenikForm(forms.ModelForm):
             "parohija",
         ]
         widgets = {
-            "parohija": ModelSelect2Widget(
+            "parohija": ScriptAwareModelSelect2Widget(
                 model=Parohija,
                 search_fields=["naziv__icontains"],
                 attrs={"data-minimum-input-length": 0},

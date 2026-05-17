@@ -20,7 +20,7 @@ class TaggableLookupWidget(ModelSelect2Widget):
         attrs.setdefault("data-tags", "true")
         attrs.setdefault("data-token-separators", "[]")
         # django-select2 sets this to 2 by default; force 1 so suggestions appear after one keystroke.
-        attrs["data-minimum-input-length"] = 1
+        attrs["data-minimum-input-length"] = 0
         attrs.setdefault("data-placeholder", "Изабери или унеси ново…")
         return attrs
 
