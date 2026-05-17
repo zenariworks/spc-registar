@@ -27,6 +27,31 @@ def warm_osoba_cache() -> int:
     return len(_OSOBA_CACHE)
 
 
+def lookup_osoba(ime: str | None, prezime: str | None) -> Osoba | None:
+    """Cache-first lookup of an existing Osoba by (ime, prezime).
+
+    Returns the cached Osoba or None. Use this BEFORE deciding whether
+    to create a new row keyed on an external UID.
+    """
+    if not ime or not prezime:
+        return None
+    key = _key(ime.strip(), prezime.strip())
+    return _OSOBA_CACHE.get(key)
+
+
+def cache_osoba(osoba: Osoba) -> None:
+    """Insert (or update) an Osoba in the in-memory cache.
+
+    Use this after creating an Osoba via a path that bypasses
+    find_or_create_osoba (e.g. raw get_or_create on a UID key) so
+    subsequent lookups still find it without round-tripping the DB.
+    """
+    if osoba is None or not osoba.ime or not osoba.prezime:
+        return
+    key = _key(osoba.ime, osoba.prezime)
+    _OSOBA_CACHE[key] = osoba
+
+
 def find_or_create_osoba(ime: str | None, prezime: str | None, **extra) -> Osoba | None:
     """Find an Osoba by (ime, prezime) case-insensitively, or create one.
 
