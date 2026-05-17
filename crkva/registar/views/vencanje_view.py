@@ -121,7 +121,7 @@ class PrikazVencanja(DetailView):
     """Приказује детаљне информације о појединачном венчању."""
 
     model = Vencanje
-    template_name = "registar/info_vencanje.html"
+    template_name = "registar/vencanje.html"
     context_object_name = "vencanje"
 
     def get_object(self) -> Vencanje:
@@ -172,5 +172,6 @@ def izmena_vencanja(request, uid):
             "title": "Измена",
             "back_url": reverse("vencanje_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,
+            "vencanje": instance,
         },
     )
