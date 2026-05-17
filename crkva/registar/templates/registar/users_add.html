@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <form method="post" class="form">
+  <form method="post" class="form form--single-column">
     {% csrf_token %}
     <div class="u-page-header">
       <a href="{% url 'tenants:user_list' %}" class="back-button" aria-label="Назад" title="Назад">
@@ -18,8 +18,8 @@
     {% endif %}
 
     <fieldset class="form-section">
-      <legend>Налог</legend>
-      <div class="form-row">
+      <legend><i class="fa-solid fa-id-card"></i> Налог</legend>
+      <div class="form-row form-row--pair">
         <div class="form-field">
           {{ form.username.label_tag }} {{ form.username }}
           {% if form.username.errors %}<div class="error-text">{{ form.username.errors|join:" " }}</div>{% endif %}
@@ -29,7 +29,7 @@
           {% if form.password.errors %}<div class="error-text">{{ form.password.errors|join:" " }}</div>{% endif %}
         </div>
       </div>
-      <div class="form-row">
+      <div class="form-row form-row--pair">
         <div class="form-field">
           {{ form.first_name.label_tag }} {{ form.first_name }}
           {% if form.first_name.errors %}<div class="error-text">{{ form.first_name.errors|join:" " }}</div>{% endif %}
@@ -48,8 +48,8 @@
     </fieldset>
 
     <fieldset class="form-section">
-      <legend>Приступ у парохији</legend>
-      <div class="form-row">
+      <legend><i class="fa-solid fa-shield-halved"></i> Приступ у парохији</legend>
+      <div class="form-row form-row--pair">
         <div class="form-field">
           {{ form.role.label_tag }} {{ form.role }}
           {% if form.role.errors %}<div class="error-text">{{ form.role.errors|join:" " }}</div>{% endif %}
