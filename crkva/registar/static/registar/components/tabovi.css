@@ -133,42 +133,38 @@
 
 .tabs--segmented .tabs__nav {
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-2);
-    overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-    background: var(--color-surface);
+    border-radius: 999px;
+    background: var(--color-surface-1);
+    padding: 3px;
+    gap: 2px;
 }
 
 .tabs--segmented .tabs__tab {
     background: transparent;
-}
-
-.tabs--segmented .tabs__tab + .tabs__radio + .tabs__tab,
-.tabs--segmented .tabs__radio:not(:first-of-type) + .tabs__tab {
-    border-left: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-weight: 500;
+    border-radius: 999px;
+    padding: 6px 16px;
+    min-height: 32px;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .tabs--segmented .tabs__tab:hover:not([aria-disabled="true"]) {
-    background: var(--color-surface-2);
+    background: color-mix(in oklab, var(--color-text-muted) 12%, transparent);
+    color: var(--color-text);
 }
 
-/* Active tab — primary fill, white text, count badge inverted */
+/* Active tab — solid primary pill (mirrors .toggle-button.active) */
 .tabs--segmented .tabs__radio:checked + .tabs__tab {
     background: var(--color-primary);
     color: #fff;
-    border-left-color: transparent;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 
 .tabs--segmented .tabs__radio:checked + .tabs__tab .tabs__count {
     background: rgba(255, 255, 255, 0.22);
     color: #fff;
-}
-
-/* Hide the divider directly to the right of the active tab so the fill
-   meets its neighbour seamlessly. Approximate: the tab immediately after
-   the active label drops its left border. */
-.tabs--segmented .tabs__radio:checked + .tabs__tab + .tabs__radio + .tabs__tab {
-    border-left-color: transparent;
 }
 
 .tabs--segmented .tabs__radio:focus-visible + .tabs__tab {

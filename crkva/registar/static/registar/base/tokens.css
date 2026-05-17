@@ -51,6 +51,10 @@
     --color-info-border-light: #b3d9ff;
     --color-info-link: #0066cc;
 
+    /* Link colors — used for plain <a> elements site-wide */
+    --color-link: var(--color-primary);
+    --color-link-hover: var(--color-primary-700);
+
     /* Primary hover state */
     --color-primary-hover: #8B1312;
     --color-primary-transparent: rgba(162, 21, 20, 0.1);
@@ -177,6 +181,10 @@ a:focus, button:focus, input:focus, select:focus, textarea:focus {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
 }
+
+/* Default link colour: brand red, never browser blue */
+a { color: var(--color-link); text-decoration: none; }
+a:hover { color: var(--color-link-hover); text-decoration: underline; }
 
 /* Sekundarni tekst */
 .muted { color: var(--color-text-muted); }
