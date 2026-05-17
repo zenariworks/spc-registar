@@ -81,7 +81,7 @@
     {% if ukucani_zivi %}
     <div class="u-mb-6">
         <h3 class="u-section-title u-section-title--success">
-            Живи чланови ({{ ukucani_zivi|length }})
+            {{ ukucani_zivi|length }} {% if ukucani_zivi|length == 1 %}члан{% elif ukucani_zivi|length < 5 %}члана{% else %}чланова{% endif %}
         </h3>
         <ul class="spisak">
             {% for ukucanin in ukucani_zivi %}
@@ -111,7 +111,7 @@
     {% if ukucani_preminuli %}
     <div>
         <h3 class="u-section-title u-text-muted">
-            Преминули чланови ({{ ukucani_preminuli|length }})
+            Преминули ({{ ukucani_preminuli|length }})
         </h3>
         <ul class="spisak">
             {% for ukucanin in ukucani_preminuli %}
