@@ -14,7 +14,7 @@ from typing import Dict, Iterable
 from django.db import connection
 from registar.management.commands.base_migration import MigrationCommand
 from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
-from registar.migracija.helpers import clean_prezime, cyr
+from registar.migracija.helpers import cyr, extract_maiden
 from registar.migracija.osoba_repo import find_or_create_osoba, warm_osoba_cache
 from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
 
@@ -125,8 +125,13 @@ class Command(MigrationCommand):
                 if not puno_ime:
                     continue
 
-                ime, prezime = (puno_ime.split(" ", 1) + [""])[:2]
-                prezime = clean_prezime(prezime)
+                ime, prezime_raw = (puno_ime.split(" ", 1) + [""])[:2]
+                married_prezime, devojacko_prezime = extract_maiden(prezime_raw)
+                # Domaćin records with only a "р.<maiden>" surname can't
+                # be created without a married surname — fall back to the
+                # maiden value so the row isn't lost, and the cleanup
+                # command (popravi_devojacka) can re-split it later.
+                prezime = married_prezime or devojacko_prezime
                 if not ime or not prezime:
                     self.log_skip(
                         f"Парохијан UID {parohijan_uid}: непотпуно име '{puno_ime}'"
@@ -157,6 +162,7 @@ class Command(MigrationCommand):
                     defaults={
                         "ime": ime,
                         "prezime": prezime,
+                        "devojacko_prezime": devojacko_prezime or None,
                         "parohijan": True,
                         "adresa": adresa,
                         "tel_fiksni": (telefon_fiksni or "").strip() or None,
