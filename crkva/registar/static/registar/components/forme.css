@@ -130,22 +130,19 @@ fieldset.form-section legend {
 }
 
 /* ==========================================================================
-   TOGGLE GROUP — segmented control (pill buttons)
+   TOGGLE GROUP — segmented control (joined buttons, sharp corners)
    Used as a replacement for <select> when there are 2-5 discrete options.
-   Visual: pills inside a rounded container. Active pill has solid primary
-   background and contrasting text. Inactive pills are transparent / muted.
    ========================================================================== */
 .toggle-group {
   display: inline-flex;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-2);
+  overflow: hidden;
   background: var(--color-surface-1);
-  padding: 3px;
-  gap: 2px;
   flex-wrap: wrap;
 }
 .toggle-button {
-  padding: 6px 14px;
+  padding: 8px 16px;
   cursor: pointer;
   user-select: none;
   font-weight: 500;
@@ -154,17 +151,21 @@ fieldset.form-section legend {
   color: var(--color-text-muted);
   background: transparent;
   border: none;
-  border-radius: 999px;
-  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 0;
+  transition: background 0.15s ease, color 0.15s ease;
 }
-.toggle-button:hover:not(.active):not(:disabled) {
-  background: color-mix(in oklab, var(--color-text-muted) 12%, transparent);
+.toggle-button + .toggle-button {
+  border-left: 1px solid var(--color-border);
+}
+.toggle-button:hover:not(.active):not(:disabled):not(:has(input:checked)) {
+  background: color-mix(in oklab, var(--color-text-muted) 10%, transparent);
   color: var(--color-text);
 }
 .toggle-button:focus-visible,
 .toggle-button:focus-within {
   outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+  outline-offset: -2px;
+  z-index: 1;
 }
 .toggle-button:disabled {
   opacity: 0.5;
@@ -175,10 +176,9 @@ fieldset.form-section legend {
   color: #fff;
   background: var(--color-primary);
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }
 .toggle-button:has(input:checked):hover {
-  background: var(--color-primary);
+  background: var(--color-primary-700, var(--color-primary));
   color: #fff;
 }
 /* Hide the underlying radio/checkbox inside a label-style toggle */
@@ -191,11 +191,8 @@ fieldset.form-section legend {
 }
 
 /* Compact variant for dense lists / toolbars */
-.toggle-group--sm {
-  padding: 2px;
-}
 .toggle-group--sm .toggle-button {
-  padding: 4px 10px;
+  padding: 5px 12px;
   font-size: 13px;
 }
 
