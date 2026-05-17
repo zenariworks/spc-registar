@@ -31,7 +31,7 @@ class Tenant(TenantMixin):
 
     naziv = models.CharField(
         max_length=200,
-        verbose_name="назив тенанта",
+        verbose_name="назив парохије",
         help_text="Кориснички видљив назив (нпр. „Парохија Чукарица“).",
     )
     parohija_naziv = models.CharField(
@@ -39,14 +39,14 @@ class Tenant(TenantMixin):
         blank=True,
         default="",
         verbose_name="парохија (име)",
-        help_text="Име парохије за приказ. У сваком тенантовом шеми "
+        help_text="Име парохије за приказ. У свакој парохијској шеми "
         "постоји сопствена Parohija инстанца; ово је само display label.",
     )
     is_active = models.BooleanField(default=True, verbose_name="активан")
     is_default = models.BooleanField(
         default=False,
         verbose_name="подразумевани",
-        help_text="Тенант који видe корисници без експлицитно додељене парохије.",
+        help_text="Парохија коју виде корисници без експлицитно додељене парохије.",
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -57,8 +57,8 @@ class Tenant(TenantMixin):
 
     class Meta:
         db_table = "tenants_tenant"
-        verbose_name = "Тенант"
-        verbose_name_plural = "Тенанти"
+        verbose_name = "Парохија"
+        verbose_name_plural = "Парохије"
         constraints = [
             models.UniqueConstraint(
                 fields=["is_default"],
@@ -117,7 +117,7 @@ class UserMembership(models.Model):
     )
     is_default = models.BooleanField(
         default=False,
-        help_text="Тенант у који корисник аутоматски улази после пријаве.",
+        help_text="Парохија у коју корисник аутоматски улази после пријаве.",
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
