@@ -283,6 +283,187 @@ class IzmenaKrstenjaTests(TestCase):
             r, 'name="dete_sa_telesnom_manom" id="id_dete_sa_telesnom_manom" checked'
         )
 
+    def test_dete_bool_fields_use_info_row_editable_markup(self):
+        """Each Дете bool/text field must render as its own info-row--editable."""
+        k = self._create_krstenje(
+            dete_rodjeno_zivo=True,
+            dete_vanbracno=False,
+            dete_blizanac=True,
+            dete_sa_telesnom_manom=False,
+            drugo_dete_blizanac_ime="Лука",
+        )
+        self.client.force_login(self.clerk)
+        html = self.client.get(self.url(k)).content.decode("utf-8")
+        # No leftover plain-label wrappers from the old form-row layout.
+        self.assertNotIn("<label>{0}".format("<input"), html)
+        self.assertNotIn("ванбрачно</label>", html)
+        self.assertNotIn("близанац</label>", html)
+        self.assertNotIn("рођено живо</label>", html)
+        self.assertNotIn("са телесном маном</label>", html)
+        # Each field is wrapped in its own .info-row.info-row--editable list
+        # item with the matching tooltip on .info-row__icon.
+        expected_tooltips = [
+            "Дете рођено живо",
+            "Дете по реду (по мајци)",
+            "Ванбрачно дете",
+            "Дете близанац",
+            "Име другог детета близанца",
+            "Дете са телесном маном",
+        ]
+        for tooltip in expected_tooltips:
+            # Use a relaxed marker so trailing whitespace / attribute ordering
+            # variations between Django versions don't break the assertion.
+            needle = f'data-tooltip="{tooltip}"'
+            self.assertIn(
+                needle,
+                html,
+                msg=f'Missing data-tooltip for "{tooltip}"',
+            )
+            # And verify the row that hosts the icon is an info-row--editable.
+            idx = html.index(needle)
+            preceding = html[max(0, idx - 200) : idx]
+            self.assertIn(
+                "info-row info-row--editable",
+                preceding,
+                msg=(
+                    f"Row hosting tooltip {tooltip!r} should carry "
+                    f"info-row--editable; preceding 200 chars: {preceding!r}"
+                ),
+            )
+
+    def test_dete_bool_widgets_are_bare_checkboxes(self):
+        """Bool widgets render as bare <input type=checkbox> (slider style)."""
+        k = self._create_krstenje()
+        self.client.force_login(self.clerk)
+        r = self.client.get(self.url(k))
+        # No surrounding inline <label> text node — the value cell directly
+        # contains the checkbox so the slider CSS attaches cleanly.
+        for fname in (
+            "dete_rodjeno_zivo",
+            "dete_vanbracno",
+            "dete_blizanac",
+            "dete_sa_telesnom_manom",
+        ):
+            self.assertContains(
+                r,
+                f'<div class="info-row__value">'
+                f'<input type="checkbox" name="{fname}"',
+                msg_prefix=f"{fname} should be bare checkbox in info-row__value",
+            )
+
+
+class PrikazKrstenjaDeteSectionTests(TestCase):
+    """View-mode (is_edit=False) rendering of the Дете bool fields."""
+
+    def setUp(self):
+        self.client = Client()
+
+    def _create_krstenje(self, **overrides):
+        defaults = dict(
+            godina_registracije=2024,
+            redni_broj=1,
+            knjiga=1,
+            strana=1,
+            broj=1,
+            datum=datetime.date(2024, 2, 10),
+            dete_rodjeno_zivo=True,
+            dete_vanbracno=False,
+            dete_blizanac=True,
+            dete_sa_telesnom_manom=False,
+            drugo_dete_blizanac_ime="Лука",
+        )
+        defaults.update(overrides)
+        return Krstenje.objects.create(**defaults)
+
+    def url(self, k):
+        return reverse("krstenje_detail", kwargs={"uid": k.uid})
+
+    def test_view_mode_shows_da_ne_for_each_bool(self):
+        """View mode must render Да/Не values for every dete bool."""
+        k = self._create_krstenje()
+        html = self.client.get(self.url(k)).content.decode("utf-8")
+        # Each bool field has its own info-row with the right tooltip in view
+        # mode, and the value is exactly "Да" or "Не".
+        cases = [
+            ("Дете рођено живо", "Да"),
+            ("Ванбрачно дете", "Не"),
+            ("Дете близанац", "Да"),
+            ("Дете са телесном маном", "Не"),
+        ]
+        for tooltip, expected in cases:
+            row_marker = (
+                f'<div class="info-row__icon" data-tooltip="{tooltip}">'
+            )
+            self.assertIn(row_marker, html, msg=f'No row for "{tooltip}"')
+            # Find the value cell that follows this icon and check it begins
+            # with the expected Да/Не label.
+            idx = html.index(row_marker)
+            value_open = html.index('<div class="info-row__value">', idx)
+            value_close = html.index("</div>", value_open)
+            value_html = html[value_open:value_close]
+            self.assertIn(
+                expected,
+                value_html,
+                msg=f'Expected "{expected}" inside {tooltip} value, got: {value_html!r}',
+            )
+
+    def test_view_mode_shows_twin_sibling_name_when_blizanac(self):
+        """If dete_blizanac is true, drugo_dete_blizanac_ime is shown beside it."""
+        k = self._create_krstenje(
+            dete_blizanac=True, drugo_dete_blizanac_ime="Лука"
+        )
+        r = self.client.get(self.url(k))
+        self.assertContains(r, "Лука")
+
+    def test_view_mode_renders_false_bools_as_ne(self):
+        """All four bools set to False render Не (not omitted)."""
+        k = self._create_krstenje(
+            dete_rodjeno_zivo=False,
+            dete_vanbracno=False,
+            dete_blizanac=False,
+            dete_sa_telesnom_manom=False,
+        )
+        html = self.client.get(self.url(k)).content.decode("utf-8")
+        for tooltip in (
+            "Дете рођено живо",
+            "Ванбрачно дете",
+            "Дете близанац",
+            "Дете са телесном маном",
+        ):
+            row_marker = (
+                f'<div class="info-row__icon" data-tooltip="{tooltip}">'
+            )
+            self.assertIn(row_marker, html)
+            value_open = html.index('<div class="info-row__value">', html.index(row_marker))
+            value_close = html.index("</div>", value_open)
+            self.assertIn("Не", html[value_open:value_close])
+
+
+class InfoCssRulesTests(TestCase):
+    """Smoke-test that the info-section / info-row CSS rules are present."""
+
+    def test_info_css_defines_section_and_editable_row(self):
+        import pathlib
+        from django.conf import settings
+
+        css_path = (
+            pathlib.Path(settings.BASE_DIR)
+            / "registar"
+            / "static"
+            / "registar"
+            / "components"
+            / "info.css"
+        )
+        content = css_path.read_text(encoding="utf-8")
+        self.assertIn(".info-section", content)
+        self.assertIn(".info-row--editable", content)
+        # The slider styling that gives bool checkboxes the toggle look must
+        # also be present so the Дете section renders correctly.
+        self.assertIn(
+            '.info-row--editable .info-row__value > input[type="checkbox"]',
+            content,
+        )
+
 
 class IzmenaVencanjaTests(TestCase):
     """Edit-form rendering for Vencanje — razresenje BooleanField round-trip."""

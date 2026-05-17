@@ -126,7 +126,7 @@
 .info-row--editable .info-row__value {
     min-width: 0;
 }
-.info-row--editable .info-row__value > input,
+.info-row--editable .info-row__value > input:not([type="checkbox"]):not([type="radio"]),
 .info-row--editable .info-row__value > select,
 .info-row--editable .info-row__value > textarea,
 .info-row--editable .info-row__value > .select2,
@@ -148,6 +148,55 @@
 .info-row--editable .info-row__value > .visually-hidden + .toggle-group,
 .info-row--editable .info-row__value > .toggle-wrapper {
     margin: 0;
+}
+
+/* Toggle slider style for raw checkboxes inside an editable info-row.
+   Mirrors the .form-field input[type="checkbox"] slider in forme.css so
+   booleans rendered as standalone checkbox widgets get the same look. */
+.info-row--editable .info-row__value > input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 46px;
+    height: 26px;
+    border: 1px solid var(--color-border);
+    border-radius: 13px;
+    background: var(--color-surface-2);
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+    margin: 0;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+.info-row--editable .info-row__value > input[type="checkbox"]::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease;
+}
+.info-row--editable .info-row__value > input[type="checkbox"]:hover {
+    border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
+}
+.info-row--editable .info-row__value > input[type="checkbox"]:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
+}
+.info-row--editable .info-row__value > input[type="checkbox"]:checked {
+    background: color-mix(in oklab, var(--color-success, #22c55e) 60%, var(--color-surface-2));
+    border-color: var(--color-success, #22c55e);
+}
+.info-row--editable .info-row__value > input[type="checkbox"]:checked::after {
+    transform: translateX(20px);
+}
+.info-row--editable .info-row__value > input[type="checkbox"][disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .info-row--placeholder {
