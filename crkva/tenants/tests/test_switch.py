@@ -48,7 +48,7 @@ class SwitchTenantViewTests(TestCase):
         self.client = Client()
 
     def url(self, tenant_id):
-        return reverse("tenants:switch", kwargs={"tenant_id": tenant_id})
+        return reverse("parohija:switch", kwargs={"tenant_id": tenant_id})
 
     def test_anonymous_redirects_to_login(self):
         r = self.client.post(self.url(self.tenant_a.pk))
