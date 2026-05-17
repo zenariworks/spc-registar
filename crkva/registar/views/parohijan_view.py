@@ -137,6 +137,32 @@ class PrikazParohijana(DetailView):
             "zenik", "nevesta"
         ).all()
 
+        # Венчања — родитељи и старосват
+        roditelj_sel = ("zenik", "nevesta")
+        context["vencanja_svekar"] = p.vencanja_kao_svekar.select_related(
+            *roditelj_sel
+        ).all()
+        context["vencanja_svekrva"] = p.vencanja_kao_svekrva.select_related(
+            *roditelj_sel
+        ).all()
+        context["vencanja_tast"] = p.vencanja_kao_tast.select_related(
+            *roditelj_sel
+        ).all()
+        context["vencanja_tasta"] = p.vencanja_kao_tasta.select_related(
+            *roditelj_sel
+        ).all()
+        context["vencanja_stari_svat"] = p.vencanja_kao_stari_svat.select_related(
+            *roditelj_sel
+        ).all()
+
+        # Крштења — родитељи (где је ова особа отац или мајка)
+        context["krstenja_otac"] = p.krstenja_kao_otac.select_related(
+            "dete", "majka"
+        ).all()
+        context["krstenja_majka"] = p.krstenja_kao_majka.select_related(
+            "dete", "otac"
+        ).all()
+
         # Родитељи (из крштења где је ова особа дете)
         krstenje_kao_dete = p.krstenja_kao_dete.select_related("otac", "majka").first()
         if krstenje_kao_dete:

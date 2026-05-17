@@ -143,6 +143,32 @@
       <ul class="info-list">{% for v in vencanja_kum %}<li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">{{ v.datum }}</span></li>{% endfor %}</ul>
     </div>
     {% endif %}
+    {% if vencanja_svekar or vencanja_svekrva or vencanja_tast or vencanja_tasta %}
+    <div class="info-section">
+      <h2 class="info-section__title">Венчања — родитељ младенаца</h2>
+      <ul class="info-list">
+        {% for v in vencanja_svekar %}<li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">отац женика · {{ v.datum }}</span></li>{% endfor %}
+        {% for v in vencanja_svekrva %}<li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">мајка женика · {{ v.datum }}</span></li>{% endfor %}
+        {% for v in vencanja_tast %}<li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">отац невесте · {{ v.datum }}</span></li>{% endfor %}
+        {% for v in vencanja_tasta %}<li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">мајка невесте · {{ v.datum }}</span></li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    {% if vencanja_stari_svat %}
+    <div class="info-section">
+      <h2 class="info-section__title">Стари сват</h2>
+      <ul class="info-list">{% for v in vencanja_stari_svat %}<li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">{{ v.datum }}</span></li>{% endfor %}</ul>
+    </div>
+    {% endif %}
+    {% if krstenja_otac or krstenja_majka %}
+    <div class="info-section">
+      <h2 class="info-section__title">Крштења — родитељ детета</h2>
+      <ul class="info-list">
+        {% for k in krstenja_otac %}<li class="info-list__item"><span><a href="{% url 'krstenje_detail' uid=k.uid %}">{{ k.dete }}</a></span><span class="info-list__role">отац · {{ k.datum }}</span></li>{% endfor %}
+        {% for k in krstenja_majka %}<li class="info-list__item"><span><a href="{% url 'krstenje_detail' uid=k.uid %}">{{ k.dete }}</a></span><span class="info-list__role">мајка · {{ k.datum }}</span></li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
     {% if ukucanstva %}
     <div class="info-section">
       <h2 class="info-section__title">Домаћинства</h2>
