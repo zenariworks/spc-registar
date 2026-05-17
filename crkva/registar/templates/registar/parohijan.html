@@ -91,6 +91,9 @@
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Занимање"><i class="fa-solid fa-briefcase"></i></div><div class="info-row__value">{{ form.zanimanje }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Вероисповест"><i class="fa-solid fa-cross"></i></div><div class="info-row__value">{{ form.veroispovest }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Народност"><i class="fa-solid fa-flag"></i></div><div class="info-row__value">{{ form.narodnost }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ form.adresa }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Мобилни"><i class="fa-solid fa-mobile-screen"></i></div><div class="info-row__value">{{ form.tel_mobilni }}</div></li>
+    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Фиксни"><i class="fa-solid fa-phone"></i></div><div class="info-row__value">{{ form.tel_fiksni }}</div></li>
     {% else %}
     {% if parohijan.zanimanje %}<li class="info-row"><div class="info-row__icon" data-tooltip="Занимање"><i class="fa-solid fa-briefcase"></i></div><div class="info-row__value">{{ parohijan.zanimanje }}</div></li>{% endif %}
     {% if parohijan.veroispovest %}<li class="info-row"><div class="info-row__icon" data-tooltip="Вероисповест"><i class="fa-solid fa-cross"></i></div><div class="info-row__value">{{ parohijan.veroispovest }}</div></li>{% endif %}
