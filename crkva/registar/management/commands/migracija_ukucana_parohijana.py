@@ -15,7 +15,12 @@ from django.db import connection
 from registar.management.commands.base_migration import MigrationCommand
 from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
 from registar.migracija.helpers import cyr, extract_maiden
-from registar.migracija.osoba_repo import find_or_create_osoba, warm_osoba_cache
+from registar.migracija.osoba_repo import (
+    cache_osoba,
+    find_or_create_osoba,
+    lookup_osoba,
+    warm_osoba_cache,
+)
 from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
 
 
@@ -83,6 +88,7 @@ class Command(MigrationCommand):
     def _create_parohijani_and_domacinstva(self, limit: int = 0) -> None:
         created_parohijani = 0
         created_domacinstva = 0
+        self._dbf_uid_to_osoba_uid: Dict[int, int] = {}
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -157,28 +163,73 @@ class Command(MigrationCommand):
                 if slava_uid:
                     slava = Slava.objects.filter(uid=slava_uid).first()
 
-                osoba, p_created = Osoba.objects.get_or_create(
-                    uid=parohijan_uid,
-                    defaults={
-                        "ime": ime,
-                        "prezime": prezime,
-                        "devojacko_prezime": devojacko_prezime or None,
-                        "parohijan": True,
-                        "adresa": adresa,
-                        "tel_fiksni": (telefon_fiksni or "").strip() or None,
-                        "tel_mobilni": (telefon_mobilni or "").strip() or None,
-                    },
+                tel_f = (telefon_fiksni or "").strip() or None
+                tel_m = (telefon_mobilni or "").strip() or None
+
+                # Name-based dedup: if an Osoba with this (ime, prezime) already
+                # exists AND shares a safety signal (same canonical Adresa,
+                # tel_fiksni, or tel_mobilni), reuse it instead of creating a
+                # second row with a different uid.
+                cached = lookup_osoba(ime, prezime)
+                safe_to_merge = bool(cached) and (
+                    (adresa is not None and cached.adresa_id == adresa.uid)
+                    or (tel_f and cached.tel_fiksni and str(cached.tel_fiksni) == tel_f)
+                    or (
+                        tel_m
+                        and cached.tel_mobilni
+                        and str(cached.tel_mobilni) == tel_m
+                    )
                 )
-                if p_created:
-                    created_parohijani += 1
+
+                if safe_to_merge:
+                    osoba = cached
+                    updates = {}
+                    if not osoba.parohijan:
+                        updates["parohijan"] = True
+                    if not osoba.adresa_id and adresa is not None:
+                        updates["adresa"] = adresa
+                    if not osoba.tel_fiksni and tel_f:
+                        updates["tel_fiksni"] = tel_f
+                    if not osoba.tel_mobilni and tel_m:
+                        updates["tel_mobilni"] = tel_m
+                    if not osoba.devojacko_prezime and devojacko_prezime:
+                        updates["devojacko_prezime"] = devojacko_prezime
+                    if updates:
+                        Osoba.objects.filter(pk=osoba.pk).update(**updates)
+                        osoba.refresh_from_db()
+                else:
+                    osoba, p_created = Osoba.objects.get_or_create(
+                        uid=parohijan_uid,
+                        defaults={
+                            "ime": ime,
+                            "prezime": prezime,
+                            "devojacko_prezime": devojacko_prezime or None,
+                            "parohijan": True,
+                            "adresa": adresa,
+                            "tel_fiksni": tel_f,
+                            "tel_mobilni": tel_m,
+                        },
+                    )
+                    if p_created:
+                        created_parohijani += 1
+                        # Only cache the FIRST occurrence of this name. If the
+                        # cache already holds an Osoba with this name (cached
+                        # was non-None above but we landed here because the
+                        # safety check failed), keep the original cache entry.
+                        if not lookup_osoba(ime, prezime):
+                            cache_osoba(osoba)
+
+                # Track DBF UID -> canonical Osoba so the ukucani pass can resolve
+                # UK_RBRDOM even when we deduped onto an Osoba with a different uid.
+                self._dbf_uid_to_osoba_uid[parohijan_uid] = osoba.uid
 
                 _, d_created = Domacinstvo.objects.get_or_create(
                     domacin=osoba,
                     defaults={
                         "adresa": adresa,
                         "slava": slava,
-                        "tel_fiksni": (telefon_fiksni or "").strip() or None,
-                        "tel_mobilni": (telefon_mobilni or "").strip() or None,
+                        "tel_fiksni": tel_f,
+                        "tel_mobilni": tel_m,
                         "slavska_vodica": slavska_vodica
                         and slavska_vodica.strip() == "D",
                         "vaskrsnja_vodica": uskrsnja_vodica
@@ -200,9 +251,16 @@ class Command(MigrationCommand):
     # ---------------- Ukucanin pass ----------------
 
     def _prepare_ukucanin_records(self) -> Iterable[dict | None]:
-        domacinstva_cache: Dict[int, Domacinstvo] = {
+        # Resolve via dbf-uid -> osoba-uid -> domacinstvo so deduped parohijani
+        # still match their ukucani.
+        osoba_to_dom: Dict[int, Domacinstvo] = {
             d.domacin.uid: d for d in Domacinstvo.objects.select_related("domacin")
         }
+        domacinstva_cache: Dict[int, Domacinstvo] = {}
+        for dbf_uid, osoba_uid in self._dbf_uid_to_osoba_uid.items():
+            dom = osoba_to_dom.get(osoba_uid)
+            if dom is not None:
+                domacinstva_cache[dbf_uid] = dom
 
         with connection.cursor() as cursor:
             cursor.execute(
