@@ -1,56 +1,85 @@
-<details id="history-panel" class="history-panel" style="margin-top:var(--space-5);">
-  <summary class="visually-hidden">Историја измена</summary>
-  <h2 style="font-size:18px;margin:0 0 var(--space-3);">
-    <i class="fa-solid fa-clock-rotate-left" style="margin-right:6px;color:var(--color-text-muted);"></i>
-    Историја измена
-    <span style="color:var(--color-text-muted);font-weight:400;font-size:15px;">({{ history_entries|length }})</span>
-  </h2>
-  {% if not history_entries %}
-    <p style="color:var(--color-text-muted);">Нема записа.</p>
-  {% else %}
-    <ol class="history-list" style="list-style:none;padding:0;margin:0;">
-      {% for entry in history_entries %}
-        <li style="border-left:3px solid var(--color-border);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
-          <div style="display:flex;justify-content:space-between;gap:var(--space-3);color:var(--color-text-muted);font-size:13px;">
-            <span>
-              {% if entry.record.history_type == "+" %}<i class="fa-solid fa-circle-plus" style="color:#059669;"></i> Креирано{% endif %}
-              {% if entry.record.history_type == "~" %}<i class="fa-solid fa-pen" style="color:#2563eb;"></i> Измењено{% endif %}
-              {% if entry.record.history_type == "-" %}<i class="fa-solid fa-trash" style="color:#dc2626;"></i> Обрисано{% endif %}
-              {% if entry.record.history_user %}
-                — <strong style="color:var(--color-text);">{{ entry.record.history_user.username }}</strong>
-              {% else %}
-                — <span title="Систем или ручни упис">систем</span>
-              {% endif %}
-            </span>
-            <span>{{ entry.record.history_date|date:"d.m.Y. H:i" }}</span>
-          </div>
-          {% if entry.changes %}
-            <ul style="margin:var(--space-2) 0 0;padding-left:var(--space-4);font-size:13px;">
-              {% for change in entry.changes %}
-                <li>
-                  <strong>{{ change.field }}</strong>:
-                  <span style="color:#991b1b;text-decoration:line-through;">{{ change.old|default:"—"|truncatechars:60 }}</span>
-                  →
-                  <span style="color:#065f46;">{{ change.new|default:"—"|truncatechars:60 }}</span>
-                </li>
-              {% endfor %}
-            </ul>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ol>
-  {% endif %}
-</details>
+<div id="history-backdrop" class="history-backdrop" aria-hidden="true"></div>
+<aside id="history-panel" class="history-panel" role="dialog" aria-modal="false" aria-labelledby="history-panel-title" aria-hidden="true">
+  <div class="history-panel__header">
+    <h2 id="history-panel-title" class="history-panel__title">
+      <i class="fa-solid fa-clock-rotate-left" style="margin-right:6px;color:var(--color-text-muted);"></i>
+      Историја измена
+      <span style="color:var(--color-text-muted);font-weight:400;font-size:15px;">({{ history_entries|length }})</span>
+    </h2>
+    <button type="button" id="history-close" class="history-panel__close" aria-label="Затвори">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+  </div>
+  <div class="history-panel__body">
+    {% if not history_entries %}
+      <p style="color:var(--color-text-muted);">Нема записа.</p>
+    {% else %}
+      <ol class="history-list" style="list-style:none;padding:0;margin:0;">
+        {% for entry in history_entries %}
+          <li style="border-left:3px solid var(--color-border);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
+            <div style="display:flex;justify-content:space-between;gap:var(--space-3);color:var(--color-text-muted);font-size:13px;">
+              <span>
+                {% if entry.record.history_type == "+" %}<i class="fa-solid fa-circle-plus" style="color:#059669;"></i> Креирано{% endif %}
+                {% if entry.record.history_type == "~" %}<i class="fa-solid fa-pen" style="color:#2563eb;"></i> Измењено{% endif %}
+                {% if entry.record.history_type == "-" %}<i class="fa-solid fa-trash" style="color:#dc2626;"></i> Обрисано{% endif %}
+                {% if entry.record.history_user %}
+                  — <strong style="color:var(--color-text);">{{ entry.record.history_user.username }}</strong>
+                {% else %}
+                  — <span title="Систем или ручни упис">систем</span>
+                {% endif %}
+              </span>
+              <span>{{ entry.record.history_date|date:"d.m.Y. H:i" }}</span>
+            </div>
+            {% if entry.changes %}
+              <ul style="margin:var(--space-2) 0 0;padding-left:var(--space-4);font-size:13px;">
+                {% for change in entry.changes %}
+                  <li>
+                    <strong>{{ change.field }}</strong>:
+                    <span style="color:#991b1b;text-decoration:line-through;">{{ change.old|default:"—"|truncatechars:60 }}</span>
+                    →
+                    <span style="color:#065f46;">{{ change.new|default:"—"|truncatechars:60 }}</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    {% endif %}
+  </div>
+</aside>
 
 <script>
   (function () {
     const btn = document.getElementById("history-toggle");
     const panel = document.getElementById("history-panel");
+    const backdrop = document.getElementById("history-backdrop");
+    const closeBtn = document.getElementById("history-close");
     if (!btn || !panel) return;
-    btn.addEventListener("click", function (e) {
+
+    function open() {
+      panel.classList.add("is-open");
+      backdrop.classList.add("is-open");
+      panel.setAttribute("aria-hidden", "false");
+      backdrop.setAttribute("aria-hidden", "false");
+      document.body.classList.add("history-open");
+    }
+    function close() {
+      panel.classList.remove("is-open");
+      backdrop.classList.remove("is-open");
+      panel.setAttribute("aria-hidden", "true");
+      backdrop.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("history-open");
+    }
+    function toggle(e) {
       e.preventDefault();
-      panel.open = !panel.open;
-      if (panel.open) panel.scrollIntoView({ behavior: "smooth", block: "start" });
+      panel.classList.contains("is-open") ? close() : open();
+    }
+    btn.addEventListener("click", toggle);
+    if (closeBtn) closeBtn.addEventListener("click", close);
+    if (backdrop) backdrop.addEventListener("click", close);
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && panel.classList.contains("is-open")) close();
     });
   })();
 </script>
