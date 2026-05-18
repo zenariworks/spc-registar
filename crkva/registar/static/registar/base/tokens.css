@@ -17,8 +17,10 @@
     --color-surface-1: #f1f5f9;
     --color-border: #e2e8f0;
 
-    /* Success color for living members */
+    /* Status colors (paired with --color-success; align with dark theme keys) */
     --color-success: #28a745;
+    --color-danger:  #dc2626;
+    --color-info:    #2563eb;
 
     /* Slava badge colors */
     --color-slava-text: #856404;

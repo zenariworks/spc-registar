@@ -33,7 +33,6 @@ import re
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-
 from registar.models import Hram, Krstenje, Osoba, Svestenik
 from registar.models.parohija import Parohija
 from tenants.models import Role, Tenant, UserMembership
@@ -64,9 +63,7 @@ class _BaseUnosKrstenjeAuditTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.tenant = Tenant.objects.get(schema_name="test_tenant")
-        cls.clerk = User.objects.create_user(
-            username="audit-kanc", password="x"
-        )
+        cls.clerk = User.objects.create_user(username="audit-kanc", password="x")
         UserMembership.objects.create(
             user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
         )
@@ -79,18 +76,10 @@ class _BaseUnosKrstenjeAuditTest(TestCase):
             zvanje="Јереј",
             parohija=cls.parohija,
         )
-        cls.dete = Osoba.objects.create(
-            ime="Дете", prezime="Тестовић", pol="М"
-        )
-        cls.otac = Osoba.objects.create(
-            ime="Отац", prezime="Тестовић", pol="М"
-        )
-        cls.majka = Osoba.objects.create(
-            ime="Мајка", prezime="Тестовић", pol="Ж"
-        )
-        cls.kum = Osoba.objects.create(
-            ime="Кум", prezime="Тестовић", pol="М"
-        )
+        cls.dete = Osoba.objects.create(ime="Дете", prezime="Тестовић", pol="М")
+        cls.otac = Osoba.objects.create(ime="Отац", prezime="Тестовић", pol="М")
+        cls.majka = Osoba.objects.create(ime="Мајка", prezime="Тестовић", pol="Ж")
+        cls.kum = Osoba.objects.create(ime="Кум", prezime="Тестовић", pol="М")
 
     def setUp(self):
         self.client = Client()
@@ -147,7 +136,7 @@ class PageLoadsCleanlyTests(_BaseUnosKrstenjeAuditTest):
 
     def test_page_uses_unos_krstenja_template(self):
         r = self.client.get(reverse("unos_krstenja"))
-        self.assertTemplateUsed(r, "registar/unos_krstenja.html")
+        self.assertTemplateUsed(r, "registar/krstenje.html")
 
     def test_no_raw_template_tokens_leak_into_html(self):
         html = self._get_html()
@@ -262,7 +251,7 @@ class Select2WidgetWiringTests(_BaseUnosKrstenjeAuditTest):
         result_ids = {row["id"] for row in r.json().get("results", [])}
         self.assertIn(self.otac.pk, result_ids)
         self.assertIn(self.dete.pk, result_ids)  # male too
-        self.assertIn(self.kum.pk, result_ids)   # male too
+        self.assertIn(self.kum.pk, result_ids)  # male too
         self.assertNotIn(
             self.majka.pk, result_ids, msg="majka (Ж) leaked into otac (М) lookup"
         )
@@ -339,7 +328,7 @@ class BooleanInfoRowsTests(_BaseUnosKrstenjeAuditTest):
         # Pin the editable-row container around the dete_rodjeno_zivo input.
         m = re.search(
             r'<li[^>]*class="[^"]*info-row--editable[^"]*"[^>]*>'
-            r'.*?dete_rodjeno_zivo',
+            r".*?dete_rodjeno_zivo",
             html,
             re.DOTALL,
         )
@@ -450,17 +439,13 @@ class Select2CacheBackendTests(TestCase):
         from django.contrib.auth import get_user_model as _gu
         from django.core import signing
         from django.core.cache import cache as _cache
-
         from django_select2.conf import settings as s2_settings
-
         from tenants.models import Role, Tenant, UserMembership
 
         User_ = _gu()
         tenant = Tenant.objects.get(schema_name="test_tenant")
         clerk = User_.objects.create_user(username="cache-probe", password="x")
-        UserMembership.objects.create(
-            user=clerk, tenant=tenant, role=Role.KANCELARIJA
-        )
+        UserMembership.objects.create(user=clerk, tenant=tenant, role=Role.KANCELARIJA)
         c = Client()
         c.force_login(clerk)
         r = c.get(reverse("unos_krstenja"))
@@ -585,7 +570,7 @@ class OsobaCreateInlineFlowTests(_BaseUnosKrstenjeAuditTest):
         self.assertIn(
             f'url: "{reverse("brzi_unos_osobe")}"',
             html,
-            msg='Modal.bindForm must point at brzi_unos_osobe URL',
+            msg="Modal.bindForm must point at brzi_unos_osobe URL",
         )
 
     def test_osoba_create_js_is_referenced_after_select2(self):

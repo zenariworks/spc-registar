@@ -19,9 +19,9 @@
           <li style="border-left:3px solid var(--color-border);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
             <div style="display:flex;justify-content:space-between;gap:var(--space-3);color:var(--color-text-muted);font-size:13px;">
               <span>
-                {% if entry.record.history_type == "+" %}<i class="fa-solid fa-circle-plus" style="color:#059669;"></i> Креирано{% endif %}
-                {% if entry.record.history_type == "~" %}<i class="fa-solid fa-pen" style="color:#2563eb;"></i> Измењено{% endif %}
-                {% if entry.record.history_type == "-" %}<i class="fa-solid fa-trash" style="color:#dc2626;"></i> Обрисано{% endif %}
+                {% if entry.record.history_type == "+" %}<i class="fa-solid fa-circle-plus" style="color:var(--color-success);"></i> Креирано{% endif %}
+                {% if entry.record.history_type == "~" %}<i class="fa-solid fa-pen" style="color:var(--color-info);"></i> Измењено{% endif %}
+                {% if entry.record.history_type == "-" %}<i class="fa-solid fa-trash" style="color:var(--color-danger);"></i> Обрисано{% endif %}
                 {% if entry.record.history_user %}
                   — <strong style="color:var(--color-text);">{{ entry.record.history_user.username }}</strong>
                 {% else %}
@@ -35,9 +35,9 @@
                 {% for change in entry.changes %}
                   <li>
                     <strong>{{ change.field }}</strong>:
-                    <span style="color:#991b1b;text-decoration:line-through;">{{ change.old|default:"—"|truncatechars:60 }}</span>
+                    <span style="color:var(--color-danger);text-decoration:line-through;">{{ change.old|default:"—"|truncatechars:60 }}</span>
                     →
-                    <span style="color:#065f46;">{{ change.new|default:"—"|truncatechars:60 }}</span>
+                    <span style="color:var(--color-success);">{{ change.new|default:"—"|truncatechars:60 }}</span>
                   </li>
                 {% endfor %}
               </ul>

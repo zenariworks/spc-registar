@@ -391,8 +391,9 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
         """View mode must render Да/Не values for every dete bool."""
         k = self._create_krstenje()
         html = self.client.get(self.url(k)).content.decode("utf-8")
-        # Each bool field has its own info-row with the right tooltip in view
-        # mode, and the value is exactly "Да" or "Не".
+        # Each bool field has its own info-row with the right tooltip; the
+        # static (view-mode) text is rendered via .info-row__static, which
+        # in the unified template lives inline with the label.
         cases = [
             ("Дете рођено живо", "Да"),
             ("Ванбрачно дете", "Не"),
@@ -400,27 +401,21 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
             ("Дете са телесном маном", "Не"),
         ]
         for tooltip, expected in cases:
-            row_marker = (
-                f'<div class="info-row__icon" data-tooltip="{tooltip}">'
-            )
+            row_marker = f'<div class="info-row__icon" data-tooltip="{tooltip}">'
             self.assertIn(row_marker, html, msg=f'No row for "{tooltip}"')
-            # Find the value cell that follows this icon and check it begins
-            # with the expected Да/Не label.
             idx = html.index(row_marker)
-            value_open = html.index('<div class="info-row__value">', idx)
-            value_close = html.index("</div>", value_open)
-            value_html = html[value_open:value_close]
+            static_open = html.index('<span class="info-row__static">', idx)
+            static_close = html.index("</span>", static_open)
+            value_html = html[static_open:static_close]
             self.assertIn(
                 expected,
                 value_html,
-                msg=f'Expected "{expected}" inside {tooltip} value, got: {value_html!r}',
+                msg=f'Expected "{expected}" inside {tooltip} static, got: {value_html!r}',
             )
 
     def test_view_mode_shows_twin_sibling_name_when_blizanac(self):
         """If dete_blizanac is true, drugo_dete_blizanac_ime is shown beside it."""
-        k = self._create_krstenje(
-            dete_blizanac=True, drugo_dete_blizanac_ime="Лука"
-        )
+        k = self._create_krstenje(dete_blizanac=True, drugo_dete_blizanac_ime="Лука")
         r = self.client.get(self.url(k))
         self.assertContains(r, "Лука")
 
@@ -439,13 +434,13 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
             "Дете близанац",
             "Дете са телесном маном",
         ):
-            row_marker = (
-                f'<div class="info-row__icon" data-tooltip="{tooltip}">'
-            )
+            row_marker = f'<div class="info-row__icon" data-tooltip="{tooltip}">'
             self.assertIn(row_marker, html)
-            value_open = html.index('<div class="info-row__value">', html.index(row_marker))
-            value_close = html.index("</div>", value_open)
-            self.assertIn("Не", html[value_open:value_close])
+            static_open = html.index(
+                '<span class="info-row__static">', html.index(row_marker)
+            )
+            static_close = html.index("</span>", static_open)
+            self.assertIn("Не", html[static_open:static_close])
 
 
 class InfoCssRulesTests(TestCase):
@@ -453,6 +448,7 @@ class InfoCssRulesTests(TestCase):
 
     def test_info_css_defines_section_and_editable_row(self):
         import pathlib
+
         from django.conf import settings
 
         css_path = (
