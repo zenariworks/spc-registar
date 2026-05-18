@@ -60,15 +60,16 @@
     --tooltip-shadow: rgba(0, 0, 0, 0.28);
 
     /* ---------- Sidebar = warm ink chrome ---------- */
-    --sidebar-bg-start:    #1B1612;
-    --sidebar-bg-end:      #15161D;
-    --sidebar-text:        #EDE6D6;
-    --sidebar-muted:       #9C8E7D;
-    --sidebar-hover-bg:    rgba(237, 230, 214, 0.06);
-    --sidebar-active-rail: var(--color-accent);
-    --sidebar-active-text: var(--color-accent-100);
-    --sidebar-divider:     rgba(176, 132, 67, 0.20);
-    --sidebar-theme-meta:  #15161D;
+    --sidebar-bg-start:        #1B1612;
+    --sidebar-bg-end:          #15161D;
+    --sidebar-text:            #EDE6D6;
+    --sidebar-muted:           #9C8E7D;
+    --sidebar-hover-bg:        rgba(237, 230, 214, 0.06);
+    --sidebar-active-bg-themed: rgba(213, 180, 117, 0.18);  /* gold on ink */
+    --sidebar-active-rail:     var(--color-accent);
+    --sidebar-active-text:     #F5E6BD;
+    --sidebar-divider:         rgba(176, 132, 67, 0.20);
+    --sidebar-theme-meta:      #15161D;
 
     /* ---------- Fasting cells (warm-tinted) ---------- */
     --fasting-dairy-bg: rgba(176, 132, 67, 0.16);

@@ -44,15 +44,16 @@
     --color-info:    #7BA6C6;
 
     /* ---------- Sidebar ---------- */
-    --sidebar-bg-start:    #15161D;
-    --sidebar-bg-end:      #0B0C12;
-    --sidebar-text:        #EDE6D6;
-    --sidebar-muted:       #9C8E7D;
-    --sidebar-hover-bg:    rgba(237, 230, 214, 0.06);
-    --sidebar-active-rail: var(--color-accent);
-    --sidebar-active-text: var(--color-accent);
-    --sidebar-divider:     rgba(213, 180, 117, 0.20);
-    --sidebar-theme-meta:  #0B0C12;
+    --sidebar-bg-start:        #15161D;
+    --sidebar-bg-end:          #0B0C12;
+    --sidebar-text:            #EDE6D6;
+    --sidebar-muted:           #9C8E7D;
+    --sidebar-hover-bg:        rgba(237, 230, 214, 0.06);
+    --sidebar-active-bg-themed: rgba(213, 180, 117, 0.22);  /* gold on deep ink */
+    --sidebar-active-rail:     var(--color-accent);
+    --sidebar-active-text:     #F5E6BD;
+    --sidebar-divider:         rgba(213, 180, 117, 0.20);
+    --sidebar-theme-meta:      #0B0C12;
 
     /* ---------- Slava badge ---------- */
     --color-slava-bg:     #2D2410;

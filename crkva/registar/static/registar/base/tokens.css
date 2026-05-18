@@ -156,15 +156,16 @@
     --shadow-hover: 0 6px 14px -4px rgba(15, 22, 29, 0.12);
 
     /* ---------- Sidebar tokens — LIGHT = SPC red ---------- */
-    --sidebar-bg-start:    var(--color-primary);
-    --sidebar-bg-end:      var(--color-primary-700);
-    --sidebar-text:        #FFFFFF;
-    --sidebar-muted:       rgba(255, 255, 255, 0.72);
-    --sidebar-hover-bg:    rgba(255, 255, 255, 0.10);
-    --sidebar-active-rail: var(--color-accent);
-    --sidebar-active-text: #FFFFFF;
-    --sidebar-divider:     rgba(255, 255, 255, 0.14);
-    --sidebar-theme-meta:  #A21514;  /* drives <meta name="theme-color"> */
+    --sidebar-bg-start:        var(--color-primary);
+    --sidebar-bg-end:          var(--color-primary-700);
+    --sidebar-text:            #FFFFFF;
+    --sidebar-muted:           rgba(255, 255, 255, 0.72);
+    --sidebar-hover-bg:        rgba(255, 255, 255, 0.10);
+    --sidebar-active-bg-themed: rgba(255, 255, 255, 0.22);  /* visible on red */
+    --sidebar-active-rail:     var(--color-accent);
+    --sidebar-active-text:     #FFFFFF;
+    --sidebar-divider:         rgba(255, 255, 255, 0.14);
+    --sidebar-theme-meta:      #A21514;
 
     /* ---------- Typography ---------- */
     --font-display: 'Miroslavljeva Cirilica', 'PT Serif', Georgia, serif;

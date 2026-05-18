@@ -6,7 +6,7 @@
   --sidebar-bg: linear-gradient(180deg, var(--sidebar-bg-start) 0%, var(--sidebar-bg-end) 100%);
   --sidebar-text-color: var(--sidebar-text);
   --sidebar-hover-bg: var(--sidebar-hover-bg);
-  --sidebar-active-bg: rgba(176, 132, 67, 0.10);
+  --sidebar-active-bg: var(--sidebar-active-bg-themed, rgba(255, 255, 255, 0.18));
   --sidebar-transition: all 0.3s ease;
 }
 
@@ -189,10 +189,9 @@ body.sidebar-collapsed .sidebar-toggle {
 .sidebar-menu-item > a:first-child.active {
   background: var(--sidebar-active-bg);
   opacity: 1;
-  font-weight: 600;
-  color: var(--color-accent-100);
+  font-weight: 700;
+  color: var(--sidebar-active-text, var(--sidebar-text));
   border-left: 3px solid var(--sidebar-active-rail);
-  box-shadow: inset 0 0 0 1px rgba(176, 132, 67, 0.10);
 }
 
 .sidebar-menu-item > a:first-child i {
@@ -326,8 +325,8 @@ body.sidebar-collapsed .sidebar-toggle {
 .sidebar-submenu a.active {
   background: var(--sidebar-active-bg);
   opacity: 1;
-  font-weight: 600;
-  color: var(--color-accent-100);
+  font-weight: 700;
+  color: var(--sidebar-active-text, var(--sidebar-text));
   border-left: 3px solid var(--sidebar-active-rail);
 }
 
