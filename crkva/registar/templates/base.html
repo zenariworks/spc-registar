@@ -7,26 +7,34 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="theme-color" content="#A21514">
+    <meta name="theme-color" content="#15161D">
     <meta name="mobile-web-app-capable" content="yes">
     <script>
-      // Apply saved theme as early as possible to avoid flash
+      // Apply saved theme as early as possible to avoid flash.
+      // Valid themes: 'light' (default, no attr) | 'sepia' | 'dark'.
       (function() {
         try {
           var saved = localStorage.getItem('theme');
-          if (saved) {
+          if (saved && saved !== 'light') {
             document.documentElement.setAttribute('data-theme', saved);
           }
-        } catch (e) {
-          // ignore
-        }
+          // Sync <meta name="theme-color"> with active theme's chrome color.
+          // Done after first paint so token values resolve.
+          requestAnimationFrame(function() {
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (!meta) return;
+            var c = getComputedStyle(document.documentElement)
+              .getPropertyValue('--sidebar-theme-meta').trim();
+            if (c) meta.setAttribute('content', c);
+          });
+        } catch (e) {}
       })();
     </script>
 
     <!-- Core styles split into separate files for parallel loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&family=PT+Serif:wght@400;700&family=JetBrains+Mono:wght@400;500&&subset=cyrillic,cyrillic-ext,latin&display=swap" rel="stylesheet">
 
     {% compress css %}
       <!-- Centralized local fonts (must be loaded before components for correct metrics) -->
@@ -48,7 +56,8 @@
       <link rel="stylesheet" href="{% static 'registar/components/tabovi.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/modali.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/select2_skin.css' %}">
-      <!-- Dark theme overrides (loaded last for correct specificity) -->
+      <!-- Theme overrides (loaded last for correct specificity) -->
+      <link rel="stylesheet" href="{% static 'registar/themes/sepia.css' %}">
       <link rel="stylesheet" href="{% static 'registar/themes/tamna.css' %}">
     {% endcompress %}
     {% block extra_css %}{% endblock %}

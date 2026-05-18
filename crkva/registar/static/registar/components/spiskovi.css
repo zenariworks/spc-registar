@@ -7,26 +7,30 @@
     gap: 0;
 }
 
+/* Ledger row: flat, hairline-ruled, mono dates. Reads like a book entry. */
 .stavka {
     list-style-type: none;
     margin: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    border: 1px solid var(--color-border);
-    border-left: 3px solid transparent;
-    border-radius: 12px;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
     background: var(--color-surface);
-    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+    border: 0;
+    border-bottom: 1px solid var(--color-border);
+    border-left: 3px solid transparent;
+    border-radius: 0;
+    transition: background-color 0.15s ease, border-left-color 0.15s ease;
+}
+
+.stavka:first-child {
+    border-top: 1px solid var(--color-border);
 }
 
 .stavka:hover {
-    background-color: var(--color-surface-2);
-    border-color: color-mix(in oklab, var(--color-primary) 30%, var(--color-border));
-    border-left: 3px solid var(--color-primary);
-    box-shadow: var(--shadow-hover);
-    transform: translateY(-1px);
+    background-color: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface));
+    border-left-color: var(--color-accent);
     cursor: pointer;
 }
 
@@ -204,7 +208,12 @@
 
 /* Diskretno prugasto pozadinsko isticanje parnih redova */
 /* Remove zebra striping with card rows */
-.spisak .stavka:nth-child(even) { background-color: var(--color-surface-2); }
+.spisak .stavka:nth-child(even) {
+    background-color: color-mix(in oklab, var(--color-accent) 3%, var(--color-surface));
+}
+.spisak .stavka:nth-child(even):hover {
+    background-color: color-mix(in oklab, var(--color-accent) 9%, var(--color-surface));
+}
 
 /* Mobile-friendly list and filters */
 @media (max-width: 768px) {
@@ -219,25 +228,33 @@
     }
 
     .stavka {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0;
-        padding: 16px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3) var(--space-3);
     }
 
     .stavka-veza {
-        width: 100%;
+        width: calc(100% - 50px);
         font-size: 1rem;
         line-height: 1.5;
     }
 
-    /* Make buttons full-width on mobile for better touch targets */
+    .stavka .button.button--primary {
+        width: 40px;
+        height: 40px;
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    /* Legacy compatibility */
     .stavka .dugme-crveno {
         width: 100%;
         padding: 12px 15px;
         font-size: 16px;
         text-align: center;
-        min-height: 44px; /* Minimum touch target */
+        min-height: 44px;
         display: block;
     }
 
@@ -457,17 +474,30 @@
 
 .stavka__primary {
     display: block;
-    font-weight: 600;
-    font-size: 15px;
+    font-family: var(--font-serif);
+    font-weight: 700;
+    font-size: 1.0625rem;
     line-height: 1.3;
+    color: var(--color-heading);
+    letter-spacing: -0.005em;
 }
 
 .stavka__secondary {
     display: block;
-    font-size: 13px;
+    font-family: var(--font-sans);
+    font-size: 0.85rem;
     color: var(--color-text-muted);
-    line-height: 1.3;
-    margin-top: 2px;
+    line-height: 1.4;
+    margin-top: 3px;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+}
+/* Style any leading date string in secondary (first ~10 chars are typically a date) */
+.stavka__secondary::first-line {
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    color: var(--color-heading);
+    letter-spacing: -0.01em;
 }
 
 .stavka__secondary:empty {
@@ -478,24 +508,36 @@
    PRINT BUTTON – show only on row hover
    ========================================================================== */
 
+/* Print button — ghost icon, revealed on row hover (desktop) or
+   always visible on touch devices that have no hover. */
 .stavka .button.button--primary {
-    width: 36px;
-    height: 36px;
-    min-width: 36px;
-    min-height: 36px;
+    width: 34px;
+    height: 34px;
+    min-width: 34px;
+    min-height: 34px;
     padding: 0;
-    font-size: 14px;
+    font-size: 13px;
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--radius-2);
-    opacity: 0;
-    transition: opacity 0.15s ease;
+    background: transparent;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.stavka .button.button--primary:hover {
+    background: var(--color-accent-50);
+    color: var(--color-accent-700);
+    border-color: var(--color-accent);
 }
 
-.stavka:hover .button.button--primary {
-    opacity: 1;
+/* Devices with a real hover pointer (desktop mouse): hide until row hover. */
+@media (hover: hover) and (pointer: fine) {
+    .stavka .button.button--primary { opacity: 0; }
+    .stavka:hover .button.button--primary { opacity: 1; color: var(--color-text); }
+    .stavka .button.button--primary:focus-visible { opacity: 1; }
 }
 
 @media (hover: none) {
@@ -779,20 +821,26 @@ body.has-infinite-scroll .pagination {
 /* Page title with count suffix */
 .u-page-title__count {
     color: var(--color-text-muted);
+    font-family: var(--font-sans);
     font-weight: 400;
-    font-size: 0.7em;
-    margin-left: 4px;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.45em;
+    margin-left: var(--space-3);
+    letter-spacing: 0.04em;
+    vertical-align: middle;
 }
 
 /* Empty list state for spisak */
 .spisak__empty {
     text-align: center;
-    padding: 40px 20px;
+    padding: var(--space-6) var(--space-4);
     color: var(--color-text-muted);
+    font-family: var(--font-serif);
     font-style: italic;
+    font-size: 1.05rem;
     background: var(--color-surface-2);
-    border-radius: 12px;
-    border: 1px dashed var(--color-border);
+    border-top: 1px solid var(--color-accent);
+    border-bottom: 1px solid var(--color-accent);
     list-style: none;
 }
 
@@ -910,16 +958,30 @@ body.history-open {
 
 .stavka__meta-badge--domacin {
     color: var(--color-primary);
-    background: color-mix(in oklab, var(--color-primary) 12%, var(--color-surface));
-    border-color: color-mix(in oklab, var(--color-primary) 35%, var(--color-border));
+    background: var(--color-primary-50);
+    border-color: var(--color-primary-200);
 }
 
 .stavka__meta-badge--clan {
-    color: var(--color-text);
-    background: var(--color-surface-2);
-    border-color: var(--color-border);
+    color: var(--color-accent-700);
+    background: var(--color-accent-50);
+    border-color: var(--color-accent-200);
 }
 
 .stavka__meta-text {
     color: var(--color-text-muted);
+}
+
+
+/* ==========================================================================
+   Spisak as a ledger sheet — wraps the whole list as one continuous page
+   ========================================================================== */
+.spisak {
+    background: var(--color-surface);
+    border-radius: var(--radius-2);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.spisak .stavka:last-child {
+    border-bottom: 0;
 }
