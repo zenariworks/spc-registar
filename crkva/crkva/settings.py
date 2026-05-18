@@ -215,3 +215,33 @@ LOGGING = {
 }
 
 TEST_RUNNER = "tenants.test_runner.TenantTestRunner"
+
+
+# ---------------------------------------------------------------------------
+# Caches
+# ---------------------------------------------------------------------------
+# django-select2 signs every heavy <select> with a field_id and stores the
+# widget's queryset metadata in Django's cache under that key. The browser
+# then GETs /select2/fields/auto.json?field_id=… and the server must look
+# the key up to know what to return.
+#
+# The default cache backend is LocMemCache which is per-process, so under
+# multi-worker gunicorn (workers=3 in scripts/gunicorn.conf.py) a field_id
+# minted by worker A is invisible to workers B and C, producing a 404 with
+# "field_id not found" on roughly 67% of AJAX requests. Symptom: the
+# Hram / Svestenik / Osoba autocomplete dropdowns silently show "Грешка
+# при учитавању резултата" (or nothing) on /unos/krstenje/ and friends.
+#
+# The fix is any cross-process cache. FileBasedCache works on the bare
+# systemd host with zero extra services. The DB layer is per-tenant so we
+# cannot use DatabaseCache here without extra plumbing.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": os.environ.get(
+            "DJANGO_CACHE_DIR", "/tmp/django_cache_spc_registar"
+        ),
+        "TIMEOUT": 60 * 60 * 8,  # 8h — matches a typical workday session
+        "OPTIONS": {"MAX_ENTRIES": 5000},
+    }
+}
