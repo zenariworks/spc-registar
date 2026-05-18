@@ -508,8 +508,8 @@
    PRINT BUTTON – show only on row hover
    ========================================================================== */
 
-/* Ghost print button — always visible, gold accent on hover.
-   (Previous opacity-on-hover made the action invisible on touch devices.) */
+/* Print button — ghost icon, revealed on row hover (desktop) or
+   always visible on touch devices that have no hover. */
 .stavka .button.button--primary {
     width: 34px;
     height: 34px;
@@ -525,15 +525,19 @@
     background: transparent;
     color: var(--color-text-muted);
     border: 1px solid var(--color-border);
-    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
 .stavka .button.button--primary:hover {
     background: var(--color-accent-50);
     color: var(--color-accent-700);
     border-color: var(--color-accent);
 }
-.stavka:hover .button.button--primary {
-    color: var(--color-text);
+
+/* Devices with a real hover pointer (desktop mouse): hide until row hover. */
+@media (hover: hover) and (pointer: fine) {
+    .stavka .button.button--primary { opacity: 0; }
+    .stavka:hover .button.button--primary { opacity: 1; color: var(--color-text); }
+    .stavka .button.button--primary:focus-visible { opacity: 1; }
 }
 
 @media (hover: none) {
