@@ -1,13 +1,18 @@
 {% comment %}
-  Boolean (checkbox) info-row partial — rendered by {% info_row_bool %}.
-  The body uses .info-row__body--inline so the checkbox + label sit next to
-  each other in edit mode.
+  Boolean (slider toggle) info-row partial — rendered by {% info_row_bool %}.
+
+  CSS contract (info.css):
+    - The <input type="checkbox"> must be a DIRECT CHILD of
+      .info-row__value to receive the slider-toggle styling.
+    - A sibling .info-row__bool-label rendered inside .info-row__value
+      sits inline next to the slider.
 {% endcomment %}
 <li class="info-row{% if field %} info-row--editable info-row--stacked{% endif %}">
   <div class="info-row__icon" data-tooltip="{{ label }}"><i class="fa-solid {{ icon }}"></i></div>
-  <div class="info-row__body info-row__body--inline">
-    <span class="info-row__static">{{ value_label }}: {% if value %}Да{% else %}Не{% endif %}{% if sub %} <span class="info-row__sub">{{ sub }}</span>{% endif %}</span>
-    {% if field %}{{ field }}
-    <label class="info-row__label" for="{{ field.id_for_label }}">{{ label }}</label>{% endif %}
+  <div class="info-row__body">
+    <div class="info-row__value">
+      <span class="info-row__static">{{ value_label }}: {% if value %}Да{% else %}Не{% endif %}{% if sub %} <span class="info-row__sub">{{ sub }}</span>{% endif %}</span>
+      {% if field %}{{ field }}<label class="info-row__bool-label" for="{{ field.id_for_label }}">{{ label }}</label>{% endif %}
+    </div>
   </div>
 </li>
