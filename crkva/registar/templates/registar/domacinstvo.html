@@ -27,17 +27,94 @@
     {% include 'registar/_form_errors.html' %}
   {% endif %}
 
+  {% if is_edit %}
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-house"></i> Домаћинство</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Домаћин"><i class="fa-solid fa-house"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.domacin.id_for_label }}">Домаћин</label>
+          <div class="info-row__value">{{ form.domacin }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-location-dot"></i> Адреса и слава</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.adresa.id_for_label }}">Адреса</label>
+          <div class="info-row__value">{{ form.adresa }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Слава"><i class="fa-solid fa-gift"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.slava.id_for_label }}">Слава</label>
+          <div class="info-row__value">{{ form.slava }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-mobile-screen"></i> Контакт</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Мобилни телефон"><i class="fa-solid fa-mobile-screen"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.tel_mobilni.id_for_label }}">Мобилни телефон</label>
+          <div class="info-row__value">{{ form.tel_mobilni }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Фиксни телефон"><i class="fa-solid fa-phone"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.tel_fiksni.id_for_label }}">Фиксни телефон</label>
+          <div class="info-row__value">{{ form.tel_fiksni }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-droplet"></i> Обреди</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Славска водица"><i class="fa-solid fa-droplet"></i></div>
+        <div class="info-row__body info-row__body--inline">
+          {{ form.slavska_vodica }}
+          <label class="info-row__label" for="{{ form.slavska_vodica.id_for_label }}">Славска водица</label>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Васкршња водица"><i class="fa-solid fa-droplet"></i></div>
+        <div class="info-row__body info-row__body--inline">
+          {{ form.vaskrsnja_vodica }}
+          <label class="info-row__label" for="{{ form.vaskrsnja_vodica.id_for_label }}">Васкршња водица</label>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-note-sticky"></i> Напомена</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Напомена"><i class="fa-solid fa-note-sticky"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.napomena.id_for_label }}">Напомена</label>
+          <div class="info-row__value">{{ form.napomena }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  {% else %}
   <ul class="info-rows">
-    {% if is_edit %}
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Домаћин"><i class="fa-solid fa-house"></i></div><div class="info-row__value">{{ form.domacin }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ form.adresa }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Слава"><i class="fa-solid fa-gift"></i></div><div class="info-row__value">{{ form.slava }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Мобилни телефон"><i class="fa-solid fa-mobile-screen"></i></div><div class="info-row__value">{{ form.tel_mobilni }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Фиксни телефон"><i class="fa-solid fa-phone"></i></div><div class="info-row__value">{{ form.tel_fiksni }}</div></li>
-    <li class="info-row info-row--editable" data-tooltip="Славска водица"><div class="info-row__icon" data-tooltip="Славска водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">{{ form.slavska_vodica }}<label for="id_slavska_vodica" class="info-row__bool-label">Славска водица</label></div></li>
-    <li class="info-row info-row--editable" data-tooltip="Васкршња водица"><div class="info-row__icon" data-tooltip="Васкршња водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">{{ form.vaskrsnja_vodica }}<label for="id_vaskrsnja_vodica" class="info-row__bool-label">Васкршња водица</label></div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Напомена"><i class="fa-solid fa-note-sticky"></i></div><div class="info-row__value">{{ form.napomena }}</div></li>
-    {% else %}
     <li class="info-row"><div class="info-row__icon" data-tooltip="Домаћин"><i class="fa-solid fa-house"></i></div><div class="info-row__value"><a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</a></div></li>
     {% if domacinstvo.adresa %}<li class="info-row"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value"><a href="https://www.openstreetmap.org/search?query={{ domacinstvo.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ domacinstvo.adresa }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em;opacity:0.55;margin-left:4px;"></i></a></div></li>{% endif %}
     {% if domacinstvo.tel_mobilni %}<li class="info-row"><div class="info-row__icon" data-tooltip="Мобилни"><i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i></div><div class="info-row__value"><a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}">{{ domacinstvo.tel_mobilni|format_phone }}</a></div></li>{% endif %}
@@ -45,8 +122,8 @@
     {% if domacinstvo.slava %}<li class="info-row"><div class="info-row__icon" data-tooltip="Слава"><i class="fa-solid fa-gift"></i></div><div class="info-row__value"><a href="{% url 'slava_detail' uid=domacinstvo.slava.uid %}">{{ domacinstvo.slava }}</a></div></li>{% endif %}
     <li class="info-row"><div class="info-row__icon" data-tooltip="Славска водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">Славска водица: {{ domacinstvo.slavska_vodica|yesno:"Да,Не" }}</div></li>
     <li class="info-row"><div class="info-row__icon" data-tooltip="Васкршња водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">Васкршња водица: {{ domacinstvo.vaskrsnja_vodica|yesno:"Да,Не" }}</div></li>
-    {% endif %}
   </ul>
+  {% endif %}
 
   {% if not is_edit and domacinstvo.napomena %}<div class="info-note">{{ domacinstvo.napomena }}</div>{% endif %}
 
