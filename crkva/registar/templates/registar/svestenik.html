@@ -28,16 +28,75 @@
     {% include 'registar/_form_errors.html' %}
   {% endif %}
 
+  {% if is_edit %}
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-user"></i> Лични подаци</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Звање"><i class="fa-solid fa-id-badge"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.zvanje.id_for_label }}">Звање</label>
+          <div class="info-row__value">{{ form.zvanje }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.ime.id_for_label }}">Име</label>
+          <div class="info-row__value">{{ form.ime }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.prezime.id_for_label }}">Презиме</label>
+          <div class="info-row__value">{{ form.prezime }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-cake-candles"></i> Рођење</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.datum_rodjenja.id_for_label }}">Датум рођења</label>
+          <div class="info-row__value">{{ form.datum_rodjenja }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.mesto_rodjenja.id_for_label }}">Место рођења</label>
+          <div class="info-row__value">{{ form.mesto_rodjenja }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-church"></i> Служба</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Парохија"><i class="fa-solid fa-church"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.parohija.id_for_label }}">Парохија</label>
+          <div class="info-row__value">{{ form.parohija }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-house"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.adresa.id_for_label }}">Адреса</label>
+          <div class="info-row__value">{{ form.adresa }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  {% else %}
   <ul class="info-rows">
-    {% if is_edit %}
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Звање"><i class="fa-solid fa-id-badge"></i></div><div class="info-row__value">{{ form.zvanje }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ form.ime }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ form.prezime }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Парохија"><i class="fa-solid fa-church"></i></div><div class="info-row__value">{{ form.parohija }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-house"></i></div><div class="info-row__value">{{ form.adresa }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ form.datum_rodjenja }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ form.mesto_rodjenja }}</div></li>
-    {% else %}
     <li class="info-row"><div class="info-row__icon" data-tooltip="Звање"><i class="fa-solid fa-id-badge"></i></div><div class="info-row__value">{{ svestenik.zvanje }}</div></li>
     <li class="info-row"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ svestenik.ime }}</div></li>
     <li class="info-row"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ svestenik.prezime }}</div></li>
@@ -45,8 +104,8 @@
     {% if svestenik.adresa %}<li class="info-row"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-house"></i></div><div class="info-row__value">{{ svestenik.adresa }}</div></li>{% endif %}
     {% if svestenik.datum_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ svestenik.datum_rodjenja }}</div></li>{% endif %}
     {% if svestenik.mesto_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ svestenik.mesto_rodjenja }}</div></li>{% endif %}
-    {% endif %}
   </ul>
+  {% endif %}
 
   {% if not is_edit %}
     {% if krstenja %}

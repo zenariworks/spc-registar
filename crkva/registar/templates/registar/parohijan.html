@@ -41,55 +41,141 @@
     {% include 'registar/_form_errors.html' %}
   {% endif %}
 
-  <ul class="info-rows">
-
-    {% if is_edit %}
-    <li class="info-row info-row--editable">
-      <div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div>
-      <div class="info-row__value">
-        <div class="toggle-group" role="radiogroup" aria-label="Пол">
-          {% for value, label in form.pol.field.choices %}{% if value %}
-            <label class="toggle-button">
-              <input type="radio" name="pol" value="{{ value }}"{% if form.pol.value == value %} checked{% endif %}>
-              <span>{{ label }}</span>
-            </label>
-          {% endif %}{% endfor %}
+  {% if is_edit %}
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-user"></i> Лични подаци</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label">Пол</label>
+          <div class="info-row__value">
+            <div class="toggle-group" role="radiogroup" aria-label="Пол">
+              {% for value, label in form.pol.field.choices %}{% if value %}
+                <label class="toggle-button">
+                  <input type="radio" name="pol" value="{{ value }}"{% if form.pol.value == value %} checked{% endif %}>
+                  <span>{{ label }}</span>
+                </label>
+              {% endif %}{% endfor %}
+            </div>
+          </div>
         </div>
-      </div>
-    </li>
-    {% else %}
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.ime.id_for_label }}">Име</label>
+          <div class="info-row__value">{{ form.ime }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.prezime.id_for_label }}">Презиме</label>
+          <div class="info-row__value">{{ form.prezime }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked" id="row-devojacko-prezime"{% if parohijan and parohijan.pol == "М" %} style="display:none;"{% endif %}>
+        <div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.devojacko_prezime.id_for_label }}">Девојачко презиме</label>
+          <div class="info-row__value">{{ form.devojacko_prezime }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-cake-candles"></i> Рођење</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.datum_rodjenja.id_for_label }}">Датум рођења</label>
+          <div class="info-row__value">{{ form.datum_rodjenja }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Време рођења"><i class="fa-solid fa-clock"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.vreme_rodjenja.id_for_label }}">Време рођења</label>
+          <div class="info-row__value">{{ form.vreme_rodjenja }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.mesto_rodjenja.id_for_label }}">Место рођења</label>
+          <div class="info-row__value">{{ form.mesto_rodjenja }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-id-card"></i> Идентитет</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Занимање"><i class="fa-solid fa-briefcase"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.zanimanje.id_for_label }}">Занимање</label>
+          <div class="info-row__value">{{ form.zanimanje }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Вероисповест"><i class="fa-solid fa-cross"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.veroispovest.id_for_label }}">Вероисповест</label>
+          <div class="info-row__value">{{ form.veroispovest }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Народност"><i class="fa-solid fa-flag"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.narodnost.id_for_label }}">Народност</label>
+          <div class="info-row__value">{{ form.narodnost }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <div class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-address-book"></i> Контакт</h2>
+    <ul class="info-rows">
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.adresa.id_for_label }}">Адреса</label>
+          <div class="info-row__value">{{ form.adresa }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Мобилни"><i class="fa-solid fa-mobile-screen"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.tel_mobilni.id_for_label }}">Мобилни телефон</label>
+          <div class="info-row__value">{{ form.tel_mobilni }}</div>
+        </div>
+      </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Фиксни"><i class="fa-solid fa-phone"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.tel_fiksni.id_for_label }}">Фиксни телефон</label>
+          <div class="info-row__value">{{ form.tel_fiksni }}</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  {% else %}
+  <ul class="info-rows">
     {% if parohijan.pol %}<li class="info-row"><div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div><div class="info-row__value">{{ parohijan.get_pol_display }}</div></li>{% endif %}
     <li class="info-row"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ parohijan.ime }}</div></li>
     <li class="info-row"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ parohijan.prezime }}</div></li>
     {% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %}<li class="info-row"><div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div><div class="info-row__value">{{ parohijan.devojacko_prezime }}</div></li>{% endif %}
-    {% endif %}
-
-    {% if is_edit %}
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ form.ime }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ form.prezime }}</div></li>
-    <li class="info-row info-row--editable" id="row-devojacko-prezime"{% if parohijan and parohijan.pol == "М" %} style="display:none;"{% endif %}><div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div><div class="info-row__value">{{ form.devojacko_prezime }}</div></li>
-    {% endif %}
-
-    {% if is_edit %}
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ form.datum_rodjenja }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Време рођења"><i class="fa-solid fa-clock"></i></div><div class="info-row__value">{{ form.vreme_rodjenja }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ form.mesto_rodjenja }}</div></li>
-    {% else %}
     {% if parohijan.datum_rodjenja %}
     <li class="info-row"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ parohijan.datum_rodjenja }}{% if parohijan.mesto_rodjenja %} <span class="info-row__sub">{{ parohijan.mesto_rodjenja }}</span>{% endif %}</div></li>
     {% elif parohijan.mesto_rodjenja %}
     <li class="info-row"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ parohijan.mesto_rodjenja }}</div></li>
     {% endif %}
-    {% endif %}
-
-    {% if is_edit %}
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Занимање"><i class="fa-solid fa-briefcase"></i></div><div class="info-row__value">{{ form.zanimanje }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Вероисповест"><i class="fa-solid fa-cross"></i></div><div class="info-row__value">{{ form.veroispovest }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Народност"><i class="fa-solid fa-flag"></i></div><div class="info-row__value">{{ form.narodnost }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ form.adresa }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Мобилни"><i class="fa-solid fa-mobile-screen"></i></div><div class="info-row__value">{{ form.tel_mobilni }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Фиксни"><i class="fa-solid fa-phone"></i></div><div class="info-row__value">{{ form.tel_fiksni }}</div></li>
-    {% else %}
     {% if parohijan.zanimanje %}<li class="info-row"><div class="info-row__icon" data-tooltip="Занимање"><i class="fa-solid fa-briefcase"></i></div><div class="info-row__value">{{ parohijan.zanimanje }}</div></li>{% endif %}
     {% if parohijan.veroispovest %}<li class="info-row"><div class="info-row__icon" data-tooltip="Вероисповест"><i class="fa-solid fa-cross"></i></div><div class="info-row__value">{{ parohijan.veroispovest }}</div></li>{% endif %}
     {% if parohijan.narodnost %}<li class="info-row"><div class="info-row__icon" data-tooltip="Народност"><i class="fa-solid fa-flag"></i></div><div class="info-row__value">{{ parohijan.narodnost }}</div></li>{% endif %}
@@ -97,8 +183,8 @@
     {% if parohijan.tel_mobilni %}<li class="info-row"><div class="info-row__icon" data-tooltip="Мобилни"><i class="fa-solid {{ parohijan.tel_mobilni|phone_icon }}"></i></div><div class="info-row__value"><a href="tel:{{ parohijan.tel_mobilni|tel_link }}">{{ parohijan.tel_mobilni|format_phone }}</a></div></li>{% endif %}
     {% if parohijan.tel_fiksni %}<li class="info-row"><div class="info-row__icon" data-tooltip="Фиксни"><i class="fa-solid {{ parohijan.tel_fiksni|phone_icon }}"></i></div><div class="info-row__value"><a href="tel:{{ parohijan.tel_fiksni|tel_link }}">{{ parohijan.tel_fiksni|format_phone }}</a></div></li>{% endif %}
     {% if parohijan.domacinstvo %}<li class="info-row"><div class="info-row__icon" data-tooltip="Домаћин домаћинства"><i class="fa-solid fa-house"></i></div><div class="info-row__value"><a href="{% url 'domacinstvo_detail' uid=parohijan.domacinstvo.uid %}">Прикажи домаћинство <i class="fa-solid fa-arrow-right" style="font-size:0.85em;"></i></a></div></li>{% endif %}
-    {% endif %}
   </ul>
+  {% endif %}
 
   {% if not is_edit %}
     {% if otac or majka %}
