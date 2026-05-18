@@ -333,14 +333,32 @@
   }
 })();
 
-// Theme Toggle
+// Theme Toggle — cycles light -> sepia -> dark -> light
 (function() {
   const toggle = document.getElementById('theme-toggle');
   const iconEl = toggle ? toggle.querySelector('i') : null;
+  const order = ['light', 'sepia', 'dark'];
+  const meta = {
+    light: { icon: 'fa-sun',       label: 'Тема: светла (кликни за сепија)' },
+    sepia: { icon: 'fa-cloud-sun', label: 'Тема: сепија (кликни за тамна)' },
+    dark:  { icon: 'fa-moon',      label: 'Тема: тамна (кликни за светла)' },
+  };
 
   function setTheme(t) {
-    document.documentElement.setAttribute('data-theme', t);
+    if (t === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', t);
+    }
     try { localStorage.setItem('theme', t); } catch(e) {}
+    // Re-sync <meta name="theme-color"> after the cascade settles.
+    requestAnimationFrame(function() {
+      var m = document.querySelector('meta[name="theme-color"]');
+      if (!m) return;
+      var c = getComputedStyle(document.documentElement)
+        .getPropertyValue('--sidebar-theme-meta').trim();
+      if (c) m.setAttribute('content', c);
+    });
   }
 
   function getTheme() {
@@ -349,16 +367,11 @@
 
   function updateThemeIcon() {
     const current = getTheme();
-    if (!iconEl) return;
-
-    if (current === 'dark') {
-      iconEl.className = 'fa-solid fa-moon';
-      toggle.setAttribute('aria-label', 'Промени тему: светла');
-      toggle.setAttribute('aria-pressed', 'true');
-    } else {
-      iconEl.className = 'fa-solid fa-sun';
-      toggle.setAttribute('aria-label', 'Промени тему: тамна');
-      toggle.setAttribute('aria-pressed', 'false');
+    const info = meta[current] || meta.light;
+    if (iconEl) iconEl.className = 'fa-solid ' + info.icon;
+    if (toggle) {
+      toggle.setAttribute('aria-label', info.label);
+      toggle.setAttribute('aria-pressed', current === 'dark' ? 'true' : 'false');
     }
   }
 
@@ -366,7 +379,8 @@
     updateThemeIcon();
     toggle.addEventListener('click', function(e) {
       e.preventDefault();
-      const next = getTheme() === 'dark' ? 'light' : 'dark';
+      const i = order.indexOf(getTheme());
+      const next = order[(i + 1) % order.length];
       setTheme(next);
       updateThemeIcon();
     });

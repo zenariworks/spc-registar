@@ -10,16 +10,24 @@
     <meta name="theme-color" content="#15161D">
     <meta name="mobile-web-app-capable" content="yes">
     <script>
-      // Apply saved theme as early as possible to avoid flash
+      // Apply saved theme as early as possible to avoid flash.
+      // Valid themes: 'light' (default, no attr) | 'sepia' | 'dark'.
       (function() {
         try {
           var saved = localStorage.getItem('theme');
-          if (saved) {
+          if (saved && saved !== 'light') {
             document.documentElement.setAttribute('data-theme', saved);
           }
-        } catch (e) {
-          // ignore
-        }
+          // Sync <meta name="theme-color"> with active theme's chrome color.
+          // Done after first paint so token values resolve.
+          requestAnimationFrame(function() {
+            var meta = document.querySelector('meta[name="theme-color"]');
+            if (!meta) return;
+            var c = getComputedStyle(document.documentElement)
+              .getPropertyValue('--sidebar-theme-meta').trim();
+            if (c) meta.setAttribute('content', c);
+          });
+        } catch (e) {}
       })();
     </script>
 
@@ -48,7 +56,8 @@
       <link rel="stylesheet" href="{% static 'registar/components/tabovi.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/modali.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/select2_skin.css' %}">
-      <!-- Dark theme overrides (loaded last for correct specificity) -->
+      <!-- Theme overrides (loaded last for correct specificity) -->
+      <link rel="stylesheet" href="{% static 'registar/themes/sepia.css' %}">
       <link rel="stylesheet" href="{% static 'registar/themes/tamna.css' %}">
     {% endcompress %}
     {% block extra_css %}{% endblock %}

@@ -1,15 +1,14 @@
 /* ==========================================================================
-   DESIGN TOKENS — redesign v1
+   DESIGN TOKENS — base layer = LIGHT theme (SPC red + white)
    --------------------------------------------------------------------------
-   Palette grounded in Serbian Orthodox visual tradition:
-     • Crimson  — institutional brand, used as accent (not wallpaper)
-     • Aged gold — co-star: hairlines, ornament, secondary actions
-     • Warm ink — chrome (sidebar, headings) instead of cool slate
-     • Parchment — surfaces shift from cool grey to warm cream
-   All legacy token names are preserved so components keep working.
+   Three themes ride on these tokens:
+     • Light (default) — SPC institutional red on white surfaces
+     • Sepia (themes/sepia.css) — warm parchment + ink + gold (archive mood)
+     • Dark  (themes/tamna.css) — deep ink + parchment-cream text + gold
+   Themes only override the token values; component CSS doesn't change.
    ========================================================================== */
 :root {
-    /* ---------- Brand crimson ---------- */
+    /* ---------- Brand crimson (SPC) ---------- */
     --color-primary:        #A21514;
     --color-primary-700:    #7C0F0E;
     --color-primary-200:    #E9B6B4;
@@ -19,7 +18,7 @@
     --color-primary-transparent: rgba(162, 21, 20, 0.10);
     --color-secondary:      #7C0F0E;
 
-    /* ---------- Aged gold (the new co-star) ---------- */
+    /* ---------- Aged gold (secondary accent) ---------- */
     --color-accent:         #B08443;
     --color-accent-700:     #8C6B2F;
     --color-accent-200:     #E3CFA6;
@@ -27,31 +26,32 @@
     --color-accent-50:      #F8F1DF;
     --color-accent-transparent: rgba(176, 132, 67, 0.14);
 
-    /* ---------- Warm ink (chrome + headings) ---------- */
+    /* ---------- Ink (headings + sepia/dark chrome) ---------- */
     --color-ink-900:        #15161D;
     --color-ink-800:        #1B1D26;
     --color-ink-700:        #262934;
     --color-ink-600:        #3A3E4C;
 
     /* ---------- Text ---------- */
-    --color-text:           #1B1612;
-    --color-text-muted:     #5C544C;
-    --color-muted:          #5C544C;
+    --color-text:           #15161D;
+    --color-text-muted:     #4B5563;
+    --color-muted:          #4B5563;
+    --color-heading:        #15161D;  /* theme-aware — overridden in dark */
 
-    /* ---------- Surfaces (warm parchment) ---------- */
+    /* ---------- Surfaces (clean white + light grey, SPC palette) ---------- */
     --color-surface:        #FFFFFF;
-    --color-surface-2:      #FAF4E8;   /* parchment */
-    --color-surface-1:      #F1E9D9;   /* warm cream */
-    --color-border:         rgba(27, 22, 18, 0.10);
-    --color-border-strong:  rgba(176, 132, 67, 0.32);
+    --color-surface-2:      #FAFAFA;
+    --color-surface-1:      #F3F4F6;
+    --color-border:         rgba(15, 22, 29, 0.10);
+    --color-border-strong:  rgba(15, 22, 29, 0.18);
 
-    /* ---------- Status (curated, not Bootstrap defaults) ---------- */
-    --color-success:        #5B7553;   /* sacramental olive */
+    /* ---------- Status (curated) ---------- */
+    --color-success:        #5B7553;
     --color-danger:         #A21514;
     --color-info:           #2B5878;
     --color-warning:        #B08443;
 
-    /* ---------- Slava badge (warm parchment + gold) ---------- */
+    /* ---------- Slava badge ---------- */
     --color-slava-text:     #6B4F1A;
     --color-slava-bg:       #F8F1DF;
     --color-slava-border:   #B08443;
@@ -66,21 +66,21 @@
     --color-error-bg:       #FBEAE8;
     --color-error-border:   #E9B6B4;
 
-    /* ---------- Greys (kept for legacy components) ---------- */
-    --color-gray-100: #F8F5EF;
-    --color-gray-200: #EEE7D7;
-    --color-gray-300: #DDD2BC;
-    --color-gray-400: #C5B89E;
-    --color-gray-500: #9E9382;
-    --color-gray-600: #6F6557;
-    --color-gray-700: #3C342B;
-    --color-gray-800: #F4EFE5;
-    --color-gray-900: #F8F4EB;
-    --color-gray-light:  #DDD2BC;
-    --color-gray-border: #DDD2BC;
-    --color-gray-dark:   #C5B89E;
+    /* ---------- Greys (legacy) ---------- */
+    --color-gray-100: #F9FAFB;
+    --color-gray-200: #F3F4F6;
+    --color-gray-300: #E5E7EB;
+    --color-gray-400: #D1D5DB;
+    --color-gray-500: #9CA3AF;
+    --color-gray-600: #6B7280;
+    --color-gray-700: #374151;
+    --color-gray-800: #F4F4F5;
+    --color-gray-900: #F9FAFB;
+    --color-gray-light:  #E5E7EB;
+    --color-gray-border: #E5E7EB;
+    --color-gray-dark:   #D1D5DB;
 
-    /* ---------- Info / blue (kept for some components) ---------- */
+    /* ---------- Info / blue ---------- */
     --color-info-light:        #EEF2F6;
     --color-info-border-light: #C9D6E2;
     --color-info-link:         #2B5878;
@@ -96,7 +96,7 @@
     --color-dark-text:          #EDE6D6;
     --color-dark-text-secondary:#9C8E7D;
 
-    /* ---------- Today highlight (amber/gold) ---------- */
+    /* ---------- Amber (today highlight) ---------- */
     --color-amber-500: #B08443;
     --color-amber-400: #C19A57;
     --color-amber-300: #D5B475;
@@ -114,7 +114,7 @@
     --tooltip-text:   #F1E5C9;
     --tooltip-shadow: rgba(0, 0, 0, 0.28);
 
-    /* ---------- Fasting cells (derived from primary + accent) ---------- */
+    /* ---------- Fasting cells ---------- */
     --fasting-dairy-bg: rgba(176, 132, 67, 0.14);
     --fasting-fish-bg:  rgba(43, 88, 120, 0.16);
     --fasting-oil-bg:   rgba(176, 132, 67, 0.22);
@@ -144,33 +144,34 @@
     --space-5: 24px;
     --space-6: 32px;
 
-    /* ---------- Radius (tighter — feels more archival than SaaS) ---------- */
+    /* ---------- Radius ---------- */
     --radius-1: 3px;
     --radius-2: 6px;
     --radius-3: 10px;
 
-    /* ---------- Shadows (warm-tinted, softer) ---------- */
-    --shadow-sm:    0 1px 2px rgba(27, 22, 18, 0.05);
-    --shadow-md:    0 2px 8px rgba(27, 22, 18, 0.07);
-    --shadow-lg:    0 6px 18px rgba(27, 22, 18, 0.10);
-    --shadow-hover: 0 6px 14px -4px rgba(27, 22, 18, 0.14);
+    /* ---------- Shadows ---------- */
+    --shadow-sm:    0 1px 2px rgba(15, 22, 29, 0.05);
+    --shadow-md:    0 2px 8px rgba(15, 22, 29, 0.06);
+    --shadow-lg:    0 6px 18px rgba(15, 22, 29, 0.08);
+    --shadow-hover: 0 6px 14px -4px rgba(15, 22, 29, 0.12);
 
-    /* ---------- Sidebar tokens (consumed by bocna-traka.css) ---------- */
-    --sidebar-bg-start:  #1B1612;
-    --sidebar-bg-end:    #15161D;
-    --sidebar-text:      #EDE6D6;
-    --sidebar-muted:     #9C8E7D;
-    --sidebar-hover-bg:  rgba(237, 230, 214, 0.06);
+    /* ---------- Sidebar tokens — LIGHT = SPC red ---------- */
+    --sidebar-bg-start:    var(--color-primary);
+    --sidebar-bg-end:      var(--color-primary-700);
+    --sidebar-text:        #FFFFFF;
+    --sidebar-muted:       rgba(255, 255, 255, 0.72);
+    --sidebar-hover-bg:    rgba(255, 255, 255, 0.10);
     --sidebar-active-rail: var(--color-accent);
-    --sidebar-divider:   rgba(176, 132, 67, 0.20);
+    --sidebar-active-text: #FFFFFF;
+    --sidebar-divider:     rgba(255, 255, 255, 0.14);
+    --sidebar-theme-meta:  #A21514;  /* drives <meta name="theme-color"> */
 
-    /* ---------- Typography (wired in Move 2) ---------- */
+    /* ---------- Typography ---------- */
     --font-display: 'Miroslavljeva Cirilica', 'PT Serif', Georgia, serif;
     --font-serif:   'PT Serif', 'Source Serif Pro', Georgia, serif;
     --font-sans:    'Source Sans Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
-    /* Backwards-compat alias */
-    --font-body:    var(--font-serif);
+    --font-body:    var(--font-sans);
 }
 
 html,
@@ -213,11 +214,11 @@ body > main { flex: 1; }
     .footer-links { flex-wrap: wrap; }
 }
 
-/* Headings: institutional serif. Page titles get the display face. */
+/* Headings — institutional serif; color uses theme-aware token. */
 h1, h2, h3, h4 {
     margin: var(--space-5) 0 var(--space-3);
     line-height: 1.2;
-    color: var(--color-ink-900);
+    color: var(--color-heading);
     font-family: var(--font-serif);
     font-weight: 700;
     letter-spacing: -0.005em;
@@ -226,9 +227,7 @@ h1 { font-size: 2rem; }
 h2 { font-size: 1.5rem; }
 h3 { font-size: 1.125rem; font-weight: 600; }
 
-/* Page title masthead: Miroslavljeva for the ceremonial moment.
-   Each list page renders <h1 class="u-page-title">Парохијани</h1>.
-   The script is reserved for h1 only — body text remains sans for legibility. */
+/* Page title masthead — Miroslavljeva for the ceremonial moment. */
 .u-page-title,
 h1.u-page-title {
     font-family: var(--font-display);
@@ -236,16 +235,14 @@ h1.u-page-title {
     font-size: 2.6rem;
     line-height: 1.05;
     letter-spacing: 0;
-    color: var(--color-ink-900);
+    color: var(--color-heading);
     margin: var(--space-3) 0 var(--space-4);
-    /* Quiet ornament: thin double rule in aged gold above the title. */
     padding-top: var(--space-4);
     border-top: 1px solid var(--color-accent);
     box-shadow: 0 -4px 0 -3px var(--color-accent);
     position: relative;
 }
 .u-page-title__count {
-    /* Count suffix stays in workhorse sans — readable, not ceremonial. */
     font-family: var(--font-sans);
     font-weight: 400;
     font-variant-numeric: tabular-nums;
@@ -255,7 +252,7 @@ h1.u-page-title {
     letter-spacing: 0.02em;
 }
 
-/* Ledger utility — for record numbers, dates, anything tabular */
+/* Ledger utility */
 .u-ledger,
 .stavka__secondary,
 .stavka__meta-text,
@@ -268,15 +265,14 @@ time, .date, .datum {
     font-weight: 500;
     letter-spacing: -0.01em;
 }
+
 p { margin: 0 0 var(--space-3) 0; }
 
-/* Focus — gold ring is calmer than red ring everywhere */
 a:focus, button:focus, input:focus, select:focus, textarea:focus {
     outline: 2px solid var(--color-accent);
     outline-offset: 2px;
 }
 
-/* Default link — brand crimson */
 a { color: var(--color-link); text-decoration: none; }
 a:hover { color: var(--color-link-hover); text-decoration: underline; }
 
@@ -292,15 +288,12 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
         align-items: flex-start;
         gap: var(--space-3);
     }
-    .page-title {
-        font-size: 20px;
-        margin-bottom: var(--space-2);
-    }
+    .page-title { font-size: 20px; margin-bottom: var(--space-2); }
     .page-header form,
     .page-header .form-container { width: 100%; }
 }
 
-/* Compact back button */
+/* Back button */
 .back-button {
     display: inline-flex;
     align-items: center;
@@ -331,9 +324,11 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
     h1 { font-size: 1.75rem; }
     h2 { font-size: 1.5rem; }
     h3 { font-size: 1.25rem; }
+    .u-page-title, h1.u-page-title { font-size: 2rem; }
 }
 @media (max-width: 480px) {
     h1 { font-size: 1.5rem; }
     h2 { font-size: 1.25rem; }
     h3 { font-size: 1.125rem; }
+    .u-page-title, h1.u-page-title { font-size: 1.625rem; }
 }

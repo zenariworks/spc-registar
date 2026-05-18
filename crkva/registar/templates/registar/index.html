@@ -8,13 +8,61 @@
 <!-- Main Content Grid -->
 <div class="grid">
 
-  <!-- Slava Calendar Widget — hero -->
+  <!-- Slava Calendar Widget — hero (7-day strip) -->
   <div class="card card--hero">
     <div class="card__header">
       <h3><i class="fa-solid fa-calendar-days"></i> Текући дани</h3>
       <a href="{% url 'kalendar' %}" class="card__link">
         <i class="fa-solid fa-arrow-right"></i> Календар
       </a>
+    </div>
+
+    <div class="dashboard-calendar dashboard-calendar--week">
+      {% for day in calendar_cells %}
+        <div class="calendar-cell {% if day.is_today %}today{% endif %} {% if day.is_crveno_slovo %}crveno-slovo{% elif day.is_important %}important{% elif day.is_fasting %}fasting fasting-{{ day.fasting_type }}{% endif %}">
+          {% if day.is_fasting %}
+            <div class="fasting-info">
+              {% if day.fasting_type == 'вода' %}
+                <i class="fa-solid fa-droplet fasting-icon"></i>
+              {% elif day.fasting_type == 'уље' %}
+                <i class="fa-solid fa-droplet fasting-icon icon-oil"></i>
+              {% elif day.fasting_type == 'риба' %}
+                <i class="fa-solid fa-fish fasting-icon"></i>
+              {% elif day.fasting_type == 'бели_мрс' %}
+                <i class="fa-solid fa-cheese fasting-icon"></i>
+              {% endif %}
+              <span class="fasting-tooltip">{{ day.fasting_display }}: {{ day.fasting_description }}</span>
+            </div>
+          {% endif %}
+          <div class="cell-header">
+            <div class="date-wrapper">
+              <div class="date">{{ day.date.day }}.</div>
+              <div class="weekday">{{ day.day_label }}</div>
+            </div>
+          </div>
+          {% if day.fixed_slavas or day.moveable_slavas %}
+            <div class="slavas">
+              {% if day.moveable_slavas %}
+                {% for s in day.moveable_slavas %}
+                  <a href="{% url 'slava_detail' uid=s.uid %}" class="slava-moveable slava-link">{{ s.naziv }}</a>
+                {% endfor %}
+              {% endif %}
+              {% if day.fixed_slavas and day.moveable_slavas %}
+                <div class="slavas-separator"></div>
+              {% endif %}
+              {% if day.fixed_slavas %}
+                {% for s in day.fixed_slavas %}
+                  <a href="{% url 'slava_detail' uid=s.uid %}" class="slava-fixed slava-link">{{ s.naziv }}</a>
+                {% endfor %}
+              {% endif %}
+            </div>
+          {% else %}
+            <div class="no-slavas-text">Нема слава</div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
 
   <!-- Quick Actions -->
   <div class="card card--elevated">
@@ -51,6 +99,7 @@
         </div>
       </a>
     </div>
+  </div>
 
   <!-- Registry Overview -->
   <div class="registry">
@@ -91,7 +140,8 @@
         </div>
       </a>
     </div>
-
   </div>
+
+</div>
 
 {% endblock %}
