@@ -1,0 +1,25 @@
+{% comment %}
+  Single info-row partial — rendered by the {% info_row %} template tag.
+  See registar/templatetags/info_components.py for the parameter contract.
+
+  When `field` is supplied, the row is rendered in editable form with both
+  a static <span class="info-row__static"> (view mode) and the bound widget
+  (edit mode); the [data-mode] attribute on the wrapping <form> in info.css
+  controls which is visible.
+{% endcomment %}
+{% if inline %}<li class="info-row{% if full %} info-row--full{% endif %}{% if field %} info-row--editable{% endif %}">
+  <div class="info-row__icon" data-tooltip="{{ label }}"><i class="fa-solid {{ icon }}"></i></div>
+  <div class="info-row__value">
+    <span class="info-row__static">{% if value %}{% if link %}<a href="{{ link }}">{{ value }}</a>{% else %}{{ value }}{% endif %}{% if sub %} <span class="info-row__sub">{{ sub }}</span>{% endif %}{% else %}{% if muted_empty %}<span class="info-row__static--muted">—</span>{% else %}—{% endif %}{% endif %}</span>
+    {% if field %}{{ field }}{% endif %}
+  </div>
+</li>{% else %}<li class="info-row{% if field %} info-row--editable info-row--stacked{% endif %}">
+  <div class="info-row__icon" data-tooltip="{{ label }}"><i class="fa-solid {{ icon }}"></i></div>
+  <div class="info-row__body">
+    {% if label %}<label class="info-row__label"{% if field %} for="{{ field.id_for_label }}"{% endif %}>{{ label }}</label>{% endif %}
+    <div class="info-row__value">
+      <span class="info-row__static">{% if value %}{% if link %}<a href="{{ link }}">{{ value }}</a>{% else %}{{ value }}{% endif %}{% if sub %} <span class="info-row__sub">{{ sub }}</span>{% endif %}{% else %}{% if muted_empty %}<span class="info-row__static--muted">—</span>{% else %}—{% endif %}{% endif %}</span>
+      {% if field %}{{ field }}{% endif %}
+    </div>
+  </div>
+</li>{% endif %}

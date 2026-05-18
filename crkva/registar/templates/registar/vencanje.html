@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load info_components %}
 {% load julian_dates %}
 
 {% block extra_css %}
@@ -55,8 +56,8 @@
   {% if form.errors %}{% include 'registar/_form_errors.html' %}{% endif %}
 
   {% if vencanje %}
-  <div class="tabs tabs--segmented">
-    <div class="tabs__nav" data-show-mode="view">
+  <div class="tabs tabs--segmented" data-show-mode="view">
+    <div class="tabs__nav">
       <input type="radio" id="venc-tab-podaci" name="venc-view" class="tabs__radio" checked>
       <label for="venc-tab-podaci" class="tabs__tab"><i class="tabs__icon fa-solid fa-table-list"></i> Подаци</label>
       <input type="radio" id="venc-tab-pregled" name="venc-view" class="tabs__radio">
@@ -67,58 +68,20 @@
 
       {% if form %}
       {# ============ ЗАПИС ============ #}
-      <div class="info-section">
-        <h2 class="info-section__title"><i class="fa-solid fa-file-lines"></i> Запис</h2>
-        <ul class="info-rows info-rows--inline">
-          <li class="info-row info-row--editable">
-            <div class="info-row__icon" data-tooltip="Књига"><i class="fa-solid fa-book"></i></div>
-            <div class="info-row__value">
-              <span class="info-row__static">{{ vencanje.knjiga|default:"—" }}</span>
-              {{ form.knjiga }}
-            </div>
-          </li>
-          <li class="info-row info-row--editable">
-            <div class="info-row__icon" data-tooltip="Страна"><i class="fa-solid fa-file"></i></div>
-            <div class="info-row__value">
-              <span class="info-row__static">{{ vencanje.strana|default:"—" }}</span>
-              {{ form.strana }}
-            </div>
-          </li>
-          <li class="info-row info-row--editable">
-            <div class="info-row__icon" data-tooltip="Текући број"><i class="fa-solid fa-hashtag"></i></div>
-            <div class="info-row__value">
-              <span class="info-row__static">{{ vencanje.broj|default:"—" }}</span>
-              {{ form.broj }}
-            </div>
-          </li>
-          <li class="info-row info-row--editable">
-            <div class="info-row__icon" data-tooltip="Редни број"><i class="fa-solid fa-hashtag"></i></div>
-            <div class="info-row__value">
-              <span class="info-row__static">{{ vencanje.redni_broj|default:"—" }}</span>
-              {{ form.redni_broj }}
-            </div>
-          </li>
-          <li class="info-row info-row--editable">
-            <div class="info-row__icon" data-tooltip="Година регистрације"><i class="fa-solid fa-calendar"></i></div>
-            <div class="info-row__value">
-              <span class="info-row__static">{{ vencanje.godina_registracije|default:"—" }}</span>
-              {{ form.godina_registracije }}
-            </div>
-          </li>
-          <li class="info-row info-row--full info-row--editable">
-            <div class="info-row__icon" data-tooltip="Примедба"><i class="fa-solid fa-note-sticky"></i></div>
-            <div class="info-row__value">
-              <span class="info-row__static">{% if vencanje.primedba %}{{ vencanje.primedba }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-              {{ form.primedba }}
-            </div>
-          </li>
-        </ul>
-      </div>
+      {% info_section title="Запис" icon="fa-file-lines" inline=True %}
+        {% info_row icon="fa-book" label="Књига" field=form.knjiga value=vencanje.knjiga inline=True muted_empty=False %}
+        {% info_row icon="fa-file" label="Страна" field=form.strana value=vencanje.strana inline=True muted_empty=False %}
+        {% info_row icon="fa-hashtag" label="Текући број" field=form.broj value=vencanje.broj inline=True muted_empty=False %}
+        {% info_row icon="fa-hashtag" label="Редни број" field=form.redni_broj value=vencanje.redni_broj inline=True muted_empty=False %}
+        {% info_row icon="fa-calendar" label="Година регистрације" field=form.godina_registracije value=vencanje.godina_registracije inline=True muted_empty=False %}
+        {% info_row icon="fa-note-sticky" label="Примедба" field=form.primedba value=vencanje.primedba inline=True full=True %}
+      {% endinfo_section %}
 
       {# ============ ЖЕНИК ============ #}
       <div class="info-section">
         <h2 class="info-section__title"><i class="fa-solid fa-person"></i> Женик</h2>
         <ul class="info-rows">
+          {# Женик row keeps raw markup — compound name + zanimanje sub like krstenje отац. #}
           <li class="info-row info-row--editable info-row--stacked">
             <div class="info-row__icon" data-tooltip="Особа"><i class="fa-solid fa-user"></i></div>
             <div class="info-row__body">
@@ -129,16 +92,7 @@
               </div>
             </div>
           </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Редни брак"><i class="fa-solid fa-list-ol"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.zenik_rb_brak.id_for_label }}">Брак по реду женика</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.zenik_rb_brak %}{{ vencanje.zenik_rb_brak }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.zenik_rb_brak }}
-              </div>
-            </div>
-          </li>
+          {% info_row icon="fa-list-ol" label="Брак по реду женика" field=form.zenik_rb_brak value=vencanje.zenik_rb_brak %}
         </ul>
       </div>
 
@@ -146,6 +100,7 @@
       <div class="info-section">
         <h2 class="info-section__title"><i class="fa-solid fa-person-dress"></i> Невеста</h2>
         <ul class="info-rows">
+          {# Невеста row keeps raw markup — compound name + zanimanje sub. #}
           <li class="info-row info-row--editable info-row--stacked">
             <div class="info-row__icon" data-tooltip="Особа"><i class="fa-solid fa-user"></i></div>
             <div class="info-row__body">
@@ -156,154 +111,46 @@
               </div>
             </div>
           </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Редни брак"><i class="fa-solid fa-list-ol"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.nevesta_rb_brak.id_for_label }}">Брак по реду невесте</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.nevesta_rb_brak %}{{ vencanje.nevesta_rb_brak }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.nevesta_rb_brak }}
-              </div>
-            </div>
-          </li>
+          {% info_row icon="fa-list-ol" label="Брак по реду невесте" field=form.nevesta_rb_brak value=vencanje.nevesta_rb_brak %}
         </ul>
       </div>
 
       {# ============ РОДИТЕЉИ ============ #}
-      <div class="info-section">
-        <h2 class="info-section__title"><i class="fa-solid fa-people-group"></i> Родитељи</h2>
-        <ul class="info-rows">
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Свекар"><i class="fa-solid fa-person"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.svekar.id_for_label }}">Свекар (отац женика)</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.svekar %}<a href="{% url 'parohijan_detail' uid=vencanje.svekar.uid %}">{{ vencanje.svekar }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.svekar }}
-              </div>
-            </div>
-          </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Свекрва"><i class="fa-solid fa-person-dress"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.svekrva.id_for_label }}">Свекрва (мајка женика)</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.svekrva %}<a href="{% url 'parohijan_detail' uid=vencanje.svekrva.uid %}">{{ vencanje.svekrva }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.svekrva }}
-              </div>
-            </div>
-          </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Таст"><i class="fa-solid fa-person"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.tast.id_for_label }}">Таст (отац невесте)</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.tast %}<a href="{% url 'parohijan_detail' uid=vencanje.tast.uid %}">{{ vencanje.tast }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.tast }}
-              </div>
-            </div>
-          </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Ташта"><i class="fa-solid fa-person-dress"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.tasta.id_for_label }}">Ташта (мајка невесте)</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.tasta %}<a href="{% url 'parohijan_detail' uid=vencanje.tasta.uid %}">{{ vencanje.tasta }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.tasta }}
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
+      {% info_section title="Родитељи" icon="fa-people-group" %}
+        {% if vencanje.svekar %}{% url 'parohijan_detail' uid=vencanje.svekar.uid as svekar_url %}{% endif %}
+        {% info_row icon="fa-person" label="Свекар (отац женика)" field=form.svekar value=vencanje.svekar link=svekar_url %}
+        {% if vencanje.svekrva %}{% url 'parohijan_detail' uid=vencanje.svekrva.uid as svekrva_url %}{% endif %}
+        {% info_row icon="fa-person-dress" label="Свекрва (мајка женика)" field=form.svekrva value=vencanje.svekrva link=svekrva_url %}
+        {% if vencanje.tast %}{% url 'parohijan_detail' uid=vencanje.tast.uid as tast_url %}{% endif %}
+        {% info_row icon="fa-person" label="Таст (отац невесте)" field=form.tast value=vencanje.tast link=tast_url %}
+        {% if vencanje.tasta %}{% url 'parohijan_detail' uid=vencanje.tasta.uid as tasta_url %}{% endif %}
+        {% info_row icon="fa-person-dress" label="Ташта (мајка невесте)" field=form.tasta value=vencanje.tasta link=tasta_url %}
+      {% endinfo_section %}
 
       {# ============ СВЕДОЦИ ============ #}
-      <div class="info-section">
-        <h2 class="info-section__title"><i class="fa-solid fa-user-check"></i> Сведоци</h2>
-        <ul class="info-rows">
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Кум"><i class="fa-solid fa-user-tag"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.kum.id_for_label }}">Кум</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.kum %}<a href="{% url 'parohijan_detail' uid=vencanje.kum.uid %}">{{ vencanje.kum }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.kum }}
-              </div>
-            </div>
-          </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Стари сват"><i class="fa-solid fa-user-tie"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.stari_svat.id_for_label }}">Стари сват</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.stari_svat %}<a href="{% url 'parohijan_detail' uid=vencanje.stari_svat.uid %}">{{ vencanje.stari_svat }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.stari_svat }}
-              </div>
-            </div>
-          </li>
-        </ul>
-      </div>
+      {% info_section title="Сведоци" icon="fa-user-check" %}
+        {% if vencanje.kum %}{% url 'parohijan_detail' uid=vencanje.kum.uid as kum_url %}{% endif %}
+        {% info_row icon="fa-user-tag" label="Кум" field=form.kum value=vencanje.kum link=kum_url %}
+        {% if vencanje.stari_svat %}{% url 'parohijan_detail' uid=vencanje.stari_svat.uid as stari_svat_url %}{% endif %}
+        {% info_row icon="fa-user-tie" label="Стари сват" field=form.stari_svat value=vencanje.stari_svat link=stari_svat_url %}
+      {% endinfo_section %}
 
       {# ============ ВЕНЧАЊЕ ============ #}
-      <div class="info-section">
-        <h2 class="info-section__title"><i class="fa-solid fa-ring"></i> Венчање</h2>
-        <ul class="info-rows">
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Датум"><i class="fa-solid fa-calendar-day"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.datum.id_for_label }}">Датум</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.datum %}{{ vencanje.datum }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.datum }}
-              </div>
-            </div>
-          </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Датум испита"><i class="fa-solid fa-clipboard-check"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.datum_ispita.id_for_label }}">Датум испита</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.datum_ispita %}{{ vencanje.datum_ispita }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.datum_ispita }}
-              </div>
-            </div>
-          </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Храм"><i class="fa-solid fa-church"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.hram.id_for_label }}">Храм</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.hram %}{{ vencanje.hram }}{% if vencanje.hram.mesto %} <span class="info-row__sub">{{ vencanje.hram.mesto }}</span>{% endif %}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.hram }}
-              </div>
-            </div>
-          </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Свештеник"><i class="fa-solid fa-id-badge"></i></div>
-            <div class="info-row__body">
-              <label class="info-row__label" for="{{ form.svestenik.id_for_label }}">Свештеник</label>
-              <div class="info-row__value">
-                <span class="info-row__static">{% if vencanje.svestenik %}<a href="{% url 'svestenik_detail' uid=vencanje.svestenik.uid %}">{{ vencanje.svestenik }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-                {{ form.svestenik }}
-              </div>
-            </div>
-          </li>
-          <li class="info-row info-row--editable info-row--stacked">
-            <div class="info-row__icon" data-tooltip="Разрешење"><i class="fa-solid fa-file-signature"></i></div>
-            <div class="info-row__body info-row__body--inline">
-              <span class="info-row__static">Разрешење: {{ vencanje.razresenje|yesno:"Да,Не" }}</span>
-              {{ form.razresenje }}
-              <label class="info-row__label" for="{{ form.razresenje.id_for_label }}">Разрешење</label>
-            </div>
-          </li>
-        </ul>
-      </div>
+      {% info_section title="Венчање" icon="fa-ring" %}
+        {% info_row icon="fa-calendar-day" label="Датум" field=form.datum value=vencanje.datum %}
+        {% info_row icon="fa-clipboard-check" label="Датум испита" field=form.datum_ispita value=vencanje.datum_ispita %}
+        {% info_row icon="fa-church" label="Храм" field=form.hram value=vencanje.hram sub=vencanje.hram.mesto %}
+        {% if vencanje.svestenik %}{% url 'svestenik_detail' uid=vencanje.svestenik.uid as svestenik_url %}{% endif %}
+        {% info_row icon="fa-id-badge" label="Свештеник" field=form.svestenik value=vencanje.svestenik link=svestenik_url %}
+        {% info_row_bool icon="fa-file-signature" label="Разрешење" value_label="Разрешење" field=form.razresenje value=vencanje.razresenje %}
+      {% endinfo_section %}
       {% endif %}
 
   {% if vencanje %}
     </section>
 
     {# ============ CERTIFICATE PREVIEW ============ #}
-    <section class="tabs__panel" data-show-mode="view">
+    <section class="tabs__panel">
       <div class="vencanica">
         <div class="vencanica-frame">
           <div class="venc-field-knjiga">{{ vencanje.knjiga }}</div>
