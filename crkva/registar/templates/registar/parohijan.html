@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load info_components %}
 {% load phone_filters %}
 
 {% block extra_css %}{% if form %}{{ form.media.css }}{% endif %}{% endblock %}
@@ -56,6 +57,7 @@
   <div class="info-section">
     <h2 class="info-section__title"><i class="fa-solid fa-user"></i> Лични подаци</h2>
     <ul class="info-rows">
+      {# Пол keeps raw markup — view-mode uses get_pol_display, edit-mode renders a custom toggle-group. #}
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div>
         <div class="info-row__body">
@@ -73,26 +75,9 @@
           </div>
         </div>
       </li>
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.ime.id_for_label }}">Име</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{{ parohijan.ime|default:"—" }}</span>
-            {{ form.ime }}
-          </div>
-        </div>
-      </li>
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.prezime.id_for_label }}">Презиме</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{{ parohijan.prezime|default:"—" }}</span>
-            {{ form.prezime }}
-          </div>
-        </div>
-      </li>
+      {% info_row icon="fa-user" label="Име" field=form.ime value=parohijan.ime muted_empty=False %}
+      {% info_row icon="fa-user-tag" label="Презиме" field=form.prezime value=parohijan.prezime muted_empty=False %}
+      {# Девојачко презиме keeps raw markup — has id="row-devojacko-prezime" + inline style hidden when pol=М. #}
       <li class="info-row info-row--editable info-row--stacked" id="row-devojacko-prezime"{% if parohijan and parohijan.pol == "М" %} style="display:none;"{% endif %}>
         <div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div>
         <div class="info-row__body">
@@ -103,94 +88,26 @@
           </div>
         </div>
       </li>
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Грађанско име"><i class="fa-solid fa-signature"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.gradjansko_ime.id_for_label }}">Грађанско име</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.gradjansko_ime %}{{ parohijan.gradjansko_ime }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            {{ form.gradjansko_ime }}
-          </div>
-        </div>
-      </li>
+      {% info_row icon="fa-signature" label="Грађанско име" field=form.gradjansko_ime value=parohijan.gradjansko_ime %}
     </ul>
   </div>
 
-  <div class="info-section">
-    <h2 class="info-section__title"><i class="fa-solid fa-cake-candles"></i> Рођење</h2>
-    <ul class="info-rows">
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.datum_rodjenja.id_for_label }}">Датум рођења</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.datum_rodjenja %}{{ parohijan.datum_rodjenja }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            {{ form.datum_rodjenja }}
-          </div>
-        </div>
-      </li>
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Време рођења"><i class="fa-solid fa-clock"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.vreme_rodjenja.id_for_label }}">Време рођења</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.vreme_rodjenja %}{{ parohijan.vreme_rodjenja }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            {{ form.vreme_rodjenja }}
-          </div>
-        </div>
-      </li>
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.mesto_rodjenja.id_for_label }}">Место рођења</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.mesto_rodjenja %}{{ parohijan.mesto_rodjenja }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            {{ form.mesto_rodjenja }}
-          </div>
-        </div>
-      </li>
-    </ul>
-  </div>
+  {% info_section title="Рођење" icon="fa-cake-candles" %}
+    {% info_row icon="fa-cake-candles" label="Датум рођења" field=form.datum_rodjenja value=parohijan.datum_rodjenja %}
+    {% info_row icon="fa-clock" label="Време рођења" field=form.vreme_rodjenja value=parohijan.vreme_rodjenja %}
+    {% info_row icon="fa-location-dot" label="Место рођења" field=form.mesto_rodjenja value=parohijan.mesto_rodjenja %}
+  {% endinfo_section %}
 
-  <div class="info-section">
-    <h2 class="info-section__title"><i class="fa-solid fa-id-card"></i> Идентитет</h2>
-    <ul class="info-rows">
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Занимање"><i class="fa-solid fa-briefcase"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.zanimanje.id_for_label }}">Занимање</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.zanimanje %}{{ parohijan.zanimanje }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            {{ form.zanimanje }}
-          </div>
-        </div>
-      </li>
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Вероисповест"><i class="fa-solid fa-cross"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.veroispovest.id_for_label }}">Вероисповест</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.veroispovest %}{{ parohijan.veroispovest }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            {{ form.veroispovest }}
-          </div>
-        </div>
-      </li>
-      <li class="info-row info-row--editable info-row--stacked">
-        <div class="info-row__icon" data-tooltip="Народност"><i class="fa-solid fa-flag"></i></div>
-        <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.narodnost.id_for_label }}">Народност</label>
-          <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.narodnost %}{{ parohijan.narodnost }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            {{ form.narodnost }}
-          </div>
-        </div>
-      </li>
-    </ul>
-  </div>
+  {% info_section title="Идентитет" icon="fa-id-card" %}
+    {% info_row icon="fa-briefcase" label="Занимање" field=form.zanimanje value=parohijan.zanimanje %}
+    {% info_row icon="fa-cross" label="Вероисповест" field=form.veroispovest value=parohijan.veroispovest %}
+    {% info_row icon="fa-flag" label="Народност" field=form.narodnost value=parohijan.narodnost %}
+  {% endinfo_section %}
 
   <div class="info-section">
     <h2 class="info-section__title"><i class="fa-solid fa-address-book"></i> Контакт</h2>
     <ul class="info-rows">
+      {# Address + phones keep raw markup — view-mode renders OSM link / tel: link with custom formatting. #}
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div>
         <div class="info-row__body">
