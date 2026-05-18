@@ -50,6 +50,7 @@ class ParohijanForm(forms.ModelForm):
             "ime",
             "prezime",
             "devojacko_prezime",
+            "gradjansko_ime",
             "mesto_rodjenja",
             "datum_rodjenja",
             "vreme_rodjenja",

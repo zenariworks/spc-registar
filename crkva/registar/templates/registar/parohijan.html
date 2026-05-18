@@ -103,6 +103,16 @@
           </div>
         </div>
       </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Грађанско име"><i class="fa-solid fa-signature"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.gradjansko_ime.id_for_label }}">Грађанско име</label>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if parohijan.gradjansko_ime %}{{ parohijan.gradjansko_ime }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.gradjansko_ime }}
+          </div>
+        </div>
+      </li>
     </ul>
   </div>
 

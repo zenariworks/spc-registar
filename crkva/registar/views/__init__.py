@@ -456,7 +456,9 @@ def brzi_unos_osobe(request):
     if not ime or not prezime:
         return JsonResponse({"error": "Име и презиме су обавезни"}, status=400)
 
-    osoba = Parohijan.objects.create(ime=ime, prezime=prezime, pol=pol or None)
+    osoba = Parohijan.objects.create(
+        ime=ime, prezime=prezime, pol=pol or None, parohijan=True
+    )
     return JsonResponse({"id": osoba.uid, "text": str(osoba)})
 
 

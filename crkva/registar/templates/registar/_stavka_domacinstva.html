@@ -8,4 +8,7 @@
         </span>
     </a>
 </li>
+{% empty %}
+{% if page_obj.number == 1 %}<li class="spisak__empty">Нема домаћинстава у бази.</li>{% endif %}
 {% endfor %}
+{% if page_obj.has_next %}<div class="next-page-marker" data-next-page="{{ page_obj.next_page_number }}"></div>{% endif %}

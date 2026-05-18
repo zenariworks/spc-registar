@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import DomacinstvoForm
+from registar.forms.domacinstvo_form import UkucaninFormSet
 from registar.models import Domacinstvo
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from tenants.permissions import tenant_role_required
@@ -78,6 +79,7 @@ class PrikazDomacinstva(DetailView):
         context["domacinstvo"] = self.object
         context["is_edit"] = False
         context["form"] = DomacinstvoForm(instance=self.object)
+        context["ukucanin_formset"] = UkucaninFormSet(instance=self.object)
         domacinstvo = self.object
         ukucani = domacinstvo.ukucani.all()
         context["ukucani_zivi"] = [u for u in ukucani if not u.preminuo]
@@ -91,16 +93,28 @@ def izmena_domacinstva(request, uid):
     instance = get_object_or_404(Domacinstvo, uid=uid)
     if request.method == "POST":
         form = DomacinstvoForm(request.POST, instance=instance)
-        if form.is_valid():
+        # The Ukucanin formset is only bound when the management form is
+        # actually present in the POST (the formset is rendered only in
+        # edit-mode of the inline edit toggle).
+        has_formset = "ukucani-TOTAL_FORMS" in request.POST
+        if has_formset:
+            ukucanin_formset = UkucaninFormSet(request.POST, instance=instance)
+        else:
+            ukucanin_formset = UkucaninFormSet(instance=instance)
+        if form.is_valid() and (not has_formset or ukucanin_formset.is_valid()):
             form.save()
+            if has_formset:
+                ukucanin_formset.save()
             return redirect("domacinstvo_detail", uid=instance.uid)
     else:
         form = DomacinstvoForm(instance=instance)
+        ukucanin_formset = UkucaninFormSet(instance=instance)
     return render(
         request,
         "registar/domacinstvo.html",
         {
             "form": form,
+            "ukucanin_formset": ukucanin_formset,
             "title": "Измена",
             "back_url": reverse("domacinstvo_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,

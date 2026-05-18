@@ -23,7 +23,10 @@ def unos_parohijana(request):
     if request.method == "POST":
         form = ParohijanForm(request.POST)
         if form.is_valid():
-            form.save()
+            obj = form.save(commit=False)
+            obj.parohijan = True
+            obj.save()
+            form.save_m2m()
             return redirect("parohijani")
     else:
         form = ParohijanForm()

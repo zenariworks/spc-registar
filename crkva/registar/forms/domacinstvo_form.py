@@ -1,11 +1,12 @@
 """Django форма за унос домаћинства."""
 
 from django import forms
+from django.forms import inlineformset_factory
 from registar.forms.select2 import (
     PublicSchemaModelSelect2Widget,
     ScriptAwareModelSelect2Widget,
 )
-from registar.models import Adresa, Domacinstvo, Osoba, Slava
+from registar.models import Adresa, Domacinstvo, Osoba, Slava, Ukucanin
 
 
 class DomacinstvoForm(forms.ModelForm):
@@ -47,3 +48,30 @@ class DomacinstvoForm(forms.ModelForm):
             ),
             "napomena": forms.Textarea(attrs={"rows": 3}),
         }
+
+
+class UkucaninForm(forms.ModelForm):
+    """Формулар за уређивање чланова домаћинства."""
+
+    class Meta:
+        model = Ukucanin
+        fields = ["osoba", "ime_ukucana", "uloga", "preminuo"]
+        widgets = {
+            "osoba": ScriptAwareModelSelect2Widget(
+                model=Osoba,
+                search_fields=["ime__icontains", "prezime__icontains"],
+                attrs={"data-minimum-input-length": 0},
+            ),
+            "ime_ukucana": forms.TextInput(
+                attrs={"placeholder": "Име ако особа није у бази"}
+            ),
+        }
+
+
+UkucaninFormSet = inlineformset_factory(
+    Domacinstvo,
+    Ukucanin,
+    form=UkucaninForm,
+    extra=1,
+    can_delete=True,
+)
