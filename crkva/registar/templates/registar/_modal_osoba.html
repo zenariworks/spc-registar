@@ -1,6 +1,14 @@
 {% comment %}
 Quick-add Osoba modal. Uses the generic Modal component
 (registar/components/modali.css + modal.js).
+
+The Modal.bindForm call is deferred to DOMContentLoaded because this
+partial renders inside {% block content %} while modal.js is loaded at the
+bottom of base.html. Running Modal.bindForm inline at parse time would hit
+a ReferenceError (Modal still undefined), so `var osobaModal` would never
+be assigned. The "+ Додај новог" footer inside Osoba select2 dropdowns
+checks window.osobaModal before opening the modal, so an unset value made
+the click a silent no-op on every page that includes this partial.
 {% endcomment %}
 <div id="osoba-modal" class="modal-overlay" style="display:none;">
   <div class="modal">
@@ -32,7 +40,7 @@ Quick-add Osoba modal. Uses the generic Modal component
     </div>
     <div class="modal__footer">
       <button type="button" class="button button--neutral" onclick="Modal.close('osoba-modal')">Откажи</button>
-      <button type="button" class="button button--primary" onclick="osobaModal.save()">
+      <button type="button" class="button button--primary" onclick="window.osobaModal && window.osobaModal.save()">
         <i class="fa-solid fa-check" style="margin-right:6px;"></i>Сачувај
       </button>
     </div>
@@ -40,11 +48,20 @@ Quick-add Osoba modal. Uses the generic Modal component
 </div>
 
 <script>
-  var osobaModal = Modal.bindForm("osoba-modal", {
-    url: "{% url 'brzi_unos_osobe' %}",
-    fields: ["ime", "prezime", "pol"],
-    toggleGroups: { pol: "modal-pol-toggle" },
-    requiredFields: ["ime", "prezime"],
-    requiredMessage: "Име и презиме су обавезни.",
-  });
+  (function () {
+    function init() {
+      window.osobaModal = Modal.bindForm("osoba-modal", {
+        url: "{% url 'brzi_unos_osobe' %}",
+        fields: ["ime", "prezime", "pol"],
+        toggleGroups: { pol: "modal-pol-toggle" },
+        requiredFields: ["ime", "prezime"],
+        requiredMessage: "Име и презиме су обавезни.",
+      });
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
 </script>
