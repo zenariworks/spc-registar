@@ -1,7 +1,10 @@
 """Django форма за унос домаћинства."""
 
 from django import forms
-from registar.forms.select2 import ScriptAwareModelSelect2Widget
+from registar.forms.select2 import (
+    PublicSchemaModelSelect2Widget,
+    ScriptAwareModelSelect2Widget,
+)
 from registar.models import Adresa, Domacinstvo, Osoba, Slava
 
 
@@ -29,9 +32,15 @@ class DomacinstvoForm(forms.ModelForm):
             "adresa": ScriptAwareModelSelect2Widget(
                 model=Adresa,
                 search_fields=["ulica__icontains", "mesto__icontains"],
-                attrs={"data-minimum-input-length": 0},
+                attrs={
+                    "data-minimum-input-length": 0,
+                    "data-adresa-edit": "1",
+                },
             ),
-            "slava": ScriptAwareModelSelect2Widget(
+            # Slava lives in the public schema (shared model); the dedicated
+            # widget wraps every SQL call in schema_context("public") so the
+            # select2 AJAX endpoint returns rows even inside a tenant request.
+            "slava": PublicSchemaModelSelect2Widget(
                 model=Slava,
                 search_fields=["naziv__icontains"],
                 attrs={"data-minimum-input-length": 0},

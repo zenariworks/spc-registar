@@ -199,6 +199,45 @@
     cursor: not-allowed;
 }
 
+/* Label rendered next to a slider-toggle checkbox in an editable info-row.
+   The checkbox itself stays a direct child of .info-row__value so the
+   slider styling above applies; this label sits inline. */
+.info-row--editable .info-row__value > .info-row__bool-label {
+    margin-left: 10px;
+    cursor: pointer;
+    vertical-align: middle;
+    user-select: none;
+}
+
+/* Inline pencil button rendered next to the Adresa select2 in the editable
+   Domacinstvo form. Sits on the right edge of the value column and shares
+   the icon-only look of the page-header action buttons. */
+.info-row__value .adresa-edit-btn {
+    appearance: none;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+    color: var(--color-text);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    margin-left: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    vertical-align: middle;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+.info-row__value .adresa-edit-btn:hover {
+    border-color: var(--color-primary);
+    background: color-mix(in oklab, var(--color-primary) 12%, var(--color-surface-2));
+}
+.info-row__value .adresa-edit-btn:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
+}
 .info-row--placeholder {
     color: var(--color-text-muted);
 }

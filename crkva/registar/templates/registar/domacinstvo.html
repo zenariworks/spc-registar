@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
+{% load phone_filters %}
 
 {% block extra_css %}{% if is_edit %}{{ form.media.css }}{% endif %}{% endblock %}
-{% block extra_js %}{% if is_edit %}{{ form.media.js }}{% endif %}{% endblock %}
-{% load phone_filters %}
+{% block extra_js %}{% if is_edit %}{{ form.media.js }}<script src="{% static 'registar/components/adresa_edit.js' %}"></script>{% endif %}{% endblock %}
 
 {% block content %}
 {% if is_edit %}<form method="post" class="info-page">{% csrf_token %}{% else %}<div class="info-page">{% endif %}
@@ -33,8 +34,8 @@
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Слава"><i class="fa-solid fa-gift"></i></div><div class="info-row__value">{{ form.slava }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Мобилни телефон"><i class="fa-solid fa-mobile-screen"></i></div><div class="info-row__value">{{ form.tel_mobilni }}</div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Фиксни телефон"><i class="fa-solid fa-phone"></i></div><div class="info-row__value">{{ form.tel_fiksni }}</div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Славска водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value"><label>{{ form.slavska_vodica }} Славска водица</label></div></li>
-    <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Васкршња водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value"><label>{{ form.vaskrsnja_vodica }} Васкршња водица</label></div></li>
+    <li class="info-row info-row--editable" data-tooltip="Славска водица"><div class="info-row__icon" data-tooltip="Славска водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">{{ form.slavska_vodica }}<label for="id_slavska_vodica" class="info-row__bool-label">Славска водица</label></div></li>
+    <li class="info-row info-row--editable" data-tooltip="Васкршња водица"><div class="info-row__icon" data-tooltip="Васкршња водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">{{ form.vaskrsnja_vodica }}<label for="id_vaskrsnja_vodica" class="info-row__bool-label">Васкршња водица</label></div></li>
     <li class="info-row info-row--editable"><div class="info-row__icon" data-tooltip="Напомена"><i class="fa-solid fa-note-sticky"></i></div><div class="info-row__value">{{ form.napomena }}</div></li>
     {% else %}
     <li class="info-row"><div class="info-row__icon" data-tooltip="Домаћин"><i class="fa-solid fa-house"></i></div><div class="info-row__value"><a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</a></div></li>
@@ -42,9 +43,8 @@
     {% if domacinstvo.tel_mobilni %}<li class="info-row"><div class="info-row__icon" data-tooltip="Мобилни"><i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i></div><div class="info-row__value"><a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}">{{ domacinstvo.tel_mobilni|format_phone }}</a></div></li>{% endif %}
     {% if domacinstvo.tel_fiksni %}<li class="info-row"><div class="info-row__icon" data-tooltip="Фиксни"><i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i></div><div class="info-row__value"><a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}">{{ domacinstvo.tel_fiksni|format_phone }}</a></div></li>{% endif %}
     {% if domacinstvo.slava %}<li class="info-row"><div class="info-row__icon" data-tooltip="Слава"><i class="fa-solid fa-gift"></i></div><div class="info-row__value"><a href="{% url 'slava_detail' uid=domacinstvo.slava.uid %}">{{ domacinstvo.slava }}</a></div></li>{% endif %}
-    {% if domacinstvo.slavska_vodica or domacinstvo.vaskrsnja_vodica %}
-    <li class="info-row"><div class="info-row__icon" data-tooltip="Водице"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">{% if domacinstvo.slavska_vodica %}Славска{% endif %}{% if domacinstvo.slavska_vodica and domacinstvo.vaskrsnja_vodica %} · {% endif %}{% if domacinstvo.vaskrsnja_vodica %}Васкршња{% endif %}</div></li>
-    {% endif %}
+    <li class="info-row"><div class="info-row__icon" data-tooltip="Славска водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">Славска водица: {{ domacinstvo.slavska_vodica|yesno:"Да,Не" }}</div></li>
+    <li class="info-row"><div class="info-row__icon" data-tooltip="Васкршња водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">Васкршња водица: {{ domacinstvo.vaskrsnja_vodica|yesno:"Да,Не" }}</div></li>
     {% endif %}
   </ul>
 
@@ -65,6 +65,6 @@
     {% endif %}
   {% endif %}
 
-{% if is_edit %}</form>{% else %}</div>{% endif %}
+{% if is_edit %}{% include "registar/_modal_adresa.html" %}</form>{% else %}</div>{% endif %}
 {% if not is_edit %}{% include "registar/_history_panel.html" %}{% endif %}
 {% endblock %}
