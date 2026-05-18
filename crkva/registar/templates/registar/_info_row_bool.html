@@ -1,0 +1,13 @@
+{% comment %}
+  Boolean (checkbox) info-row partial — rendered by {% info_row_bool %}.
+  The body uses .info-row__body--inline so the checkbox + label sit next to
+  each other in edit mode.
+{% endcomment %}
+<li class="info-row{% if field %} info-row--editable info-row--stacked{% endif %}">
+  <div class="info-row__icon" data-tooltip="{{ label }}"><i class="fa-solid {{ icon }}"></i></div>
+  <div class="info-row__body info-row__body--inline">
+    <span class="info-row__static">{{ value_label }}: {% if value %}Да{% else %}Не{% endif %}{% if sub %} <span class="info-row__sub">{{ sub }}</span>{% endif %}</span>
+    {% if field %}{{ field }}
+    <label class="info-row__label" for="{{ field.id_for_label }}">{{ label }}</label>{% endif %}
+  </div>
+</li>
