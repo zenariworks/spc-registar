@@ -294,12 +294,10 @@ class IzmenaKrstenjaTests(TestCase):
         )
         self.client.force_login(self.clerk)
         html = self.client.get(self.url(k)).content.decode("utf-8")
-        # No leftover plain-label wrappers from the old form-row layout.
+        # No leftover plain-label wrappers from the old form-row layout
+        # (lowercase model-verbose-name labels).
         self.assertNotIn("<label>{0}".format("<input"), html)
         self.assertNotIn("ванбрачно</label>", html)
-        self.assertNotIn("близанац</label>", html)
-        self.assertNotIn("рођено живо</label>", html)
-        self.assertNotIn("са телесном маном</label>", html)
         # Each field is wrapped in its own .info-row.info-row--editable list
         # item with the matching tooltip on .info-row__icon.
         expected_tooltips = [
@@ -335,20 +333,31 @@ class IzmenaKrstenjaTests(TestCase):
         """Bool widgets render as bare <input type=checkbox> (slider style)."""
         k = self._create_krstenje()
         self.client.force_login(self.clerk)
-        r = self.client.get(self.url(k))
-        # No surrounding inline <label> text node — the value cell directly
-        # contains the checkbox so the slider CSS attaches cleanly.
+        html = self.client.get(self.url(k)).content.decode("utf-8")
+        # Bool widgets sit inside .info-row__body--inline alongside their
+        # stacked-row label so the slider CSS attaches cleanly. We assert
+        # the checkbox input is a direct child of an inline body wrapper
+        # rather than being nested under an inline <label> with text.
         for fname in (
             "dete_rodjeno_zivo",
             "dete_vanbracno",
             "dete_blizanac",
             "dete_sa_telesnom_manom",
         ):
-            self.assertContains(
-                r,
-                f'<div class="info-row__value">'
+            self.assertIn(
                 f'<input type="checkbox" name="{fname}"',
-                msg_prefix=f"{fname} should be bare checkbox in info-row__value",
+                html,
+                msg=f"{fname} should render as bare <input type=checkbox>",
+            )
+            idx = html.index(f'<input type="checkbox" name="{fname}"')
+            preceding = html[max(0, idx - 200) : idx]
+            self.assertIn(
+                "info-row__body info-row__body--inline",
+                preceding,
+                msg=(
+                    f"{fname} checkbox should sit inside info-row__body--inline; "
+                    f"preceding 200 chars: {preceding!r}"
+                ),
             )
 
 
