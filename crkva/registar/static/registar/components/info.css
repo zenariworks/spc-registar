@@ -250,6 +250,57 @@
 }
 
 
+/* ==========================================================================
+   STACKED variant — icon column left, label-above-input on the right
+   Used on every input/edit page so each field has a visible text label.
+   ========================================================================== */
+.info-row--stacked {
+    grid-template-columns: 28px 1fr;
+    align-items: center;
+    padding: 8px 0;
+}
+.info-row--stacked .info-row__icon {
+    align-self: center;
+}
+.info-row__body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.info-row__label {
+    display: block;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin: 0 0 4px;
+    line-height: 1.3;
+    padding: 0;
+}
+/* Boolean slider rows: label sits inline next to the slider in the body. */
+.info-row--stacked .info-row__body--inline {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+.info-row--stacked .info-row__body--inline .info-row__label {
+    margin: 0;
+    cursor: pointer;
+    user-select: none;
+}
+/* Input/select/textarea/select2 fills the body column under the label. */
+.info-row--stacked .info-row__value {
+    width: 100%;
+    min-width: 0;
+}
+.info-row--stacked .info-row__value > input:not([type="checkbox"]):not([type="radio"]),
+.info-row--stacked .info-row__value > select,
+.info-row--stacked .info-row__value > textarea,
+.info-row--stacked .info-row__value > .select2,
+.info-row--stacked .info-row__value > .select2-container {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
 /* Horizontal compact variant — fields side-by-side for record/Запис sections */
 .info-rows--inline {
     display: flex;
