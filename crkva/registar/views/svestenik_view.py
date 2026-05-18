@@ -96,6 +96,8 @@ class PrikazSvestenika(DetailView):
 
         context = super().get_context_data(**kwargs)
         context["history_entries"] = history_for(self.object)
+        context["form"] = SvestenikForm(instance=self.object)
+        context["is_edit"] = False
         s = self.object
         context["krstenja"] = s.свештеник_крститељ.select_related(
             "dete", "otac"

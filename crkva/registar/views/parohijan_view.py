@@ -120,6 +120,8 @@ class PrikazParohijana(DetailView):
 
         context = super().get_context_data(**kwargs)
         context["history_entries"] = history_for(self.object)
+        context["form"] = ParohijanForm(instance=self.object)
+        context["is_edit"] = False
         p = self.object
 
         # Крштења
