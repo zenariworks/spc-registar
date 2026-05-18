@@ -1,0 +1,47 @@
+{% comment %}
+Inline-edit Adresa modal. Mirrors _modal_osoba.html / modal.js architecture.
+Reads the currently selected Adresa from the linked select2 widget, pulls its
+fields from a hidden data block prerendered by the form, and POSTs to the
+brzi_izmena_adrese endpoint to update the row in place.
+{% endcomment %}
+<div id="adresa-modal" class="modal-overlay" style="display:none;">
+  <div class="modal">
+    <div class="modal__header">
+      <h3><i class="fa-solid fa-location-dot"></i> Измена адресе</h3>
+      <button type="button" class="modal__close" onclick="Modal.close('adresa-modal')">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modal-adresa-ulica">Улица</label>
+          <input type="text" id="modal-adresa-ulica" autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="modal-adresa-broj">Број</label>
+          <input type="text" id="modal-adresa-broj" autocomplete="off">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modal-adresa-broj_stana">Број стана</label>
+          <input type="text" id="modal-adresa-broj_stana" autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="modal-adresa-mesto">Место</label>
+          <input type="text" id="modal-adresa-mesto" autocomplete="off">
+        </div>
+      </div>
+      <div class="error-text" style="display:none;"></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="button button--neutral" onclick="Modal.close('adresa-modal')">Откажи</button>
+      <button type="button" class="button button--primary" id="adresa-modal-save">
+        <i class="fa-solid fa-check" style="margin-right:6px;"></i>Сачувај
+      </button>
+    </div>
+  </div>
+</div>
+
+{% if domacinstvo and domacinstvo.adresa %}
+<script id="adresa-modal-initial" type="application/json">{"uid": "{{ domacinstvo.adresa.uid }}", "ulica": "{{ domacinstvo.adresa.ulica|escapejs }}", "broj": "{{ domacinstvo.adresa.broj|escapejs }}", "broj_stana": "{{ domacinstvo.adresa.broj_stana|escapejs }}", "mesto": "{{ domacinstvo.adresa.mesto|escapejs }}"}</script>
+{% endif %}
