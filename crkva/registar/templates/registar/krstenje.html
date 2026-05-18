@@ -40,7 +40,7 @@
     </h1>
     {% if krstenje %}
       <span data-show-mode="view">
-        {% if can_edit_krstenje %}<a href="{% url 'izmena_krstenja' uid=krstenje.uid %}" data-action="enter-edit" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
+        {% if can_edit_krstenje %}<a href="{% url 'izmena_krstenja' uid=krstenje.uid %}" data-action="enter-edit" class="button button--neutral button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
         <a href="{% url 'krstenje_pdf' krstenje.uid %}" target="_blank" class="button button--neutral button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
         <button type="button" id="history-toggle" class="button button--ghost button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
       </span>
