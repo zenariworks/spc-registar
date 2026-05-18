@@ -65,6 +65,18 @@
           {% endif %}</ul>
       </div>
 
+      {% if not is_edit %}{% if krstenje.mesto_registracije or krstenje.datum_registracije or krstenje.maticni_broj or krstenje.strana_registracije %}
+      <div class="info-section">
+        <h2 class="info-section__title"><i class="fa-solid fa-book"></i> Матична књига – анаграф</h2>
+        <ul class="info-rows info-rows--inline">
+          {% if krstenje.mesto_registracije %}<li class="info-row"><div class="info-row__icon" data-tooltip="Место регистрације"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ krstenje.mesto_registracije }}</div></li>{% endif %}
+          {% if krstenje.datum_registracije %}<li class="info-row"><div class="info-row__icon" data-tooltip="Датум регистрације"><i class="fa-solid fa-calendar"></i></div><div class="info-row__value">{{ krstenje.datum_registracije }}</div></li>{% endif %}
+          {% if krstenje.maticni_broj %}<li class="info-row"><div class="info-row__icon" data-tooltip="Матични број"><i class="fa-solid fa-hashtag"></i></div><div class="info-row__value">{{ krstenje.maticni_broj }}</div></li>{% endif %}
+          {% if krstenje.strana_registracije %}<li class="info-row"><div class="info-row__icon" data-tooltip="Страна регистрације"><i class="fa-solid fa-bookmark"></i></div><div class="info-row__value">{{ krstenje.strana_registracije }}</div></li>{% endif %}
+        </ul>
+      </div>
+      {% endif %}{% endif %}
+
       <div class="info-section">
         <h2 class="info-section__title"><i class="fa-solid fa-baby"></i> Дете</h2>
         <ul class="info-rows">
