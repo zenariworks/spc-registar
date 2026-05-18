@@ -339,3 +339,53 @@
 .info-rows--inline .info-row--full {
     flex: 1 0 100%;
 }
+
+/* ==========================================================================
+   EDIT-TOGGLE — view vs. edit visibility on a single page
+   When .info-page (or any ancestor) carries data-mode="view" or "edit",
+   the matching widgets show/hide so the same DOM renders both modes.
+   Save still happens through a regular form POST when in edit mode.
+   ========================================================================== */
+
+[data-mode="view"] .info-row__static { display: block; }
+[data-mode="edit"] .info-row__static { display: none; }
+
+/* In view mode, every form widget inside an editable row is hidden so the
+   accompanying .info-row__static span occupies the row alone. */
+[data-mode="view"] .info-row--editable .info-row__value > input,
+[data-mode="view"] .info-row--editable .info-row__value > select,
+[data-mode="view"] .info-row--editable .info-row__value > textarea,
+[data-mode="view"] .info-row--editable .info-row__value > .select2,
+[data-mode="view"] .info-row--editable .info-row__value > .select2-container,
+[data-mode="view"] .info-row--editable .info-row__value > .adresa-edit-btn,
+[data-mode="view"] .info-row--editable .info-row__value > .toggle-group,
+[data-mode="view"] .info-row--editable .info-row__body--inline > input,
+[data-mode="view"] .info-row--editable .info-row__body--inline > .toggle-group,
+[data-mode="view"] .info-row--editable .info-row__body--inline > .info-row__label {
+    display: none !important;
+}
+
+/* In view mode the row label sits on its own line; remove the form-row
+   spacing so the static value sits flush like the legacy view layout. */
+[data-mode="view"] .info-row--editable {
+    padding: 12px 0;
+}
+
+/* Header action buttons grouped by mode. */
+[data-mode="view"] [data-show-mode="edit"] { display: none !important; }
+[data-mode="edit"] [data-show-mode="view"] { display: none !important; }
+
+/* In edit mode the static span is hidden so the inputs render alone. */
+.info-row__static {
+    display: block;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--color-text);
+    word-break: break-word;
+}
+.info-row__static a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+.info-row__static a:hover { text-decoration: underline; }
+.info-row__static--muted { color: var(--color-text-muted); }

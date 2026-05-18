@@ -2,32 +2,41 @@
 {% load static %}
 {% load phone_filters %}
 
-{% block extra_css %}{% if is_edit %}{{ form.media.css }}{% endif %}{% endblock %}
-{% block extra_js %}{% if is_edit %}{{ form.media.js }}<script src="{% static 'registar/components/adresa_edit.js' %}"></script>{% endif %}{% endblock %}
+{% block extra_css %}{% if form %}{{ form.media.css }}{% endif %}{% endblock %}
+{% block extra_js %}{% if form %}{{ form.media.js }}<script src="{% static "registar/components/adresa_edit.js" %}"></script>{% endif %}{% endblock %}
 
 {% block content %}
-{% if is_edit %}<form method="post" class="info-page">{% csrf_token %}{% else %}<div class="info-page">{% endif %}
+{% if domacinstvo %}
+<form method="post" class="info-page" data-edit-toggle-root data-mode="{% if is_edit %}edit{% else %}view{% endif %}" data-view-url="{% url "domacinstvo_detail" uid=domacinstvo.uid %}" action="{% url "izmena_domacinstva" uid=domacinstvo.uid %}">
+{% else %}
+<form method="post" class="info-page" data-edit-toggle-root data-mode="edit">
+{% endif %}
+  {% csrf_token %}
 
   <div class="u-page-header">
-    <a href="{% if is_edit and domacinstvo %}{% url 'domacinstvo_detail' uid=domacinstvo.uid %}{% else %}{% url 'domacinstva' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
+    <a href="{% if is_edit and domacinstvo %}{% url "domacinstvo_detail" uid=domacinstvo.uid %}{% else %}{% url "domacinstva" %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 class="u-page-title">
       {% if is_edit and not domacinstvo %}Додавање домаћинства
       {% elif is_edit %}Измена домаћинства{% if domacinstvo.domacin %} · {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}{% endif %}
       {% else %}Домаћинство · {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}{% endif %}
     </h1>
-    {% if is_edit %}
-      <button class="button button--primary button--icon" type="submit" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+    {% if domacinstvo %}
+      <span data-show-mode="view">
+        {% if can_edit_domacinstvo %}<a href="{% url "izmena_domacinstva" uid=domacinstvo.uid %}" data-action="enter-edit" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
+        <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      </span>
+      <span data-show-mode="edit">
+        <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
+        <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+      </span>
     {% else %}
-      {% if can_edit_domacinstvo %}<a href="{% url 'izmena_domacinstva' uid=domacinstvo.uid %}" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-      <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}
   </div>
 
-  {% if is_edit and form.errors %}
-    {% include 'registar/_form_errors.html' %}
-  {% endif %}
+  {% if form.errors %}{% include "registar/_form_errors.html" %}{% endif %}
 
-  {% if is_edit %}
+  {% if form %}
   <div class="info-section">
     <h2 class="info-section__title"><i class="fa-solid fa-house"></i> Домаћинство</h2>
     <ul class="info-rows">
@@ -35,7 +44,10 @@
         <div class="info-row__icon" data-tooltip="Домаћин"><i class="fa-solid fa-house"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.domacin.id_for_label }}">Домаћин</label>
-          <div class="info-row__value">{{ form.domacin }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if domacinstvo.domacin %}<a href="{% url "parohijan_detail" uid=domacinstvo.domacin.uid %}">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</a>{% else %}—{% endif %}</span>
+            {{ form.domacin }}
+          </div>
         </div>
       </li>
     </ul>
@@ -48,14 +60,20 @@
         <div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.adresa.id_for_label }}">Адреса</label>
-          <div class="info-row__value">{{ form.adresa }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if domacinstvo.adresa %}<a href="https://www.openstreetmap.org/search?query={{ domacinstvo.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ domacinstvo.adresa }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em;opacity:0.55;margin-left:4px;"></i></a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.adresa }}
+          </div>
         </div>
       </li>
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Слава"><i class="fa-solid fa-gift"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.slava.id_for_label }}">Слава</label>
-          <div class="info-row__value">{{ form.slava }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if domacinstvo.slava %}<a href="{% url "slava_detail" uid=domacinstvo.slava.uid %}">{{ domacinstvo.slava }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.slava }}
+          </div>
         </div>
       </li>
     </ul>
@@ -68,14 +86,20 @@
         <div class="info-row__icon" data-tooltip="Мобилни телефон"><i class="fa-solid fa-mobile-screen"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.tel_mobilni.id_for_label }}">Мобилни телефон</label>
-          <div class="info-row__value">{{ form.tel_mobilni }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if domacinstvo.tel_mobilni %}<a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}">{{ domacinstvo.tel_mobilni|format_phone }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.tel_mobilni }}
+          </div>
         </div>
       </li>
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Фиксни телефон"><i class="fa-solid fa-phone"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.tel_fiksni.id_for_label }}">Фиксни телефон</label>
-          <div class="info-row__value">{{ form.tel_fiksni }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if domacinstvo.tel_fiksni %}<a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}">{{ domacinstvo.tel_fiksni|format_phone }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.tel_fiksni }}
+          </div>
         </div>
       </li>
     </ul>
@@ -87,6 +111,7 @@
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Славска водица"><i class="fa-solid fa-droplet"></i></div>
         <div class="info-row__body info-row__body--inline">
+          <span class="info-row__static">Славска водица: {{ domacinstvo.slavska_vodica|yesno:"Да,Не" }}</span>
           {{ form.slavska_vodica }}
           <label class="info-row__label" for="{{ form.slavska_vodica.id_for_label }}">Славска водица</label>
         </div>
@@ -94,6 +119,7 @@
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Васкршња водица"><i class="fa-solid fa-droplet"></i></div>
         <div class="info-row__body info-row__body--inline">
+          <span class="info-row__static">Васкршња водица: {{ domacinstvo.vaskrsnja_vodica|yesno:"Да,Не" }}</span>
           {{ form.vaskrsnja_vodica }}
           <label class="info-row__label" for="{{ form.vaskrsnja_vodica.id_for_label }}">Васкршња водица</label>
         </div>
@@ -108,30 +134,21 @@
         <div class="info-row__icon" data-tooltip="Напомена"><i class="fa-solid fa-note-sticky"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.napomena.id_for_label }}">Напомена</label>
-          <div class="info-row__value">{{ form.napomena }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if domacinstvo.napomena %}{{ domacinstvo.napomena|linebreaksbr }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.napomena }}
+          </div>
         </div>
       </li>
     </ul>
   </div>
-  {% else %}
-  <ul class="info-rows">
-    <li class="info-row"><div class="info-row__icon" data-tooltip="Домаћин"><i class="fa-solid fa-house"></i></div><div class="info-row__value"><a href="{% url 'parohijan_detail' uid=domacinstvo.domacin.uid %}">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</a></div></li>
-    {% if domacinstvo.adresa %}<li class="info-row"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value"><a href="https://www.openstreetmap.org/search?query={{ domacinstvo.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ domacinstvo.adresa }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em;opacity:0.55;margin-left:4px;"></i></a></div></li>{% endif %}
-    {% if domacinstvo.tel_mobilni %}<li class="info-row"><div class="info-row__icon" data-tooltip="Мобилни"><i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i></div><div class="info-row__value"><a href="tel:{{ domacinstvo.tel_mobilni|tel_link }}">{{ domacinstvo.tel_mobilni|format_phone }}</a></div></li>{% endif %}
-    {% if domacinstvo.tel_fiksni %}<li class="info-row"><div class="info-row__icon" data-tooltip="Фиксни"><i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i></div><div class="info-row__value"><a href="tel:{{ domacinstvo.tel_fiksni|tel_link }}">{{ domacinstvo.tel_fiksni|format_phone }}</a></div></li>{% endif %}
-    {% if domacinstvo.slava %}<li class="info-row"><div class="info-row__icon" data-tooltip="Слава"><i class="fa-solid fa-gift"></i></div><div class="info-row__value"><a href="{% url 'slava_detail' uid=domacinstvo.slava.uid %}">{{ domacinstvo.slava }}</a></div></li>{% endif %}
-    <li class="info-row"><div class="info-row__icon" data-tooltip="Славска водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">Славска водица: {{ domacinstvo.slavska_vodica|yesno:"Да,Не" }}</div></li>
-    <li class="info-row"><div class="info-row__icon" data-tooltip="Васкршња водица"><i class="fa-solid fa-droplet"></i></div><div class="info-row__value">Васкршња водица: {{ domacinstvo.vaskrsnja_vodica|yesno:"Да,Не" }}</div></li>
-  </ul>
   {% endif %}
 
-  {% if not is_edit and domacinstvo.napomena %}<div class="info-note">{{ domacinstvo.napomena }}</div>{% endif %}
-
-  {% if not is_edit %}
+  {% if domacinstvo %}
     {% if ukucani_zivi %}
     <div class="info-section">
       <h2 class="info-section__title">Чланови ({{ ukucani_zivi|length }})</h2>
-      <ul class="info-list">{% for u in ukucani_zivi %}<li class="info-list__item"><span>{% if u.osoba %}<a href="{% url 'parohijan_detail' uid=u.osoba.uid %}">{{ u.osoba.ime }} {{ u.osoba.prezime }}</a>{% else %}{{ u.ime_ukucana }}{% endif %}</span><span class="info-list__role">{{ u.get_uloga_display }}</span></li>{% endfor %}</ul>
+      <ul class="info-list">{% for u in ukucani_zivi %}<li class="info-list__item"><span>{% if u.osoba %}<a href="{% url "parohijan_detail" uid=u.osoba.uid %}">{{ u.osoba.ime }} {{ u.osoba.prezime }}</a>{% else %}{{ u.ime_ukucana }}{% endif %}</span><span class="info-list__role">{{ u.get_uloga_display }}</span></li>{% endfor %}</ul>
     </div>
     {% endif %}
     {% if ukucani_preminuli %}
@@ -142,6 +159,7 @@
     {% endif %}
   {% endif %}
 
-{% if is_edit %}{% include "registar/_modal_adresa.html" %}</form>{% else %}</div>{% endif %}
-{% if not is_edit %}{% include "registar/_history_panel.html" %}{% endif %}
+  {% if form %}{% include "registar/_modal_adresa.html" %}{% endif %}
+</form>
+{% if domacinstvo %}{% include "registar/_history_panel.html" %}{% endif %}
 {% endblock %}

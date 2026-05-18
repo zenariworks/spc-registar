@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 
-{% block extra_css %}{% if is_edit %}{{ form.media.css }}{% endif %}{% endblock %}
-{% block extra_js %}{% if is_edit %}{{ form.media.js }}{% endif %}{% endblock %}
+{% block extra_css %}{% if form %}{{ form.media.css }}{% endif %}{% endblock %}
+{% block extra_js %}{% if form %}{{ form.media.js }}{% endif %}{% endblock %}
 
 {% block content %}
-{% if is_edit %}<form method="post" class="info-page">{% csrf_token %}{% else %}<div class="info-page">{% endif %}
+{% if svestenik %}
+<form method="post" class="info-page" data-edit-toggle-root data-mode="{% if is_edit %}edit{% else %}view{% endif %}" data-view-url="{% url "svestenik_detail" uid=svestenik.uid %}" action="{% url "izmena_svestenika" uid=svestenik.uid %}">
+{% else %}
+<form method="post" class="info-page" data-edit-toggle-root data-mode="edit">
+{% endif %}
+  {% csrf_token %}
 
   <div class="u-page-header">
-    <a href="{% if is_edit and svestenik %}{% url 'svestenik_detail' uid=svestenik.uid %}{% else %}{% url 'svestenici' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад">
+    <a href="{% if is_edit and svestenik %}{% url "svestenik_detail" uid=svestenik.uid %}{% else %}{% url "svestenici" %}{% endif %}" class="back-button" aria-label="Назад" title="Назад">
       <i class="fa-solid fa-arrow-left"></i>
     </a>
     <h1 class="u-page-title">
@@ -15,20 +20,24 @@
       {% elif is_edit %}Измена: {{ svestenik.ime }} {{ svestenik.prezime }}
       {% else %}{{ svestenik.ime }} {{ svestenik.prezime }}{% endif %}
     </h1>
-    {% if is_edit %}
-      <button class="button button--primary button--icon" type="submit" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+    {% if svestenik %}
+      <span data-show-mode="view">
+        {% if can_edit_svestenik %}<a href="{% url "izmena_svestenika" uid=svestenik.uid %}" data-action="enter-edit" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
+        <a href="{% url "svestenik_pdf" svestenik.uid %}" target="_blank" class="button button--primary button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
+        <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      </span>
+      <span data-show-mode="edit">
+        <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
+        <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+      </span>
     {% else %}
-      {% if can_edit_svestenik %}<a href="{% url 'izmena_svestenika' uid=svestenik.uid %}" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-      <a href="{% url 'svestenik_pdf' svestenik.uid %}" target="_blank" class="button button--primary button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
-      <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}
   </div>
 
-  {% if is_edit and form.errors %}
-    {% include 'registar/_form_errors.html' %}
-  {% endif %}
+  {% if form.errors %}{% include "registar/_form_errors.html" %}{% endif %}
 
-  {% if is_edit %}
+  {% if form %}
   <div class="info-section">
     <h2 class="info-section__title"><i class="fa-solid fa-user"></i> Лични подаци</h2>
     <ul class="info-rows">
@@ -36,21 +45,30 @@
         <div class="info-row__icon" data-tooltip="Звање"><i class="fa-solid fa-id-badge"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.zvanje.id_for_label }}">Звање</label>
-          <div class="info-row__value">{{ form.zvanje }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{{ svestenik.zvanje|default:"—" }}</span>
+            {{ form.zvanje }}
+          </div>
         </div>
       </li>
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.ime.id_for_label }}">Име</label>
-          <div class="info-row__value">{{ form.ime }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{{ svestenik.ime|default:"—" }}</span>
+            {{ form.ime }}
+          </div>
         </div>
       </li>
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.prezime.id_for_label }}">Презиме</label>
-          <div class="info-row__value">{{ form.prezime }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{{ svestenik.prezime|default:"—" }}</span>
+            {{ form.prezime }}
+          </div>
         </div>
       </li>
     </ul>
@@ -63,14 +81,20 @@
         <div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.datum_rodjenja.id_for_label }}">Датум рођења</label>
-          <div class="info-row__value">{{ form.datum_rodjenja }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if svestenik.datum_rodjenja %}{{ svestenik.datum_rodjenja }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.datum_rodjenja }}
+          </div>
         </div>
       </li>
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.mesto_rodjenja.id_for_label }}">Место рођења</label>
-          <div class="info-row__value">{{ form.mesto_rodjenja }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if svestenik.mesto_rodjenja %}{{ svestenik.mesto_rodjenja }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.mesto_rodjenja }}
+          </div>
         </div>
       </li>
     </ul>
@@ -83,45 +107,41 @@
         <div class="info-row__icon" data-tooltip="Парохија"><i class="fa-solid fa-church"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.parohija.id_for_label }}">Парохија</label>
-          <div class="info-row__value">{{ form.parohija }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if svestenik.parohija %}{{ svestenik.parohija }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.parohija }}
+          </div>
         </div>
       </li>
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-house"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.adresa.id_for_label }}">Адреса</label>
-          <div class="info-row__value">{{ form.adresa }}</div>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if svestenik.adresa %}{{ svestenik.adresa }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.adresa }}
+          </div>
         </div>
       </li>
     </ul>
   </div>
-  {% else %}
-  <ul class="info-rows">
-    <li class="info-row"><div class="info-row__icon" data-tooltip="Звање"><i class="fa-solid fa-id-badge"></i></div><div class="info-row__value">{{ svestenik.zvanje }}</div></li>
-    <li class="info-row"><div class="info-row__icon" data-tooltip="Име"><i class="fa-solid fa-user"></i></div><div class="info-row__value">{{ svestenik.ime }}</div></li>
-    <li class="info-row"><div class="info-row__icon" data-tooltip="Презиме"><i class="fa-solid fa-user-tag"></i></div><div class="info-row__value">{{ svestenik.prezime }}</div></li>
-    {% if svestenik.parohija %}<li class="info-row"><div class="info-row__icon" data-tooltip="Парохија"><i class="fa-solid fa-church"></i></div><div class="info-row__value">{{ svestenik.parohija }}</div></li>{% endif %}
-    {% if svestenik.adresa %}<li class="info-row"><div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-house"></i></div><div class="info-row__value">{{ svestenik.adresa }}</div></li>{% endif %}
-    {% if svestenik.datum_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Датум рођења"><i class="fa-solid fa-cake-candles"></i></div><div class="info-row__value">{{ svestenik.datum_rodjenja }}</div></li>{% endif %}
-    {% if svestenik.mesto_rodjenja %}<li class="info-row"><div class="info-row__icon" data-tooltip="Место рођења"><i class="fa-solid fa-location-dot"></i></div><div class="info-row__value">{{ svestenik.mesto_rodjenja }}</div></li>{% endif %}
-  </ul>
   {% endif %}
 
-  {% if not is_edit %}
+  {% if svestenik %}
     {% if krstenja %}
-    <div class="info-section">
+    <div class="info-section" data-show-mode="view">
       <h2 class="info-section__title">Крштења ({{ krstenja_count }})</h2>
-      <ul class="info-list">{% for k in krstenja %}<li class="info-list__item"><span><a href="{% url 'krstenje_detail' uid=k.uid %}">{{ k.dete }}</a></span><span class="info-list__role">{{ k.datum|default:"—" }}</span></li>{% endfor %}</ul>
+      <ul class="info-list">{% for k in krstenja %}<li class="info-list__item"><span><a href="{% url "krstenje_detail" uid=k.uid %}">{{ k.dete }}</a></span><span class="info-list__role">{{ k.datum|default:"—" }}</span></li>{% endfor %}</ul>
     </div>
     {% endif %}
     {% if vencanja %}
-    <div class="info-section">
+    <div class="info-section" data-show-mode="view">
       <h2 class="info-section__title">Венчања ({{ vencanja_count }})</h2>
-      <ul class="info-list">{% for v in vencanja %}<li class="info-list__item"><span><a href="{% url 'vencanje_detail' uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">{{ v.datum|default:"—" }}</span></li>{% endfor %}</ul>
+      <ul class="info-list">{% for v in vencanja %}<li class="info-list__item"><span><a href="{% url "vencanje_detail" uid=v.uid %}">{{ v.zenik }} и {{ v.nevesta }}</a></span><span class="info-list__role">{{ v.datum|default:"—" }}</span></li>{% endfor %}</ul>
     </div>
     {% endif %}
   {% endif %}
 
-{% if is_edit %}</form>{% else %}</div>{% endif %}
-{% if not is_edit %}{% include "registar/_history_panel.html" %}{% endif %}
+</form>
+{% if svestenik %}{% include "registar/_history_panel.html" %}{% endif %}
 {% endblock %}

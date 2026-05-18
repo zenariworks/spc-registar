@@ -77,6 +77,7 @@ class PrikazDomacinstva(DetailView):
         context["history_entries"] = history_for(self.object)
         context["domacinstvo"] = self.object
         context["is_edit"] = False
+        context["form"] = DomacinstvoForm(instance=self.object)
         domacinstvo = self.object
         ukucani = domacinstvo.ukucani.all()
         context["ukucani_zivi"] = [u for u in ukucani if not u.preminuo]
