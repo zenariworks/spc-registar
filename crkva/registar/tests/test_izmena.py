@@ -330,14 +330,17 @@ class IzmenaKrstenjaTests(TestCase):
             )
 
     def test_dete_bool_widgets_are_bare_checkboxes(self):
-        """Bool widgets render as bare <input type=checkbox> (slider style)."""
+        """Bool widgets render as bare <input type=checkbox> (slider style).
+
+        The slider-toggle CSS in info.css targets
+        ``.info-row--editable .info-row__value > input[type="checkbox"]`` —
+        so the checkbox MUST be a direct child of ``.info-row__value``,
+        not nested deeper. This guards against regressions where the
+        widget gets wrapped in an extra div / label.
+        """
         k = self._create_krstenje()
         self.client.force_login(self.clerk)
         html = self.client.get(self.url(k)).content.decode("utf-8")
-        # Bool widgets sit inside .info-row__body--inline alongside their
-        # stacked-row label so the slider CSS attaches cleanly. We assert
-        # the checkbox input is a direct child of an inline body wrapper
-        # rather than being nested under an inline <label> with text.
         for fname in (
             "dete_rodjeno_zivo",
             "dete_vanbracno",
@@ -352,10 +355,11 @@ class IzmenaKrstenjaTests(TestCase):
             idx = html.index(f'<input type="checkbox" name="{fname}"')
             preceding = html[max(0, idx - 200) : idx]
             self.assertIn(
-                "info-row__body info-row__body--inline",
+                'class="info-row__value"',
                 preceding,
                 msg=(
-                    f"{fname} checkbox should sit inside info-row__body--inline; "
+                    f"{fname} checkbox must sit directly inside .info-row__value "
+                    f"so the slider-toggle CSS applies; "
                     f"preceding 200 chars: {preceding!r}"
                 ),
             )
