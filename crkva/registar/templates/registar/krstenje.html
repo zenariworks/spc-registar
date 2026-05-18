@@ -56,8 +56,8 @@
   {% if form.errors %}{% include 'registar/_form_errors.html' %}{% endif %}
 
   {% if krstenje %}
-  <div class="tabs tabs--segmented" data-show-mode="view">
-    <div class="tabs__nav">
+  <div class="tabs tabs--segmented">
+    <div class="tabs__nav" data-show-mode="view">
       <input type="radio" id="krst-tab-podaci" name="krst-view" class="tabs__radio" checked>
       <label for="krst-tab-podaci" class="tabs__tab"><i class="tabs__icon fa-solid fa-table-list"></i> Подаци</label>
       <input type="radio" id="krst-tab-pregled" name="krst-view" class="tabs__radio">
@@ -181,7 +181,7 @@
     </section>
 
     {# ============ CERTIFICATE PREVIEW ============ #}
-    <section class="tabs__panel">
+    <section class="tabs__panel" data-show-mode="view">
       <div class="krstenica">
         <div class="krstenica-frame">
           <div class="krst-field-knjiga">{{ krstenje.knjiga }}</div>
