@@ -240,3 +240,35 @@
     margin-left: auto;
     flex-shrink: 0;
 }
+
+/* Registry as compact info-strip (used on home page below actions) */
+.registry--compact .registry__grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-2);
+}
+.registry--compact .registry__card {
+    padding: var(--space-3);
+    gap: var(--space-3);
+}
+.registry--compact .registry__icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.05rem;
+    border-radius: var(--radius-1);
+}
+.registry--compact .registry__count {
+    font-size: 1.25rem;
+}
+.registry--compact .registry__desc {
+    display: none;
+}
+@media (max-width: 768px) {
+    .registry--compact .registry__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 480px) {
+    .registry--compact .registry__grid {
+        grid-template-columns: 1fr;
+    }
+}
