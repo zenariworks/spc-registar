@@ -4,7 +4,6 @@
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import KrstenjeForm
 from registar.models import Krstenje
@@ -35,7 +34,11 @@ def unos_krstenja(request):
             return redirect("krstenja")
     else:
         form = KrstenjeForm()
-    return render(request, "registar/unos_krstenja.html", {"form": form})
+    return render(
+        request,
+        "registar/krstenje.html",
+        {"form": form, "is_edit": True, "krstenje": None},
+    )
 
 
 class SpisakKrstenja(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
@@ -136,6 +139,13 @@ class PrikazKrstenja(DetailView):
             uid=uid,
         )
 
+    def get_context_data(self, **kwargs):
+        """Form bound to instance + is_edit=False so the unified template renders."""
+        context = super().get_context_data(**kwargs)
+        context["form"] = KrstenjeForm(instance=self.object)
+        context["is_edit"] = False
+        return context
+
 
 # @login_required
 def calibrate_krstenje(request):
@@ -156,11 +166,9 @@ def izmena_krstenja(request, uid):
         form = KrstenjeForm(instance=instance)
     return render(
         request,
-        "registar/unos_krstenja.html",
+        "registar/krstenje.html",
         {
             "form": form,
-            "title": "Измена",
-            "back_url": reverse("krstenje_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,
             "krstenje": instance,
         },

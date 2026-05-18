@@ -236,9 +236,9 @@ class UnosKrstenjaViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_unos_krstenja_uses_correct_template(self):
-        """Унос крштења користи исправан шаблон."""
+        """Унос крштења користи унифицирани шаблон krstenje.html."""
         response = self.client.get(reverse("unos_krstenja"))
-        self.assertTemplateUsed(response, "registar/unos_krstenja.html")
+        self.assertTemplateUsed(response, "registar/krstenje.html")
 
     def test_unos_krstenja_has_form(self):
         """Унос крштења садржи форму."""

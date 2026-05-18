@@ -126,6 +126,11 @@ class Krstenje(TimeStampedModel):
         return self.dete.ime if self.dete else ""
 
     @property
+    def prezime_deteta(self):
+        """Презиме детета из везаног Osoba objekta."""
+        return self.dete.prezime if self.dete else ""
+
+    @property
     def pol_deteta(self):
         """Пол детета из везаног Osoba objekta."""
         return self.dete.pol if self.dete else ""
