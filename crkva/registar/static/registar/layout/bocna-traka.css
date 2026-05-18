@@ -810,3 +810,23 @@ body.sidebar-collapsed {
     display: none;
   }
 }
+
+
+/* Move 6 — responsive body offset.
+   Default desktop reserves room for sidebar; mobile drops the offset
+   so content flows full-width under the hamburger. */
+body > main { padding-left: var(--sidebar-width-expanded); transition: padding-left 0.3s ease; }
+body.sidebar-collapsed > main { padding-left: var(--sidebar-width-collapsed); }
+
+@media (max-width: 1024px) {
+    body > main { padding-left: var(--sidebar-width-collapsed); }
+    body.sidebar-collapsed > main { padding-left: var(--sidebar-width-collapsed); }
+    .sidebar:not(.open) { width: var(--sidebar-width-collapsed); }
+    .sidebar:not(.open) .sidebar-text,
+    .sidebar:not(.open) .sidebar-logo-text { display: none; opacity: 0; width: 0; }
+}
+
+@media (max-width: 768px) {
+    body > main { padding-left: 0; }
+    body.sidebar-collapsed > main { padding-left: 0; }
+}
