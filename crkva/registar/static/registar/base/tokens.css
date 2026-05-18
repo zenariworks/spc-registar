@@ -166,9 +166,11 @@
 
     /* ---------- Typography (wired in Move 2) ---------- */
     --font-display: 'Miroslavljeva Cirilica', 'PT Serif', Georgia, serif;
-    --font-body:    'PT Serif', 'Source Serif Pro', Georgia, serif;
-    --font-sans:    'Source Sans Pro', system-ui, sans-serif;
-    --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
+    --font-serif:   'PT Serif', 'Source Serif Pro', Georgia, serif;
+    --font-sans:    'Source Sans Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    /* Backwards-compat alias */
+    --font-body:    var(--font-serif);
 }
 
 html,
@@ -211,13 +213,60 @@ body > main { flex: 1; }
     .footer-links { flex-wrap: wrap; }
 }
 
-/* Headings — slight serif influence, tighter line height */
-h1, h2, h3 {
+/* Headings: institutional serif. Page titles get the display face. */
+h1, h2, h3, h4 {
     margin: var(--space-5) 0 var(--space-3);
     line-height: 1.2;
     color: var(--color-ink-900);
-    font-weight: 600;
+    font-family: var(--font-serif);
+    font-weight: 700;
     letter-spacing: -0.005em;
+}
+h1 { font-size: 2rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.125rem; font-weight: 600; }
+
+/* Page title masthead: Miroslavljeva for the ceremonial moment.
+   Each list page renders <h1 class="u-page-title">Парохијани</h1>.
+   The script is reserved for h1 only — body text remains sans for legibility. */
+.u-page-title,
+h1.u-page-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 2.6rem;
+    line-height: 1.05;
+    letter-spacing: 0;
+    color: var(--color-ink-900);
+    margin: var(--space-3) 0 var(--space-4);
+    /* Quiet ornament: thin double rule in aged gold above the title. */
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-accent);
+    box-shadow: 0 -4px 0 -3px var(--color-accent);
+    position: relative;
+}
+.u-page-title__count {
+    /* Count suffix stays in workhorse sans — readable, not ceremonial. */
+    font-family: var(--font-sans);
+    font-weight: 400;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+    font-size: 0.55em;
+    margin-left: var(--space-3);
+    letter-spacing: 0.02em;
+}
+
+/* Ledger utility — for record numbers, dates, anything tabular */
+.u-ledger,
+.stavka__secondary,
+.stavka__meta-text,
+time, .date, .datum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+}
+.u-ledger {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    letter-spacing: -0.01em;
 }
 p { margin: 0 0 var(--space-3) 0; }
 
