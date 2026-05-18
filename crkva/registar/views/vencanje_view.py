@@ -4,7 +4,6 @@
 
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import VencanjeForm
 from registar.models.vencanje import Vencanje
@@ -132,6 +131,13 @@ class PrikazVencanja(DetailView):
             uid=uid,
         )
 
+    def get_context_data(self, **kwargs):
+        """Form bound to instance + is_edit=False so the unified template renders."""
+        context = super().get_context_data(**kwargs)
+        context["form"] = VencanjeForm(instance=self.object)
+        context["is_edit"] = False
+        return context
+
 
 # @login_required
 @tenant_role_required("vencanje")
@@ -144,7 +150,11 @@ def unos_vencanja(request):
             return redirect("vencanja")
     else:
         form = VencanjeForm()
-    return render(request, "registar/unos_vencanja.html", {"form": form})
+    return render(
+        request,
+        "registar/vencanje.html",
+        {"form": form, "is_edit": True, "vencanje": None},
+    )
 
 
 # @login_required
@@ -166,11 +176,9 @@ def izmena_vencanja(request, uid):
         form = VencanjeForm(instance=instance)
     return render(
         request,
-        "registar/unos_vencanja.html",
+        "registar/vencanje.html",
         {
             "form": form,
-            "title": "Измена",
-            "back_url": reverse("vencanje_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,
             "vencanje": instance,
         },
