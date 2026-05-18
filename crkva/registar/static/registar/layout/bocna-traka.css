@@ -3,10 +3,10 @@
 :root {
   --sidebar-width-expanded: 260px;
   --sidebar-width-collapsed: 70px;
-  --sidebar-bg: linear-gradient(180deg, var(--color-primary) 0%, var(--color-secondary) 100%);
-  --sidebar-text-color: #ffffff;
-  --sidebar-hover-bg: rgba(255, 255, 255, 0.1);
-  --sidebar-active-bg: var(--color-white-alpha-20);
+  --sidebar-bg: linear-gradient(180deg, var(--sidebar-bg-start) 0%, var(--sidebar-bg-end) 100%);
+  --sidebar-text-color: var(--sidebar-text);
+  --sidebar-hover-bg: var(--sidebar-hover-bg);
+  --sidebar-active-bg: rgba(176, 132, 67, 0.10);
   --sidebar-transition: all 0.3s ease;
 }
 
@@ -64,7 +64,7 @@
   align-items: center;
   justify-content: center;
   background: var(--sidebar-bg);
-  border: 2px solid var(--color-white-alpha-20);
+  border: 2px solid var(--sidebar-divider);
   border-radius: 50%;
   color: var(--sidebar-text-color);
   cursor: pointer;
@@ -99,7 +99,7 @@ body.sidebar-collapsed .sidebar-toggle {
   padding: 20px 15px;
   margin-top: 0;
   text-align: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--sidebar-divider);
   min-height: 100px;
   display: flex;
   align-items: center;
@@ -189,8 +189,10 @@ body.sidebar-collapsed .sidebar-toggle {
 .sidebar-menu-item > a:first-child.active {
   background: var(--sidebar-active-bg);
   opacity: 1;
-  font-weight: 500;
-  border-left: 3px solid var(--sidebar-text-color);
+  font-weight: 600;
+  color: var(--color-accent-100);
+  border-left: 3px solid var(--sidebar-active-rail);
+  box-shadow: inset 0 0 0 1px rgba(176, 132, 67, 0.10);
 }
 
 .sidebar-menu-item > a:first-child i {
@@ -206,16 +208,16 @@ body.sidebar-collapsed .sidebar-toggle {
 }
 
 .sidebar-nav::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(237, 230, 214, 0.04);
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(176, 132, 67, 0.28);
   border-radius: 3px;
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(176, 132, 67, 0.42);
 }
 
 /* Section */
@@ -324,8 +326,9 @@ body.sidebar-collapsed .sidebar-toggle {
 .sidebar-submenu a.active {
   background: var(--sidebar-active-bg);
   opacity: 1;
-  font-weight: 500;
-  border-left: 3px solid var(--sidebar-text-color);
+  font-weight: 600;
+  color: var(--color-accent-100);
+  border-left: 3px solid var(--sidebar-active-rail);
 }
 
 .sidebar-submenu a i {
@@ -345,7 +348,7 @@ body.sidebar-collapsed .sidebar-toggle {
   flex: 0 0 auto;
   opacity: 0.7 !important;
   transition: opacity 0.2s, background 0.2s;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: 1px solid var(--sidebar-divider);
   margin-right: 0 !important;
   color: var(--sidebar-text-color);
   text-decoration: none;

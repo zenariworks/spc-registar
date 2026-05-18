@@ -17,44 +17,51 @@
 
 :root[data-theme="dark"] {
   /* ---------- Brand ---------- */
-  /* Primary stays the SPC red, but brighter on dark so body text + buttons
-     keep WCAG contrast against the dark surface. */
-  --color-primary:       #ef4444;
-  --color-primary-700:   #dc2626;
-  --color-primary-hover: #f87171;
-  --color-primary-transparent: rgba(239, 68, 68, 0.18);
-  --color-primary-50:    color-mix(in oklab, var(--color-primary) 14%, #0d1117);
-  --color-primary-100:   color-mix(in oklab, var(--color-primary) 22%, #0d1117);
-  --color-primary-200:   color-mix(in oklab, var(--color-primary) 32%, #0d1117);
+  /* On dark, primary brightens slightly for contrast; gold accent does the
+     heavy lifting on borders and ornament. */
+  --color-primary:       #D14A48;
+  --color-primary-700:   #B0302E;
+  --color-primary-hover: #E26967;
+  --color-primary-transparent: rgba(209, 74, 72, 0.18);
+  --color-primary-50:    color-mix(in oklab, var(--color-primary) 14%, var(--color-ink-900));
+  --color-primary-100:   color-mix(in oklab, var(--color-primary) 22%, var(--color-ink-900));
+  --color-primary-200:   color-mix(in oklab, var(--color-primary) 32%, var(--color-ink-900));
 
-  /* ---------- Surfaces (page → cards → controls) ---------- */
-  --color-surface:   #0d1117;   /* page background — true dark, slight blue tint */
-  --color-surface-2: #161b22;   /* cards, panels, info-rows */
-  --color-surface-1: #21262d;   /* form controls, inputs */
-  --color-surface-3: #30363d;   /* hover surfaces, active controls */
+  /* ---------- Accent (aged gold lifts to candlelight on dark) ---------- */
+  --color-accent:        #D5B475;
+  --color-accent-700:    #B08443;
+  --color-accent-200:    color-mix(in oklab, #D5B475 30%, var(--color-ink-900));
+  --color-accent-100:    color-mix(in oklab, #D5B475 18%, var(--color-ink-900));
+  --color-accent-50:     color-mix(in oklab, #D5B475 10%, var(--color-ink-900));
 
-  /* ---------- Text ---------- */
-  --color-text:        #e6edf3;  /* primary */
-  --color-text-muted:  #9ba3af;  /* secondary */
-  --color-muted:       #9ba3af;  /* alias */
-  --color-placeholder: #6e7681;
+  /* ---------- Surfaces (deep ink → softer ink → controls) ---------- */
+  --color-surface:   #15161D;
+  --color-surface-2: #1F212B;
+  --color-surface-1: #2A2D3A;
+  --color-surface-3: #383C4D;
+
+  /* ---------- Text (warm parchment cream) ---------- */
+  --color-text:        #EDE6D6;
+  --color-text-muted:  #9C8E7D;
+  --color-muted:       #9C8E7D;
+  --color-placeholder: #6C6457;
 
   /* ---------- Borders ---------- */
-  --color-border:        #30363d;  /* subtle */
-  --color-border-strong: #484f58;  /* dividers, input borders */
+  --color-border:        rgba(213, 180, 117, 0.16);
+  --color-border-strong: rgba(213, 180, 117, 0.32);
 
   /* ---------- Status ---------- */
-  --color-success: #3fb950;
-  --color-warning: #d29922;
-  --color-danger:  #f85149;
-  --color-info:    #58a6ff;
+  --color-success: #82A776;
+  --color-warning: #D5B475;
+  --color-danger:  #E26967;
+  --color-info:    #7BA6C6;
 
   /* Links: use the brighter dark-primary to keep contrast on dark surfaces */
   --color-link:       var(--color-primary);
   --color-link-hover: var(--color-primary-hover);
 
   /* ---------- Sidebar / chrome ---------- */
-  --sidebar-bg: linear-gradient(180deg, var(--color-surface-2) 0%, #0a0f17 100%);
+  --sidebar-bg: linear-gradient(180deg, #15161D 0%, #0B0C12 100%);
 
   /* ---------- Slava badge — keep amber readable on dark ---------- */
   --color-slava-bg:     #2d2410;
@@ -94,8 +101,8 @@
      dark page and the label stays high-contrast. Crucially this does
      NOT reuse --color-surface (which is dark here) or --color-text
      (which can resolve dark on certain components). */
-  --tooltip-bg:     #374151;   /* slate-700, sits above page bg */
-  --tooltip-text:   #f9fafb;   /* near-white */
+  --tooltip-bg:     #2A2D3A;
+  --tooltip-text:   #EDE6D6;
   --tooltip-shadow: rgba(0, 0, 0, 0.6);
 }
 

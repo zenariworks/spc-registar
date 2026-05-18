@@ -1,120 +1,142 @@
-/* CSS promenljive za lagani i dosledni dizajn */
+/* ==========================================================================
+   DESIGN TOKENS — redesign v1
+   --------------------------------------------------------------------------
+   Palette grounded in Serbian Orthodox visual tradition:
+     • Crimson  — institutional brand, used as accent (not wallpaper)
+     • Aged gold — co-star: hairlines, ornament, secondary actions
+     • Warm ink — chrome (sidebar, headings) instead of cool slate
+     • Parchment — surfaces shift from cool grey to warm cream
+   All legacy token names are preserved so components keep working.
+   ========================================================================== */
 :root {
-    --color-primary: #A21514;
-    /* Additional primary shades used by components */
-    --color-primary-700: #9c1818;
-    --color-primary-200: #f8b4b4;
-    --color-primary-100: #fbd5d5;
-    --color-primary-50: #fde8e8;
+    /* ---------- Brand crimson ---------- */
+    --color-primary:        #A21514;
+    --color-primary-700:    #7C0F0E;
+    --color-primary-200:    #E9B6B4;
+    --color-primary-100:    #F3D4D2;
+    --color-primary-50:     #FBEAE8;
+    --color-primary-hover:  #7C0F0E;
+    --color-primary-transparent: rgba(162, 21, 20, 0.10);
+    --color-secondary:      #7C0F0E;
 
-    --color-text: #1e293b;
-    --color-text-muted: #475569;
-    /* Alias for muted text used in some components */
-    --color-muted: #475569;
-    --color-surface: #ffffff;
-    --color-surface-2: #f8fafc;
-    /* Intermediate surface tone used by some form controls */
-    --color-surface-1: #f1f5f9;
-    --color-border: #e2e8f0;
+    /* ---------- Aged gold (the new co-star) ---------- */
+    --color-accent:         #B08443;
+    --color-accent-700:     #8C6B2F;
+    --color-accent-200:     #E3CFA6;
+    --color-accent-100:     #F1E5C9;
+    --color-accent-50:      #F8F1DF;
+    --color-accent-transparent: rgba(176, 132, 67, 0.14);
 
-    /* Status colors (paired with --color-success; align with dark theme keys) */
-    --color-success: #28a745;
-    --color-danger:  #dc2626;
-    --color-info:    #2563eb;
+    /* ---------- Warm ink (chrome + headings) ---------- */
+    --color-ink-900:        #15161D;
+    --color-ink-800:        #1B1D26;
+    --color-ink-700:        #262934;
+    --color-ink-600:        #3A3E4C;
 
-    /* Slava badge colors */
-    --color-slava-text: #856404;
-    --color-slava-bg: #fff3cd;
-    --color-slava-border: #ffc107;
+    /* ---------- Text ---------- */
+    --color-text:           #1B1612;
+    --color-text-muted:     #5C544C;
+    --color-muted:          #5C544C;
 
-    /* Warning/info colors */
-    --color-warning-text: #856404;
-    --color-warning-bg: #fff3cd;
-    --color-warning-border: #ffc107;
-    --color-info-bg: #f8f9fa;
-    --color-info-border: #dee2e6;
-    --color-error-text: #991b1b;
-    --color-error-bg: #fef2f2;
-    --color-error-border: #fca5a5;
+    /* ---------- Surfaces (warm parchment) ---------- */
+    --color-surface:        #FFFFFF;
+    --color-surface-2:      #FAF4E8;   /* parchment */
+    --color-surface-1:      #F1E9D9;   /* warm cream */
+    --color-border:         rgba(27, 22, 18, 0.10);
+    --color-border-strong:  rgba(176, 132, 67, 0.32);
 
-    /* Gray shades */
-    --color-gray-100: #f8f9fa;
-    --color-gray-200: #e9ecef;
-    --color-gray-300: #dee2e6;
-    --color-gray-400: #e0e0e0;
-    --color-gray-500: #999;
-    --color-gray-600: #666;
-    --color-gray-700: #333;
-    --color-gray-800: #f5f5f5;
-    --color-gray-900: #f9f9f9;
-    --color-gray-light: #ccc;
-    --color-gray-border: #ddd;
-    --color-gray-dark: #d0d0d0;
+    /* ---------- Status (curated, not Bootstrap defaults) ---------- */
+    --color-success:        #5B7553;   /* sacramental olive */
+    --color-danger:         #A21514;
+    --color-info:           #2B5878;
+    --color-warning:        #B08443;
 
-    /* Info/blue shades */
-    --color-info-light: #e7f3ff;
-    --color-info-border-light: #b3d9ff;
-    --color-info-link: #0066cc;
+    /* ---------- Slava badge (warm parchment + gold) ---------- */
+    --color-slava-text:     #6B4F1A;
+    --color-slava-bg:       #F8F1DF;
+    --color-slava-border:   #B08443;
 
-    /* Link colors — used for plain <a> elements site-wide */
-    --color-link: var(--color-primary);
-    --color-link-hover: var(--color-primary-700);
+    /* ---------- Warning / info / error ---------- */
+    --color-warning-text:   #6B4F1A;
+    --color-warning-bg:     #F8F1DF;
+    --color-warning-border: #E3CFA6;
+    --color-info-bg:        #EEF2F6;
+    --color-info-border:    #D4DEE8;
+    --color-error-text:     #7C0F0E;
+    --color-error-bg:       #FBEAE8;
+    --color-error-border:   #E9B6B4;
 
-    /* Primary hover state */
-    --color-primary-hover: #8B1312;
-    --color-primary-transparent: rgba(162, 21, 20, 0.1);
+    /* ---------- Greys (kept for legacy components) ---------- */
+    --color-gray-100: #F8F5EF;
+    --color-gray-200: #EEE7D7;
+    --color-gray-300: #DDD2BC;
+    --color-gray-400: #C5B89E;
+    --color-gray-500: #9E9382;
+    --color-gray-600: #6F6557;
+    --color-gray-700: #3C342B;
+    --color-gray-800: #F4EFE5;
+    --color-gray-900: #F8F4EB;
+    --color-gray-light:  #DDD2BC;
+    --color-gray-border: #DDD2BC;
+    --color-gray-dark:   #C5B89E;
 
-    /* Dark theme colors */
-    --color-dark-bg: #1e293b;
-    --color-dark-bg-deep: #0f172a;
-    --color-dark-border: #334155;
-    --color-dark-text: #f1f5f9;
-    --color-dark-text-secondary: #94a3b8;
+    /* ---------- Info / blue (kept for some components) ---------- */
+    --color-info-light:        #EEF2F6;
+    --color-info-border-light: #C9D6E2;
+    --color-info-link:         #2B5878;
 
-    /* Golden/amber colors for today highlighting */
-    --color-amber-500: #f59e0b;
-    --color-amber-400: #fbbf24;
-    --color-amber-300: #fcd34d;
-    --color-amber-200: #fde68a;
-    --color-amber-100: #fef3c7;
-    --color-amber-900: #78350f;
-    --color-amber-800: #92400e;
+    /* ---------- Links ---------- */
+    --color-link:        var(--color-primary);
+    --color-link-hover:  var(--color-primary-700);
 
-    /* Secondary brand color */
-    --color-secondary: #C92F2E;
+    /* ---------- Dark theme defaults (overridden in themes/tamna.css) ---------- */
+    --color-dark-bg:            var(--color-ink-800);
+    --color-dark-bg-deep:       var(--color-ink-900);
+    --color-dark-border:        #2D3140;
+    --color-dark-text:          #EDE6D6;
+    --color-dark-text-secondary:#9C8E7D;
 
-    /* Utility colors */
+    /* ---------- Today highlight (amber/gold) ---------- */
+    --color-amber-500: #B08443;
+    --color-amber-400: #C19A57;
+    --color-amber-300: #D5B475;
+    --color-amber-200: #E3CFA6;
+    --color-amber-100: #F1E5C9;
+    --color-amber-900: #5A3F18;
+    --color-amber-800: #6B4F1A;
+
+    /* ---------- Utility ---------- */
     --color-black-alpha-90: rgba(0, 0, 0, 0.9);
-    --color-white-alpha-20: rgba(255, 255, 255, 0.2);
+    --color-white-alpha-20: rgba(255, 255, 255, 0.18);
 
-    /* Tooltip colors — kept theme-aware so contrast survives in both themes.
-       Light theme: dark bubble + white text. Dark theme overrides in themes/tamna.css. */
-    --tooltip-bg: #1f2937;
-    --tooltip-text: #ffffff;
-    --tooltip-shadow: rgba(0, 0, 0, 0.25);
+    /* ---------- Tooltip ---------- */
+    --tooltip-bg:     var(--color-ink-800);
+    --tooltip-text:   #F1E5C9;
+    --tooltip-shadow: rgba(0, 0, 0, 0.28);
 
-    /* Fasting type colors */
-    --fasting-dairy-bg: rgba(251, 191, 36, 0.15);
-    --fasting-fish-bg: rgba(20, 184, 166, 0.2);
-    --fasting-oil-bg: rgba(245, 158, 11, 0.25);
-    --fasting-water-bg: rgba(59, 130, 246, 0.2);
+    /* ---------- Fasting cells (derived from primary + accent) ---------- */
+    --fasting-dairy-bg: rgba(176, 132, 67, 0.14);
+    --fasting-fish-bg:  rgba(43, 88, 120, 0.16);
+    --fasting-oil-bg:   rgba(176, 132, 67, 0.22);
+    --fasting-water-bg: rgba(43, 88, 120, 0.22);
 
-    --fasting-oil-cell: var(--color-primary-100);
-    --fasting-oil-cell-end: var(--color-primary-50);
-    --fasting-oil-border: var(--color-primary-100);
+    --fasting-oil-cell:     var(--color-accent-100);
+    --fasting-oil-cell-end: var(--color-accent-50);
+    --fasting-oil-border:   var(--color-accent-200);
 
-    --fasting-dairy-cell: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface-2));
+    --fasting-dairy-cell:     color-mix(in oklab, var(--color-accent) 8%, var(--color-surface-2));
     --fasting-dairy-cell-end: var(--color-surface-2);
-    --fasting-dairy-border: color-mix(in oklab, var(--color-primary) 15%, var(--color-surface-2));
+    --fasting-dairy-border:   color-mix(in oklab, var(--color-accent) 18%, var(--color-surface-2));
 
-    --fasting-fish-cell: var(--color-primary-50);
-    --fasting-fish-cell-end: color-mix(in oklab, var(--color-primary) 8%, var(--color-surface-2));
-    --fasting-fish-border: var(--color-primary-50);
+    --fasting-fish-cell:     color-mix(in oklab, var(--color-info) 10%, var(--color-surface-2));
+    --fasting-fish-cell-end: color-mix(in oklab, var(--color-info) 5%, var(--color-surface-2));
+    --fasting-fish-border:   color-mix(in oklab, var(--color-info) 25%, var(--color-surface-2));
 
-    --fasting-water-cell: color-mix(in oklab, var(--color-primary) 40%, var(--color-surface-2));
-    --fasting-water-cell-end: color-mix(in oklab, var(--color-primary) 30%, var(--color-surface-2));
-    --fasting-water-border: color-mix(in oklab, var(--color-primary) 50%, var(--color-surface-2));
+    --fasting-water-cell:     color-mix(in oklab, var(--color-info) 30%, var(--color-surface-2));
+    --fasting-water-cell-end: color-mix(in oklab, var(--color-info) 20%, var(--color-surface-2));
+    --fasting-water-border:   color-mix(in oklab, var(--color-info) 45%, var(--color-surface-2));
 
+    /* ---------- Spacing ---------- */
     --space-1: 4px;
     --space-2: 8px;
     --space-3: 12px;
@@ -122,14 +144,31 @@
     --space-5: 24px;
     --space-6: 32px;
 
-    --radius-1: 4px;
+    /* ---------- Radius (tighter — feels more archival than SaaS) ---------- */
+    --radius-1: 3px;
     --radius-2: 6px;
+    --radius-3: 10px;
 
-    /* Shadow tokens */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
-    --shadow-hover: 0 8px 14px -6px rgba(0, 0, 0, 0.15);
+    /* ---------- Shadows (warm-tinted, softer) ---------- */
+    --shadow-sm:    0 1px 2px rgba(27, 22, 18, 0.05);
+    --shadow-md:    0 2px 8px rgba(27, 22, 18, 0.07);
+    --shadow-lg:    0 6px 18px rgba(27, 22, 18, 0.10);
+    --shadow-hover: 0 6px 14px -4px rgba(27, 22, 18, 0.14);
+
+    /* ---------- Sidebar tokens (consumed by bocna-traka.css) ---------- */
+    --sidebar-bg-start:  #1B1612;
+    --sidebar-bg-end:    #15161D;
+    --sidebar-text:      #EDE6D6;
+    --sidebar-muted:     #9C8E7D;
+    --sidebar-hover-bg:  rgba(237, 230, 214, 0.06);
+    --sidebar-active-rail: var(--color-accent);
+    --sidebar-divider:   rgba(176, 132, 67, 0.20);
+
+    /* ---------- Typography (wired in Move 2) ---------- */
+    --font-display: 'Miroslavljeva Cirilica', 'PT Serif', Georgia, serif;
+    --font-body:    'PT Serif', 'Source Serif Pro', Georgia, serif;
+    --font-sans:    'Source Sans Pro', system-ui, sans-serif;
+    --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 html,
@@ -138,15 +177,14 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    font-family: 'Source Sans Pro', Arial, Helvetica, sans-serif;
+    font-family: var(--font-sans);
     color: var(--color-text);
     background-color: var(--color-surface);
 }
 
-body > main {
-    flex: 1;
-}
+body > main { flex: 1; }
 
+/* Footer */
 .footer-inner {
     display: flex;
     justify-content: space-between;
@@ -168,48 +206,38 @@ body > main {
 }
 .footer-links a { color: #fff; text-decoration: none; }
 .footer-links a:hover { text-decoration: underline; }
-
 @media (max-width: 768px) {
-    .footer-inner {
-        flex-direction: column;
-        align-items: flex-start;
-    }
+    .footer-inner { flex-direction: column; align-items: flex-start; }
     .footer-links { flex-wrap: wrap; }
 }
 
-
-/* Tipografske sitnice i razmaci */
+/* Headings — slight serif influence, tighter line height */
 h1, h2, h3 {
     margin: var(--space-5) 0 var(--space-3);
-    line-height: 1.25;
+    line-height: 1.2;
+    color: var(--color-ink-900);
+    font-weight: 600;
+    letter-spacing: -0.005em;
 }
-p {
-    margin: 0 0 var(--space-3) 0;
-}
+p { margin: 0 0 var(--space-3) 0; }
 
-/* Fokus vidljivost (pristupačnost) */
+/* Focus — gold ring is calmer than red ring everywhere */
 a:focus, button:focus, input:focus, select:focus, textarea:focus {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
 }
 
-/* Default link colour: brand red, never browser blue */
+/* Default link — brand crimson */
 a { color: var(--color-link); text-decoration: none; }
 a:hover { color: var(--color-link-hover); text-decoration: underline; }
 
-/* Sekundarni tekst */
 .muted { color: var(--color-text-muted); }
 
-/* Ensure action buttons stay visible and don't shrink */
 .page-header a,
-.page-header button {
-    flex-shrink: 0;
-}
+.page-header button { flex-shrink: 0; }
 
-/* Mobile responsiveness */
 @media (max-width: 640px) {
     .container { padding: 0 var(--space-3); }
-
     .page-header {
         flex-wrap: wrap;
         align-items: flex-start;
@@ -220,12 +248,10 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
         margin-bottom: var(--space-2);
     }
     .page-header form,
-    .page-header .form-container {
-        width: 100%;
-    }
+    .page-header .form-container { width: 100%; }
 }
 
-/* Compact back button placed just before the page title */
+/* Compact back button */
 .back-button {
     display: inline-flex;
     align-items: center;
@@ -240,59 +266,25 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
     color: var(--color-text);
     text-decoration: none;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
-
 .back-button:hover {
     background-color: var(--color-surface);
     color: var(--color-primary);
-    border-color: var(--color-primary-700);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
 }
+.back-button i { font-size: 18px; }
 
-.back-button i {
-    font-size: 18px;
-}
-
-/* Mobile enhancements */
 @media (max-width: 768px) {
-    /* Better touch targets on mobile */
-    .back-button {
-        width: 44px;
-        height: 44px;
-        min-width: 44px;
-        min-height: 44px;
-    }
-
-    /* Better text sizing on mobile */
-    body {
-        font-size: 16px;
-        line-height: 1.5;
-    }
-
-    h1 {
-        font-size: 1.75rem;
-    }
-
-    h2 {
-        font-size: 1.5rem;
-    }
-
-    h3 {
-        font-size: 1.25rem;
-    }
+    .back-button { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+    body { font-size: 16px; line-height: 1.5; }
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
 }
-
 @media (max-width: 480px) {
-    h1 {
-        font-size: 1.5rem;
-    }
-
-    h2 {
-        font-size: 1.25rem;
-    }
-
-    h3 {
-        font-size: 1.125rem;
-    }
+    h1 { font-size: 1.5rem; }
+    h2 { font-size: 1.25rem; }
+    h3 { font-size: 1.125rem; }
 }
