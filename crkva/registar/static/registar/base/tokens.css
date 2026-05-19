@@ -175,6 +175,15 @@
     --font-body:    var(--font-sans);
 }
 
+/* Global box-sizing reset — every element computes width from total
+   (padding + border included), not from content only. Without this,
+   any child with width:100% + padding overflows its parent. */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 html,
 body {
     margin: 0;
@@ -184,6 +193,9 @@ body {
     font-family: var(--font-sans);
     color: var(--color-text);
     background-color: var(--color-surface);
+    /* Suppress horizontal scrollbar if any descendant ever overflows
+       (defensive — content should never need horizontal scroll). */
+    overflow-x: hidden;
 }
 
 body > main { flex: 1; }
