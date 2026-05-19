@@ -27,7 +27,7 @@
       <li class="stavka stavka--slava">
         <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}" class="stavka-veza">
           <span class="stavka__primary">
-            {% if domacinstvo.domacin %}{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}
+            {% if domacinstvo.domacin %}{{ domacinstvo.domacin.ime|title }} {{ domacinstvo.domacin.prezime|title }}
             {% else %}<span class="muted">Непознат домаћин</span>{% endif %}
           </span>
           <span class="stavka__secondary">
@@ -44,8 +44,8 @@
                 <ul class="stavka__roster-list">
                   {% for u in zivi %}{% if not u.preminuo %}
                     <li>
-                      {% if u.osoba %}{{ u.osoba.ime }} {{ u.osoba.prezime }}
-                      {% else %}{{ u.ime_ukucana|default:"—" }}{% endif %}
+                      {% if u.osoba %}{{ u.osoba.ime|title }} {{ u.osoba.prezime|title }}
+                      {% else %}{{ u.ime_ukucana|title|default:"—" }}{% endif %}
                       {% if u.uloga and u.uloga != "остало" %}<span class="stavka__roster-role">{{ u.get_uloga_display }}</span>{% endif %}
                     </li>
                   {% endif %}{% empty %}{% endfor %}
@@ -56,8 +56,8 @@
                 <ul class="stavka__roster-list">
                   {% for u in zivi %}{% if u.preminuo %}
                     <li>
-                      {% if u.osoba %}{{ u.osoba.ime }} {{ u.osoba.prezime }}
-                      {% else %}{{ u.ime_ukucana|default:"—" }}{% endif %}
+                      {% if u.osoba %}{{ u.osoba.ime|title }} {{ u.osoba.prezime|title }}
+                      {% else %}{{ u.ime_ukucana|title|default:"—" }}{% endif %}
                       {% if u.uloga and u.uloga != "остало" %}<span class="stavka__roster-role">{{ u.get_uloga_display }}</span>{% endif %}
                     </li>
                   {% endif %}{% empty %}{% endfor %}
