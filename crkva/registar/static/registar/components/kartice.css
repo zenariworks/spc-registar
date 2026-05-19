@@ -157,17 +157,18 @@
     .registry-grid { grid-template-columns: 1fr; }
 }
 
-/* Main Grid Layout — single column, full-width sections.
-   Generous max-width gives breathing room on wide monitors; caps at
-   1440 so on ultrawides content stays a comfortable reading width. */
+/* Main Grid Layout — fills main edge-to-edge (no max-width cap).
+   On wide monitors content used to sit in a centered 1440 box,
+   leaving a visual gap on the right of viewport center. Now it fills. */
 .grid,
 .main-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-5);
-    max-width: 1440px;
+    width: 100%;
     margin: 0 auto;
     padding: var(--space-5) var(--space-5);
+    box-sizing: border-box;
 }
 @media (max-width: 768px) {
     .grid, .main-grid {
