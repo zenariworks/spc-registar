@@ -260,8 +260,8 @@ class VodicaSliderToggleMarkupTests(_BaseDomacinstvoMixin, TestCase):
         )
         self.assertEqual(r.status_code, 200)
         body = r.content.decode("utf-8")
-        self.assertIn("Славска водица: Да", body)
-        self.assertIn("Васкршња водица: Да", body)
+        self.assertIn("Славска: Да", body)
+        self.assertIn("Васкршња: Да", body)
 
     def test_view_mode_shows_ne_for_false_bools(self):
         self.domacinstvo.slavska_vodica = False
@@ -273,5 +273,5 @@ class VodicaSliderToggleMarkupTests(_BaseDomacinstvoMixin, TestCase):
         )
         self.assertEqual(r.status_code, 200)
         body = r.content.decode("utf-8")
-        self.assertIn("Славска водица: Не", body)
-        self.assertIn("Васкршња водица: Не", body)
+        self.assertIn("Славска: Не", body)
+        self.assertIn("Васкршња: Не", body)

@@ -140,7 +140,7 @@ class InfoRowBoolTagTestCase(TestCase):
         # (info.css applies margin-left + cursor:pointer to it).
         form = _BoolForm()
         out = self.render(
-            '{% info_row_bool icon="fa-droplet" label="Славска водица" value_label="Славска водица" field=form.flag value=v %}',
+            '{% info_row_bool icon="fa-droplet" label="Славска" value_label="Славска" field=form.flag value=v %}',
             {"form": form, "v": False},
         )
         self.assertIn('class="info-row__bool-label"', out)
