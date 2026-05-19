@@ -810,24 +810,3 @@ body.sidebar-collapsed {
   }
 }
 
-
-/* Move 6 (fixed v2) — sidebar offset lives on <body>, not <main>.
-   Putting it on main collided with .u-container's max-width + margin:0 auto:
-   content would center inside a centered box and end up squeezed/offset.
-   Body padding-left reserves room for the fixed sidebar; main then
-   auto-centers within (viewport - sidebar). */
-body {
-    padding-left: var(--sidebar-width-expanded);
-    transition: padding-left 0.3s ease;
-    box-sizing: border-box;
-}
-body.sidebar-collapsed {
-    padding-left: var(--sidebar-width-collapsed);
-}
-
-@media (max-width: 768px) {
-    body,
-    body.sidebar-collapsed {
-        padding-left: 0;
-    }
-}
