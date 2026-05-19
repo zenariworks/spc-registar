@@ -1084,3 +1084,10 @@ body.history-open {
 /* Slava-page header: title + meta + button on one row */
 .u-page-header { flex-wrap: wrap; gap: var(--space-2); }
 .u-page-header .u-page-title { margin-right: auto; }
+
+
+/* Move 8 — preminuli marker (the small cross beside deceased members) */
+.info-list__cross {
+    opacity: 0.5;
+    margin-left: var(--space-1);
+}

@@ -14,9 +14,9 @@
 </div>
 
 {% if not query %}
-<p class="u-text-muted" style="text-align:center; padding:40px 0;">Унесите појам за претрагу.</p>
+<p class="search-empty">Унесите појам за претрагу.</p>
 {% elif not total %}
-<p class="u-text-muted" style="text-align:center; padding:40px 0;">Нема резултата за "{{ query }}".</p>
+<p class="search-empty">Нема резултата за "{{ query }}".</p>
 {% endif %}
 
 {% if parohijani_count %}

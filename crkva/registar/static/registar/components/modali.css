@@ -144,3 +144,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
+
+/* Move 8 — modal overlay hidden-attribute support
+   The modal overlay's natural display is flex/grid. The HTML5 [hidden]
+   attribute must be respected so the templates can use it instead of
+   inline style="display:none;" */
+.modal-overlay[hidden],
+.error-text[hidden] { display: none !important; }

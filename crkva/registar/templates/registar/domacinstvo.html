@@ -52,7 +52,7 @@
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.adresa.id_for_label }}">Адреса</label>
           <div class="info-row__value">
-            <span class="info-row__static">{% if domacinstvo.adresa %}<a href="https://www.openstreetmap.org/search?query={{ domacinstvo.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ domacinstvo.adresa }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em;opacity:0.55;margin-left:4px;"></i></a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            <span class="info-row__static">{% if domacinstvo.adresa %}<a href="https://www.openstreetmap.org/search?query={{ domacinstvo.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ domacinstvo.adresa }} <i class="fa-solid fa-arrow-up-right-from-square u-icon-external"></i></a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
             {{ form.adresa }}
           </div>
         </div>
@@ -116,7 +116,7 @@
     {% if ukucani_preminuli %}
     <div class="info-section" data-show-mode="view">
       <h2 class="info-section__title">Преминули ({{ ukucani_preminuli|length }})</h2>
-      <ul class="info-list">{% for u in ukucani_preminuli %}<li class="info-list__item info-list__item--muted"><span>{% if u.osoba %}{{ u.osoba.ime }} {{ u.osoba.prezime }}{% else %}{{ u.ime_ukucana }}{% endif %} <i class="fa-solid fa-cross" style="opacity:0.5;margin-left:6px;"></i></span><span class="info-list__role">{{ u.get_uloga_display }}</span></li>{% endfor %}</ul>
+      <ul class="info-list">{% for u in ukucani_preminuli %}<li class="info-list__item info-list__item--muted"><span>{% if u.osoba %}{{ u.osoba.ime }} {{ u.osoba.prezime }}{% else %}{{ u.ime_ukucana }}{% endif %} <i class="fa-solid fa-cross info-list__cross"></i></span><span class="info-list__role">{{ u.get_uloga_display }}</span></li>{% endfor %}</ul>
     </div>
     {% endif %}
     {% if ukucanin_formset %}
@@ -158,12 +158,12 @@
         </li>
         {% endfor %}
       </ul>
-      <p class="info-row__sub" style="margin-top:8px;opacity:0.7;">Сачувајте промене да би се додатни редови појавили.</p>
+      <p class="info-row__sub u-section-note">Сачувајте промене да би се додатни редови појавили.</p>
     </div>
     {% endif %}
   {% endif %}
 
   {% if form %}{% include "registar/_modal_adresa.html" %}{% endif %}
 </form>
-{% if domacinstvo %}{% include "registar/_history_panel.html" %}{% endif %}
+{% if domacinstvo %}{% include "registar/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

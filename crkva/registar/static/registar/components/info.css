@@ -454,3 +454,7 @@
 [data-mode="edit"] .info-row--bool .info-row__bool-static {
     display: none !important;
 }
+
+
+/* Move 8 — inline variant of info-row__sub (used inside .info-list__item) */
+.info-row__sub--inline { display: inline; }

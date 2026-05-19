@@ -84,7 +84,7 @@ def user_list(request: HttpRequest) -> HttpResponse:
     )
     return render(
         request,
-        "registar/users_list.html",
+        "registar/spisak_korisnika.html",
         {"memberships": memberships},
     )
 

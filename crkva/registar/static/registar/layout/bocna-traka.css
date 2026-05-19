@@ -810,3 +810,11 @@ body.sidebar-collapsed {
   }
 }
 
+
+
+/* Move 8 — logout form reset (sits inside .sidebar-actions next to buttons) */
+.sidebar-logout-form { margin: 0; padding: 0; }
+
+
+/* Move 8 — search-overlay hidden-attribute support */
+.search-overlay[hidden] { display: none !important; }

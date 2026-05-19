@@ -121,7 +121,7 @@
     </a>
 
     <!-- Logout -->
-    <form method="post" action="{% url 'logout' %}" style="margin:0;padding:0;">
+    <form method="post" action="{% url 'logout' %}" class="sidebar-logout-form">
       {% csrf_token %}
       <button type="submit" class="sidebar-action-btn" aria-label="Одјава" title="Одјава">
         <i class="fa-solid fa-right-from-bracket"></i>
@@ -145,7 +145,7 @@
 </button>
 
 <!-- Search Overlay -->
-<div id="search-overlay" class="search-overlay" style="display: none;">
+<div id="search-overlay" class="search-overlay" hidden>
   <div class="search-overlay-content">
     <form method="get" action="{% url 'search_view' %}" class="search-form" id="search-form">
       <div class="search-box">
@@ -249,7 +249,7 @@
   let selectedIdx = -1;
 
   function openSearch() {
-    overlay.style.display = 'flex';
+    overlay.hidden = false;
     input.value = '';
     results.innerHTML = '';
     selectedIdx = -1;
@@ -257,7 +257,7 @@
   }
 
   function closeSearch() {
-    overlay.style.display = 'none';
+    overlay.hidden = true;
     results.innerHTML = '';
     selectedIdx = -1;
   }
@@ -267,7 +267,7 @@
 
   document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
-    if (e.key === 'Escape' && overlay.style.display === 'flex') closeSearch();
+    if (e.key === 'Escape' && !overlay.hidden) closeSearch();
   });
 
   input.addEventListener('input', function() {
