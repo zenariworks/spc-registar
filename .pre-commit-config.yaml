@@ -77,6 +77,24 @@ repos:
         files: ^crkva/registar/static/registar/.*\.css$
         pass_filenames: true
 
+
+  # djlint — django template lint (H021 catches inline styles + many more)
+  - repo: https://github.com/djlint/djLint
+    rev: v1.36.4
+    hooks:
+      - id: djlint-django
+        files: \.html$
+
+
+  # Block leftover JS debug statements (console.log / debugger)
+  - repo: local
+    hooks:
+      - id: no-js-debug
+        name: no console.log / debugger in JS or inline scripts
+        language: pygrep
+        entry: '(console\.(log|debug)\b|(^|[^a-zA-Z_])debugger\s*;)'
+        files: \.(js|html)$
+
   # Validate commit message subject (feat: / fix: / refactor: / ...)
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.6.0

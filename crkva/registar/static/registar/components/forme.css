@@ -352,3 +352,10 @@ input[name="vreme_rodjenja"]:focus {
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
+
+
+/* Move 8 — form-errors list (inline error block above a form) */
+.form-errors__list {
+    margin: var(--space-2) 0 0;
+    padding-left: var(--space-5);
+}

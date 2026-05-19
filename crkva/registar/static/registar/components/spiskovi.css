@@ -985,3 +985,109 @@ body.history-open {
 .spisak .stavka:last-child {
     border-bottom: 0;
 }
+
+
+/* Slava-page header needs the title + meta + button on one row */
+.u-page-header { flex-wrap: wrap; gap: var(--space-2); }
+.u-page-header .u-page-title { margin-right: auto; }
+
+/* Stack columns on narrow screens */
+@media (max-width: 720px) {
+  .stavka__roster { grid-template-columns: 1fr; gap: var(--space-3); }
+  .stavka__roster-col--deceased {
+    border-left: 0;
+    padding-left: 0;
+    padding-top: var(--space-2);
+    border-top: 1px dashed var(--color-border);
+  }
+}
+
+/* Slava-page header needs the title + meta + button on one row */
+.u-page-header { flex-wrap: wrap; gap: var(--space-2); }
+.u-page-header .u-page-title { margin-right: auto; }
+
+/* ===== Slava page — household roster (unified sans style) ===== */
+.slava-meta {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  margin-left: var(--space-3);
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+.stavka--slava { flex-direction: column; align-items: stretch; }
+.stavka--slava .stavka-veza { display: block; }
+
+.stavka__roster {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.stavka__roster-col { min-width: 0; }
+
+.stavka__roster-head {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+  font-weight: 600;
+}
+.stavka__roster-head .stavka__roster-count {
+  font-weight: 400;
+  margin-left: var(--space-1);
+  opacity: 0.7;
+}
+
+.stavka__roster-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.stavka__roster-list li {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-text);
+  padding: 1px 0;
+}
+.stavka__roster-col--deceased .stavka__roster-list li {
+  color: var(--color-text-muted);
+}
+.stavka__roster-role {
+  color: var(--color-text-muted);
+  font-size: 0.78rem;
+  margin-left: var(--space-1);
+}
+.stavka__roster-empty {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* Single-column variant: when one side is empty (or both fit naturally
+   on one column), drop the 2-col grid so the lone column doesn't sit
+   isolated in a half-width box. */
+.stavka__roster--single { grid-template-columns: 1fr; }
+
+/* Stack columns on narrow screens */
+@media (max-width: 720px) {
+  .stavka__roster { grid-template-columns: 1fr; gap: var(--space-3); }
+}
+
+/* Slava-page header: title + meta + button on one row */
+.u-page-header { flex-wrap: wrap; gap: var(--space-2); }
+.u-page-header .u-page-title { margin-right: auto; }
+
+
+/* Move 8 — preminuli marker (the small cross beside deceased members) */
+.info-list__cross {
+    opacity: 0.5;
+    margin-left: var(--space-1);
+}

@@ -1,4 +1,6 @@
 {% extends "base.html" %}
+{% load static %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'registar/pages/profil.css' %}">{% endblock %}
 
 {% block content %}
 <div class="info-page">
@@ -11,9 +13,9 @@
   </div>
 
   {% if messages %}
-    <div class="form-messages" style="margin-bottom:var(--space-4);">
+    <div class="form-messages u-message-strip">
       {% for message in messages %}
-        <div class="alert" style="background:color-mix(in oklab, var(--color-success) 12%, var(--color-surface));border:1px solid color-mix(in oklab, var(--color-success) 35%, var(--color-border));border-radius:var(--radius-2);padding:var(--space-3) var(--space-4);color:var(--color-success);font-weight:500;">
+        <div class="alert profil-success">
           <i class="fa-solid fa-check-circle"></i> {{ message }}
         </div>
       {% endfor %}
@@ -30,7 +32,7 @@
         <li class="info-row info-row--editable">
           <div class="info-row__icon" data-tooltip="Корисничко име"><i class="fa-solid fa-at"></i></div>
           <div class="info-row__value">
-            <input type="text" value="{{ user.username }}" disabled style="opacity:0.75;cursor:not-allowed;">
+            <input type="text" value="{{ user.username }}" disabled class="profil-disabled-input">
           </div>
         </li>
         <li class="info-row info-row--editable">
@@ -47,11 +49,11 @@
         </li>
       </ul>
       {% if info_form.errors %}
-        <div class="u-alert u-alert--error" style="margin-top:var(--space-3);">
+        <div class="u-alert u-alert--error u-section-note">
           {% for field, errors in info_form.errors.items %}{% for error in errors %}<div>{{ field }}: {{ error }}</div>{% endfor %}{% endfor %}
         </div>
       {% endif %}
-      <div style="margin-top:var(--space-3);">
+      <div class="profil-actions">
         <button class="button button--primary" type="submit">
           <i class="fa-solid fa-floppy-disk"></i> Сачувај
         </button>
@@ -80,13 +82,13 @@
         </li>
       </ul>
       {% if password_form.errors %}
-        <div class="u-alert u-alert--error" style="margin-top:var(--space-3);">
-          <ul style="margin:0;padding-left:20px;">
+        <div class="u-alert u-alert--error u-section-note">
+          <ul class="profil-error-list">
             {% for field, errors in password_form.errors.items %}{% for error in errors %}<li>{{ error }}</li>{% endfor %}{% endfor %}
           </ul>
         </div>
       {% endif %}
-      <div style="margin-top:var(--space-3);">
+      <div class="profil-actions">
         <button class="button button--primary" type="submit">
           <i class="fa-solid fa-key"></i> Промени
         </button>

@@ -34,7 +34,7 @@
     <h1 class="u-page-title">
       {% if is_edit and not parohijan %}Додавање парохијана
       {% elif is_edit %}Измена: {{ parohijan.ime }} {{ parohijan.prezime }}
-      {% else %}{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span style="color:var(--color-text-muted);font-weight:400;">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}{% endif %}
+      {% else %}{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}{% endif %}
     </h1>
     {% if parohijan %}
       <span data-show-mode="view">
@@ -78,7 +78,7 @@
       {% info_row icon="fa-user" label="Име" field=form.ime value=parohijan.ime muted_empty=False %}
       {% info_row icon="fa-user-tag" label="Презиме" field=form.prezime value=parohijan.prezime muted_empty=False %}
       {# Девојачко презиме keeps raw markup — has id="row-devojacko-prezime" + inline style hidden when pol=М. #}
-      <li class="info-row info-row--editable info-row--stacked" id="row-devojacko-prezime"{% if parohijan and parohijan.pol == "М" %} style="display:none;"{% endif %}>
+      <li class="info-row info-row--editable info-row--stacked" id="row-devojacko-prezime"{% if parohijan and parohijan.pol == "М" %} hidden{% endif %}>
         <div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div>
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.devojacko_prezime.id_for_label }}">Девојачко презиме</label>
@@ -113,7 +113,7 @@
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.adresa.id_for_label }}">Адреса</label>
           <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.adresa %}<a href="https://www.openstreetmap.org/search?query={{ parohijan.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ parohijan.adresa }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em;opacity:0.55;margin-left:4px;"></i></a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            <span class="info-row__static">{% if parohijan.adresa %}<a href="https://www.openstreetmap.org/search?query={{ parohijan.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ parohijan.adresa }} <i class="fa-solid fa-arrow-up-right-from-square u-icon-external"></i></a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
             {{ form.adresa }}
           </div>
         </div>
@@ -141,7 +141,7 @@
       {% if parohijan.domacinstvo %}
       <li class="info-row" data-show-mode="view">
         <div class="info-row__icon" data-tooltip="Домаћин домаћинства"><i class="fa-solid fa-house"></i></div>
-        <div class="info-row__value"><a href="{% url "domacinstvo_detail" uid=parohijan.domacinstvo.uid %}">Прикажи домаћинство <i class="fa-solid fa-arrow-right" style="font-size:0.85em;"></i></a></div>
+        <div class="info-row__value"><a href="{% url "domacinstvo_detail" uid=parohijan.domacinstvo.uid %}">Прикажи домаћинство <i class="fa-solid fa-arrow-right u-icon-sm"></i></a></div>
       </li>
       {% endif %}
     </ul>
@@ -167,7 +167,7 @@
     {% if krstenja_dete %}
     <div class="info-section" data-show-mode="view">
       <h2 class="info-section__title">Крштење</h2>
-      <ul class="info-list">{% for k in krstenja_dete %}<li class="info-list__item"><span><a href="{% url "krstenje_detail" uid=k.uid %}">{{ k.datum }}</a>{% if k.kum %} <span class="info-row__sub" style="display:inline;">кум: {{ k.kum.ime }} {{ k.kum.prezime }}</span>{% endif %}</span></li>{% endfor %}</ul>
+      <ul class="info-list">{% for k in krstenja_dete %}<li class="info-list__item"><span><a href="{% url "krstenje_detail" uid=k.uid %}">{{ k.datum }}</a>{% if k.kum %} <span class="info-row__sub info-row__sub--inline">кум: {{ k.kum.ime }} {{ k.kum.prezime }}</span>{% endif %}</span></li>{% endfor %}</ul>
     </div>
     {% endif %}
     {% if vencanja_zenik or vencanja_nevesta %}
@@ -243,5 +243,5 @@
 </script>
 {% endif %}
 </form>
-{% if parohijan %}{% include "registar/_history_panel.html" %}{% endif %}
+{% if parohijan %}{% include "registar/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

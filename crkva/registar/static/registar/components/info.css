@@ -389,3 +389,72 @@
 }
 .info-row__static a:hover { text-decoration: underline; }
 .info-row__static--muted { color: var(--color-text-muted); }
+
+/* ==========================================================================
+   BOOL ROW — view-mode disabled toggle (mirrors the edit-mode slider)
+   ========================================================================== */
+
+.info-row__bool-view {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 36px;
+    height: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-2);
+    position: relative;
+    margin: 0;
+    cursor: not-allowed;
+    vertical-align: middle;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+.info-row__bool-view::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 16px;
+    height: 16px;
+    background: var(--color-surface);
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    transition: transform 0.15s ease;
+}
+.info-row__bool-view:checked {
+    background: color-mix(in oklab, var(--color-success) 55%, var(--color-surface-2));
+    border-color: color-mix(in oklab, var(--color-success) 70%, var(--color-border));
+}
+.info-row__bool-view:checked::after {
+    transform: translateX(16px);
+}
+
+.info-row__bool-static {
+    margin-left: var(--space-2);
+    color: var(--color-text);
+    vertical-align: middle;
+    font-size: 15px;
+}
+
+/* Default (no mode attribute) and view mode: show the disabled toggle,
+   keep the static value-label, hide the form checkbox + .info-row__static. */
+.info-row--bool .info-row__static { display: none; }
+
+[data-mode="view"] .info-row--bool .info-row__bool-view,
+.info-row--bool:not([data-mode]) .info-row__bool-view {
+    display: inline-block;
+}
+[data-mode="view"] .info-row--bool .info-row__bool-static {
+    display: inline;
+}
+
+/* Edit mode: hide the disabled view-toggle + its static label;
+   the form's own checkbox slider shows via existing rules above. */
+[data-mode="edit"] .info-row--bool .info-row__bool-view,
+[data-mode="edit"] .info-row--bool .info-row__bool-static {
+    display: none !important;
+}
+
+
+/* Move 8 — inline variant of info-row__sub (used inside .info-list__item) */
+.info-row__sub--inline { display: inline; }
