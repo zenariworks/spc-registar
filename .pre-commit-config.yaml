@@ -77,6 +77,17 @@ repos:
         files: ^crkva/registar/static/registar/.*\.css$
         pass_filenames: true
 
+
+  # Block <style> and inline style="..." in HTML templates (use CSS tokens)
+  - repo: local
+    hooks:
+      - id: check-inline-styles
+        name: no inline styles in HTML templates
+        entry: python scripts/check_inline_styles.py
+        language: system
+        files: ^crkva/.*\.html$
+        pass_filenames: true
+
   # Validate commit message subject (feat: / fix: / refactor: / ...)
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.6.0
