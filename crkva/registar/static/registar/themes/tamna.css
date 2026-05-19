@@ -5,9 +5,9 @@
    ========================================================================== */
 :root[data-theme="dark"] {
     /* ---------- Brand ---------- */
-    --color-primary:       #D14A48;
+    --color-primary:       #E5605E;
     --color-primary-700:   #B0302E;
-    --color-primary-hover: #E26967;
+    --color-primary-hover: #F08886;
     --color-primary-transparent: rgba(209, 74, 72, 0.18);
     --color-primary-50:    color-mix(in oklab, var(--color-primary) 14%, var(--color-ink-900));
     --color-primary-100:   color-mix(in oklab, var(--color-primary) 22%, var(--color-ink-900));
@@ -92,6 +92,91 @@
     --tooltip-bg:     #2A2D3A;
     --tooltip-text:   #EDE6D6;
     --tooltip-shadow: rgba(0, 0, 0, 0.6);
+
+    /* ---------- Token parity (Move 7) — explicit values for dark surfaces ---------- */
+
+    /* Info — dark-tinted instead of inheriting light cream */
+    --color-info-light:        #1A2A3A;
+    --color-info-border-light: #2E4868;
+    --color-info-link:         #7BA6C6;
+    --color-info-bg:           #1A2A3A;
+    --color-info-border:       #2E4868;
+
+    /* Warning — dark-tinted */
+    --color-warning-text:      #F5D88A;
+    --color-warning-bg:        #2D2410;
+    --color-warning-border:    #7C5E1C;
+
+    /* Error — dark-tinted */
+    --color-error-text:        #F5A5A3;
+    --color-error-bg:          #2A1311;
+    --color-error-border:      #7C2624;
+
+    /* Slava already overridden above; explicit for completeness */
+
+    /* Link tokens */
+    --color-link:        var(--color-primary);
+    --color-link-hover:  var(--color-primary-hover);
+
+    /* Ink family */
+    --color-ink-900:     #15161D;
+    --color-ink-800:     #1B1D26;
+    --color-ink-700:     #262934;
+    --color-ink-600:     #3A3E4C;
+
+    /* Greys — dark-friendly */
+    --color-gray-100: #2A2D3A;
+    --color-gray-200: #383C4D;
+    --color-gray-300: #484F58;
+    --color-gray-400: #6E7681;
+    --color-gray-500: #9C8E7D;
+    --color-gray-600: #B5A99A;
+    --color-gray-700: #EDE6D6;
+    --color-gray-800: #383C4D;
+    --color-gray-900: #2A2D3A;
+    --color-gray-light:  #484F58;
+    --color-gray-border: rgba(213, 180, 117, 0.16);
+    --color-gray-dark:   #6E7681;
+
+    /* Amber (today highlight) — bright on dark */
+    --color-amber-500: #D5B475;
+    --color-amber-400: #E3CFA6;
+    --color-amber-300: #F1E5C9;
+    --color-amber-200: #F8F1DF;
+    --color-amber-100: #FBF5E3;
+    --color-amber-900: #B08443;
+    --color-amber-800: #8C6B2F;
+
+    /* Accent transparent on dark */
+    --color-accent-transparent: rgba(213, 180, 117, 0.18);
+
+    /* Other utility */
+    --color-black-alpha-90: rgba(0, 0, 0, 0.95);
+    --color-white-alpha-20: rgba(237, 230, 214, 0.14);
+
+    /* Legacy dark-* aliases */
+    --color-dark-bg:            var(--color-ink-800);
+    --color-dark-bg-deep:       var(--color-ink-900);
+    --color-dark-border:        var(--color-border-strong);
+    --color-dark-text:          var(--color-text);
+    --color-dark-text-secondary:var(--color-text-muted);
+
+    /* Secondary */
+    --color-secondary: #B0302E;
+
+    /* Fasting cells — explicit dark values (Move 7b token parity) */
+    --fasting-oil-cell:       #2D2410;
+    --fasting-oil-cell-end:   #1F212B;
+    --fasting-oil-border:     #7C5E1C;
+    --fasting-dairy-cell:     #262934;
+    --fasting-dairy-cell-end: #1F212B;
+    --fasting-dairy-border:   #3A3E4C;
+    --fasting-fish-cell:      #1A2A3A;
+    --fasting-fish-cell-end:  #1F212B;
+    --fasting-fish-border:    #2E4868;
+    --fasting-water-cell:     #1F2E40;
+    --fasting-water-cell-end: #1F212B;
+    --fasting-water-border:   #2E4868;
 }
 
 [data-theme="dark"] body {

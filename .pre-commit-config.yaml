@@ -66,6 +66,17 @@ repos:
         pass_filenames: false
         files: '\.py$'
 
+
+  # Block hardcoded hex colors in component CSS (use design tokens instead)
+  - repo: local
+    hooks:
+      - id: check-hardcoded-colors
+        name: no hardcoded colors in component CSS
+        entry: python scripts/check_hardcoded_colors.py
+        language: system
+        files: ^crkva/registar/static/registar/.*\.css$
+        pass_filenames: true
+
   # Validate commit message subject (feat: / fix: / refactor: / ...)
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.6.0
