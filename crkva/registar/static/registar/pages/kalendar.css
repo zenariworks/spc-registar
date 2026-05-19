@@ -308,20 +308,17 @@
   color: var(--color-text-muted);
 }
 
-/* Tablet and mobile optimizations */
+/* Tablet: keep 7 columns, tighten the gutters and hide nothing.
+   (Previously dropped weekday headers + placeholders + used auto-fit,
+   which caused days to land under the wrong weekday.) */
 @media (max-width: 900px) {
   .calendar-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 8px;
+    gap: var(--space-1);
   }
-  .weekday-header { display: none; }
-  .calendar-cell.placeholder { display: none; }
 }
 
 @media (max-width: 768px) {
-  .calendar-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  }
+  /* keep grid-template-columns from base (7 cols) — only relax cell sizing */
   .calendar-cell {
     height: auto;
     min-height: 110px;
@@ -362,13 +359,10 @@
 }
 
 @media (max-width: 600px) {
-  .calendar-grid {
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-    gap: 6px;
-  }
+  /* grid switches to single-column stack via the dedicated rule further down */
   .calendar-cell {
     min-height: 90px;
-    padding: 8px;
+    padding: var(--space-2);
   }
   .calendar-cell .date { font-size: 1rem; }
   .calendar-cell .weekday { font-size: 0.7rem; }
@@ -376,11 +370,10 @@
   .slava-link__count { font-size: 10px; padding: 0 4px; }
 }
 
-/* Small mobile - single column for better readability */
+/* Small mobile — covered by the single-column stack rule below */
 @media (max-width: 480px) {
   .calendar-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 6px;
+    gap: var(--space-1);
   }
   .calendar-cell {
     height: auto;
