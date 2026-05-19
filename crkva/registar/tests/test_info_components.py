@@ -150,7 +150,9 @@ class InfoRowBoolTagTestCase(TestCase):
         # apply the wrong "label-above-input" styling).
         self.assertNotIn('class="info-row__label"', out)
 
-    def test_static_value_renders_da_or_ne(self):
+    def test_bool_view_toggle_reflects_value(self):
+        """The disabled view-mode toggle is checked iff value is truthy.
+        The static label (value_label) always renders alongside."""
         form = _BoolForm()
         out_da = self.render(
             '{% info_row_bool icon="fa-x" label="X" value_label="Велико X" field=form.flag value=True %}',
@@ -160,8 +162,14 @@ class InfoRowBoolTagTestCase(TestCase):
             '{% info_row_bool icon="fa-x" label="X" value_label="Велико X" field=form.flag value=False %}',
             {"form": form},
         )
-        self.assertIn("Велико X: Да", out_da)
-        self.assertIn("Велико X: Не", out_ne)
+        # Truthy → disabled view toggle is checked.
+        self.assertIn('class="info-row__bool-view"', out_da)
+        self.assertIn('checked', out_da)
+        self.assertIn("Велико X", out_da)
+        # Falsy → disabled view toggle exists but has no checked attribute.
+        self.assertIn('class="info-row__bool-view"', out_ne)
+        self.assertNotIn('checked', out_ne)
+        self.assertIn("Велико X", out_ne)
 
     def test_sub_appended_to_static(self):
         form = _BoolForm()

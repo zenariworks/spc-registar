@@ -44,7 +44,7 @@
   {% endinfo_section %}
 
   <div class="info-section">
-    <h2 class="info-section__title"><i class="fa-solid fa-location-dot"></i> Адреса и слава</h2>
+    <h2 class="info-section__title"><i class="fa-solid fa-address-card"></i> Контакт</h2>
     <ul class="info-rows">
       {# Adresa keeps raw markup — view-mode renders an OSM link with external-link icon. #}
       <li class="info-row info-row--editable info-row--stacked">
@@ -57,14 +57,6 @@
           </div>
         </div>
       </li>
-      {% if domacinstvo.slava %}{% url "slava_detail" uid=domacinstvo.slava.uid as slava_url %}{% endif %}
-      {% info_row icon="fa-gift" label="Слава" field=form.slava value=domacinstvo.slava link=slava_url %}
-    </ul>
-  </div>
-
-  <div class="info-section">
-    <h2 class="info-section__title"><i class="fa-solid fa-mobile-screen"></i> Контакт</h2>
-    <ul class="info-rows">
       {# Phone rows keep raw markup — view-mode renders tel: link + format_phone filter. #}
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Мобилни телефон"><i class="fa-solid fa-mobile-screen"></i></div>
@@ -89,9 +81,11 @@
     </ul>
   </div>
 
-  {% info_section title="Водица" icon="fa-droplet" %}
-    {% info_row_bool icon="fa-droplet" label="Славска" value_label="Славска" field=form.slavska_vodica value=domacinstvo.slavska_vodica %}
-    {% info_row_bool icon="fa-droplet" label="Васкршња" value_label="Васкршња" field=form.vaskrsnja_vodica value=domacinstvo.vaskrsnja_vodica %}
+  {% info_section title="Слава" icon="fa-gift" %}
+    {% if domacinstvo.slava %}{% url "slava_detail" uid=domacinstvo.slava.uid as slava_url %}{% endif %}
+    {% info_row icon="fa-gift" label="Слава" field=form.slava value=domacinstvo.slava link=slava_url %}
+    {% info_row_bool icon="fa-droplet" label="Славска водица" value_label="Славска водица" field=form.slavska_vodica value=domacinstvo.slavska_vodica %}
+    {% info_row_bool icon="fa-droplet" label="Васкршња водица" value_label="Васкршња водица" field=form.vaskrsnja_vodica value=domacinstvo.vaskrsnja_vodica %}
   {% endinfo_section %}
 
   <div class="info-section">

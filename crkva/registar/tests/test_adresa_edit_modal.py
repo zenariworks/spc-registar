@@ -250,7 +250,7 @@ class VodicaSliderToggleMarkupTests(_BaseDomacinstvoMixin, TestCase):
             # The <li> wrapper must carry info-row--editable.
             self.assertIn("info-row--editable", html[: html.find(block)])
 
-    def test_view_mode_shows_da_for_true_bools(self):
+    def test_view_mode_shows_checked_toggle_for_true_bools(self):
         self.domacinstvo.slavska_vodica = True
         self.domacinstvo.vaskrsnja_vodica = True
         self.domacinstvo.save()
@@ -260,10 +260,20 @@ class VodicaSliderToggleMarkupTests(_BaseDomacinstvoMixin, TestCase):
         )
         self.assertEqual(r.status_code, 200)
         body = r.content.decode("utf-8")
-        self.assertIn("Славска: Да", body)
-        self.assertIn("Васкршња: Да", body)
+        # The view-mode disabled toggle should be checked for both rows.
+        # Each row also keeps its static label text (Славска / Васкршња).
+        # Count `checked` attribute only within the disabled view-toggles —
+        # the form's hidden edit-mode checkbox also has `checked` when truthy.
+        import re
+        view_toggles_checked = re.findall(
+            r'class="info-row__bool-view"[^>]*\bchecked\b', body
+        )
+        self.assertEqual(len(view_toggles_checked), 2)
+        self.assertEqual(body.count('class="info-row__bool-view"'), 2)
+        self.assertIn("Славска", body)
+        self.assertIn("Васкршња", body)
 
-    def test_view_mode_shows_ne_for_false_bools(self):
+    def test_view_mode_shows_unchecked_toggle_for_false_bools(self):
         self.domacinstvo.slavska_vodica = False
         self.domacinstvo.vaskrsnja_vodica = False
         self.domacinstvo.save()
@@ -273,5 +283,13 @@ class VodicaSliderToggleMarkupTests(_BaseDomacinstvoMixin, TestCase):
         )
         self.assertEqual(r.status_code, 200)
         body = r.content.decode("utf-8")
-        self.assertIn("Славска: Не", body)
-        self.assertIn("Васкршња: Не", body)
+        # Both view toggles render unchecked (no `checked` attribute inside
+        # any .info-row__bool-view tag).
+        import re
+        view_toggles_checked = re.findall(
+            r'class="info-row__bool-view"[^>]*\bchecked\b', body
+        )
+        self.assertEqual(len(view_toggles_checked), 0)
+        self.assertEqual(body.count('class="info-row__bool-view"'), 2)
+        self.assertIn("Славска", body)
+        self.assertIn("Васкршња", body)
