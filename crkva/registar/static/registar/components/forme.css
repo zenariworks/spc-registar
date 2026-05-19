@@ -19,12 +19,12 @@ input[type="time"], input[type="datetime-local"], select, textarea {
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
-input::placeholder { color: var(--color-placeholder, #94a3b8); }
+input::placeholder { color: var(--color-placeholder, var(--color-placeholder, var(--color-muted))); }
 
 .form-actions { display: flex; gap: 8px; }
 
-.help-text { color: #475569; font-size: 14px; margin-top: 6px; }
-.error-text { color: #b91c1c; font-size: 14px; margin-top: 6px; }
+.help-text { color: var(--color-text-muted); font-size: 14px; margin-top: 6px; }
+.error-text { color: var(--color-error-text, var(--color-danger)); font-size: 14px; margin-top: 6px; }
 
 /* Vidljiv fokus */
 input:focus, select:focus, textarea:focus {
@@ -267,8 +267,8 @@ input[name="vreme_rodjenja"]:focus {
 .form-field input[type="checkbox"]:hover { border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border)); }
 .form-field input[type="checkbox"]:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent); }
 .form-field input[type="checkbox"]:checked {
-  background: color-mix(in oklab, var(--color-success, #22c55e) 60%, var(--color-surface-2));
-  border-color: var(--color-success, #22c55e);
+  background: color-mix(in oklab, var(--color-success, var(--color-success)) 60%, var(--color-surface-2));
+  border-color: var(--color-success, var(--color-success));
 }
 .form-field input[type="checkbox"]:checked::after { transform: translateX(20px); }
 /* Greenish check mark when true */
@@ -279,8 +279,8 @@ input[name="vreme_rodjenja"]:focus {
   top: 6px;
   width: 8px;
   height: 14px;
-  border-right: 3px solid var(--color-success, #22c55e);
-  border-bottom: 3px solid var(--color-success, #22c55e);
+  border-right: 3px solid var(--color-success, var(--color-success));
+  border-bottom: 3px solid var(--color-success, var(--color-success));
   transform: rotate(45deg) scale(0.8);
   opacity: 0;
   transition: opacity 0.2s ease;
@@ -312,7 +312,7 @@ input[name="vreme_rodjenja"]:focus {
 .form__group { margin-bottom: 12px; }
 .form__actions { display: flex; gap: 8px; }
 .form__help-text { color: var(--color-text-muted); font-size: 14px; margin-top: 6px; }
-.form__error-text { color: #b91c1c; font-size: 14px; margin-top: 6px; }
+.form__error-text { color: var(--color-error-text, var(--color-danger)); font-size: 14px; margin-top: 6px; }
 
 
 /* FK поље са акцијским дугметом (+ за додавање) */

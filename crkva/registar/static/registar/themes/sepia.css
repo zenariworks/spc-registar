@@ -76,6 +76,92 @@
     --fasting-fish-bg:  rgba(61, 88, 120, 0.16);
     --fasting-oil-bg:   rgba(176, 132, 67, 0.26);
     --fasting-water-bg: rgba(61, 88, 120, 0.24);
+
+    /* ---------- Token parity (Move 7) — explicit values per theme ---------- */
+
+    /* Accent: keep family, slightly cooler on sepia */
+    --color-accent:         #B08443;
+    --color-accent-700:     #6B4F1A;   /* deepened for AA contrast on cream */
+    --color-accent-200:     #E3CFA6;
+    --color-accent-100:     #F1E5C9;
+    --color-accent-50:      #F8F1DF;
+    --color-accent-transparent: rgba(176, 132, 67, 0.18);
+
+    /* Info — warm-toned to fit sepia */
+    --color-info-light:        #EFE6CE;
+    --color-info-border-light: #D8C9A0;
+    --color-info-link:         #3D5878;
+
+    /* Link tokens */
+    --color-link:        var(--color-primary);
+    --color-link-hover:  var(--color-primary-700);
+
+    /* Sidebar muted (was rgba on light — explicit on sepia) */
+    /* (already declared in sidebar block above) */
+
+    /* Ink family — same conceptual color across themes */
+    --color-ink-900:     #15161D;
+    --color-ink-800:     #1B1D26;
+    --color-ink-700:     #262934;
+    --color-ink-600:     #3A3E4C;
+
+    /* Greys — re-toned to warm so they fit sepia surfaces */
+    --color-gray-100: #FBF5E3;
+    --color-gray-200: #F1E9D9;
+    --color-gray-300: #E0D4B6;
+    --color-gray-400: #C9B79A;
+    --color-gray-500: #9E8D72;
+    --color-gray-600: #7A6A55;
+    --color-gray-700: #3D2E1F;
+    --color-gray-800: #F4ECD6;
+    --color-gray-900: #FBF5E3;
+    --color-gray-light:  #E0D4B6;
+    --color-gray-border: rgba(176, 132, 67, 0.30);
+    --color-gray-dark:   #C9B79A;
+
+    /* Amber/today highlight — warm */
+    --color-amber-500: #B08443;
+    --color-amber-400: #C19A57;
+    --color-amber-300: #D5B475;
+    --color-amber-200: #E3CFA6;
+    --color-amber-100: #F1E5C9;
+    --color-amber-900: #5A3F18;
+    --color-amber-800: #6B4F1A;
+
+    /* Fasting cells — explicit (light's color-mix values resolve here too, but
+       declaring guarantees identical computation in tools and avoids surprises). */
+    --fasting-dairy-bg: rgba(176, 132, 67, 0.18);
+    --fasting-fish-bg:  rgba(61, 88, 120, 0.16);
+    --fasting-oil-bg:   rgba(176, 132, 67, 0.28);
+    --fasting-water-bg: rgba(61, 88, 120, 0.26);
+
+    /* Other utility */
+    --color-black-alpha-90: rgba(0, 0, 0, 0.9);
+    --color-white-alpha-20: rgba(237, 230, 214, 0.18);
+
+    /* Legacy dark-* aliases (kept for back-compat) */
+    --color-dark-bg:            var(--color-ink-800);
+    --color-dark-bg-deep:       var(--color-ink-900);
+    --color-dark-border:        #2D3140;
+    --color-dark-text:          #EDE6D6;
+    --color-dark-text-secondary:#9C8E7D;
+
+    /* Secondary */
+    --color-secondary: #6E0F0E;
+
+    /* Fasting cells — explicit values (Move 7b token parity) */
+    --fasting-oil-cell:       #F1E5C9;
+    --fasting-oil-cell-end:   #F8F1DF;
+    --fasting-oil-border:     #E3CFA6;
+    --fasting-dairy-cell:     #F3EAD2;
+    --fasting-dairy-cell-end: #FBF5E3;
+    --fasting-dairy-border:   #E3CFA6;
+    --fasting-fish-cell:      #E8E0CC;
+    --fasting-fish-cell-end:  #F4ECD6;
+    --fasting-fish-border:    #B8C0CC;
+    --fasting-water-cell:     #C2C4C2;
+    --fasting-water-cell-end: #D6D6CE;
+    --fasting-water-border:   #95A3B5;
 }
 
 [data-theme="sepia"] body {

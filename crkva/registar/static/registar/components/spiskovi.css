@@ -101,7 +101,7 @@
 
 .stavka__member {
     padding: 10px;
-    border-left: 3px solid #28a745;
+    border-left: 3px solid var(--color-success);
     margin: 10px 0;
     background: var(--color-surface);
     border-radius: 4px;

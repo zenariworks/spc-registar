@@ -188,8 +188,8 @@
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
 }
 .info-row--editable .info-row__value > input[type="checkbox"]:checked {
-    background: color-mix(in oklab, var(--color-success, #22c55e) 60%, var(--color-surface-2));
-    border-color: var(--color-success, #22c55e);
+    background: color-mix(in oklab, var(--color-success, var(--color-success)) 60%, var(--color-surface-2));
+    border-color: var(--color-success, var(--color-success));
 }
 .info-row--editable .info-row__value > input[type="checkbox"]:checked::after {
     transform: translateX(20px);
