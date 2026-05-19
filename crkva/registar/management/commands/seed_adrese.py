@@ -38,15 +38,26 @@ class Command(BaseCommand):
                 ))
 
             created = 0
-            for _ in range(opts["count"]):
-                Adresa.objects.create(
+            skipped = 0
+            attempts = 0
+            max_attempts = opts["count"] * 5  # avoid infinite loop on dense duplicates
+            while created < opts["count"] and attempts < max_attempts:
+                attempts += 1
+                _, was_created = Adresa.objects.get_or_create(
                     ulica=g.rand_street(),
                     broj=str(random_module.randint(1, 250)),
+                    broj_stana=str(random_module.randint(1, 20)) if random_module.random() < 0.5 else "",
                     mesto=g.rand_place(),
-                    postkod=g.rand_postcode(),
+                    defaults={
+                        "postkod": g.rand_postcode(),
+                    },
                 )
-                created += 1
+                if was_created:
+                    created += 1
+                else:
+                    skipped += 1
 
-            self.stdout.write(self.style.SUCCESS(
-                f"Креирано {created} адреса у {tenant.schema_name!r}."
-            ))
+            msg = f"Креирано {created} нових адреса у {tenant.schema_name!r}"
+            if skipped:
+                msg += f" (прескочено {skipped} дупликата)"
+            self.stdout.write(self.style.SUCCESS(msg + "."))

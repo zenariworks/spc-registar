@@ -27,17 +27,22 @@ PIPELINE: list[Step] = [
          takes_source=False, takes_count=False, takes_seed=False, takes_reset=False),
     Step("seed_adrese",     "Адресе",       default_count=30),
     Step("seed_svestenici", "Свештеници",   default_count=5),
-    Step("seed_parohijani", "Парохијани",   default_count=100),
-    # seed_domacinstva, seed_krstenja, seed_vencanja land next.
+    Step("seed_parohijani",   "Парохијани",   default_count=100),
+    Step("seed_domacinstva",  "Домаћинства",  default_count=33),
+    Step("seed_krstenja",     "Крштења",      default_count=25),
+    Step("seed_vencanja",     "Венчања",      default_count=10),
 ]
 
 
 # Scale rule: when user gives --count N, parohijani gets N,
 # others get N/divisor (rough realistic ratios).
 SCALE_DIVISORS = {
-    "seed_parohijani":  1,
-    "seed_svestenici":  20,
-    "seed_adrese":      3,
+    "seed_parohijani":   1,
+    "seed_svestenici":   20,
+    "seed_adrese":       3,
+    "seed_domacinstva":  3,
+    "seed_krstenja":     4,
+    "seed_vencanja":     10,
 }
 
 
