@@ -7,10 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <meta name="theme-color" content="#A21514">
     <script>
+      // Apply saved theme as early as possible to avoid flash.
+      // Valid themes: 'light' (default, no attr) | 'sepia' | 'dark'.
       (function() {
         try {
           var saved = localStorage.getItem('theme');
-          if (saved) {
+          if (saved && saved !== 'light') {
             document.documentElement.setAttribute('data-theme', saved);
           }
         } catch (e) {}
@@ -18,124 +20,24 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&family=PT+Serif:wght@400;700&family=JetBrains+Mono:wght@400;500&&subset=cyrillic,cyrillic-ext,latin&display=swap" rel="stylesheet">
     {% compress css %}
       <link rel="stylesheet" href="{% static 'registar/base/fonts.css' %}">
       <link rel="stylesheet" href="{% static 'registar/base/tokens.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/pages/prijava.css' %}">
+      <link rel="stylesheet" href="{% static 'registar/themes/sepia.css' %}">
       <link rel="stylesheet" href="{% static 'registar/themes/tamna.css' %}">
     {% endcompress %}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="icon" href="{% static 'registar/favicon.png' %}" type="image/x-icon">
     <title>Пријава — Црквени регистар</title>
-    <style>
-      body {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 100vh;
-        background: var(--color-surface-2);
-      }
-      .login-card {
-        background: var(--color-surface);
-        border: 1px solid var(--color-border);
-        border-radius: 12px;
-        box-shadow: var(--shadow-lg);
-        padding: 40px 36px 32px;
-        width: 100%;
-        max-width: 400px;
-        margin: var(--space-4);
-      }
-      .login-header {
-        text-align: center;
-        margin-bottom: var(--space-6);
-      }
-      .login-header i {
-        font-size: 48px;
-        color: var(--color-primary);
-        margin-bottom: var(--space-3);
-        display: block;
-      }
-      .login-header h1 {
-        font-size: 22px;
-        font-weight: 600;
-        margin: 0 0 var(--space-2);
-        color: var(--color-text);
-      }
-      .login-header p {
-        color: var(--color-text-muted);
-        font-size: 14px;
-        margin: 0;
-      }
-      .login-form .form-group {
-        margin-bottom: var(--space-4);
-      }
-      .login-form label {
-        display: block;
-        font-weight: 600;
-        margin-bottom: 6px;
-        font-size: 14px;
-        color: var(--color-text);
-      }
-      .login-form input[type="text"],
-      .login-form input[type="password"] {
-        width: 100%;
-        padding: 10px 12px;
-        font-size: 16px;
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius-2);
-        background: var(--color-surface);
-        color: var(--color-text);
-        box-shadow: var(--shadow-sm);
-        box-sizing: border-box;
-      }
-      .login-form input:focus {
-        outline: 2px solid var(--color-primary);
-        outline-offset: 2px;
-      }
-      .login-form .login-button {
-        width: 100%;
-        font-size: 16px;
-        line-height: 20px;
-        background: var(--color-primary);
-        padding: 10px 15px;
-        min-height: 44px;
-        color: #fff;
-        box-shadow: 0px 6px 10px -4px rgba(0, 0, 0, 0.25);
-        font-weight: 600;
-        transition: all ease 0.3s;
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: var(--radius-2);
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .login-form .login-button:hover {
-        background: var(--color-primary-700);
-        box-shadow: 0 8px 14px -6px rgba(0,0,0,0.3);
-      }
-      .login-errors {
-        background: #fef2f2;
-        border: 1px solid #fca5a5;
-        border-radius: var(--radius-2);
-        padding: var(--space-3) var(--space-4);
-        margin-bottom: var(--space-4);
-        color: #991b1b;
-        font-size: 14px;
-      }
-      :root[data-theme="dark"] .login-errors {
-        background: rgba(185, 28, 28, 0.15);
-        border-color: rgba(185, 28, 28, 0.4);
-        color: #fca5a5;
-      }
-    </style>
   </head>
-  <body>
+  <body class="login-page">
     <div class="login-card">
       <div class="login-header">
-        <i class="fas fa-church"></i>
+        <i class="fas fa-church login-header__icon"></i>
         <h1>Црквени регистар</h1>
-        <p>Пријавите се на свој налог</p>
+        <p class="login-header__subtitle">Пријавите се на свој налог</p>
       </div>
 
       {% if form.errors %}
@@ -156,7 +58,7 @@
           <input type="password" name="password" id="id_password" autocomplete="current-password" required>
         </div>
         <button type="submit" class="login-button">
-          <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i> Пријава
+          <i class="fas fa-sign-in-alt"></i> Пријава
         </button>
         <input type="hidden" name="next" value="{{ next }}">
       </form>
