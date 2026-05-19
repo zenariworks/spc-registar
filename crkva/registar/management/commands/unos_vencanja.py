@@ -1,4 +1,18 @@
-"""Модул за попуњавање базе података насумичним венчањима."""
+"""
+.. warning::
+
+    BROKEN — pending refactor (Phase 3 of mgmt-command cleanup).
+
+    This module's mock-data path imports ``unesi_ulicu`` from a non-existent
+    ``unos_ulica`` module. It will raise ImportError if invoked.
+
+    Do not call this command. Mock-data generation will be reworked into a
+    unified ``seed_*`` / ``load_data --from mock`` pipeline.
+"""
+
+# Original module docstring:
+# """Модул за попуњавање базе података насумичним венчањима."""
+# 
 
 import random
 import uuid

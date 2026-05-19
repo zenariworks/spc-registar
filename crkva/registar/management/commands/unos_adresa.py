@@ -1,6 +1,20 @@
 """
-Модул команде за унос адреса и повезивање са улицама.
+.. warning::
+
+    BROKEN — pending refactor (Phase 3 of mgmt-command cleanup).
+
+    This module's mock-data path imports ``unesi_ulicu`` from a non-existent
+    ``unos_ulica`` module. It will raise ImportError if invoked.
+
+    Do not call this command. Mock-data generation will be reworked into a
+    unified ``seed_*`` / ``load_data --from mock`` pipeline.
 """
+
+# Original module docstring:
+# """
+# Модул команде за унос адреса и повезивање са улицама.
+# """
+# 
 
 from django.core.management.base import BaseCommand
 from registar.models import Adresa, Svestenik

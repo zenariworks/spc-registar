@@ -129,14 +129,15 @@ function recreate_database() {
     docker compose run --rm app sh -c "${LOAD_CMD}"
 
     # Run all data migrations
+    # Lookups (reference data) + DBF migrations
+    # NOTE: 3 commands previously called here (unos_meseci, unos_drzava,
+    # migracija_ulica) never existed in the codebase; removed.
+    # migracija_parohijana was a 12-line stub that redirected to
+    # migracija_ukucana_parohijana — calling target directly.
     docker compose run --rm app sh -c "python manage.py unosi"
-    docker compose run --rm app sh -c "python manage.py unos_meseci"
     docker compose run --rm app sh -c "python manage.py migracija_slava"
     docker compose run --rm app sh -c "python manage.py migracija_svestenika"
-    docker compose run --rm app sh -c "python manage.py unos_drzava"
-    docker compose run --rm app sh -c "python manage.py migracija_ulica"
-    docker compose run --rm app sh -c "python manage.py migracija_parohijana"
-    docker compose run --rm app sh -c "python manage.py migracija_ukucana"
+    docker compose run --rm app sh -c "python manage.py migracija_ukucana_parohijana"
     docker compose run --rm app sh -c "python manage.py migracija_krstenja"
     docker compose run --rm app sh -c "python manage.py migracija_vencanja"
 }
