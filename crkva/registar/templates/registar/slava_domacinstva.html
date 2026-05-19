@@ -37,34 +37,27 @@
           </span>
 
           {% if domacinstvo.ukucani.all %}
-            {% with zivi=domacinstvo.ukucani.all %}
-            <div class="stavka__roster">
-              <div class="stavka__roster-col">
-                <div class="stavka__roster-head">Живи</div>
-                <ul class="stavka__roster-list">
-                  {% for u in zivi %}{% if not u.preminuo %}
-                    <li>
-                      {% if u.osoba %}{{ u.osoba.ime|title }} {{ u.osoba.prezime|title }}
-                      {% else %}{{ u.ime_ukucana|title|default:"—" }}{% endif %}
-                      {% if u.uloga and u.uloga != "остало" %}<span class="stavka__roster-role">{{ u.get_uloga_display }}</span>{% endif %}
-                    </li>
-                  {% endif %}{% empty %}{% endfor %}
-                </ul>
-              </div>
-              <div class="stavka__roster-col stavka__roster-col--deceased">
-                <div class="stavka__roster-head">Преминули</div>
-                <ul class="stavka__roster-list">
-                  {% for u in zivi %}{% if u.preminuo %}
-                    <li>
-                      {% if u.osoba %}{{ u.osoba.ime|title }} {{ u.osoba.prezime|title }}
-                      {% else %}{{ u.ime_ukucana|title|default:"—" }}{% endif %}
-                      {% if u.uloga and u.uloga != "остало" %}<span class="stavka__roster-role">{{ u.get_uloga_display }}</span>{% endif %}
-                    </li>
-                  {% endif %}{% empty %}{% endfor %}
-                </ul>
-              </div>
+            {# Living and deceased lists provided by the view as
+               domacinstvo.zivi_clanovi / .preminuli_clanovi. Render only
+               columns that have content; lone column takes natural width. #}
+            <div class="stavka__roster{% if not domacinstvo.zivi_clanovi or not domacinstvo.preminuli_clanovi %} stavka__roster--single{% endif %}">
+              {% if domacinstvo.zivi_clanovi %}
+                <div class="stavka__roster-col">
+                  <div class="stavka__roster-head">Живи</div>
+                  <ul class="stavka__roster-list">
+                    {% for u in domacinstvo.zivi_clanovi %}<li>{% if u.osoba %}{{ u.osoba.ime|title }} {{ u.osoba.prezime|title }}{% else %}{{ u.ime_ukucana|title|default:"—" }}{% endif %}{% if u.uloga and u.uloga != "остало" %}<span class="stavka__roster-role">{{ u.get_uloga_display }}</span>{% endif %}</li>{% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
+              {% if domacinstvo.preminuli_clanovi %}
+                <div class="stavka__roster-col stavka__roster-col--deceased">
+                  <div class="stavka__roster-head">Преминули</div>
+                  <ul class="stavka__roster-list">
+                    {% for u in domacinstvo.preminuli_clanovi %}<li>{% if u.osoba %}{{ u.osoba.ime|title }} {{ u.osoba.prezime|title }}{% else %}{{ u.ime_ukucana|title|default:"—" }}{% endif %}{% if u.uloga and u.uloga != "остало" %}<span class="stavka__roster-role">{{ u.get_uloga_display }}</span>{% endif %}</li>{% endfor %}
+                  </ul>
+                </div>
+              {% endif %}
             </div>
-            {% endwith %}
           {% endif %}
         </a>
       </li>

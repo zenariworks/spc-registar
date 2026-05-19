@@ -1071,6 +1071,11 @@ body.history-open {
   opacity: 0.6;
 }
 
+/* Single-column variant: when one side is empty (or both fit naturally
+   on one column), drop the 2-col grid so the lone column doesn't sit
+   isolated in a half-width box. */
+.stavka__roster--single { grid-template-columns: 1fr; }
+
 /* Stack columns on narrow screens */
 @media (max-width: 720px) {
   .stavka__roster { grid-template-columns: 1fr; gap: var(--space-3); }
