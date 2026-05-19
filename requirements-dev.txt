@@ -1,0 +1,14 @@
+# Dev + lint tooling. Production deploy does NOT need these.
+# Install with: pip install -r requirements-dev.txt
+# (Also runs all of requirements.txt — assumes you install both)
+
+-r requirements.txt
+
+# Django template linter (pre-commit hook)
+djlint==1.36.4
+# Python linter (pre-commit hook)
+pylint==4.0.4
+pylint-django==2.7.0
+pylint-plugin-utils==0.9.0
+# Pre-commit framework
+pre_commit==4.5.1
