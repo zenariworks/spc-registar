@@ -16,7 +16,7 @@
       </a>
     </div>
 
-    {% with today=calendar_cells.0 %}
+    {% with today=today_cell %}
       <div class="dashboard-today">
         <div class="dashboard-today__date">
           <div class="dashboard-today__day-label">{{ today.day_label }}</div>
@@ -66,7 +66,7 @@
     {% endwith %}
 
     <ul class="dashboard-upcoming">
-      {% for day in calendar_cells|slice:"1:" %}
+      {% for day in upcoming_cells %}
         {% with all_slavas=day.moveable_slavas|add:day.fixed_slavas %}
           {% if all_slavas %}
             {% with first_slava=all_slavas|first %}

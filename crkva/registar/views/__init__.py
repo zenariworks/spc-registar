@@ -209,6 +209,11 @@ def index(request) -> HttpResponse:
             }
         )
 
+    # Split cells for the home page: today gets the hero, the next 5 days
+    # form the upcoming-list. (calendar_cells stays full for backwards compat.)
+    today_cell = next((c for c in cells if c["is_today"]), None)
+    upcoming_cells = [c for c in cells if c["date"] > today]
+
     context = {
         "stats": {
             "parohijani": Parohijan.objects.count(),
@@ -217,6 +222,8 @@ def index(request) -> HttpResponse:
             "svestenici": Svestenik.objects.count(),
         },
         "calendar_cells": cells,
+        "today_cell": today_cell,
+        "upcoming_cells": upcoming_cells,
     }
 
     return render(request, "registar/index.html", context)
