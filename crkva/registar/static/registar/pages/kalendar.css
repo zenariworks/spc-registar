@@ -16,8 +16,12 @@
 }
 
 .dashboard-calendar .calendar-cell .date {
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-size: 1rem;
+  color: var(--color-heading);
 }
 
 .dashboard-calendar .calendar-cell .weekday {
@@ -40,7 +44,7 @@
   right: 10px;
   width: 32px;
   height: 32px;
-  background: rgba(0, 0, 0, 0.08);
+  background: color-mix(in oklab, var(--color-text) 8%, transparent);
 }
 
 .dashboard-calendar .fasting-icon {
@@ -70,11 +74,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px 0;
-  padding: 15px;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
   background: var(--color-surface-2);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-3);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-arrow {
@@ -95,14 +101,6 @@
 }
 
 
-.nav-arrow:first-of-type {
-  margin-right: 20px;
-}
-
-.nav-arrow:last-of-type {
-  margin-left: 20px;
-}
-
 .current-month {
   text-align: center;
   min-width: 200px;
@@ -119,16 +117,27 @@
   color: var(--color-text-muted);
 }
 
-/* Calendar grid - fluid responsive */
+/* Calendar grid — 7 columns always, narrow screens stack to a list.
+   Previously used auto-fit minmax(140px, 1fr) which let the column count
+   change with viewport width, so the leading placeholders no longer
+   aligned month days under their weekday header. */
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-2);
 }
 
 .weekday-header {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
   font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-2) 0;
+  border-bottom: 2px solid var(--color-border);
+  margin-bottom: var(--space-1);
 }
 
 /* Calendar cells */
@@ -137,8 +146,8 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: var(--radius-2);
+  padding: var(--space-2);
   background: var(--color-surface-2);
   position: relative;
   transition: all 0.2s ease;
@@ -147,7 +156,7 @@
 /* Only apply hover effects on devices that support hover */
 @media (hover: hover) and (pointer: fine) {
   .calendar-cell:not(.placeholder):hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
     transform: translateY(-1px);
   }
 
@@ -161,7 +170,7 @@
   }
 
   .fasting-info:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: color-mix(in oklab, var(--color-text) 10%, transparent);
   }
 
   .fasting-info:hover .fasting-tooltip {
@@ -188,10 +197,21 @@
 }
 
 
-/* Today - golden border only, background preserved */
+/* Today — gold border + halo. Keeps gold (the accent) but tokenized. */
 .calendar-cell.today {
-  border: 3px solid var(--color-amber-500);
-  box-shadow: 0 0 0 1px var(--color-amber-400), 0 2px 8px rgba(245, 158, 11, 0.3);
+  border: 3px solid var(--color-accent);
+  box-shadow:
+    0 0 0 1px var(--color-accent-200),
+    var(--shadow-md);
+}
+/* Today AND crveno-slovo: the cell has a red gradient bg, so the gold
+   border needs an inner cream ring to read clearly against red. */
+.calendar-cell.today.crveno-slovo {
+  border-color: var(--color-accent);
+  box-shadow:
+    inset 0 0 0 2px color-mix(in oklab, var(--color-accent-100) 70%, transparent),
+    0 0 0 2px var(--color-accent-200),
+    var(--shadow-md);
 }
 
 
@@ -419,7 +439,7 @@
     right: 10px;
     width: 32px;
     height: 32px;
-    background: rgba(0, 0, 0, 0.08);
+    background: color-mix(in oklab, var(--color-text) 8%, transparent);
   }
 
   .fasting-icon {
@@ -453,7 +473,7 @@
   top: 8px;
   right: 8px;
   padding: 4px;
-  background: rgba(0, 0, 0, 0.05);
+  background: color-mix(in oklab, var(--color-text) 5%, transparent);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -465,26 +485,22 @@
 }
 
 /* Water fasting - light blue background */
-.fasting-water .fasting-info,
-.fasting-вода .fasting-info {
+.fasting-water .fasting-info {
   background: var(--fasting-water-bg);
 }
 
 /* Oil fasting - amber/golden background */
-.fasting-oil .fasting-info,
-.fasting-уље .fasting-info {
+.fasting-oil .fasting-info {
   background: var(--fasting-oil-bg);
 }
 
 /* Fish fasting - teal background */
-.fasting-fish .fasting-info,
-.fasting-риба .fasting-info {
+.fasting-fish .fasting-info {
   background: var(--fasting-fish-bg);
 }
 
 /* Dairy fasting - cream background */
-.fasting-dairy .fasting-info,
-.fasting-бели_мрс .fasting-info {
+.fasting-dairy .fasting-info {
   background: var(--fasting-dairy-bg);
 }
 
@@ -838,4 +854,69 @@
     .dashboard-upcoming__row { padding: var(--space-2) var(--space-1); gap: var(--space-2); }
     .dashboard-upcoming__date { font-size: 0.9rem; }
     .dashboard-upcoming__feast { font-size: 0.88rem; }
+}
+
+/* Narrow viewport: drop the 7-col grid and stack days as a list */
+@media (max-width: 600px) {
+  .calendar-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+  .weekday-header,
+  .calendar-cell.placeholder { display: none; }
+  .calendar-cell { height: auto; min-height: 80px; }
+}
+
+
+/* ===== Print stylesheet — clean month grid for paper ===== */
+@media print {
+  /* hide chrome */
+  .sidebar,
+  .sidebar-toggle,
+  .mobile-sidebar-toggle,
+  .sidebar-backdrop,
+  .search-overlay,
+  .calendar-navigation .nav-arrow,
+  .back-button { display: none !important; }
+
+  body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+  body > main { padding: 0 !important; }
+  .u-page-header { padding: 0 0 var(--space-2) !important; margin-bottom: var(--space-2) !important; }
+
+  /* tighten the grid */
+  .calendar-grid {
+    gap: 0 !important;
+    page-break-inside: avoid;
+  }
+  .calendar-cell {
+    height: auto !important;
+    min-height: 90px;
+    border: 1px solid color-mix(in oklab, var(--color-text) 35%, transparent) !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    page-break-inside: avoid;
+  }
+  .calendar-cell.today { border-width: 2px !important; }
+  .calendar-cell.crveno-slovo {
+    background: transparent !important;
+    color: var(--color-primary) !important;
+  }
+  .calendar-cell.crveno-slovo .date,
+  .calendar-cell.crveno-slovo .weekday,
+  .calendar-cell.crveno-slovo .slavas,
+  .calendar-cell.crveno-slovo .slava-link { color: var(--color-primary) !important; }
+  .calendar-cell .slava-link { color: var(--color-text) !important; text-decoration: none !important; }
+  .slava-link__count { display: none !important; }
+  .fasting-info,
+  .fasting-tooltip { display: none !important; }
+
+  /* keep just the month + year visible */
+  .calendar-navigation {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 }

@@ -8,7 +8,7 @@
 
 {% block content %}
 <div class="u-page-header">
-  <a href="#" class="back-button" onclick="history.back(); return false;" aria-label="Назад" title="Назад">
+  <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад">
     <i class="fa-solid fa-arrow-left"></i>
   </a>
 <h1 class="u-page-title">Календар</h1>
@@ -42,7 +42,7 @@
     {% if day.is_placeholder %}
       <div class="calendar-cell placeholder"></div>
     {% else %}
-      <div class="calendar-cell {% if day.is_today %}today{% endif %} {% if day.is_crveno_slovo %}crveno-slovo{% elif day.is_important %}important{% elif day.is_fasting %}fasting fasting-{{ day.fasting_type }}{% endif %}">
+      <div class="calendar-cell {% if day.is_today %}today{% endif %} {% if day.is_crveno_slovo %}crveno-slovo{% elif day.is_important %}important{% elif day.is_fasting %}fasting fasting-{{ day.fasting_class }}{% endif %}">
         {% if day.is_fasting %}
           <div class="fasting-info">
             {% if day.fasting_type == 'вода' %}
