@@ -985,3 +985,48 @@ body.history-open {
 .spisak .stavka:last-child {
     border-bottom: 0;
 }
+
+
+/* ===== Slava page bits ===== */
+.slava-meta {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+  margin-left: var(--space-3);
+  flex-shrink: 0;
+}
+.stavka--slava { flex-direction: column; align-items: stretch; }
+.stavka--slava .stavka-veza { display: block; }
+.stavka__members {
+  display: block;
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px dashed var(--color-border);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  line-height: 1.7;
+}
+.stavka__members > i:first-child {
+  color: var(--color-accent-700);
+  margin-right: var(--space-1);
+}
+.member-chip {
+  display: inline-block;
+  padding: 1px 8px;
+  margin: 1px 0;
+  background: var(--color-accent-50);
+  border: 1px solid var(--color-accent-200);
+  border-radius: 999px;
+  color: var(--color-text);
+  font-size: 0.8rem;
+}
+.member-chip--deceased {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+  opacity: 0.75;
+}
+
+/* Slava-page header needs the title + meta + button on one row */
+.u-page-header { flex-wrap: wrap; gap: var(--space-2); }
+.u-page-header .u-page-title { margin-right: auto; }
