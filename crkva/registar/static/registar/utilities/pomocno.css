@@ -24,9 +24,13 @@
 
 .u-container {
     width: 100%;
-    max-width: 1080px;
+    /* No max-width: main fills the available area (viewport - sidebar).
+       Inner sections (.grid, .spisak, info-rows) set their own caps if
+       they need them. Pages that want narrow content can layer
+       .u-max-w-md (800px). */
     margin: 0 auto;
     padding: 0 var(--space-5);
+    box-sizing: border-box;
 }
 
 .u-max-w-md {
