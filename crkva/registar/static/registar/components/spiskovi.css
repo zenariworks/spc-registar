@@ -987,7 +987,11 @@ body.history-open {
 }
 
 
-/* ===== Slava page bits ===== */
+/* Slava-page header needs the title + meta + button on one row */
+.u-page-header { flex-wrap: wrap; gap: var(--space-2); }
+.u-page-header .u-page-title { margin-right: auto; }
+
+/* ===== Slava page — household rows with split living/deceased rosters ===== */
 .slava-meta {
   font-family: var(--font-serif);
   font-size: 0.95rem;
@@ -997,34 +1001,84 @@ body.history-open {
 }
 .stavka--slava { flex-direction: column; align-items: stretch; }
 .stavka--slava .stavka-veza { display: block; }
-.stavka__members {
-  display: block;
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
+
+.stavka__roster {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-5);
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
   border-top: 1px dashed var(--color-border);
+}
+
+.stavka__roster-col {
+  min-width: 0;
+}
+.stavka__roster-col--deceased {
+  border-left: 1px solid var(--color-border);
+  padding-left: var(--space-4);
+}
+.stavka__roster-col--deceased:empty,
+.stavka__roster-col:has(ul:empty) {
+  /* keep grid alignment, just dim the empty column */
+  opacity: 0.4;
+}
+
+.stavka__roster-head {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
-  font-size: 0.85rem;
-  line-height: 1.7;
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
 }
-.stavka__members > i:first-child {
-  color: var(--color-accent-700);
-  margin-right: var(--space-1);
+.stavka__roster-head i { color: var(--color-accent-700); font-size: 0.85rem; }
+.stavka__roster-cross {
+  color: var(--color-text-muted);
+  font-weight: 600;
+  font-size: 1rem;
 }
-.member-chip {
-  display: inline-block;
-  padding: 1px 8px;
-  margin: 1px 0;
-  background: var(--color-accent-50);
-  border: 1px solid var(--color-accent-200);
-  border-radius: 999px;
+
+.stavka__roster-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+.stavka__roster-list li {
   color: var(--color-text);
-  font-size: 0.8rem;
+  padding: 1px 0;
 }
-.member-chip--deceased {
-  background: transparent;
-  border-color: var(--color-border);
+.stavka__roster-col--deceased .stavka__roster-list li {
   color: var(--color-text-muted);
-  opacity: 0.75;
+}
+.stavka__roster-role {
+  color: var(--color-text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-style: italic;
+}
+.stavka__roster-list li:empty,
+.stavka__roster-list:empty::before {
+  content: "—";
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Stack columns on narrow screens */
+@media (max-width: 720px) {
+  .stavka__roster { grid-template-columns: 1fr; gap: var(--space-3); }
+  .stavka__roster-col--deceased {
+    border-left: 0;
+    padding-left: 0;
+    padding-top: var(--space-2);
+    border-top: 1px dashed var(--color-border);
+  }
 }
 
 /* Slava-page header needs the title + meta + button on one row */

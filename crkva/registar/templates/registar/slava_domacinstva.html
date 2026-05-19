@@ -35,17 +35,41 @@
             {% if domacinstvo.tel_fiksni %}{% if domacinstvo.adresa %} &middot; {% endif %}<i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i> {{ domacinstvo.tel_fiksni|format_phone }}{% endif %}
             {% if domacinstvo.tel_mobilni %}{% if domacinstvo.adresa or domacinstvo.tel_fiksni %} &middot; {% endif %}<i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i> {{ domacinstvo.tel_mobilni|format_phone }}{% endif %}
           </span>
+
           {% if domacinstvo.ukucani.all %}
-            <span class="stavka__members"><i class="fa-solid fa-users"></i>
-              {% for ukucanin in domacinstvo.ukucani.all %}
-                <span class="member-chip{% if ukucanin.preminuo %} member-chip--deceased{% endif %}">
-                  {% if ukucanin.preminuo %}†&nbsp;{% endif %}
-                  {% if ukucanin.osoba %}{{ ukucanin.osoba.ime }} {{ ukucanin.osoba.prezime }}
-                  {% else %}{{ ukucanin.ime_ukucana|default:"?" }}{% endif %}
-                  {% if ukucanin.uloga %} · {{ ukucanin.uloga }}{% endif %}
-                </span>{% if not forloop.last %} {% endif %}
-              {% endfor %}
-            </span>
+            {# partition into living vs deceased without changing the view #}
+            {% with zivi=domacinstvo.ukucani.all %}
+            <div class="stavka__roster">
+              <div class="stavka__roster-col">
+                <div class="stavka__roster-head">
+                  <i class="fa-solid fa-users"></i> Живи
+                </div>
+                <ul class="stavka__roster-list">
+                  {% for u in zivi %}{% if not u.preminuo %}
+                    <li>
+                      {% if u.osoba %}{{ u.osoba.ime }} {{ u.osoba.prezime }}
+                      {% else %}{{ u.ime_ukucana|default:"—" }}{% endif %}
+                      {% if u.uloga and u.uloga != "остало" %}<span class="stavka__roster-role"> · {{ u.get_uloga_display }}</span>{% endif %}
+                    </li>
+                  {% endif %}{% endfor %}
+                </ul>
+              </div>
+              <div class="stavka__roster-col stavka__roster-col--deceased">
+                <div class="stavka__roster-head">
+                  <span class="stavka__roster-cross">†</span> Преминули
+                </div>
+                <ul class="stavka__roster-list">
+                  {% for u in zivi %}{% if u.preminuo %}
+                    <li>
+                      {% if u.osoba %}{{ u.osoba.ime }} {{ u.osoba.prezime }}
+                      {% else %}{{ u.ime_ukucana|default:"—" }}{% endif %}
+                      {% if u.uloga and u.uloga != "остало" %}<span class="stavka__roster-role"> · {{ u.get_uloga_display }}</span>{% endif %}
+                    </li>
+                  {% endif %}{% endfor %}
+                </ul>
+              </div>
+            </div>
+            {% endwith %}
           {% endif %}
         </a>
       </li>
