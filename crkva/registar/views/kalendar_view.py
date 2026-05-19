@@ -102,6 +102,7 @@ def kalendar(
                 "weekday_label": weekday_labels[d.weekday()],
                 "is_fasting": fasting_info["is_fasting"],
                 "fasting_type": fasting_info["type"],
+                "fasting_class": {"вода":"water","уље":"oil","риба":"fish","бели_мрс":"dairy"}.get(fasting_info["type"]) or "",
                 "fasting_display": fasting_info["display"],
                 "fasting_description": fasting_info["description"],
                 "slave": day_slavas,
