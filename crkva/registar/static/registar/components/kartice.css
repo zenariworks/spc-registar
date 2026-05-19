@@ -157,13 +157,15 @@
     .registry-grid { grid-template-columns: 1fr; }
 }
 
-/* Main Grid Layout — single column, full-width sections */
+/* Main Grid Layout — single column, full-width sections.
+   Generous max-width gives breathing room on wide monitors; caps at
+   1440 so on ultrawides content stays a comfortable reading width. */
 .grid,
 .main-grid {
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--space-5);
-    max-width: 1280px;
+    max-width: 1440px;
     margin: 0 auto;
     padding: var(--space-5) var(--space-5);
 }
