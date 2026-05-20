@@ -32,10 +32,10 @@
         if (defaultPol !== "М" && defaultPol !== "Ж") return;
         var group = document.getElementById("modal-pol-toggle");
         if (!group) return;
-        var buttons = group.querySelectorAll(".toggle-button");
+        var buttons = group.querySelectorAll(".tab-group__item");
         var matched = null;
         buttons.forEach(function (btn) {
-            btn.classList.remove("active");
+            btn.classList.remove("is-active");
             if (btn.dataset && btn.dataset.value === defaultPol) {
                 matched = btn;
             }
