@@ -36,6 +36,7 @@
 
 .stavka-veza:hover {
     color: var(--color-text-muted);
+    text-decoration: none;
 }
 
 .stavka-veza {

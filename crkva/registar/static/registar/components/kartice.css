@@ -86,7 +86,7 @@
 }
 
 .card__link:hover,
-.view-all-link:hover { color: var(--color-primary-700); }
+.view-all-link:hover { color: var(--color-primary-700); text-decoration: none; }
 
 /* Registry Overview */
 .registry,
@@ -127,6 +127,7 @@
     background: var(--color-surface);
     border-color: var(--color-accent);
     box-shadow: inset 3px 0 0 var(--color-accent), var(--shadow-sm);
+    text-decoration: none;
 }
 
 .registry__icon,
