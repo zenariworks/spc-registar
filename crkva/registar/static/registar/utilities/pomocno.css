@@ -45,6 +45,16 @@
     gap: var(--space-4);
     margin: var(--space-5) 0 var(--space-3);
     width: 100%;
+    /* Stick to viewport top so back/edit/print/history stay reachable while
+       scrolling through long forms. Background is opaque (theme-aware) so
+       content scrolling underneath does not bleed through; a hairline
+       bottom shadow signals the elevation. */
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--color-surface);
+    padding-bottom: var(--space-2);
+    box-shadow: 0 1px 0 var(--color-border);
 }
 
 .u-page-title {

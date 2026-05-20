@@ -514,3 +514,19 @@
     padding: 0;
     list-style: disc;
 }
+
+
+/* Sticky page header eats the top ~120px of viewport; give inputs that the
+   browser scrolls into view (TAB navigation, scrollIntoView from form-errors.js)
+   enough top breathing room that they land below the sticky header instead of
+   under it. */
+.info-row .info-row__value > input:not([type=checkbox]):not([type=radio]),
+.info-row .info-row__value > select,
+.info-row .info-row__value > textarea,
+.info-row .info-row__value > .select2,
+.info-row .info-row__value > .select2-container {
+    scroll-margin-top: 120px;
+}
+.info-row {
+    scroll-margin-top: 120px;
+}
