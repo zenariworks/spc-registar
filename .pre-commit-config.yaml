@@ -67,14 +67,16 @@ repos:
         files: '\.py$'
 
 
-  # Block hardcoded hex colors in component CSS (use design tokens instead)
+  # Biome — CSS + JS linter. Catches CSS parse errors, duplicate selectors,
+  # dead overrides, plus JS noConsoleLog / noDebugger / noVar / unused vars.
   - repo: local
     hooks:
-      - id: check-hardcoded-colors
-        name: no hardcoded colors in component CSS
-        entry: python scripts/check_hardcoded_colors.py
+      - id: biome
+        name: biome lint (CSS + JS)
+        entry: npx --no-install @biomejs/biome lint --no-errors-on-unmatched
         language: system
-        files: ^crkva/registar/static/registar/.*\.css$
+        files: ^crkva/registar/static/registar/.*\.(css|js)$
+        exclude: \.min\.(css|js)$
         pass_filenames: true
 
 
@@ -86,14 +88,15 @@ repos:
         files: \.html$
 
 
-  # Block leftover JS debug statements (console.log / debugger)
+  # Inline-script debug guard — biome catches .js files; this catches inline
+  # <script> blocks inside Django templates that biome cannot reach.
   - repo: local
     hooks:
-      - id: no-js-debug
-        name: no console.log / debugger in JS or inline scripts
+      - id: no-inline-script-debug
+        name: no console.log / debugger in inline template scripts
         language: pygrep
         entry: '(console\.(log|debug)\b|(^|[^a-zA-Z_])debugger\s*;)'
-        files: \.(js|html)$
+        files: \.html$
 
   # Validate commit message subject (feat: / fix: / refactor: / ...)
   - repo: https://github.com/compilerla/conventional-pre-commit

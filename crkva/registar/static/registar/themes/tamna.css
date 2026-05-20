@@ -53,6 +53,9 @@
     --sidebar-active-rail:     var(--color-accent);
     --sidebar-active-text:     #F5E6BD;
     --sidebar-divider:         rgba(213, 180, 117, 0.20);
+    --sidebar-scrollbar-track: rgba(213, 180, 117, 0.06);
+    --sidebar-scrollbar-thumb: rgba(213, 180, 117, 0.28);
+    --sidebar-scrollbar-thumb-hover: rgba(213, 180, 117, 0.45);
     --sidebar-theme-meta:      #0B0C12;
 
     /* ---------- Slava badge ---------- */

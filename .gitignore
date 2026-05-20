@@ -128,3 +128,6 @@ target/
 .claude/
 .agentic-qe/
 notebooks/
+
+# Node tooling (biome)
+node_modules/

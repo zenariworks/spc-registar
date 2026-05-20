@@ -207,16 +207,16 @@ body.sidebar-collapsed .sidebar-toggle {
 }
 
 .sidebar-nav::-webkit-scrollbar-track {
-  background: rgba(237, 230, 214, 0.04);
+  background: var(--sidebar-scrollbar-track);
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(176, 132, 67, 0.28);
+  background: var(--sidebar-scrollbar-thumb);
   border-radius: 3px;
 }
 
 .sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(176, 132, 67, 0.42);
+  background: var(--sidebar-scrollbar-thumb-hover);
 }
 
 /* Section */
