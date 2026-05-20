@@ -1,9 +1,15 @@
 """AJAX endpoints за брзе акције из модала (особа + адреса)."""
 
+import logging
+
+from django.core.exceptions import ValidationError
+from django.db import DatabaseError, IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from registar.models import Adresa, Osoba
 from tenants.permissions import tenant_role_required
+
+logger = logging.getLogger(__name__)
 
 
 @tenant_role_required("osoba")
@@ -42,7 +48,19 @@ def brzi_izmena_adrese(request, uid):
     adresa.broj_stana = request.POST.get("broj_stana", "").strip()
     adresa.mesto = request.POST.get("mesto", "").strip()
     try:
+        adresa.full_clean()
         adresa.save()
-    except Exception as exc:  # pragma: no cover - DB constraint surface
-        return JsonResponse({"error": str(exc)}, status=400)
+    except ValidationError as exc:
+        return JsonResponse(
+            {"error": "Невалидни подаци адресе.", "detail": exc.message_dict},
+            status=400,
+        )
+    except IntegrityError:
+        logger.exception("IntegrityError saving Adresa uid=%s", uid)
+        return JsonResponse(
+            {"error": "Адреса се не може сачувати због конфликта података."}, status=400
+        )
+    except DatabaseError:
+        logger.exception("DatabaseError saving Adresa uid=%s", uid)
+        return JsonResponse({"error": "Грешка у бази података."}, status=500)
     return JsonResponse({"id": str(adresa.uid), "text": str(adresa)})
