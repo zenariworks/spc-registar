@@ -45,6 +45,9 @@ class Osoba(TimeStampedModel):
     tel_mobilni = PhoneNumberField(
         region="RS", verbose_name="мобилни телефон", blank=True, null=True
     )
+    email = models.EmailField(
+        max_length=254, verbose_name="имејл", blank=True, null=True
+    )
 
     # Основни подаци о особи
     mesto_rodjenja = models.CharField(
