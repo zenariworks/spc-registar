@@ -1073,7 +1073,27 @@ body.history-open {
 /* Single-column variant: when one side is empty (or both fit naturally
    on one column), drop the 2-col grid so the lone column doesn't sit
    isolated in a half-width box. */
-.stavka__roster--single { grid-template-columns: 1fr; }
+/* Single-column variant: flow header + names inline so a list of one or two
+   members renders compactly ("Живи: Никола Поповић, Марија Поповић") instead
+   of stretching across a full-width column with empty space below. */
+.stavka__roster--single {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+}
+.stavka__roster--single .stavka__roster-head {
+  margin-bottom: 0;
+}
+.stavka__roster--single .stavka__roster-list {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+}
+.stavka__roster--single .stavka__roster-list li {
+  padding: 0;
+  display: inline;
+}
 
 /* Stack columns on narrow screens */
 @media (max-width: 720px) {
