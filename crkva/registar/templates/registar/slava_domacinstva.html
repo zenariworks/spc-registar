@@ -37,9 +37,11 @@
           </span>
 
           {% if domacinstvo.ukucani.all %}
-            {# Living and deceased lists provided by the view as
-               domacinstvo.zivi_clanovi / .preminuli_clanovi. Render only
-               columns that have content; lone column takes natural width. #}
+            {% comment %}
+              Living and deceased lists provided by the view as
+              domacinstvo.zivi_clanovi / .preminuli_clanovi. Render only
+              columns that have content; lone column takes natural width.
+            {% endcomment %}
             <div class="stavka__roster{% if not domacinstvo.zivi_clanovi or not domacinstvo.preminuli_clanovi %} stavka__roster--single{% endif %}">
               {% if domacinstvo.zivi_clanovi %}
                 <div class="stavka__roster-col">
