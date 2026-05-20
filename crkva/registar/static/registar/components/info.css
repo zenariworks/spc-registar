@@ -458,3 +458,59 @@
 
 /* Move 8 — inline variant of info-row__sub (used inside .info-list__item) */
 .info-row__sub--inline { display: inline; }
+
+/* ─── Inline form errors ───────────────────────────────────────────────
+ * components/form-errors.js adds .info-row--has-error to rows whose input
+ * the server rejected. The row turns red, the icon shifts color, and a
+ * small bubble below the input carries the message.
+ *
+ * Token-only (no raw hex). Works across light/sepia/dark via theme tokens.
+ * ─────────────────────────────────────────────────────────────────── */
+
+/* Highlight the row icon to draw the eye toward the offending field. */
+.info-row--has-error > .info-row__icon {
+    color: var(--color-danger);
+}
+
+/* Red border + soft danger halo on the input itself. Covers the common
+   editable widgets seen in info-row__value: bare inputs, selects, textareas,
+   plus the .select2 wrapper used by django-select2. */
+.info-row--has-error .info-row__value > input:not([type='checkbox']):not([type='radio']),
+.info-row--has-error .info-row__value > select,
+.info-row--has-error .info-row__value > textarea,
+.info-row--has-error .info-row__value > .select2 .select2-selection,
+.info-row--has-error .info-row__value > .select2-container .select2-selection {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+/* Error bubble: lives inside .info-row__body (or row), positioned in flow
+   so it pushes the next field down rather than overlapping anything.
+   Subtle slide-down on first appearance so it doesn't snap. */
+.info-row__error {
+    margin-top: var(--space-1);
+    padding: 6px var(--space-2);
+    background: var(--color-primary-50);
+    color: var(--color-danger);
+    border-left: 3px solid var(--color-danger);
+    border-radius: var(--radius-1);
+    font-size: 0.85rem;
+    line-height: 1.35;
+    animation: info-row-error-in 180ms ease-out;
+}
+
+@keyframes info-row-error-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Compact banner above the form: leans on existing .u-alert--error styling
+   so the only thing this rule adds is rhythm with the rest of the form. */
+.form-errors-banner {
+    margin-bottom: var(--space-4);
+}
+.form-errors-banner .form-errors__list {
+    margin: var(--space-1) 0 0 var(--space-4);
+    padding: 0;
+    list-style: disc;
+}

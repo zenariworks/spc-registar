@@ -1,15 +1,20 @@
+{% load form_errors_extras %}
+{% comment %}
+  Form errors include — compact banner + JSON payload for inline highlighting.
+
+  - Banner: short summary + any non-field errors (rendered server-side, works without JS)
+  - JSON payload: field_name -> [errors] consumed by components/form-errors.js
+    which marks the matching input's .info-row with --has-error and injects
+    a per-field error bubble next to it
+{% endcomment %}
 {% if form.errors %}
-  <div class="u-alert u-alert--error">
-    <strong><i class="fa-solid fa-exclamation-circle"></i> Исправите следеће грешке:</strong>
-    <ul class="form-errors__list">
-      {% for error in form.non_field_errors %}
-        <li>{{ error }}</li>
-      {% endfor %}
-      {% for bound_field in form %}
-        {% for error in bound_field.errors %}
-          <li><strong>{{ bound_field.label }}</strong>: {{ error }}</li>
-        {% endfor %}
-      {% endfor %}
-    </ul>
+  <div class="u-alert u-alert--error form-errors-banner" role="alert">
+    <strong><i class="fa-solid fa-exclamation-circle"></i> Постоје грешке у форми. Погледајте обележена поља.</strong>
+    {% if form.non_field_errors %}
+      <ul class="form-errors__list">
+        {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+      </ul>
+    {% endif %}
   </div>
+  {{ form|field_errors_dict|json_script:"form-errors-data" }}
 {% endif %}
