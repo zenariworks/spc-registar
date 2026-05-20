@@ -770,6 +770,7 @@
 .dashboard-upcoming__row:hover {
   background: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface-2));
   color: var(--color-text);
+  text-decoration: none;
 }
 .dashboard-upcoming__date {
   font-family: var(--font-mono);
