@@ -57,16 +57,16 @@
   <div class="info-section">
     <h2 class="info-section__title"><i class="fa-solid fa-user"></i> Лични подаци</h2>
     <ul class="info-rows">
-      {# Пол keeps raw markup — view-mode uses get_pol_display, edit-mode renders a custom toggle-group. #}
+      {# Пол keeps raw markup — view-mode uses get_pol_display, edit-mode renders a custom tab-group. #}
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Пол"><i class="fa-solid fa-venus-mars"></i></div>
         <div class="info-row__body">
           <label class="info-row__label">Пол</label>
           <div class="info-row__value">
             <span class="info-row__static">{% if parohijan.pol %}{{ parohijan.get_pol_display }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            <div class="toggle-group" role="radiogroup" aria-label="Пол">
+            <div class="tab-group" role="radiogroup" aria-label="Пол">
               {% for value, label in form.pol.field.choices %}{% if value %}
-                <label class="toggle-button">
+                <label class="tab-group__item">
                   <input type="radio" name="pol" value="{{ value }}"{% if form.pol.value == value %} checked{% endif %}>
                   <span>{{ label }}</span>
                 </label>

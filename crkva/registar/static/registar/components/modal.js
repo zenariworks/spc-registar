@@ -50,8 +50,8 @@
         // Clear inputs / errors
         overlay.querySelectorAll("input[type=text]").forEach((i) => (i.value = ""));
         overlay
-            .querySelectorAll(".toggle-button.active")
-            .forEach((b) => b.classList.remove("active"));
+            .querySelectorAll(".tab-group__item.is-active")
+            .forEach((b) => b.classList.remove("is-active"));
         const err = overlay.querySelector(".error-text");
         if (err) err.style.display = "none";
         // Focus the first input
@@ -98,17 +98,17 @@
             options || {},
         );
 
-        // Wire toggle-group buttons (e.g. pol: M/Ж)
+        // Wire tab-group items (e.g. pol: M/Ж)
         const toggleState = {};
         Object.entries(opts.toggleGroups).forEach(([fieldName, groupId]) => {
             const group = document.getElementById(groupId);
             if (!group) return;
-            group.querySelectorAll(".toggle-button").forEach((btn) => {
+            group.querySelectorAll(".tab-group__item").forEach((btn) => {
                 btn.addEventListener("click", () => {
                     group
-                        .querySelectorAll(".toggle-button")
-                        .forEach((b) => b.classList.remove("active"));
-                    btn.classList.add("active");
+                        .querySelectorAll(".tab-group__item")
+                        .forEach((b) => b.classList.remove("is-active"));
+                    btn.classList.add("is-active");
                     toggleState[fieldName] = btn.dataset.value;
                 });
             });

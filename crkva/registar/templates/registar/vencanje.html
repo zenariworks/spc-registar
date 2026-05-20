@@ -56,14 +56,18 @@
   {% if form.errors %}{% include 'registar/_form_errors.html' %}{% endif %}
 
   {% if vencanje %}
-  <div class="tabs tabs--segmented">
-    <div class="tabs__nav" data-show-mode="view">
-      <input type="radio" id="venc-tab-podaci" name="venc-view" class="tabs__radio" checked>
-      <label for="venc-tab-podaci" class="tabs__tab"><i class="tabs__icon fa-solid fa-table-list"></i> Подаци</label>
-      <input type="radio" id="venc-tab-pregled" name="venc-view" class="tabs__radio">
-      <label for="venc-tab-pregled" class="tabs__tab"><i class="tabs__icon fa-solid fa-file-lines"></i> Венчаница</label>
+  <div class="tab-group tab-group--with-panels">
+    <div class="tab-group__nav" data-show-mode="view" role="tablist">
+      <label class="tab-group__item">
+        <input type="radio" name="venc-view" checked>
+        <i class="tab-group__icon fa-solid fa-table-list"></i><span>Подаци</span>
+      </label>
+      <label class="tab-group__item">
+        <input type="radio" name="venc-view">
+        <i class="tab-group__icon fa-solid fa-file-lines"></i><span>Венчаница</span>
+      </label>
     </div>
-    <section class="tabs__panel">
+    <section class="tab-group__panel">
   {% endif %}
 
       {% if form %}
@@ -150,7 +154,7 @@
     </section>
 
     {# ============ CERTIFICATE PREVIEW ============ #}
-    <section class="tabs__panel" data-show-mode="view">
+    <section class="tab-group__panel" data-show-mode="view">
       <div class="vencanica">
         <div class="vencanica-frame">
           <div class="venc-field-knjiga">{{ vencanje.knjiga }}</div>
