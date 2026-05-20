@@ -1,10 +1,12 @@
 """Views for displaying households celebrating a specific slava."""
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
 from registar.models import Domacinstvo, Slava
 
 
+@login_required
 def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
     """Приказује домаћинства која славе одређену славу."""
     slava = get_object_or_404(Slava, uid=uid)

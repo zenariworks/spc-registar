@@ -2,9 +2,12 @@
 
 # pylint: disable=missing-function-docstring
 
+from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Domacinstvo, Osoba
+
+User = get_user_model()
 
 
 class DomacinstvoListEmptyStateTests(TestCase):
@@ -12,6 +15,8 @@ class DomacinstvoListEmptyStateTests(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(username="tester", password="x")
+        self.client.force_login(self.user)
 
     def test_empty_list_renders_empty_state(self):
         Domacinstvo.objects.all().delete()

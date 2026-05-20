@@ -370,6 +370,13 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
 
     def setUp(self):
         self.client = Client()
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def _create_krstenje(self, **overrides):
         defaults = dict(

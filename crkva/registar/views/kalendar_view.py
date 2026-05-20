@@ -6,6 +6,7 @@ import calendar
 import datetime as dt
 from collections import defaultdict
 
+from django.contrib.auth.decorators import login_required
 from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -14,6 +15,7 @@ from registar.utils import MESECI
 from registar.utils_fasting import get_fasting_type
 
 
+@login_required
 def kalendar(
     request: HttpRequest, year: int | None = None, month: int | None = None
 ) -> HttpResponse:
@@ -102,7 +104,13 @@ def kalendar(
                 "weekday_label": weekday_labels[d.weekday()],
                 "is_fasting": fasting_info["is_fasting"],
                 "fasting_type": fasting_info["type"],
-                "fasting_class": {"вода":"water","уље":"oil","риба":"fish","бели_мрс":"dairy"}.get(fasting_info["type"]) or "",
+                "fasting_class": {
+                    "вода": "water",
+                    "уље": "oil",
+                    "риба": "fish",
+                    "бели_мрс": "dairy",
+                }.get(fasting_info["type"])
+                or "",
                 "fasting_display": fasting_info["display"],
                 "fasting_description": fasting_info["description"],
                 "slave": day_slavas,

@@ -1,8 +1,8 @@
 """AJAX endpoints за брзе акције из модала (особа + адреса)."""
 
 from django.http import JsonResponse
-
-from registar.models import Adresa
+from django.shortcuts import get_object_or_404
+from registar.models import Adresa, Osoba
 from tenants.permissions import tenant_role_required
 
 
@@ -19,7 +19,7 @@ def brzi_unos_osobe(request):
     if not ime or not prezime:
         return JsonResponse({"error": "Име и презиме су обавезни"}, status=400)
 
-    osoba = Parohijan.objects.create(
+    osoba = Osoba.objects.create(
         ime=ime, prezime=prezime, pol=pol or None, parohijan=True
     )
     return JsonResponse({"id": osoba.uid, "text": str(osoba)})

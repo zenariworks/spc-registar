@@ -2,6 +2,7 @@
 Модул за приказ домаћинстава и њихових чланова.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
@@ -29,7 +30,9 @@ def unos_domacinstva(request):
     )
 
 
-class SpisakDomacinsta(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
+class SpisakDomacinsta(
+    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+):
     """Приказује списак домаћинстава са могућношћу претраге и пагинације."""
 
     model = Domacinstvo
@@ -52,7 +55,7 @@ class SpisakDomacinsta(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
         )
 
 
-class PrikazDomacinstva(DetailView):
+class PrikazDomacinstva(LoginRequiredMixin, DetailView):
     """Приказује детаљне информације о одређеном домаћинству."""
 
     model = Domacinstvo

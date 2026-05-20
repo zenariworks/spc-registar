@@ -2,6 +2,7 @@
 Модул за приказ, унос, претрагу и генерисање PDF докумената за венчања.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
@@ -25,7 +26,9 @@ VENCANJE_RELATED = (
 )
 
 
-class SpisakVencanja(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
+class SpisakVencanja(
+    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+):
     """Приказује списак венчања са могућностима претраге и пагинације."""
 
     model = Vencanje
@@ -54,7 +57,7 @@ class SpisakVencanja(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
         )
 
 
-class VencanjePDF(DetailView):
+class VencanjePDF(LoginRequiredMixin, DetailView):
     """Генерише PDF документ за одређено венчање."""
 
     model = Vencanje
@@ -116,7 +119,7 @@ class VencanjePDF(DetailView):
         return self.render_to_response(context)
 
 
-class PrikazVencanja(DetailView):
+class PrikazVencanja(LoginRequiredMixin, DetailView):
     """Приказује детаљне информације о појединачном венчању."""
 
     model = Vencanje
@@ -139,7 +142,6 @@ class PrikazVencanja(DetailView):
         return context
 
 
-# @login_required
 @tenant_role_required("vencanje")
 def unos_vencanja(request):
     """Обрада уноса новог венчања."""
@@ -157,7 +159,7 @@ def unos_vencanja(request):
     )
 
 
-# @login_required
+@tenant_role_required("vencanje")
 def calibrate_vencanje(request):
     """Приказује страницу за калибрацију позиција поља на венчаници."""
     return render(request, "registar/calibrate_vencanje.html")

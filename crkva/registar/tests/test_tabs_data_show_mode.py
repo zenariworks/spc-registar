@@ -2,7 +2,7 @@
 
 Background
 ----------
-The outer ``<div class="tabs tabs--segmented">`` wrapper on ``krstenje.html`` and
+The outer ``<div class="tab-group tab-group--with-panels">`` wrapper on ``krstenje.html`` and
 ``vencanje.html`` was twice tagged ``data-show-mode="view"``. Under the CSS rule
 
     [data-mode="edit"] [data-show-mode="view"] { display: none !important; }
@@ -11,10 +11,10 @@ that hid the entire editable form when the user clicked "Измени" (the form
 ``data-mode`` flipped to ``edit`` and the whole tabs wrapper, including the
 data-panel with the editable info-row inputs, disappeared).
 
-The fix: only the ``.tabs__nav`` (the segmented tab switcher) and the
-certificate-preview ``<section class="tabs__panel">`` may carry
+The fix: only the ``.tab-group__nav`` (the segmented tab switcher) and the
+certificate-preview ``<section class="tab-group__panel">`` may carry
 ``data-show-mode="view"``. The outer wrapper must NOT, and the data-panel
-``<section class="tabs__panel">`` (which hosts the editable info-section panels)
+``<section class="tab-group__panel">`` (which hosts the editable info-section panels)
 must NOT either.
 
 History:
@@ -177,11 +177,11 @@ class TabsDataShowModeRegressionTests(TestCase):
     # ------------------------------------------------------------------
     def test_krstenje_outer_tabs_wrapper_is_not_view_gated(self):
         # Regression guard for PR #140 / PR #143: the outer
-        # `<div class="tabs tabs--segmented">` must NOT carry data-show-mode,
+        # `<div class="tab-group tab-group--with-panels">` must NOT carry data-show-mode,
         # otherwise [data-mode="edit"] hides the whole editable form.
         body = KRSTENJE_TEMPLATE.read_text(encoding="utf-8")
         self.assertNotIn(
-            'class="tabs tabs--segmented" data-show-mode',
+            'class="tab-group tab-group--with-panels" data-show-mode',
             body,
             "Outer tabs wrapper on krstenje.html must not be view-gated; "
             "would re-introduce the PR #140 / #143 regression hiding the edit form.",
@@ -191,7 +191,7 @@ class TabsDataShowModeRegressionTests(TestCase):
         # Same regression guard for vencanje.html — see PR #140 / PR #143.
         body = VENCANJE_TEMPLATE.read_text(encoding="utf-8")
         self.assertNotIn(
-            'class="tabs tabs--segmented" data-show-mode',
+            'class="tab-group tab-group--with-panels" data-show-mode',
             body,
             "Outer tabs wrapper on vencanje.html must not be view-gated; "
             "would re-introduce the PR #140 / #143 regression hiding the edit form.",
@@ -199,22 +199,22 @@ class TabsDataShowModeRegressionTests(TestCase):
 
     def test_krstenje_tabs_nav_is_view_gated(self):
         # Positive half of the PR #140 / #143 contract: the segmented tab
-        # switcher (`.tabs__nav`) must be hidden in edit mode, otherwise the
+        # switcher (`.tab-group__nav`) must be hidden in edit mode, otherwise the
         # tab radios bleed into the editable form.
         body = KRSTENJE_TEMPLATE.read_text(encoding="utf-8")
         self.assertIn(
-            'class="tabs__nav" data-show-mode="view"',
+            'class="tab-group__nav" data-show-mode="view"',
             body,
-            ".tabs__nav on krstenje.html must carry data-show-mode='view'.",
+            ".tab-group__nav on krstenje.html must carry data-show-mode='view'.",
         )
 
     def test_vencanje_tabs_nav_is_view_gated(self):
         # Same positive half of the PR #140 / #143 contract for vencanje.
         body = VENCANJE_TEMPLATE.read_text(encoding="utf-8")
         self.assertIn(
-            'class="tabs__nav" data-show-mode="view"',
+            'class="tab-group__nav" data-show-mode="view"',
             body,
-            ".tabs__nav on vencanje.html must carry data-show-mode='view'.",
+            ".tab-group__nav on vencanje.html must carry data-show-mode='view'.",
         )
 
     # ------------------------------------------------------------------
@@ -239,13 +239,15 @@ class TabsDataShowModeRegressionTests(TestCase):
             "form must render with data-mode='edit' on /izmena/",
         )
 
-        # The outer `<div class="tabs tabs--segmented">` opening tag (which can
+        # The outer `<div class="tab-group tab-group--with-panels">` opening tag (which can
         # span multiple lines) must not carry data-show-mode anywhere in its
         # attribute list. Match the literal tag opener and consume until '>'.
-        tabs_open = re.search(r'<div\b[^>]*class="tabs tabs--segmented"[^>]*>', body)
+        tabs_open = re.search(
+            r'<div\b[^>]*class="tab-group tab-group--with-panels"[^>]*>', body
+        )
         self.assertIsNotNone(
             tabs_open,
-            "outer <div class='tabs tabs--segmented'> not found in rendered HTML",
+            "outer <div class='tab-group tab-group--with-panels'> not found in rendered HTML",
         )
         self.assertNotIn(
             "data-show-mode",

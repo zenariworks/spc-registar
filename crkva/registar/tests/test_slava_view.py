@@ -1,10 +1,13 @@
 """Basic tests for the slava-households view (slava_view)."""
+
 from __future__ import annotations
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-
 from kalendar.models import Slava
+
+User = get_user_model()
 
 
 class SlavaDomacinstvaViewTests(TestCase):
@@ -18,6 +21,10 @@ class SlavaDomacinstvaViewTests(TestCase):
             dan=15,
             pokretni=False,
         )
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="tester", password="x")
+        self.client.force_login(self.user)
 
     def test_renders_for_existing_slava(self):
         url = reverse("slava_detail", kwargs={"uid": self.slava.uid})
