@@ -32,11 +32,12 @@ def get_tenant_phone_region(default: str = "RS") -> str:
     return getattr(tenant, "default_phone_region", None) or default
 
 
-class SerbianPhoneField(BasePhoneNumberField):
+class TenantPhoneField(BasePhoneNumberField):
     """PhoneNumberField with loose parsing and Cyrillic Serbian errors.
 
-    Tenant-aware: default region resolves from the current tenant at clean()
-    time. Naming is historical; the region is no longer hard-coded to RS.
+    Default region resolves from the current tenant at clean() time, so
+    the same digits parse differently in Cukarica (RS) vs Amsterdam (NL).
+    Inputs with an explicit +country prefix always win.
     """
 
     default_error_messages = {

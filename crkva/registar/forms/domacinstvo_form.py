@@ -2,7 +2,7 @@
 
 from django import forms
 from django.forms import inlineformset_factory
-from registar.forms.phone import SerbianPhoneField
+from registar.forms.phone import TenantPhoneField
 from registar.forms.select2 import (
     PublicSchemaModelSelect2Widget,
     ScriptAwareModelSelect2Widget,
@@ -13,8 +13,8 @@ from registar.models import Adresa, Domacinstvo, Osoba, Slava, Ukucanin
 class DomacinstvoForm(forms.ModelForm):
     """Формулар за унос новог домаћинства."""
 
-    tel_mobilni = SerbianPhoneField(label="Мобилни телефон", placeholder="061 234 5678")
-    tel_fiksni = SerbianPhoneField(label="Фиксни телефон", placeholder="011 234 5678")
+    tel_mobilni = TenantPhoneField(label="Мобилни телефон", placeholder="061 234 5678")
+    tel_fiksni = TenantPhoneField(label="Фиксни телефон", placeholder="011 234 5678")
 
     class Meta:
         model = Domacinstvo

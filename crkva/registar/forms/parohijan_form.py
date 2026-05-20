@@ -3,7 +3,7 @@
 from django import forms
 from registar.forms.distinct_lookup import DistinctValuesCharField
 from registar.forms.lookup import TaggableLookupField, TaggableLookupWidget
-from registar.forms.phone import SerbianPhoneField
+from registar.forms.phone import TenantPhoneField
 from registar.forms.select2 import ScriptAwareModelSelect2Widget
 from registar.models import Adresa, Narodnost, Parohijan, Veroispovest, Zanimanje
 
@@ -44,8 +44,8 @@ class ParohijanForm(forms.ModelForm):
         model_label="registar.Osoba",
         source_fields=("mesto_rodjenja",),
     )
-    tel_mobilni = SerbianPhoneField(label="Мобилни телефон", placeholder="061 234 5678")
-    tel_fiksni = SerbianPhoneField(label="Фиксни телефон", placeholder="011 234 5678")
+    tel_mobilni = TenantPhoneField(label="Мобилни телефон", placeholder="061 234 5678")
+    tel_fiksni = TenantPhoneField(label="Фиксни телефон", placeholder="011 234 5678")
 
     class Meta:
         model = Parohijan
