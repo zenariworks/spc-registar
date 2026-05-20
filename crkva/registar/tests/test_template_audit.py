@@ -131,6 +131,15 @@ class SlavaUkucaninFallbackTests(TestCase):
             preminuo=True,
         )
 
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
+
     def test_fallback_name_renders(self):
         url = reverse("slava_detail", kwargs={"uid": self.slava.uid})
         response = self.client.get(url)

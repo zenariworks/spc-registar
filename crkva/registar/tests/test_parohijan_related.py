@@ -1,8 +1,11 @@
 """Tests for parent / extended-role surfacing on parohijan detail."""
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from registar.models import Hram, Krstenje, Osoba, Vencanje
+
+User = get_user_model()
 
 
 class ParohijanRelatedRecordsTest(TestCase):
@@ -44,6 +47,10 @@ class ParohijanRelatedRecordsTest(TestCase):
             otac=cls.parent,
             hram=cls.hram,
         )
+
+    def setUp(self):
+        self.user = User.objects.create_user(username="tester", password="x")
+        self.client.force_login(self.user)
 
     def test_vencanje_link_appears_for_svekrva_role(self):
         response = self.client.get(

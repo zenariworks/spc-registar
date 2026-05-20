@@ -3,19 +3,14 @@
 import datetime as dt
 from collections import defaultdict
 
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
-
-from registar.models import (
-    Krstenje,
-    Parohijan,
-    Slava,
-    Svestenik,
-    Vencanje,
-)
+from registar.models import Krstenje, Parohijan, Slava, Svestenik, Vencanje
 from registar.utils_fasting import get_fasting_type
 
 
+@login_required
 def index(request) -> HttpResponse:
     """
     Приказ почетне странице са календарским приказом актуелних слава (-1 до +5 дана).
@@ -115,7 +110,13 @@ def index(request) -> HttpResponse:
                 "day_label": day_label,
                 "is_fasting": fasting_info["is_fasting"],
                 "fasting_type": fasting_info["type"],
-                "fasting_class": {"вода":"water","уље":"oil","риба":"fish","бели_мрс":"dairy"}.get(fasting_info["type"]) or "",
+                "fasting_class": {
+                    "вода": "water",
+                    "уље": "oil",
+                    "риба": "fish",
+                    "бели_мрс": "dairy",
+                }.get(fasting_info["type"])
+                or "",
                 "fasting_display": fasting_info["display"],
                 "fasting_description": fasting_info["description"],
                 "slave": day_slavas,
@@ -147,4 +148,3 @@ def index(request) -> HttpResponse:
     }
 
     return render(request, "registar/index.html", context)
-

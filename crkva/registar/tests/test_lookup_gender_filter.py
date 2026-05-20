@@ -11,28 +11,14 @@ import re
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
-
-from registar.forms.krstenje_form import (
-    FemaleOsobaSelect2Widget as KrstFemale,
-)
-from registar.forms.krstenje_form import (
-    KrstenjeForm,
-)
-from registar.forms.krstenje_form import (
-    MaleOsobaSelect2Widget as KrstMale,
-)
-from registar.forms.krstenje_form import (
-    OsobaSelect2Widget as KrstUnfiltered,
-)
-from registar.forms.vencanje_form import (
-    FemaleOsobaSelect2Widget as VencFemale,
-)
-from registar.forms.vencanje_form import (
-    MaleOsobaSelect2Widget as VencMale,
-)
+from registar.forms.krstenje_form import FemaleOsobaSelect2Widget as KrstFemale
+from registar.forms.krstenje_form import KrstenjeForm
+from registar.forms.krstenje_form import MaleOsobaSelect2Widget as KrstMale
+from registar.forms.krstenje_form import OsobaSelect2Widget as KrstUnfiltered
+from registar.forms.vencanje_form import FemaleOsobaSelect2Widget as VencFemale
+from registar.forms.vencanje_form import MaleOsobaSelect2Widget as VencMale
 from registar.forms.vencanje_form import VencanjeForm
 from registar.models import Osoba
-
 
 FIELD_ID_RE = re.compile(
     r'<select[^>]*name="(?P<name>[a-z_]+)"[^>]*data-field_id="(?P<fid>[^"]+)"'
@@ -307,9 +293,7 @@ class Select2AjaxGenderFilterTests(TestCase):
         ids = self._field_ids("unos_vencanja")
         for name in ("svekar", "tast", "stari_svat"):
             results = self._ajax_ids(ids[name], term="Тест")
-            self.assertIn(
-                self.male.pk, results, msg=f"male missing from {name} lookup"
-            )
+            self.assertIn(self.male.pk, results, msg=f"male missing from {name} lookup")
             self.assertNotIn(
                 self.female.pk, results, msg=f"female leaked into {name} lookup"
             )
@@ -372,5 +356,5 @@ class OsobaCreateJsWiringTests(TestCase):
         self.assertIn("data-osoba-default-pol", js)
         self.assertIn("modal-pol-toggle", js)
         # Sanity: the helper that flips the toggle must reference the
-        # .toggle-button class so it matches the modal markup.
-        self.assertIn("toggle-button", js)
+        # .tab-group__item class so it matches the modal markup.
+        self.assertIn("tab-group__item", js)

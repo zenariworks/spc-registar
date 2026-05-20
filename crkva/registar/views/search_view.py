@@ -1,23 +1,16 @@
 """Глобална претрага и AJAX аутокомплетер."""
 
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-
-from registar.models import (
-    Domacinstvo,
-    Krstenje,
-    Parohijan,
-    Slava,
-    Svestenik,
-    Vencanje,
-)
+from registar.models import Domacinstvo, Krstenje, Parohijan, Svestenik, Vencanje
 from registar.utils import get_query_variants
-
 
 SEARCH_PREVIEW_LIMIT = 5
 
 
+@login_required
 def search_view(request) -> HttpResponse:
     """Глобална претрага по свим ентитетима."""
     query = request.GET.get("query", "").strip()
@@ -114,6 +107,7 @@ def search_view(request) -> HttpResponse:
     return render(request, "registar/search_view.html", context)
 
 
+@login_required
 def search_autocomplete(request):
     """JSON endpoint за аутокомплит претрагу — grouped by type, ranked by relevance."""
     query = request.GET.get("q", "").strip()
@@ -234,5 +228,3 @@ def search_autocomplete(request):
         groups.append({"label": "Венчања", "items": items})
 
     return JsonResponse({"groups": groups})
-
-

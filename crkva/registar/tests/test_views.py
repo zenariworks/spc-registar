@@ -15,6 +15,13 @@ class IndexViewTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_index_returns_200(self):
         """Почетна страница враћа статус 200."""
@@ -51,6 +58,13 @@ class SpisakKrstenjaViewTestCase(TestCase):
             dete_sa_telesnom_manom=False,
             hram=self.hram,
         )
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_spisak_krstenja_returns_200(self):
         """Списак крштења враћа статус 200."""
@@ -98,6 +112,13 @@ class PrikazKrstenjaViewTestCase(TestCase):
             dete_sa_telesnom_manom=False,
             hram=self.hram,
         )
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_prikaz_krstenja_returns_200(self):
         """Приказ крштења враћа статус 200."""
@@ -139,6 +160,13 @@ class SpisakParohijanaViewTestCase(TestCase):
             prezime="Јовановић",
             parohijan=True,
         )
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_spisak_parohijana_returns_200(self):
         """Списак парохијана враћа статус 200."""
@@ -161,6 +189,13 @@ class SearchViewTestCase(TestCase):
             prezime="Николић",
             parohijan=True,
         )
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_search_returns_200(self):
         """Претрага враћа статус 200."""
@@ -189,6 +224,13 @@ class KalendarViewTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_kalendar_returns_200(self):
         """Календар враћа статус 200."""
@@ -208,6 +250,13 @@ class CalibrateViewsTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_calibrate_krstenje_returns_200(self):
         """Калибрација крштенице враћа статус 200."""
@@ -254,6 +303,13 @@ class ListSortTestCase(TestCase):
         Osoba.objects.create(ime="Ана", prezime="Аћимовић", parohijan=True)
         Osoba.objects.create(ime="Марко", prezime="Марковић", parohijan=True)
         Osoba.objects.create(ime="Зорица", prezime="Шушић", parohijan=True)
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def _first_primary(self, response):
         import re
@@ -289,6 +345,13 @@ class SpisakParohijanaListTests(TestCase):
         self.adresa = Adresa.objects.create(
             ulica="Поручника Спасића", broj="12", mesto="Београд"
         )
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_domacin_badge_renders(self):
         """Парохијан који је домаћин има значку 'домаћин' и адресу домаћинства."""

@@ -2,6 +2,7 @@
 Модул за приказ, додавање и генерисање PDF докумената за парохијане.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -37,7 +38,9 @@ def unos_parohijana(request):
     )
 
 
-class SpisakParohijana(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
+class SpisakParohijana(
+    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+):
     """Приказује списак парохијана са могућношћу претраге и пагинације."""
 
     model = Parohijan
@@ -76,7 +79,7 @@ class SpisakParohijana(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
         )
 
 
-class ParohijanPDF(DetailView):
+class ParohijanPDF(LoginRequiredMixin, DetailView):
     """Генерише PDF документ за одређеног парохијана."""
 
     model = Parohijan
@@ -105,7 +108,7 @@ class ParohijanPDF(DetailView):
         return self.render_to_response(context)
 
 
-class PrikazParohijana(DetailView):
+class PrikazParohijana(LoginRequiredMixin, DetailView):
     """Приказује детаљне информације о одређеном парохијану."""
 
     model = Parohijan

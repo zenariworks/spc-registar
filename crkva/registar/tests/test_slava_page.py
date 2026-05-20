@@ -23,6 +23,15 @@ class SlavaAddressRenderTest(TestCase):
             domacin=cls.domacin, adresa=cls.adresa, slava=cls.slava
         )
 
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
+
     def test_address_renders_full_text(self):
         """The list must include the street name, not only the broj."""
         response = self.client.get(
