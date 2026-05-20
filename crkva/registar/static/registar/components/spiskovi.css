@@ -1074,21 +1074,28 @@ body.history-open {
    on one column), drop the 2-col grid so the lone column doesn't sit
    isolated in a half-width box. */
 /* Single-column variant: flow header + names inline so a list of one or two
-   members renders compactly ("Живи: Никола Поповић, Марија Поповић") instead
-   of stretching across a full-width column with empty space below. */
+   members renders compactly ("Живи  Никола Поповић  Марија Поповић") instead
+   of stretching across a full-width column with empty space below.
+   .stavka__roster-col wraps the header + ul and needs display: contents so
+   its children participate directly in the parent flex layout. */
 .stavka__roster--single {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   gap: var(--space-1) var(--space-3);
 }
+.stavka__roster--single .stavka__roster-col {
+  display: contents;
+}
 .stavka__roster--single .stavka__roster-head {
   margin-bottom: 0;
 }
 .stavka__roster--single .stavka__roster-list {
-  display: inline-flex;
+  display: flex;
   flex-wrap: wrap;
   gap: var(--space-1) var(--space-3);
+  margin: 0;
+  padding: 0;
 }
 .stavka__roster--single .stavka__roster-list li {
   padding: 0;
