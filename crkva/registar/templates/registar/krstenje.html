@@ -35,8 +35,8 @@
     <a href="{% if is_edit and krstenje %}{% url 'krstenje_detail' uid=krstenje.uid %}{% else %}{% url 'krstenja' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 class="u-page-title">
       {% if is_edit and not krstenje %}Унос крштења
-      {% elif is_edit %}Измена крштења{% if krstenje %} — {{ krstenje.ime_deteta }}{% endif %}
-      {% else %}Крштење — {{ krstenje.ime_deteta }} {{ krstenje.prezime_oca }}{% endif %}
+      {% elif is_edit %}Измена крштења{% if krstenje %}<span class="u-page-title__subtitle">{{ krstenje.ime_deteta }}</span>{% endif %}
+      {% else %}Крштење<span class="u-page-title__subtitle">{{ krstenje.ime_deteta }} {{ krstenje.prezime_oca }}</span>{% endif %}
     </h1>
     {% if krstenje %}
       <span data-show-mode="view">

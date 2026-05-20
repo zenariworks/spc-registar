@@ -18,8 +18,8 @@
     </a>
     <h1 class="u-page-title">
       {% if is_edit and not svestenik %}Додавање свештеника
-      {% elif is_edit %}Измена: {{ svestenik.ime }} {{ svestenik.prezime }}
-      {% else %}{{ svestenik.ime }} {{ svestenik.prezime }}{% endif %}
+      {% elif is_edit %}Измена свештеника{% if svestenik %}<span class="u-page-title__subtitle">{{ svestenik.ime }} {{ svestenik.prezime }}</span>{% endif %}
+      {% else %}Свештеник<span class="u-page-title__subtitle">{{ svestenik.ime }} {{ svestenik.prezime }}</span>{% endif %}
     </h1>
     {% if svestenik %}
       <span data-show-mode="view">
