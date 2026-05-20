@@ -70,6 +70,9 @@
     --sidebar-active-text:     #F5E6BD;
     --sidebar-divider:         rgba(176, 132, 67, 0.20);
     --sidebar-theme-meta:      #15161D;
+    --sidebar-scrollbar-track: rgba(237, 230, 214, 0.04);
+    --sidebar-scrollbar-thumb: rgba(176, 132, 67, 0.28);
+    --sidebar-scrollbar-thumb-hover: rgba(176, 132, 67, 0.42);
 
     /* ---------- Fasting cells (warm-tinted) ---------- */
     --fasting-dairy-bg: rgba(176, 132, 67, 0.16);

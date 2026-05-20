@@ -166,6 +166,9 @@
     --sidebar-active-text:     #FFFFFF;
     --sidebar-divider:         rgba(255, 255, 255, 0.14);
     --sidebar-theme-meta:      #A21514;
+    --sidebar-scrollbar-track: rgba(255, 255, 255, 0.06);
+    --sidebar-scrollbar-thumb: rgba(255, 255, 255, 0.22);
+    --sidebar-scrollbar-thumb-hover: rgba(255, 255, 255, 0.38);
 
     /* ---------- Typography ---------- */
     --font-display: 'Miroslavljeva Cirilica', 'PT Serif', Georgia, serif;

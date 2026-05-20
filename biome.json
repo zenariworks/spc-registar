@@ -1,0 +1,58 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "include": [
+      "crkva/registar/static/registar/**/*.css",
+      "crkva/registar/static/registar/**/*.js"
+    ],
+    "ignore": [
+      "crkva/registar/static/registar/**/*.min.js",
+      "crkva/registar/static/registar/**/*.min.css",
+      "crkva/registar/static/registar/vendor/**"
+    ]
+  },
+  "formatter": {
+    "enabled": false
+  },
+  "organizeImports": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "style": {
+        "useNamingConvention": "off",
+        "noVar": "warn",
+        "useTemplate": "off",
+        "useConst": "warn"
+      },
+      "complexity": {
+        "useArrowFunction": "off",
+        "noForEach": "off",
+        "useOptionalChain": "warn"
+      },
+      "suspicious": {
+        "noConsoleLog": "error",
+        "noDebugger": "error",
+        "noRedundantUseStrict": "warn",
+        "noAssignInExpressions": "warn"
+      },
+      "correctness": {
+        "noUnusedVariables": "warn",
+        "noInnerDeclarations": "warn"
+      }
+    }
+  },
+  "css": {
+    "linter": {"enabled": true},
+    "formatter": {"enabled": false},
+    "parser": {"cssModules": false, "allowWrongLineComments": false}
+  }
+}
