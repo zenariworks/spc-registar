@@ -2,7 +2,7 @@
 
 from django.db import models
 from model_utils.models import TimeStampedModel
-from phonenumber_field.modelfields import PhoneNumberField
+from registar.fields import TenantPhoneNumberField
 from simple_history.models import HistoricalRecords
 
 from .adresa import Adresa
@@ -39,11 +39,11 @@ class Osoba(TimeStampedModel):
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="адреса"
     )
-    tel_fiksni = PhoneNumberField(
-        region="RS", verbose_name="фиксни телефон", blank=True, null=True
+    tel_fiksni = TenantPhoneNumberField(
+        verbose_name="фиксни телефон", blank=True, null=True
     )
-    tel_mobilni = PhoneNumberField(
-        region="RS", verbose_name="мобилни телефон", blank=True, null=True
+    tel_mobilni = TenantPhoneNumberField(
+        verbose_name="мобилни телефон", blank=True, null=True
     )
     email = models.EmailField(
         max_length=254, verbose_name="имејл", blank=True, null=True
