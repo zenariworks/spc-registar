@@ -40,7 +40,7 @@
 
 .u-page-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: var(--space-4);
     margin: var(--space-5) 0 var(--space-3);

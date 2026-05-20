@@ -18,8 +18,8 @@
     <a href="{% if is_edit and domacinstvo %}{% url "domacinstvo_detail" uid=domacinstvo.uid %}{% else %}{% url "domacinstva" %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 class="u-page-title">
       {% if is_edit and not domacinstvo %}Додавање домаћинства
-      {% elif is_edit %}Измена домаћинства{% if domacinstvo.domacin %} · {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}{% endif %}
-      {% else %}Домаћинство · {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}{% endif %}
+      {% elif is_edit %}Измена домаћинства{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}
+      {% else %}Домаћинство{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}{% endif %}
     </h1>
     {% if domacinstvo %}
       <span data-show-mode="view">

@@ -35,8 +35,8 @@
     <a href="{% if is_edit and vencanje %}{% url 'vencanje_detail' uid=vencanje.uid %}{% else %}{% url 'vencanja' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 class="u-page-title">
       {% if is_edit and not vencanje %}Унос венчања
-      {% elif is_edit %}Измена венчања
-      {% else %}Венчање — {{ vencanje.ime_zenika }} и {{ vencanje.ime_neveste }} {{ vencanje.prezime_zenika }}{% endif %}
+      {% elif is_edit %}Измена венчања{% if vencanje %}<span class="u-page-title__subtitle">{{ vencanje.ime_zenika }} и {{ vencanje.ime_neveste }} {{ vencanje.prezime_zenika }}</span>{% endif %}
+      {% else %}Венчање<span class="u-page-title__subtitle">{{ vencanje.ime_zenika }} и {{ vencanje.ime_neveste }} {{ vencanje.prezime_zenika }}</span>{% endif %}
     </h1>
     {% if vencanje %}
       <span data-show-mode="view">
