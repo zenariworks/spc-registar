@@ -138,6 +138,16 @@
           </div>
         </div>
       </li>
+      <li class="info-row info-row--editable info-row--stacked">
+        <div class="info-row__icon" data-tooltip="Имејл"><i class="fa-solid fa-envelope"></i></div>
+        <div class="info-row__body">
+          <label class="info-row__label" for="{{ form.email.id_for_label }}">Имејл</label>
+          <div class="info-row__value">
+            <span class="info-row__static">{% if parohijan.email %}<a href="mailto:{{ parohijan.email }}">{{ parohijan.email }}</a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.email }}
+          </div>
+        </div>
+      </li>
       {% if parohijan.domacinstvo %}
       <li class="info-row" data-show-mode="view">
         <div class="info-row__icon" data-tooltip="Домаћин домаћинства"><i class="fa-solid fa-house"></i></div>
