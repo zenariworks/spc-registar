@@ -157,6 +157,11 @@
     --color-black-alpha-90: rgba(0, 0, 0, 0.95);
     --color-white-alpha-20: rgba(237, 230, 214, 0.14);
 
+    /* Olive — warm theme accent, used for domacin badge to avoid red clash */
+    --color-olive:         #8DA055;
+    --color-olive-bg:      #2F3A1F;
+    --color-olive-border:  #4F5B1E;
+
     /* Legacy dark-* aliases */
     --color-dark-bg:            var(--color-ink-800);
     --color-dark-bg-deep:       var(--color-ink-900);
@@ -241,4 +246,14 @@
 [data-theme="dark"] .page-size-link--active {
     background: var(--color-primary) !important;
     color: #fff !important;
+}
+
+
+/* On tamna the домаћин badge inherits --color-primary (deep red), which
+   clashes against the dark ink palette. Override with olive (cooler on dark) —
+   matches the sepia treatment for visual parity. */
+[data-theme="dark"] .stavka__meta-badge--domacin {
+    color: var(--color-olive);
+    background: var(--color-olive-bg);
+    border-color: var(--color-olive-border);
 }
