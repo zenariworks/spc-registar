@@ -301,6 +301,13 @@ class Command(MigrationCommand):
     @atomic
     def _build_and_save(self, records: list[KrstenjeRecord]) -> int:
         created = 0
+        dedup_skipped = 0
+        # Source DBF (HSPKRST) contains true duplicates where the same baptism
+        # was entered twice (same child name + baptism date + citation). We
+        # dedupe on (god, knj, str, broj, dete_ime, dete_prezime, datum) so
+        # legitimate twins (same citation, different child) and registry typos
+        # (different prezime spelling) are preserved.
+        seen: set[tuple] = set()
         for r in records:
             try:
                 data = self._build_krstenje(r)
@@ -312,6 +319,21 @@ class Command(MigrationCommand):
                 continue
             if data is None:
                 continue
+            dete = data.get("dete")
+            key = (
+                data.get("godina_registracije"),
+                data.get("knjiga"),
+                data.get("strana"),
+                data.get("broj"),
+                (dete.ime.casefold() if dete and dete.ime else None),
+                (dete.prezime.casefold() if dete and dete.prezime else None),
+                data.get("datum"),
+            )
+            if key in seen:
+                dedup_skipped += 1
+                self.log_skip(r.context, "дупликат — иста citation + дете + датум")
+                continue
+            seen.add(key)
             if self._dry_run:
                 created += 1
                 continue
@@ -320,6 +342,12 @@ class Command(MigrationCommand):
                 created += 1
             except IntegrityError as e:
                 self.log_error(r.context, f"IntegrityError: {e}")
+        if dedup_skipped:
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Прескочено као дупликати у извору: {dedup_skipped}"
+                )
+            )
         return created
 
     # ---------------- Transform ----------------
