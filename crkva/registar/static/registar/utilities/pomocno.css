@@ -45,6 +45,8 @@
     gap: var(--space-4);
     margin: var(--space-5) 0 var(--space-3);
     width: 100%;
+    flex-wrap: wrap;
+    row-gap: var(--space-2);
     /* Stick to viewport top so back/edit/print/history stay reachable while
        scrolling through long forms. Background is opaque (theme-aware) so
        content scrolling underneath does not bleed through; a hairline
@@ -204,4 +206,13 @@
 .osoba__devojacko {
     color: var(--color-text-muted);
     font-weight: 400;
+}
+
+
+/* When the list toolbar (search + sort) is rendered inside a u-page-header,
+   wrap it to a full-width second row below the title. Keeps the toolbar
+   sticky with the header instead of scrolling away with the list. */
+.u-page-header > .list-toolbar {
+    flex-basis: 100%;
+    margin: 0;
 }

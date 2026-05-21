@@ -7,8 +7,9 @@
         <i class="fa-solid fa-arrow-left"></i>
     </a>
     <h1 class="u-page-title">Парохијани <span class="u-page-title__count">· {{ page_obj.paginator.count }}</span></h1>
+    {% include "registar/_list_toolbar.html" %}
 </div>
-{% include "registar/_list_toolbar.html" %}
+
 {% include "registar/_filter_chips.html" %}
 <ul class="spisak" id="spisak-list">
     {% include "registar/_stavka_parohijana.html" %}
