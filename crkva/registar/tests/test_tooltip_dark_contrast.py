@@ -6,7 +6,7 @@ they consumed `var(--color-surface)` for `color` while `--color-surface`
 resolves to the page background (#0d1117) in dark mode.
 
 The fix introduces dedicated, theme-aware tokens (`--tooltip-bg`,
-`--tooltip-text`, `--tooltip-shadow`) defined in `base/tokens.css` for the
+`--tooltip-text`, `--tooltip-shadow`) defined in `themes/svetla.css` for the
 light theme and overridden in `themes/tamna.css` for the dark theme. All
 tooltip variants must consume those tokens — never `--color-surface` or
 `--color-text` — so their values can never collide with the page bg.
@@ -26,7 +26,7 @@ from django.test import TestCase
 # from `crkva/`, pytest may run from repo root).
 _REGISTAR_APP_DIR = pathlib.Path(__file__).resolve().parent.parent
 REGISTAR_STATIC = _REGISTAR_APP_DIR / "static" / "registar"
-TOKENS_CSS = REGISTAR_STATIC / "base" / "tokens.css"
+TOKENS_CSS = REGISTAR_STATIC / "themes" / "svetla.css"
 DARK_THEME_CSS = REGISTAR_STATIC / "themes" / "tamna.css"
 DUGMAD_CSS = REGISTAR_STATIC / "components" / "dugmad.css"
 SIDEBAR_CSS = REGISTAR_STATIC / "layout" / "bocna-traka.css"
