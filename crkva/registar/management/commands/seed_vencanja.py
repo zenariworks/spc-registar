@@ -1,13 +1,14 @@
 """Seed Vencanje rows by pairing existing adult Parohijani as zenik+nevesta."""
+
 from __future__ import annotations
 
 import random as random_module
 
 from django.core.management.base import BaseCommand, CommandError
-
-from registar.mock import constraints, generators as g
+from registar.mock import constraints
+from registar.mock import generators as g
 from registar.mock.tenant_ctx import with_tenant
-from registar.models import Parohijan, Svestenik, Vencanje
+from registar.models import Osoba, Svestenik, Vencanje
 
 
 class Command(BaseCommand):
@@ -33,12 +34,16 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING(f"Обрисано {n} венчања."))
 
             adult_cutoff = g.TODAY.replace(year=g.TODAY.year - 18)
-            males = list(Parohijan.objects.filter(
-                pol="М", datum_rodjenja__lte=adult_cutoff
-            ).order_by("?"))
-            females = list(Parohijan.objects.filter(
-                pol="Ж", datum_rodjenja__lte=adult_cutoff
-            ).order_by("?"))
+            males = list(
+                Osoba.objects.filter(
+                    pol="М", datum_rodjenja__lte=adult_cutoff
+                ).order_by("?")
+            )
+            females = list(
+                Osoba.objects.filter(
+                    pol="Ж", datum_rodjenja__lte=adult_cutoff
+                ).order_by("?")
+            )
             svestenici = list(Svestenik.objects.all())
 
             if not males or not females:
@@ -85,9 +90,7 @@ class Command(BaseCommand):
                 constraints.assert_spouse_pair(
                     "М", m.datum_rodjenja, "Ж", f.datum_rodjenja, datum
                 )
-                constraints.assert_no_self_reference(
-                    m.uid, [f.uid, kum.uid], "женик"
-                )
+                constraints.assert_no_self_reference(m.uid, [f.uid, kum.uid], "женик")
 
                 Vencanje.objects.create(
                     godina_registracije=datum.year,
@@ -105,6 +108,8 @@ class Command(BaseCommand):
                 )
                 created += 1
 
-            self.stdout.write(self.style.SUCCESS(
-                f"Креирано {created} венчања у {tenant.schema_name!r}."
-            ))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Креирано {created} венчања у {tenant.schema_name!r}."
+                )
+            )

@@ -8,7 +8,7 @@ from .hram import Hram
 from .krstenje import Krstenje
 from .narodnost import Narodnost
 from .parohija import Parohija
-from .parohijan import Osoba, Parohijan
+from .parohijan import Osoba
 from .svestenik import Svestenik
 from .ukucanin import Ukucanin
 from .vencanje import Vencanje
@@ -25,7 +25,7 @@ __all__ = [
     "Narodnost",
     "Parohija",
     "Osoba",
-    "Parohijan",
+    "Osoba",
     "Svestenik",
     "Ukucanin",
     "Vencanje",

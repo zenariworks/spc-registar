@@ -6,7 +6,7 @@ from collections import defaultdict
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
-from registar.models import Krstenje, Parohijan, Slava, Svestenik, Vencanje
+from registar.models import Krstenje, Osoba, Slava, Svestenik, Vencanje
 from registar.utils_fasting import get_fasting_type
 
 
@@ -137,7 +137,7 @@ def index(request) -> HttpResponse:
 
     context = {
         "stats": {
-            "parohijani": Parohijan.objects.count(),
+            "parohijani": Osoba.objects.count(),
             "krstenja": Krstenje.objects.count(),
             "vencanja": Vencanje.objects.count(),
             "svestenici": Svestenik.objects.count(),

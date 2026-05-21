@@ -9,16 +9,17 @@ Constraints enforced (mock.constraints):
 - spouse opposite gender + adult
 - no self-reference
 """
+
 from __future__ import annotations
 
 import random as random_module
 
 from django.core.management.base import BaseCommand, CommandError
-
-from registar.mock import constraints, generators as g
-from registar.mock.tenant_ctx import with_tenant
-from registar.models import Adresa, Domacinstvo, Parohijan, Ukucanin
 from kalendar.models import Slava
+from registar.mock import constraints
+from registar.mock import generators as g
+from registar.mock.tenant_ctx import with_tenant
+from registar.models import Adresa, Domacinstvo, Osoba, Ukucanin
 
 
 class Command(BaseCommand):
@@ -27,11 +28,18 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--from", dest="source", default="mock")
         parser.add_argument("--tenant", required=True)
-        parser.add_argument("--count", type=int, default=33,
-                            help="Колико домаћинстава креирати (default 33).")
+        parser.add_argument(
+            "--count",
+            type=int,
+            default=33,
+            help="Колико домаћинстава креирати (default 33).",
+        )
         parser.add_argument("--seed", type=int, default=None)
-        parser.add_argument("--reset", action="store_true",
-                            help="ОПАСНО: брише сва домаћинства + укућане у тенанту.")
+        parser.add_argument(
+            "--reset",
+            action="store_true",
+            help="ОПАСНО: брише сва домаћинства + укућане у тенанту.",
+        )
 
     def handle(self, *args, **opts):
         if opts["seed"] is not None:
@@ -45,20 +53,28 @@ class Command(BaseCommand):
                 d_count = Domacinstvo.objects.count()
                 Ukucanin.objects.all().delete()
                 Domacinstvo.objects.all().delete()
-                self.stdout.write(self.style.WARNING(
-                    f"Обрисано {d_count} домаћинстава + {u_count} укућана."
-                ))
+                self.stdout.write(
+                    self.style.WARNING(
+                        f"Обрисано {d_count} домаћинстава + {u_count} укућана."
+                    )
+                )
 
             # Pre-fetch pools
-            adults_male = list(Parohijan.objects.filter(
-                pol="М", datum_rodjenja__lte=g.TODAY.replace(year=g.TODAY.year - 18)
-            ).order_by("?")[: opts["count"] * 2])
-            adults_female = list(Parohijan.objects.filter(
-                pol="Ж", datum_rodjenja__lte=g.TODAY.replace(year=g.TODAY.year - 18)
-            ).order_by("?")[: opts["count"] * 2])
-            children = list(Parohijan.objects.filter(
-                datum_rodjenja__gt=g.TODAY.replace(year=g.TODAY.year - 18)
-            ).order_by("?"))
+            adults_male = list(
+                Osoba.objects.filter(
+                    pol="М", datum_rodjenja__lte=g.TODAY.replace(year=g.TODAY.year - 18)
+                ).order_by("?")[: opts["count"] * 2]
+            )
+            adults_female = list(
+                Osoba.objects.filter(
+                    pol="Ж", datum_rodjenja__lte=g.TODAY.replace(year=g.TODAY.year - 18)
+                ).order_by("?")[: opts["count"] * 2]
+            )
+            children = list(
+                Osoba.objects.filter(
+                    datum_rodjenja__gt=g.TODAY.replace(year=g.TODAY.year - 18)
+                ).order_by("?")
+            )
             addresses = list(Adresa.objects.all())
             slavas = list(Slava.objects.all()[:30])
 
@@ -76,9 +92,9 @@ class Command(BaseCommand):
                 pool = adults_male or adults_female
                 candidates = [p for p in pool if p.uid not in used_parohijani]
                 if not candidates:
-                    self.stdout.write(self.style.WARNING(
-                        "Исцрпљени одрасли — стајем рано."
-                    ))
+                    self.stdout.write(
+                        self.style.WARNING("Исцрпљени одрасли — стајем рано.")
+                    )
                     break
                 domacin = random_module.choice(candidates)
                 used_parohijani.add(domacin.uid)
@@ -103,7 +119,9 @@ class Command(BaseCommand):
                         used_parohijani.add(spouse.uid)
                         # Assert opposite gender + adult
                         assert spouse.pol != domacin.pol, "spouse same gender"
-                        constraints.assert_adult(spouse.datum_rodjenja, role="супружник")
+                        constraints.assert_adult(
+                            spouse.datum_rodjenja, role="супружник"
+                        )
                         constraints.assert_no_self_reference(
                             domacin.uid, [spouse.uid], "супружник"
                         )
@@ -114,7 +132,9 @@ class Command(BaseCommand):
                         )
 
                 # 0-3 children
-                n_kids = random_module.choices([0, 1, 2, 3], weights=[20, 35, 30, 15])[0]
+                n_kids = random_module.choices([0, 1, 2, 3], weights=[20, 35, 30, 15])[
+                    0
+                ]
                 kid_candidates = [c for c in children if c.uid not in used_parohijani]
                 for kid in random_module.sample(
                     kid_candidates, min(n_kids, len(kid_candidates))
@@ -128,6 +148,8 @@ class Command(BaseCommand):
 
                 created += 1
 
-            self.stdout.write(self.style.SUCCESS(
-                f"Креирано {created} домаћинстава у {tenant.schema_name!r}."
-            ))
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Креирано {created} домаћинстава у {tenant.schema_name!r}."
+                )
+            )
