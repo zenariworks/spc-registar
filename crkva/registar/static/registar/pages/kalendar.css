@@ -509,7 +509,7 @@
   right: 0;
   margin-top: 8px;
   padding: 8px 12px;
-  /* Theme-aware tooltip tokens — see base/tokens.css + themes/tamna.css.
+  /* Theme-aware tooltip tokens — see themes/svetla.css + themes/tamna.css.
      Using --color-surface for text breaks dark mode (text == page bg). */
   background: var(--tooltip-bg);
   color: var(--tooltip-text);
