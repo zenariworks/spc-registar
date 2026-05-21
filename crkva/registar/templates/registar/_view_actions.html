@@ -1,0 +1,43 @@
+{% comment %}
+  Reusable action cluster — pinned to the bottom edge of the (sticky)
+  .u-page-header so it straddles the header/content border.
+
+  Layout: full-width row anchored to the header bottom.
+    LEFT  → back arrow
+    RIGHT → mode-aware buttons:
+              view: print → edit → history
+              edit: cancel → save
+
+  Required:
+    obj                  model instance with .uid
+
+  Optional:
+    pdf_url_name         named URL for print (positional uid)
+    edit_url_name        named URL for the edit form (uid kwarg)
+    can_edit             falsy hides the edit button
+    show_history         default True; pass False to suppress history toggle
+    back_list_url_name   list URL (view-mode back target)
+    back_detail_url_name detail URL (edit-mode back target)
+{% endcomment %}
+<div class="view-actions">
+  {% if back_list_url_name %}
+    <a href="{% if is_edit and obj %}{% url back_detail_url_name uid=obj.uid %}{% else %}{% url back_list_url_name %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
+  {% endif %}
+  <span class="view-actions__right">
+    <span data-show-mode="view">
+      {% if pdf_url_name %}
+        <a href="{% url pdf_url_name obj.uid %}" target="_blank" class="button button--neutral button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
+      {% endif %}
+      {% if edit_url_name and can_edit %}
+        <a href="{% url edit_url_name uid=obj.uid %}" data-action="enter-edit" class="button button--neutral button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>
+      {% endif %}
+      {% if show_history|default_if_none:True %}
+        <button type="button" id="history-toggle" class="button button--ghost button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
+      {% endif %}
+    </span>
+    <span data-show-mode="edit">
+      <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
+      <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+    </span>
+  </span>
+</div>

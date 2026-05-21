@@ -55,12 +55,13 @@
       <link rel="stylesheet" href="{% static 'registar/components/oznake.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/tabovi.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/modali.css' %}">
-      <link rel="stylesheet" href="{% static 'registar/components/select2_skin.css' %}">
       <!-- Theme overrides (loaded last for correct specificity) -->
       <link rel="stylesheet" href="{% static 'registar/themes/sepia.css' %}">
       <link rel="stylesheet" href="{% static 'registar/themes/tamna.css' %}">
     {% endcompress %}
     {% block extra_css %}{% endblock %}
+    {# Loaded AFTER form.media.css so this skin overrides vendor select2.min.css. #}
+    <link rel="stylesheet" href="{% static 'registar/components/select2_skin.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
     <link rel="icon" href="{% static 'registar/favicon.png' %}" type="image/x-icon">
