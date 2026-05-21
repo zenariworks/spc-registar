@@ -25,6 +25,7 @@
     --color-surface-2: #1F212B;
     --color-surface-1: #2A2D3A;
     --color-surface-3: #383C4D;
+    --color-surface-hover: #2A2F3B;  /* row/card hover state */
 
     /* ---------- Text (parchment cream) ---------- */
     --color-text:        #EDE6D6;
@@ -161,14 +162,6 @@
     --color-olive:         #8DA055;
     --color-olive-bg:      #2F3A1F;
     --color-olive-border:  #4F5B1E;
-
-    /* Legacy dark-* aliases */
-    --color-dark-bg:            var(--color-ink-800);
-    --color-dark-bg-deep:       var(--color-ink-900);
-    --color-dark-border:        var(--color-border-strong);
-    --color-dark-text:          var(--color-text);
-    --color-dark-text-secondary:var(--color-text-muted);
-
     /* Secondary */
     --color-secondary: #B0302E;
 
