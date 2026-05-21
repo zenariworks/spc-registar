@@ -28,24 +28,13 @@
   {% csrf_token %}
 
   <div class="u-page-header">
-    <a href="{% if is_edit and parohijan %}{% url "parohijan_detail" uid=parohijan.uid %}{% else %}{% url "parohijani" %}{% endif %}" class="back-button" aria-label="Назад" title="Назад">
-      <i class="fa-solid fa-arrow-left"></i>
-    </a>
     <h1 class="u-page-title">
       {% if is_edit and not parohijan %}Додавање парохијана
       {% elif is_edit %}Измена парохијана{% if parohijan %}<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}</span>{% endif %}
       {% else %}Парохијан<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}</span>{% endif %}
     </h1>
     {% if parohijan %}
-      <span data-show-mode="view">
-        {% if can_edit_osoba %}<a href="{% url "izmena_parohijana" uid=parohijan.uid %}" data-action="enter-edit" class="button button--neutral button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-        <a href="{% url "parohijan_pdf" parohijan.uid %}" target="_blank" class="button button--neutral button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
-        <button type="button" id="history-toggle" class="button button--ghost button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
-      </span>
-      <span data-show-mode="edit">
-        <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
-        <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
-      </span>
+      {% include "registar/_view_actions.html" with back_list_url_name="parohijani" back_detail_url_name="parohijan_detail" obj=parohijan edit_url_name="izmena_parohijana" can_edit=can_edit_osoba pdf_url_name="parohijan_pdf" %}
     {% else %}
       <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}

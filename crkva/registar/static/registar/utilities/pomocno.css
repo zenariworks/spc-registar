@@ -216,3 +216,38 @@
     flex-basis: 100%;
     margin: 0;
 }
+
+/* ==========================================================================
+   VIEW-ACTIONS — floating action cluster (print + edit + history)
+   ==========================================================================
+   Rendered by _view_actions.html. Pinned to the bottom-right of the viewport
+   so the buttons stay reachable while scrolling long detail pages. Hidden
+   automatically in edit mode because the wrapper carries data-show-mode="view"
+   (info.css drives the hide rule). On narrow screens we shrink the side gap
+   to keep the cluster off the screen edge but still finger-reachable.
+   ========================================================================== */
+.view-actions {
+    /* anchored to the bottom edge of the (sticky) .u-page-header; translateY
+       lifts the row so it straddles the header/content border line. Spans
+       the header full width so the back-arrow can hang on the left while
+       the view/edit button cluster hangs on the right. */
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transform: translateY(50%);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    z-index: 30;
+    pointer-events: none; /* clicks pass through the gap to the page below */
+}
+.view-actions > * {
+    pointer-events: auto;
+}
+.view-actions__right {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}

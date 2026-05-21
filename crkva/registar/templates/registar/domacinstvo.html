@@ -15,21 +15,13 @@
   {% csrf_token %}
 
   <div class="u-page-header">
-    <a href="{% if is_edit and domacinstvo %}{% url "domacinstvo_detail" uid=domacinstvo.uid %}{% else %}{% url "domacinstva" %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 class="u-page-title">
       {% if is_edit and not domacinstvo %}Додавање домаћинства
       {% elif is_edit %}Измена домаћинства{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}
       {% else %}Домаћинство{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}{% endif %}
     </h1>
     {% if domacinstvo %}
-      <span data-show-mode="view">
-        {% if can_edit_domacinstvo %}<a href="{% url "izmena_domacinstva" uid=domacinstvo.uid %}" data-action="enter-edit" class="button button--neutral button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-        <button type="button" id="history-toggle" class="button button--ghost button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
-      </span>
-      <span data-show-mode="edit">
-        <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
-        <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
-      </span>
+      {% include "registar/_view_actions.html" with back_list_url_name="domacinstva" back_detail_url_name="domacinstvo_detail" obj=domacinstvo edit_url_name="izmena_domacinstva" can_edit=can_edit_domacinstvo %}
     {% else %}
       <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}

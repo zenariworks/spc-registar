@@ -102,30 +102,56 @@
 /* Selection box (the closed-state pill) keeps the standard form-input look,
    inheriting forme.css selectors for height/border/padding. */
 /* Closed-state pill matches the list-toolbar sort dropdown — shared chevron, padding, hover/focus rings. */
+/* Re-assert the shared input chrome on select2's closed pill. The base
+   rule lives in forme.css but is wiped by vendor select2.min.css which
+   loads AFTER our compress block. This file is loaded last in <head>
+   (see base.html) so it wins the cascade.
+   Values must stay in sync with forme.css base input rule. */
 .select2-container--default .select2-selection--single {
+    width: 100%;
     height: auto;
-    min-height: 36px;
-    padding: 0;
+    min-height: 0;
+    padding: 10px 12px;
+    padding-right: 36px; /* room for the chevron */
+    font-size: 16px;
+    line-height: 1.5;
     border: 1px solid var(--color-border);
-    border-radius: var(--radius-2);
-    background-color: var(--color-surface);
+    border-radius: 10px;
+    background-color: var(--color-surface-1);
+    color: var(--color-text);
+    box-sizing: border-box;
+    cursor: pointer;
+    outline: none;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 16 16%27 fill=%27%23888%27%3E%3Cpath d=%27M3.204 5h9.592L8 10.481 3.204 5zm-.753.659l4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z%27/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     background-size: 12px;
-    transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-.select2-container--default .select2-selection--single:hover {
-    background-color: var(--color-surface-2);
-    border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
-}
-
+/* Render text identically to the way a native <input> shows its value:
+   no inner padding, inherit container font, baseline aligned with the
+   icon/label. */
 .select2-container--default .select2-selection--single .select2-selection__rendered {
     color: var(--color-text);
-    line-height: 20px;
-    padding: 8px 36px 8px 14px;
-    font-size: 14px;
+    line-height: inherit;
+    font-size: inherit;
+    padding: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Vendor select2.min.css renders its own arrow; we use a background-image
+   chevron above, so hide the native arrow span. */
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    display: none;
+}
+
+/* Matching focus ring with the rest of forme.css fields. */
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 25%, transparent);
 }
 
 /* Hide select2's built-in arrow — we use a background-image chevron like .list-toolbar__sort-select */
