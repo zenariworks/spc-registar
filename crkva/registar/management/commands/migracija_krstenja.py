@@ -36,6 +36,7 @@ from registar.migracija.helpers import (
     split_full_name_last_word,
 )
 from registar.migracija.osoba_repo import find_or_create_osoba
+from registar.migracija.sex import infer_sex_from_name
 from registar.models import (
     Hram,
     Krstenje,
@@ -461,5 +462,6 @@ class Command(MigrationCommand):
         return find_or_create_osoba(
             ime=kum_ime,
             prezime=kum_prez,
+            pol=infer_sex_from_name(kum_ime),
             zanimanje=self._zanimanje.get(r.kum_zanimanje),
         )
