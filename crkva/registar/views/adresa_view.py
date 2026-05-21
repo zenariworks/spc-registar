@@ -1,0 +1,75 @@
+"""Adresa-related views: duplicate finder + merge action.
+
+Adresa has no public detail or list page in the registar UI (addresses
+sit attached to Osoba / Domacinstvo / Svestenik). The merge flow gets
+its own admin-only page that surfaces exact-citation duplicate pairs
+and offers a one-click merge per pair.
+
+Routes:
+  - GET  /adrese/duplikati/  → list candidate duplicate groups
+  - POST /adresa/<loser_uid>/spoji/<winner_uid>/ → execute the merge
+"""
+
+from collections import defaultdict
+
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
+from registar.models import Adresa
+from registar.services.merge import adresa_fanout, merge_adrese
+from tenants.permissions import tenant_admin_required
+
+
+def _adresa_key(a: Adresa) -> tuple:
+    """Normalized identity key — same heuristic as popravi_duplikate Phase 1."""
+    return (
+        (a.ulica or "").strip().lower(),
+        (a.broj or "").strip().lower(),
+        (a.broj_stana or "").strip().lower(),
+        (a.mesto or "").strip().lower(),
+    )
+
+
+@tenant_admin_required
+def duplikati_adresa(request):
+    groups = defaultdict(list)
+    for a in Adresa.objects.all().order_by("uid"):
+        k = _adresa_key(a)
+        if k == ("", "", "", ""):
+            continue
+        groups[k].append(a)
+    dup_groups = []
+    for k, rows in groups.items():
+        if len(rows) < 2:
+            continue
+        decorated = [(a, adresa_fanout(a)) for a in rows]
+        dup_groups.append(
+            {
+                "key": " / ".join(p for p in k if p),
+                "rows": decorated,
+            }
+        )
+    dup_groups.sort(key=lambda g: g["key"])
+    return render(
+        request,
+        "registar/duplikati_adresa.html",
+        {"groups": dup_groups, "total_groups": len(dup_groups)},
+    )
+
+
+@require_POST
+@tenant_admin_required
+def spoji_adresu(request, loser_uid, winner_uid):
+    loser = get_object_or_404(Adresa, uid=loser_uid)
+    winner = get_object_or_404(Adresa, uid=winner_uid)
+    try:
+        moved = merge_adrese(loser, winner)
+    except ValueError as exc:
+        messages.error(request, str(exc))
+        return redirect("duplikati_adresa")
+    messages.success(
+        request,
+        f"Адресе спојене: пресмерено {moved['osoba']} парохијана, "
+        f"{moved['domacinstvo']} домаћинстава, {moved['svestenik']} свештеника.",
+    )
+    return redirect("duplikati_adresa")

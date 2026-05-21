@@ -92,4 +92,10 @@ urlpatterns = [
         views.izmena_domacinstva,
         name="izmena_domacinstva",
     ),
+    path("adrese/duplikati/", views.duplikati_adresa, name="duplikati_adresa"),
+    path(
+        "adresa/<uuid:loser_uid>/spoji/<uuid:winner_uid>/",
+        views.spoji_adresu,
+        name="spoji_adresu",
+    ),
 ]
