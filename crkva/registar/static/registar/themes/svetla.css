@@ -42,6 +42,14 @@
     --color-surface-2:      #FAFAFA;
     --color-surface-1:      #F3F4F6;
     --color-surface-hover:  #FAFBFC;   /* row/card hover state */
+    /* Olive (parity with sepia/tamna; light theme uses primary-red on domacin
+       badge by default, but olive tokens exist for components that want the
+       same accent across all themes) */
+    --color-olive:          #4F5B1E;
+    --color-olive-bg:       #EEF1D5;
+    --color-olive-border:   #B7CC68;
+    --color-surface-3:      #FFFFFF;   /* highest-elevation surface */
+    --color-placeholder:    #9CA3AF;   /* input placeholder text */
     --color-border:         rgba(15, 22, 29, 0.10);
     --color-border-strong:  rgba(15, 22, 29, 0.18);
 
@@ -88,14 +96,6 @@
     /* ---------- Links ---------- */
     --color-link:        var(--color-primary);
     --color-link-hover:  var(--color-primary-700);
-
-    /* ---------- Dark theme defaults (overridden in themes/tamna.css) ---------- */
-    --color-dark-bg:            var(--color-ink-800);
-    --color-dark-bg-deep:       var(--color-ink-900);
-    --color-dark-border:        #2D3140;
-    --color-dark-text:          #EDE6D6;
-    --color-dark-text-secondary:#9C8E7D;
-
     /* ---------- Amber (today highlight) ---------- */
     --color-amber-500: #B08443;
     --color-amber-400: #C19A57;
