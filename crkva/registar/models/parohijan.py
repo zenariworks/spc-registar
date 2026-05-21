@@ -65,6 +65,7 @@ class Osoba(TimeStampedModel):
         choices=[("М", "мушки"), ("Ж", "женски")],
         blank=True,
         null=True,
+        db_index=True,
     )
 
     zanimanje = models.ForeignKey(
@@ -100,7 +101,3 @@ class Osoba(TimeStampedModel):
         verbose_name = "Особа"
         verbose_name_plural = "Особе"
         ordering = ["prezime", "ime"]
-
-
-# Alias за компатибилност уназад
-Parohijan = Osoba

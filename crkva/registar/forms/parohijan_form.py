@@ -5,7 +5,7 @@ from registar.forms.distinct_lookup import DistinctValuesCharField
 from registar.forms.lookup import TaggableLookupField, TaggableLookupWidget
 from registar.forms.phone import TenantPhoneField
 from registar.forms.select2 import ScriptAwareModelSelect2Widget
-from registar.models import Adresa, Narodnost, Parohijan, Veroispovest, Zanimanje
+from registar.models import Adresa, Narodnost, Osoba, Veroispovest, Zanimanje
 
 
 class ParohijanForm(forms.ModelForm):
@@ -48,7 +48,7 @@ class ParohijanForm(forms.ModelForm):
     tel_fiksni = TenantPhoneField(label="Фиксни телефон", placeholder="011 234 5678")
 
     class Meta:
-        model = Parohijan
+        model = Osoba
         fields = [
             "ime",
             "prezime",
