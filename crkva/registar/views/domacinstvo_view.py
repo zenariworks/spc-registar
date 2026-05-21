@@ -42,10 +42,12 @@ class SpisakDomacinsta(
     paginate_by = 20
     search_fields = ["domacin__ime", "domacin__prezime", "adresa__ulica"]
     sort_options = [
+        ("adresa__ulica", "Адреса А-Ш"),
+        ("-adresa__ulica", "Адреса Ш-А"),
         ("domacin__prezime", "Презиме А-Ш"),
         ("-domacin__prezime", "Презиме Ш-А"),
     ]
-    ordering = ["domacin__prezime", "domacin__ime"]
+    ordering = ["adresa__ulica", "adresa__broj", "domacin__prezime", "domacin__ime"]
 
     def get_queryset(self):
         return self.get_search_queryset(
@@ -53,6 +55,14 @@ class SpisakDomacinsta(
             .prefetch_related("ukucani", "ukucani__osoba")
             .all()
         )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for d in context["domacinstva"]:
+            members = list(d.ukucani.all())
+            d.zivi_clanovi = [u for u in members if not u.preminuo]
+            d.preminuli_clanovi = [u for u in members if u.preminuo]
+        return context
 
 
 class PrikazDomacinstva(LoginRequiredMixin, DetailView):

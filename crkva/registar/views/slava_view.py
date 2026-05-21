@@ -16,7 +16,12 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
         Domacinstvo.objects.filter(slava=slava)
         .select_related("domacin", "adresa")
         .prefetch_related("ukucani", "ukucani__osoba")
-        .order_by("domacin__prezime", "domacin__ime")
+        .order_by(
+            "adresa__ulica",
+            "adresa__broj",
+            "domacin__prezime",
+            "domacin__ime",
+        )
     )
 
     # Attach partitioned lists so the template can render living vs.
