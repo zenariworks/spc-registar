@@ -171,6 +171,19 @@
     .u-page-header { gap: var(--space-3); flex-wrap: wrap; }
 }
 
+/* On mobile a fixed hamburger button sits at top:15/left:15 over the page;
+   reserve left padding on the header so the back-button + title don't sit
+   underneath it. */
+@media (max-width: 768px) {
+    .u-page-header {
+        padding-left: 60px;
+        margin-top: var(--space-2);
+        margin-bottom: var(--space-2);
+        padding-bottom: var(--space-1);
+        row-gap: var(--space-1);
+    }
+}
+
 
 /* Move 8 — inline-style cleanup utilities */
 
@@ -265,4 +278,14 @@
     bottom: 0;
     transform: translateY(50%);
     z-index: 30;
+}
+
+/* On phones the absolute back-button overlapped the wrapped list-toolbar
+   (search + sort) row. Revert to inline flex order on narrow screens so
+   the back-arrow sits beside the title like the rest of the chrome. */
+@media (max-width: 640px) {
+    .u-page-header > .back-button {
+        position: static;
+        transform: none;
+    }
 }

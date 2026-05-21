@@ -288,5 +288,15 @@
 @media (max-width: 640px) {
     .card, .card--elevated, .card--hero { padding: var(--space-3); }
     .card__header { margin-bottom: var(--space-3); padding-bottom: var(--space-2); }
-    .registry__card { flex-direction: column; align-items: flex-start; text-align: left; }
+    /* On phones the Регистри cards mirror Брзе акције (horizontal icon+text,
+       compact chrome) so the two sections read as the same component. */
+    .registry__card {
+        padding: var(--space-3) var(--space-4);
+        gap: var(--space-3);
+        background: var(--color-surface-2);
+        border-radius: var(--radius-2);
+    }
+    .registry__icon { width: 36px; height: 36px; font-size: 1.1rem; }
+    .registry__title { font-size: 0.95rem; }
+    .registry__desc  { font-size: 0.8rem; }
 }
