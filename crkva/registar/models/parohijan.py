@@ -93,6 +93,13 @@ class Osoba(TimeStampedModel):
     history = HistoricalRecords()
 
     def __str__(self):
+        # Females with a maiden name surface it inline so they read as
+        # "Љиљана Ристивојевић (рођ. Јовановић)" wherever an Osoba renders
+        # as plain text (select2 options, vencanje role fields, admin
+        # labels). HTML-styled detail subtitles still render the parts
+        # by hand for distinct typography.
+        if self.pol == "Ж" and self.devojacko_prezime:
+            return f"{self.ime} {self.prezime} (рођ. {self.devojacko_prezime})"
         return f"{self.ime} {self.prezime}"
 
     class Meta:

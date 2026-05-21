@@ -18,21 +18,31 @@
     overflow: hidden;
 }
 
+/* Search section inside the open dropdown. Distinct from the result list
+   via a darker background (surface-1, same as the closed input) + a leading
+   magnifying-glass icon, so users see at-a-glance where to type. */
 .select2-container--default .select2-search--dropdown {
-    padding: 14px 18px;
-    background: var(--color-surface);
+    padding: 12px 14px;
+    background: var(--color-surface-1);
     border-bottom: 1px solid var(--color-border);
 }
 
 .select2-container--default .select2-search--dropdown .select2-search__field {
-    border: none;
-    outline: none;
-    background: transparent;
-    font-size: 16px;
-    color: var(--color-text);
-    box-shadow: none;
-    padding: 0;
     width: 100%;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    outline: none;
+    background: var(--color-surface) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27 fill=%27%23888%27%3E%3Cpath d=%27M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z%27/%3E%3C/svg%3E") no-repeat 12px center / 14px;
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--color-text);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    padding: 8px 12px 8px 36px;
+}
+
+.select2-container--default .select2-search--dropdown .select2-search__field:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 25%, transparent);
 }
 
 .select2-container--default .select2-search--dropdown .select2-search__field::placeholder {
