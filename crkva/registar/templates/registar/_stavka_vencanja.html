@@ -4,7 +4,7 @@
     <a href="{% url 'vencanje_detail' uid=vencanje.uid %}" class="stavka-veza">
         {# safe-ok: markiraj filter escapes input before adding <span> highlight wrapping — see marker_filter.py for the contract #}
         <span class="stavka__primary">{{ vencanje.ime_zenika|markiraj:upit|safe }} и {{ vencanje.ime_neveste|markiraj:upit|safe }} {{ vencanje.prezime_zenika|markiraj:upit|safe }}</span>
-        <span class="stavka__secondary">{{ vencanje.datum }}</span>
+        <span class="stavka__secondary"><i class="fa-solid fa-calendar-day"></i> {{ vencanje.datum }}{% if vencanje.hram %} &middot; <i class="fa-solid fa-church"></i> {{ vencanje.hram }}{% endif %}</span>
     </a>
     <a href="{% url 'vencanje_pdf' uid=vencanje.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
 </li>

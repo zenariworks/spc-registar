@@ -4,7 +4,7 @@
     <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza">
         {# safe-ok: markiraj filter escapes input before adding <span> highlight wrapping — see marker_filter.py for the contract #}
         <span class="stavka__primary">{{ parohijan.ime|markiraj:upit|safe }} {{ parohijan.prezime|markiraj:upit|safe }}</span>
-        <span class="stavka__secondary">{% if parohijan.datum_rodjenja %}{{ parohijan.datum_rodjenja }}{% endif %}{% if parohijan.adresa %}{% if parohijan.datum_rodjenja %} &middot; {% endif %}{{ parohijan.adresa }}{% endif %}</span>
+        <span class="stavka__secondary">{% if parohijan.datum_rodjenja %}<i class="fa-solid fa-cake-candles"></i> {{ parohijan.datum_rodjenja }}{% endif %}{% if parohijan.adresa %}{% if parohijan.datum_rodjenja %} &middot; {% endif %}<i class="fa-solid fa-location-dot"></i> {{ parohijan.adresa }}{% endif %}</span>
         {% if parohijan.domacinstvo %}
         <span class="stavka__meta">
             <span class="stavka__meta-badge stavka__meta-badge--domacin">домаћин</span>
