@@ -65,6 +65,7 @@ class Osoba(TimeStampedModel):
         choices=[("М", "мушки"), ("Ж", "женски")],
         blank=True,
         null=True,
+        db_index=True,
     )
 
     zanimanje = models.ForeignKey(

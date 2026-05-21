@@ -58,6 +58,7 @@ class Domacinstvo(TimeStampedModel):
         db_table = "domacinstva"
         verbose_name = "Домаћинство"
         verbose_name_plural = "Домаћинства"
+        ordering = ["adresa__ulica", "adresa__broj", "domacin__prezime", "domacin__ime"]
 
     def __str__(self):
         return f"Домаћинство {self.domacin.prezime}"

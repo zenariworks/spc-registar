@@ -7,6 +7,7 @@ dbfread==2.0.7
 # Django and related packages
 Django==6.0.1
 django-admin-searchable-dropdown==1.2
+django-axes==8.3.1
 django-compressor==4.5.1
 django-environ==0.11.2
 django-extensions==3.2.3
@@ -18,6 +19,8 @@ django-select2==8.2.4
 django-simple-history==3.11.0
 django-tenants==3.10.1
 djangorestframework==3.15.2
+# WSGI Server (active in production)
+gunicorn==26.0.0
 phonenumbers==8.13.55
 Pillow==12.0.0
 # Database
@@ -26,8 +29,6 @@ python-dateutil==2.8.2
 rcssmin==1.1.2
 # WSGI Server (kept for compatibility — prod uses gunicorn)
 uWSGI==2.0.31
-# WSGI Server (active in production)
-gunicorn==26.0.0
 # PDF Generation
 WeasyPrint==62.3
 # Static file serving
