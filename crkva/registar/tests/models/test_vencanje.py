@@ -55,7 +55,7 @@ class VencanjeModelTestCase(TestCase):
         )
         self.hram = Hram.objects.create(naziv="Храм Светог Саве")
         self.svestenik = Svestenik.objects.create(
-            ime="Петар", prezime="Петровић", zvanje="Протојереј"
+            ime="Петар", prezime="Петровић", zvanje="протојереј"
         )
 
     def test_create_vencanje_basic(self):

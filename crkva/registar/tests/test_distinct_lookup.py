@@ -169,7 +169,7 @@ class SvestenikMestoRodjenjaFormTests(TestCase):
             {
                 "ime": "Свешт",
                 "prezime": "МестоТест",
-                "zvanje": "Јереј",
+                "zvanje": "јереј",
                 "mesto_rodjenja": "Крагујевац",
             },
         )
@@ -204,18 +204,12 @@ class AutoJsonEndpointTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.tenant = Tenant.objects.get(schema_name="test_tenant")
-        cls.user = User.objects.create_user(
-            username="auto-json-tester", password="x"
-        )
+        cls.user = User.objects.create_user(username="auto-json-tester", password="x")
         UserMembership.objects.create(
             user=cls.user, tenant=cls.tenant, role=Role.KANCELARIJA
         )
-        Parohijan.objects.create(
-            ime="Тест", prezime="Један", mesto_rodjenja="Београд"
-        )
-        Parohijan.objects.create(
-            ime="Тест", prezime="Два", mesto_rodjenja="Нови Сад"
-        )
+        Parohijan.objects.create(ime="Тест", prezime="Један", mesto_rodjenja="Београд")
+        Parohijan.objects.create(ime="Тест", prezime="Два", mesto_rodjenja="Нови Сад")
 
     def setUp(self):
         self.client = Client()

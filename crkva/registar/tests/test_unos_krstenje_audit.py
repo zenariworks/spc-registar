@@ -73,7 +73,7 @@ class _BaseUnosKrstenjeAuditTest(TestCase):
         cls.svestenik = Svestenik.objects.create(
             ime="Свештеник",
             prezime="Тестовић",
-            zvanje="Јереј",
+            zvanje="јереј",
             parohija=cls.parohija,
         )
         cls.dete = Osoba.objects.create(ime="Дете", prezime="Тестовић", pol="М")
