@@ -209,3 +209,30 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
 @media (max-width: 768px) {
     .u-page-header { padding: 0 var(--space-3); }
 }
+
+
+/* ==========================================================================
+   THEME-AGNOSTIC TOKENS — same in every theme (spacing, radius, typography).
+   Live here instead of in svetla.css so a new theme that does not extend
+   the light :root still inherits these defaults.
+   ========================================================================== */
+:root {
+    /* ---------- Spacing ---------- */
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 24px;
+    --space-6: 32px;
+    /* ---------- Radius ---------- */
+    --radius-1: 3px;
+    --radius-2: 6px;
+    --radius-3: 10px;
+
+    /* ---------- Typography ---------- */
+    --font-display: 'Miroslavljeva Cirilica', 'PT Serif', Georgia, serif;
+    --font-serif:   'PT Serif', 'Source Serif Pro', Georgia, serif;
+    --font-sans:    'Source Sans Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-mono:    'JetBrains Mono', 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --font-body:    var(--font-sans);
+}

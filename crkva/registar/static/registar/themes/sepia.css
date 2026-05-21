@@ -24,6 +24,7 @@
     --color-surface:        #F6EED7;   /* body / page bg = parchment base */
     --color-surface-2:      #FBF5E3;   /* cards lift via lighter cream */
     --color-surface-1:      #EBDFC1;   /* form controls / hover */
+    --color-surface-hover:  #FFF8E6;   /* row/card hover state */
     --color-border:         rgba(176, 132, 67, 0.30);
     --color-border-strong:  rgba(176, 132, 67, 0.50);
 
@@ -33,10 +34,10 @@
     --color-info:           #3D5878;
     --color-warning:        #8C6B2F;
 
-    /* ---------- Slava badge ---------- */
-    --color-slava-text:     #5A3F18;
-    --color-slava-bg:       #F1E5C9;
-    --color-slava-border:   #B08443;
+    /* ---------- Slava badge — aliased to warning tokens (collapsed M5) ---------- */
+    --color-slava-text:     var(--color-warning-text);
+    --color-slava-bg:       var(--color-warning-bg);
+    --color-slava-border:   var(--color-warning-border);
 
     /* ---------- Warning / info / error ---------- */
     --color-warning-text:   #5A3F18;
@@ -74,12 +75,7 @@
     --sidebar-scrollbar-thumb: rgba(176, 132, 67, 0.28);
     --sidebar-scrollbar-thumb-hover: rgba(176, 132, 67, 0.42);
 
-    /* ---------- Fasting cells (warm-tinted) ---------- */
-    --fasting-dairy-bg: rgba(176, 132, 67, 0.16);
-    --fasting-fish-bg:  rgba(61, 88, 120, 0.16);
-    --fasting-oil-bg:   rgba(176, 132, 67, 0.26);
-    --fasting-water-bg: rgba(61, 88, 120, 0.24);
-
+    /* Fasting cells now live in the parity block below to avoid duplicates. */
     /* ---------- Token parity (Move 7) — explicit values per theme ---------- */
 
     /* Accent: keep family, slightly cooler on sepia */
@@ -108,7 +104,9 @@
     --color-ink-700:     #262934;
     --color-ink-600:     #3A3E4C;
 
-    /* Greys — re-toned to warm so they fit sepia surfaces */
+    /* Greys (legacy name) — actually warm neutrals on sepia; values are
+       parchment / cream tones, NOT desaturated grey. Renaming would be a big
+       cross-codebase touch; the warm intent is documented here. */
     --color-gray-100: #FBF5E3;
     --color-gray-200: #F1E9D9;
     --color-gray-300: #E0D4B6;
@@ -138,19 +136,18 @@
     --fasting-oil-bg:   rgba(176, 132, 67, 0.28);
     --fasting-water-bg: rgba(61, 88, 120, 0.26);
 
+    /* Olive (used for domacin badge on warm themes — pairs with gold accent) */
+    --color-olive:         #4F5B1E;
+    --color-olive-bg:      #ECE7C9;
+    --color-olive-border:  #B7AE74;
+
     /* Other utility */
     --color-black-alpha-90: rgba(0, 0, 0, 0.9);
     --color-white-alpha-20: rgba(237, 230, 214, 0.18);
 
-    /* Legacy dark-* aliases (kept for back-compat) */
-    --color-dark-bg:            var(--color-ink-800);
-    --color-dark-bg-deep:       var(--color-ink-900);
-    --color-dark-border:        #2D3140;
-    --color-dark-text:          #EDE6D6;
-    --color-dark-text-secondary:#9C8E7D;
 
-    /* Secondary */
-    --color-secondary: #6E0F0E;
+    /* Secondary — cooler than primary-700, sits between primary and ink */
+    --color-secondary: #5C3F1E;
 
     /* Fasting cells — explicit values (Move 7b token parity) */
     --fasting-oil-cell:       #F1E5C9;
@@ -205,7 +202,7 @@
 [data-theme="sepia"] .action-item:hover,
 [data-theme="sepia"] .registry__card:hover,
 [data-theme="sepia"] .registry-card:hover {
-    background: #FFF8E6;
+    background: var(--color-surface-hover);
     border-color: var(--color-accent);
 }
 
@@ -233,6 +230,26 @@
     border-color: var(--color-border);
 }
 [data-theme="sepia"] .stavka:hover {
-    background: #FFF8E6;
+    background: var(--color-surface-hover);
     border-color: var(--color-accent);
+}
+
+
+/* On sepia the домаћин badge inherits --color-primary (deep red), which
+   clashes with the warm parchment palette. Override with olive — pairs
+   with the existing aged-gold accent. */
+[data-theme="sepia"] .stavka__meta-badge--domacin {
+    color: var(--color-olive);
+    background: var(--color-olive-bg);
+    border-color: var(--color-olive-border);
+}
+
+/* Item 7: sepia parity for select2 selection chrome. forme.css gives select2
+   the same surface-1 light bg as text inputs by default; sepia's input rule
+   above deepens text inputs but does not include select2-selection, so the
+   select2 widget rendered with the wrong (light) bg. Match it here. */
+[data-theme="sepia"] .select2-container--default .select2-selection--single {
+    background-color: var(--color-surface-2);
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
 }
