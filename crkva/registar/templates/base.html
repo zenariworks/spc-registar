@@ -55,7 +55,8 @@
       <link rel="stylesheet" href="{% static 'registar/components/oznake.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/tabovi.css' %}">
       <link rel="stylesheet" href="{% static 'registar/components/modali.css' %}">
-      <!-- Theme overrides (loaded last for correct specificity) -->
+      <!-- Themes: light is the default (:root); sepia + tamna override via data-theme -->
+      <link rel="stylesheet" href="{% static 'registar/themes/svetla.css' %}">
       <link rel="stylesheet" href="{% static 'registar/themes/sepia.css' %}">
       <link rel="stylesheet" href="{% static 'registar/themes/tamna.css' %}">
     {% endcompress %}
