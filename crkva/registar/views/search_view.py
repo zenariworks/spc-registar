@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
-from registar.models import Domacinstvo, Krstenje, Parohijan, Svestenik, Vencanje
+from registar.models import Domacinstvo, Krstenje, Osoba, Svestenik, Vencanje
 from registar.utils import get_query_variants
 
 SEARCH_PREVIEW_LIMIT = 5
@@ -26,7 +26,7 @@ def search_view(request) -> HttpResponse:
 
     if variants:
         parohijani_qs = (
-            Parohijan.objects.filter(build_q(["ime", "prezime"]))
+            Osoba.objects.filter(build_q(["ime", "prezime"]))
             .select_related("adresa")
             .distinct()
         )
@@ -67,7 +67,7 @@ def search_view(request) -> HttpResponse:
             .distinct()
         )
     else:
-        parohijani_qs = Parohijan.objects.none()
+        parohijani_qs = Osoba.objects.none()
         svestenici_qs = Svestenik.objects.none()
         krstenja_qs = Krstenje.objects.none()
         vencanja_qs = Vencanje.objects.none()
@@ -85,7 +85,7 @@ def search_view(request) -> HttpResponse:
 
     context = {
         "stats": {
-            "parohijani": Parohijan.objects.count(),
+            "parohijani": Osoba.objects.count(),
             "krstenja": Krstenje.objects.count(),
             "vencanja": Vencanje.objects.count(),
             "svestenici": Svestenik.objects.count(),
@@ -134,9 +134,7 @@ def search_autocomplete(request):
     groups = []
 
     # Парохијани
-    parohijani = list(
-        Parohijan.objects.filter(build_q(["ime", "prezime"])).distinct()[:10]
-    )
+    parohijani = list(Osoba.objects.filter(build_q(["ime", "prezime"])).distinct()[:10])
     if parohijani:
         items = sorted(
             [

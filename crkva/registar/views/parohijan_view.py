@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import ParohijanForm
 from registar.models import Krstenje
-from registar.models.parohijan import Parohijan
+from registar.models.parohijan import Osoba
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from tenants.permissions import tenant_role_required
 from weasyprint import HTML
@@ -43,7 +43,7 @@ class SpisakParohijana(
 ):
     """Приказује списак парохијана са могућношћу претраге и пагинације."""
 
-    model = Parohijan
+    model = Osoba
     template_name = "registar/spisak_parohijana.html"
     partial_template_name = "registar/_stavka_parohijana.html"
     context_object_name = "parohijani"
@@ -65,7 +65,7 @@ class SpisakParohijana(
             "domacinstvo", "domacinstvo__domacin", "domacinstvo__adresa"
         )
         return self.get_search_queryset(
-            Parohijan.objects.filter(parohijan=True)
+            Osoba.objects.filter(parohijan=True)
             .select_related("adresa")
             .select_related("domacinstvo", "domacinstvo__adresa")
             .prefetch_related(
@@ -82,13 +82,13 @@ class SpisakParohijana(
 class ParohijanPDF(LoginRequiredMixin, DetailView):
     """Генерише PDF документ за одређеног парохијана."""
 
-    model = Parohijan
+    model = Osoba
     template_name = "registar/pdf_parohijan.html"
 
     def get_object(self, queryset=None):
         """Преузима парохијана на основу UID-а."""
         uid = self.kwargs.get("uid")
-        return get_object_or_404(Parohijan, uid=uid)
+        return get_object_or_404(Osoba, uid=uid)
 
     def render_to_response(self, context, **response_kwargs):
         """Претвара HTML садржај у PDF и враћа HTTP одговор са PDF документом."""
@@ -111,7 +111,7 @@ class ParohijanPDF(LoginRequiredMixin, DetailView):
 class PrikazParohijana(LoginRequiredMixin, DetailView):
     """Приказује детаљне информације о одређеном парохијану."""
 
-    model = Parohijan
+    model = Osoba
     template_name = "registar/parohijan.html"
     context_object_name = "parohijan"
     pk_url_kwarg = "uid"
@@ -119,7 +119,7 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
     def get_object(self, queryset=None):
         """Преузима парохијана на основу UID-а."""
         uid = self.kwargs.get(self.pk_url_kwarg)
-        return get_object_or_404(Parohijan, uid=uid)
+        return get_object_or_404(Osoba, uid=uid)
 
     def get_context_data(self, **kwargs):
         from registar.history import history_for
@@ -201,7 +201,7 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
 @tenant_role_required("osoba")
 def izmena_parohijana(request, uid):
     """Измена постојеће инстанце."""
-    instance = get_object_or_404(Parohijan, uid=uid)
+    instance = get_object_or_404(Osoba, uid=uid)
     if request.method == "POST":
         form = ParohijanForm(request.POST, instance=instance)
         if form.is_valid():

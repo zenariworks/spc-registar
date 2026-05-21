@@ -9,7 +9,7 @@ User = get_user_model()
 
 
 class ParohijanRelatedRecordsTest(TestCase):
-    """Parohijan detail must link to vencanja where the person is a parent or stari svat,
+    """Osoba detail must link to vencanja where the person is a parent or stari svat,
     and to krstenja where the person is otac or majka."""
 
     @classmethod

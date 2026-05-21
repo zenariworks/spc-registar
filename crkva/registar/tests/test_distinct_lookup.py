@@ -20,7 +20,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.forms.distinct_lookup import DistinctValuesSelect2Widget
-from registar.models import Krstenje, Parohijan, Svestenik
+from registar.models import Krstenje, Osoba, Svestenik
 from tenants.models import Role, Tenant, UserMembership
 
 User = get_user_model()
@@ -36,11 +36,11 @@ class DistinctValuesWidgetTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        Parohijan.objects.create(ime="А", prezime="Један", mesto_rodjenja="Београд")
-        Parohijan.objects.create(ime="Б", prezime="Два", mesto_rodjenja="Нови Сад")
-        Parohijan.objects.create(ime="В", prezime="Три", mesto_rodjenja="Београд")
-        Parohijan.objects.create(ime="Г", prezime="Без", mesto_rodjenja=None)
-        Parohijan.objects.create(ime="Д", prezime="Празно", mesto_rodjenja="")
+        Osoba.objects.create(ime="А", prezime="Један", mesto_rodjenja="Београд")
+        Osoba.objects.create(ime="Б", prezime="Два", mesto_rodjenja="Нови Сад")
+        Osoba.objects.create(ime="В", prezime="Три", mesto_rodjenja="Београд")
+        Osoba.objects.create(ime="Г", prezime="Без", mesto_rodjenja=None)
+        Osoba.objects.create(ime="Д", prezime="Празно", mesto_rodjenja="")
 
     def test_widget_lists_distinct_existing_values(self):
         widget = DistinctValuesSelect2Widget(
@@ -116,7 +116,7 @@ class ParohijanMestoRodjenjaPostTests(_ClerkLoggedInMixin, TestCase):
     """`mesto_rodjenja` accepts a typed string and saves it verbatim."""
 
     def test_posting_existing_value_roundtrips(self):
-        Parohijan.objects.create(ime="Пред", prezime="Постоји", mesto_rodjenja="Ниш")
+        Osoba.objects.create(ime="Пред", prezime="Постоји", mesto_rodjenja="Ниш")
         r = self.client.post(
             reverse("unos_parohijana"),
             {
@@ -127,7 +127,7 @@ class ParohijanMestoRodjenjaPostTests(_ClerkLoggedInMixin, TestCase):
             },
         )
         self.assertEqual(r.status_code, 302)
-        p = Parohijan.objects.get(ime="Нови", prezime="Парохијан")
+        p = Osoba.objects.get(ime="Нови", prezime="Парохијан")
         self.assertEqual(p.mesto_rodjenja, "Ниш")
 
     def test_posting_new_value_saves_verbatim(self):
@@ -141,7 +141,7 @@ class ParohijanMestoRodjenjaPostTests(_ClerkLoggedInMixin, TestCase):
             },
         )
         self.assertEqual(r.status_code, 302)
-        p = Parohijan.objects.get(ime="Бранд")
+        p = Osoba.objects.get(ime="Бранд")
         self.assertEqual(p.mesto_rodjenja, "Краљево")
 
 
@@ -204,18 +204,12 @@ class AutoJsonEndpointTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.tenant = Tenant.objects.get(schema_name="test_tenant")
-        cls.user = User.objects.create_user(
-            username="auto-json-tester", password="x"
-        )
+        cls.user = User.objects.create_user(username="auto-json-tester", password="x")
         UserMembership.objects.create(
             user=cls.user, tenant=cls.tenant, role=Role.KANCELARIJA
         )
-        Parohijan.objects.create(
-            ime="Тест", prezime="Један", mesto_rodjenja="Београд"
-        )
-        Parohijan.objects.create(
-            ime="Тест", prezime="Два", mesto_rodjenja="Нови Сад"
-        )
+        Osoba.objects.create(ime="Тест", prezime="Један", mesto_rodjenja="Београд")
+        Osoba.objects.create(ime="Тест", prezime="Два", mesto_rodjenja="Нови Сад")
 
     def setUp(self):
         self.client = Client()

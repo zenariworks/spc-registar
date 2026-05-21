@@ -100,7 +100,3 @@ class Osoba(TimeStampedModel):
         verbose_name = "Особа"
         verbose_name_plural = "Особе"
         ordering = ["prezime", "ime"]
-
-
-# Alias за компатибилност уназад
-Parohijan = Osoba

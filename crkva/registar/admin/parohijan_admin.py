@@ -4,10 +4,10 @@
 
 from django.contrib import admin
 from import_export.admin import ImportExportMixin
-from registar.models import Parohijan
+from registar.models import Osoba
 
 
-@admin.register(Parohijan)
+@admin.register(Osoba)
 class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Парохија."""
 
