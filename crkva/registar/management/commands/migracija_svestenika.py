@@ -44,7 +44,7 @@ class Command(MigrationCommand):
                     prezime=Konvertor.string(prezime),
                     mesto_rodjenja="",
                     datum_rodjenja=datum_rodjenja if datum_rodjenja else None,
-                    zvanje=Konvertor.string(zvanje),
+                    zvanje=self._normalize_zvanje(Konvertor.string(zvanje)),
                     parohija=parohija_instance,
                 )
                 svestenik.save()
@@ -58,6 +58,31 @@ class Command(MigrationCommand):
 
         # Drop staging table after successful migration
         self.drop_staging_table()
+
+    def _normalize_zvanje(self, raw: str) -> str:
+        """Map a legacy DBF zvanje string to the canonical choice value.
+
+        Source DBF stores zvanje in mixed case/spacing (e.g. "протонамесник",
+        "протојереј - ставрофор"); the model choices are TitleCase with no
+        spaces around the hyphen. We collapse spaces, drop letter-casing,
+        and match against the choices in a case-insensitive way.
+        """
+        from registar.models.svestenik import zvanja
+
+        if not raw:
+            return raw or ""
+        # Normalize whitespace, including around hyphens.
+        norm = (
+            " ".join(raw.split())
+            .replace(" - ", "-")
+            .replace(" -", "-")
+            .replace("- ", "-")
+        )
+        target = norm.casefold()
+        for key, _label in zvanja:
+            if key.casefold() == target:
+                return key
+        return norm  # fallback: store the cleaned-up but unrecognized string
 
     def _convert_roman_to_integer(self, parohija):
         # Define a mapping from Roman numerals to integers

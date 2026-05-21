@@ -169,7 +169,7 @@ class SvestenikMestoRodjenjaFormTests(TestCase):
             {
                 "ime": "Свешт",
                 "prezime": "МестоТест",
-                "zvanje": "Јереј",
+                "zvanje": "јереј",
                 "mesto_rodjenja": "Крагујевац",
             },
         )

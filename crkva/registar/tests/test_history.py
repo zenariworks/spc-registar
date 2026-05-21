@@ -37,8 +37,8 @@ class HistoryHelperTests(TestCase):
 
     def test_returns_entries_for_svestenik_too(self):
         # PR 6 also added HistoricalRecords to Svestenik
-        s = Svestenik.objects.create(ime="Пера", prezime="Пера", zvanje="Јереј")
-        s.zvanje = "Протојереј"
+        s = Svestenik.objects.create(ime="Пера", prezime="Пера", zvanje="јереј")
+        s.zvanje = "протојереј"
         s.save()
         entries = history_for(s)
         self.assertEqual(len(entries), 2)

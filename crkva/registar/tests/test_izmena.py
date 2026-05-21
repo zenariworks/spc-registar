@@ -95,7 +95,7 @@ class IzmenaSvestenikaTests(TestCase):
             user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
         )
         cls.svestenik = Svestenik.objects.create(
-            ime="Стари", prezime="Свештеник", zvanje="Јереј"
+            ime="Стари", prezime="Свештеник", zvanje="јереј"
         )
 
     def setUp(self):
@@ -108,7 +108,7 @@ class IzmenaSvestenikaTests(TestCase):
         self.client.force_login(self.priest)
         r = self.client.post(
             self.url(),
-            {"ime": "Стари", "prezime": "Свештеник", "zvanje": "Протојереј"},
+            {"ime": "Стари", "prezime": "Свештеник", "zvanje": "протојереј"},
         )
         self.assertEqual(r.status_code, 302)
         self.svestenik.refresh_from_db()
