@@ -248,3 +248,4 @@ class Vencanje(TimeStampedModel):
         db_table = "vencanja"
         verbose_name = "Венчање"
         verbose_name_plural = "Венчања"
+        ordering = ["-datum"]
