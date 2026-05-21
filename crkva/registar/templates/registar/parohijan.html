@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% load info_components %}
 {% load phone_filters %}
 
 {% block extra_css %}{% if form %}{{ form.media.css }}{% endif %}{% endblock %}
-{% block extra_js %}{% if form %}{{ form.media.js }}{% endif %}{% endblock %}
+{% block extra_js %}{% if form %}{{ form.media.js }}<script src="{% static "registar/components/adresa_edit.js" %}"></script>{% endif %}{% endblock %}
 
 {% comment %}
   Single template for /parohijan/<id>/ (view), /unos/parohijan/ (create),
@@ -241,6 +242,7 @@
   })();
 </script>
 {% endif %}
+  {% if form %}{% include "registar/_modal_adresa.html" %}{% endif %}
 </form>
 {% if parohijan %}{% include "registar/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

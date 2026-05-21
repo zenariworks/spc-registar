@@ -174,3 +174,46 @@
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent);
     outline: none;
 }
+
+
+/* ==========================================================================
+   ADRESA DROPDOWN EDIT PENCIL
+   ==========================================================================
+   adresa_edit.js injects a small pencil button into each select2 result
+   row when a select carries data-adresa-edit. We hide it by default and
+   reveal it only when the row is hovered (or keyboard-highlighted via
+   .select2-results__option--highlighted).
+   ========================================================================== */
+.select2-container--default .select2-results__option {
+    position: relative;
+}
+.adresa-dd-edit {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.12s ease, background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+    font-size: 12px;
+}
+.select2-container--default .select2-results__option:hover .adresa-dd-edit,
+.select2-container--default .select2-results__option--highlighted .adresa-dd-edit,
+.adresa-dd-edit:focus {
+    opacity: 1;
+}
+.adresa-dd-edit:hover {
+    background: var(--color-surface-2);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}

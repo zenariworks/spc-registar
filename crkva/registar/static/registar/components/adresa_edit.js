@@ -98,6 +98,39 @@
         );
         $container.append($btn);
 
+        // Inject a small pencil into every result row in the open dropdown so
+        // the user can edit any address from the search results (not just the
+        // currently selected one). MutationObserver re-decorates as select2
+        // re-renders on each keystroke / ajax response.
+        $select.on("select2:open.adresaEditDropdown", function () {
+            requestAnimationFrame(function () {
+                var $dropdown = $(".select2-container--open .select2-dropdown");
+                if (!$dropdown.length) return;
+                function decorate() {
+                    $dropdown.find(".select2-results__option").each(function () {
+                        var data = $(this).data("data");
+                        if (!data || !data.id || data.id === "") return;
+                        if ($(this).find(".adresa-dd-edit").length) return;
+                        var $pencil = $(
+                            '<button type="button" class="adresa-dd-edit" ' +
+                                'data-uid="' + data.id + '" ' +
+                                'data-tooltip="Измени адресу" aria-label="Измени адресу">' +
+                                '<i class="fa-solid fa-pen" aria-hidden="true"></i>' +
+                            "</button>"
+                        );
+                        $(this).append($pencil);
+                    });
+                }
+                decorate();
+                var listEl = $dropdown.find(".select2-results__options")[0];
+                if (listEl && !listEl._adresaEditObs) {
+                    var obs = new MutationObserver(decorate);
+                    obs.observe(listEl, { childList: true, subtree: true });
+                    listEl._adresaEditObs = obs;
+                }
+            });
+        });
+
         $btn.on("click", function (e) {
             e.preventDefault();
             e.stopPropagation();
@@ -174,6 +207,46 @@
             saveBtn.onclick = save;
         }
     }
+
+    // Delegated handler for the dropdown-injected pencils. mousedown beats
+    // select2's own click-to-select on the parent .select2-results__option.
+    $(document).on("mousedown touchstart", ".adresa-dd-edit", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var uid = $(this).attr("data-uid");
+        if (!uid) return;
+        var $container = $(".select2-container--open");
+        var fieldId = $container.attr("aria-owns") || "";
+        var $select = fieldId
+            ? $("#" + fieldId.replace(/-results$/, ""))
+            : $("select.django-select2[data-adresa-edit]").first();
+        if ($select.length) {
+            try { $select.select2("close"); } catch (err) {}
+        }
+        fetch("/api/brzi-izmena-adrese/" + uid + "/", { credentials: "same-origin" })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data && data.error) return;
+                var modal = document.getElementById("adresa-modal");
+                if (modal) {
+                    modal.dataset.adresaUid = uid;
+                    if ($select.length) modal.dataset.targetFieldId = $select.attr("id");
+                }
+                var map = {
+                    ulica: "modal-adresa-ulica",
+                    broj: "modal-adresa-broj",
+                    broj_stana: "modal-adresa-broj_stana",
+                    mesto: "modal-adresa-mesto",
+                };
+                Object.keys(map).forEach(function (k) {
+                    var el = document.getElementById(map[k]);
+                    if (el) el.value = (data && data[k]) || "";
+                });
+                var err = document.querySelector("#adresa-modal .error-text");
+                if (err) { err.style.display = "none"; err.textContent = ""; }
+                if (window.Modal) Modal.open("adresa-modal");
+            });
+    });
 
     function init() {
         $("select[data-adresa-edit]").each(function () { attach($(this)); });
