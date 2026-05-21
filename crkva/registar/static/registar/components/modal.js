@@ -45,6 +45,10 @@
         const overlay = document.getElementById(modalId);
         if (!overlay) return;
         overlay._targetFieldId = targetFieldId || null;
+        // The overlay carries the HTML5 [hidden] attribute, which modali.css
+        // pins to display:none !important. Inline style alone cannot win that
+        // cascade — we have to drop the attribute too.
+        overlay.removeAttribute("hidden");
         overlay.style.display = "flex";
         _openModals.add(modalId);
         // Clear inputs / errors
@@ -64,7 +68,8 @@
     function close(modalId) {
         const overlay = document.getElementById(modalId);
         if (!overlay) return;
-        overlay.style.display = "none";
+        overlay.style.display = "";
+        overlay.setAttribute("hidden", "");
         overlay._targetFieldId = null;
         _openModals.delete(modalId);
     }

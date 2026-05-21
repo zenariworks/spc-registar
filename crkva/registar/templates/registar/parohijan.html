@@ -30,7 +30,7 @@
   <div class="u-page-header">
     <h1 class="u-page-title">
       {% if is_edit and not parohijan %}Додавање парохијана
-      {% elif is_edit %}Измена парохијана{% if parohijan %}<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}</span>{% endif %}
+      {% elif is_edit %}Измена парохијана{% if parohijan %}<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}</span>{% endif %}
       {% else %}Парохијан<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}</span>{% endif %}
     </h1>
     {% if parohijan %}
