@@ -720,16 +720,15 @@ select.list-toolbar__sort-select option {
 }
 
 @media (max-width: 640px) {
+    /* Keep search + sort on a single row so the toolbar stays one row tall
+       instead of taking up half the viewport. Search grows, sort shrinks. */
     .list-toolbar {
-        flex-direction: column;
-        align-items: stretch;
+        flex-wrap: nowrap;
+        gap: var(--space-2);
     }
-    .list-toolbar__search,
-    .list-toolbar__select,
+    .list-toolbar__search { flex: 1 1 0; min-width: 0; }
     .list-toolbar__sort,
-    .list-toolbar__sort-select {
-        width: 100%;
-    }
+    .list-toolbar__sort-select { flex: 0 0 auto; width: auto; }
 }
 
 /* ==========================================================================
