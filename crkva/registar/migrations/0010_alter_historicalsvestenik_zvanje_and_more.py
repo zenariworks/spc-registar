@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("registar", "0008_alter_domacinstvo_tel_fiksni_and_more"),
+        ("registar", "0009_alter_domacinstvo_options_alter_krstenje_options_and_more"),
     ]
 
     operations = [
