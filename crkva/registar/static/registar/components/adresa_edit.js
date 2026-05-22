@@ -155,10 +155,9 @@
         e.stopPropagation();
         var uid = $(this).attr("data-uid");
         if (!uid) return;
-        var $container = $(".select2-container--open");
-        var fieldId = $container.attr("aria-owns") || "";
-        var $select = fieldId
-            ? $("#" + fieldId.replace(/-results$/, ""))
+        var dropdownEl = $(this).closest(".select2-dropdown")[0];
+        var $select = dropdownEl
+            ? findOwningSelect(dropdownEl)
             : $("select.django-select2[data-adresa-edit]").first();
         if ($select.length) {
             try { $select.select2("close"); } catch (err) {}
@@ -196,15 +195,32 @@
     // results <ul> keeps decorating as the rows are replaced on each
     // search keystroke. This avoids any timing race with select2 init.
     // ------------------------------------------------------------------
-    function decorateDropdown(dropdownEl) {
+    function findOwningSelect(dropdownEl) {
         var $dropdown = $(dropdownEl);
-        if (!$dropdown.length) return;
-        // Find the owning select via the container that opened this dropdown.
-        var $container = $(".select2-container--open");
-        var ownsId = $container.attr("aria-owns") || "";
-        var selectId = ownsId ? ownsId.replace(/-results$/, "") : "";
-        var $select = selectId ? $("#" + selectId) : $();
+        // 1) The results UL has id="select2-{selectId}-results".
+        var ul = $dropdown.find(".select2-results__options")[0];
+        if (ul && ul.id) {
+            var m = ul.id.match(/^select2-(.+)-results$/);
+            if (m) {
+                var $s = $("#" + m[1]);
+                if ($s.length) return $s;
+            }
+        }
+        // 2) Fallback: match .select2-container--open[data-select2-id]
+        //    against the <select data-select2-id="...">.
+        var openSid = $(".select2-container--open").attr("data-select2-id") || "";
+        if (openSid) {
+            var $s2 = $("select[data-select2-id='" + openSid + "']");
+            if ($s2.length) return $s2;
+        }
+        return $();
+    }
+
+    function decorateDropdown(dropdownEl) {
+        if (!dropdownEl) return;
+        var $select = findOwningSelect(dropdownEl);
         if (!$select.length || !$select.attr("data-adresa-edit")) return;
+        var $dropdown = $(dropdownEl);
 
         function paint() {
             $dropdown.find(".select2-results__option").each(function () {
@@ -220,11 +236,14 @@
             });
         }
         paint();
-        var listEl = $dropdown.find(".select2-results__options")[0];
-        if (listEl && !listEl._adresaEditObs) {
+
+        // Observe the WHOLE dropdown subtree because select2 swaps the
+        // results <ul> wholesale on each ajax refresh; observing only the
+        // ul would orphan the observer on the next keystroke.
+        if (!dropdownEl._adresaEditObs) {
             var ro = new MutationObserver(paint);
-            ro.observe(listEl, { childList: true, subtree: true });
-            listEl._adresaEditObs = ro;
+            ro.observe(dropdownEl, { childList: true, subtree: true });
+            dropdownEl._adresaEditObs = ro;
         }
     }
 
