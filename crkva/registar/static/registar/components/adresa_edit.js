@@ -84,45 +84,14 @@
         const fieldId = $select.attr("id");
         if (!fieldId) return;
 
-        // Build a small pencil button immediately to the right of the
-        // .info-row__value wrapper holding this select.
-        const $container = $select.closest(".info-row__value");
-        if (!$container.length) return;
-        if ($container.find(".adresa-edit-btn").length) return;
-
-        const $btn = $(
-            '<button type="button" class="adresa-edit-btn" ' +
-                'data-tooltip="Измени адресу" aria-label="Измени адресу">' +
-                '<i class="fa-solid fa-pen" aria-hidden="true"></i>' +
-            "</button>"
-        );
-        $container.append($btn);
+        // The outer side pencil is intentionally NOT rendered any more.
+        // Address editing is reached exclusively via the dropdown-row
+        // pencils injected by the body-level observer below.
 
         // Decoration of dropdown rows is handled globally by the body-level
         // observer below. Nothing per-select needed here besides the outer
         // pencil button bound above.
 
-        $btn.on("click", function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const uid = currentAdresaUid($select);
-            if (!uid) {
-                showError("Прво изаберите адресу из листе.");
-                if (window.Modal) Modal.open("adresa-modal");
-                fillModalFields({});
-                return;
-            }
-            // Pull the cached payload if it matches the current select value;
-            // otherwise leave fields blank and let the user retype.
-            const payload = getInitialPayload();
-            fillModalFields(payload && payload.uid === uid ? payload : {});
-            const modal = document.getElementById("adresa-modal");
-            if (modal) {
-                modal.dataset.targetFieldId = fieldId;
-                modal.dataset.adresaUid = uid;
-            }
-            if (window.Modal) Modal.open("adresa-modal");
-        });
 
         // Enter inside any modal input submits.
         document
