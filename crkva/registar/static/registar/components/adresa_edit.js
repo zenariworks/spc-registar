@@ -98,38 +98,9 @@
         );
         $container.append($btn);
 
-        // Inject a small pencil into every result row in the open dropdown so
-        // the user can edit any address from the search results (not just the
-        // currently selected one). MutationObserver re-decorates as select2
-        // re-renders on each keystroke / ajax response.
-        $select.on("select2:open.adresaEditDropdown", function () {
-            requestAnimationFrame(function () {
-                var $dropdown = $(".select2-container--open .select2-dropdown");
-                if (!$dropdown.length) return;
-                function decorate() {
-                    $dropdown.find(".select2-results__option").each(function () {
-                        var data = $(this).data("data");
-                        if (!data || !data.id || data.id === "") return;
-                        if ($(this).find(".adresa-dd-edit").length) return;
-                        var $pencil = $(
-                            '<button type="button" class="adresa-dd-edit" ' +
-                                'data-uid="' + data.id + '" ' +
-                                'data-tooltip="Измени адресу" aria-label="Измени адресу">' +
-                                '<i class="fa-solid fa-pen" aria-hidden="true"></i>' +
-                            "</button>"
-                        );
-                        $(this).append($pencil);
-                    });
-                }
-                decorate();
-                var listEl = $dropdown.find(".select2-results__options")[0];
-                if (listEl && !listEl._adresaEditObs) {
-                    var obs = new MutationObserver(decorate);
-                    obs.observe(listEl, { childList: true, subtree: true });
-                    listEl._adresaEditObs = obs;
-                }
-            });
-        });
+        // Decoration of dropdown rows is handled globally by the body-level
+        // observer below. Nothing per-select needed here besides the outer
+        // pencil button bound above.
 
         $btn.on("click", function (e) {
             e.preventDefault();
@@ -248,7 +219,67 @@
             });
     });
 
+    // ------------------------------------------------------------------
+    // Body-level dropdown decoration. Watches the document body for any
+    // .select2-dropdown being added; when one appears, finds the owning
+    // <select> via aria-owns and (if it has data-adresa-edit) decorates
+    // every result row with an inline pencil. A nested observer on the
+    // results <ul> keeps decorating as the rows are replaced on each
+    // search keystroke. This avoids any timing race with select2 init.
+    // ------------------------------------------------------------------
+    function decorateDropdown(dropdownEl) {
+        var $dropdown = $(dropdownEl);
+        if (!$dropdown.length) return;
+        // Find the owning select via the container that opened this dropdown.
+        var $container = $(".select2-container--open");
+        var ownsId = $container.attr("aria-owns") || "";
+        var selectId = ownsId ? ownsId.replace(/-results$/, "") : "";
+        var $select = selectId ? $("#" + selectId) : $();
+        if (!$select.length || !$select.attr("data-adresa-edit")) return;
+
+        function paint() {
+            $dropdown.find(".select2-results__option").each(function () {
+                var data = $(this).data("data");
+                if (!data || !data.id || data.id === "") return;
+                if ($(this).find(".adresa-dd-edit").length) return;
+                $(this).append(
+                    '<button type="button" class="adresa-dd-edit" data-uid="' +
+                        data.id + '" data-tooltip="Измени адресу" ' +
+                        'aria-label="Измени адресу">' +
+                        '<i class="fa-solid fa-pen" aria-hidden="true"></i></button>'
+                );
+            });
+        }
+        paint();
+        var listEl = $dropdown.find(".select2-results__options")[0];
+        if (listEl && !listEl._adresaEditObs) {
+            var ro = new MutationObserver(paint);
+            ro.observe(listEl, { childList: true, subtree: true });
+            listEl._adresaEditObs = ro;
+        }
+    }
+
+    function startBodyObserver() {
+        if (document.body._adresaDdObs) return;
+        var bo = new MutationObserver(function (muts) {
+            muts.forEach(function (m) {
+                m.addedNodes.forEach(function (n) {
+                    if (n.nodeType !== 1) return;
+                    if (n.classList && n.classList.contains("select2-dropdown")) {
+                        decorateDropdown(n);
+                    } else if (n.querySelector) {
+                        var inner = n.querySelector(".select2-dropdown");
+                        if (inner) decorateDropdown(inner);
+                    }
+                });
+            });
+        });
+        bo.observe(document.body, { childList: true, subtree: true });
+        document.body._adresaDdObs = bo;
+    }
+
     function init() {
+        startBodyObserver();
         $("select[data-adresa-edit]").each(function () { attach($(this)); });
     }
 
