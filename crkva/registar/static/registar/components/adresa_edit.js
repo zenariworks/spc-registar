@@ -157,19 +157,11 @@
         }
     }
 
-    // Delegated handler for the dropdown-injected pencils. mousedown beats
-    // select2's own click-to-select on the parent .select2-results__option.
-    $(document).on("mousedown touchstart", ".adresa-dd-edit", function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        var uid = $(this).attr("data-uid");
+    // Reusable: fetch an address by uid, prefill the modal, open it.
+    function openEditModal(uid, sel) {
         if (!uid) return;
-        var dropdownEl = $(this).closest(".select2-dropdown")[0];
-        var $select = dropdownEl
-            ? findOwningSelect(dropdownEl)
-            : $("select.django-select2[data-adresa-edit]").first();
-        if ($select.length) {
-            try { $select.select2("close"); } catch (err) {}
+        if (sel && sel.length) {
+            try { sel.select2("close"); } catch (err) {}
         }
         fetch("/api/brzi-izmena-adrese/" + uid + "/", { credentials: "same-origin" })
             .then(function (r) { return r.json(); })
@@ -178,7 +170,7 @@
                 var modal = document.getElementById("adresa-modal");
                 if (modal) {
                     modal.dataset.adresaUid = uid;
-                    if ($select.length) modal.dataset.targetFieldId = $select.attr("id");
+                    if (sel && sel.length) modal.dataset.targetFieldId = sel.attr("id");
                 }
                 var map = {
                     ulica: "modal-adresa-ulica",
@@ -194,7 +186,8 @@
                 if (err) { err.style.display = "none"; err.textContent = ""; }
                 if (window.Modal) Modal.open("adresa-modal");
             });
-    });
+    }
+
 
     // ------------------------------------------------------------------
     // Body-level dropdown decoration. Watches the document body for any
@@ -253,20 +246,36 @@
         }
         function paint() {
             var rows = $dropdown.find(".select2-results__option");
-            var added = 0;
             rows.each(function () {
                 if (this.classList.contains("loading-results")) return;
                 if (this.getAttribute("role") === "group") return;
                 var uid = uidFromRow(this);
                 if (!uid) return;
-                if ($(this).find(".adresa-dd-edit").length) return;
-                $(this).append(
-                    '<button type="button" class="adresa-dd-edit" data-uid="' +
-                        uid + '" data-tooltip="Измени адресу" ' +
-                        'aria-label="Измени адресу">' +
-                        '<i class="fa-solid fa-pen" aria-hidden="true"></i></button>'
-                );
-                added++;
+                if (this.querySelector(".adresa-dd-edit")) return;
+                var btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "adresa-dd-edit";
+                btn.setAttribute("data-uid", uid);
+                btn.setAttribute("data-tooltip", "Измени адресу");
+                btn.setAttribute("aria-label", "Измени адресу");
+                btn.innerHTML = '<i class="fa-solid fa-pen" aria-hidden="true"></i>';
+                // Capture phase + stopImmediatePropagation so we beat
+                // select2 mouseup/click handlers bound on the parent <li>.
+                var capturedUid = uid;
+                function onPress(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+                    openEditModal(capturedUid, $select);
+                }
+                btn.addEventListener("mousedown", onPress, true);
+                btn.addEventListener("touchstart", onPress, true);
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+                }, true);
+                this.appendChild(btn);
             });
         }
         paint();
