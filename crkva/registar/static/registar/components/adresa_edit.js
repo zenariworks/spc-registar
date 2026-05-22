@@ -85,12 +85,21 @@
         if (!fieldId) return;
 
         // The outer side pencil is intentionally NOT rendered any more.
-        // Address editing is reached exclusively via the dropdown-row
-        // pencils injected by the body-level observer below.
-
-        // Decoration of dropdown rows is handled globally by the body-level
-        // observer below. Nothing per-select needed here besides the outer
-        // pencil button bound above.
+        // Decoration of dropdown rows is handled by the body-level
+        // observer AND this direct select2:open backup, in case the
+        // observer does not fire (some select2 builds mount the dropdown
+        // via documentFragment, which can miss MutationObserver).
+        $select.on("select2:open.adresaEdit", function () {
+            // Try immediately, again on next frame, then again after ajax settles.
+            function findAndDecorate() {
+                var dd = document.querySelector(".select2-container--open .select2-dropdown")
+                      || document.querySelector(".select2-dropdown");
+                if (dd) decorateDropdown(dd);
+            }
+            findAndDecorate();
+            requestAnimationFrame(findAndDecorate);
+            setTimeout(findAndDecorate, 200);
+        });
 
 
         // Enter inside any modal input submits.
@@ -222,17 +231,42 @@
         if (!$select.length || !$select.attr("data-adresa-edit")) return;
         var $dropdown = $(dropdownEl);
 
+        function uidFromRow(li) {
+            // 1) jQuery .data() (vanilla select2 stores here).
+            var d = $(li).data("data");
+            if (d && d.id) return String(d.id);
+            // 2) select2 internal Utils.__cache (the canonical store).
+            if ($.fn.select2 && $.fn.select2.amd && $.fn.select2.amd.require) {
+                try {
+                    var Utils = $.fn.select2.amd.require("select2/utils");
+                    if (Utils && Utils.GetData) {
+                        d = Utils.GetData(li, "data");
+                        if (d && d.id) return String(d.id);
+                    }
+                } catch (e) {}
+            }
+            // 3) Fallback: id pattern "select2-XX-result-RRRR-{value}".
+            var id = li.id || "";
+            var m = id.match(/^select2-.+?-result-[^-]+-(.+)$/);
+            if (m && m[1]) return m[1];
+            return "";
+        }
         function paint() {
-            $dropdown.find(".select2-results__option").each(function () {
-                var data = $(this).data("data");
-                if (!data || !data.id || data.id === "") return;
+            var rows = $dropdown.find(".select2-results__option");
+            var added = 0;
+            rows.each(function () {
+                if (this.classList.contains("loading-results")) return;
+                if (this.getAttribute("role") === "group") return;
+                var uid = uidFromRow(this);
+                if (!uid) return;
                 if ($(this).find(".adresa-dd-edit").length) return;
                 $(this).append(
                     '<button type="button" class="adresa-dd-edit" data-uid="' +
-                        data.id + '" data-tooltip="Измени адресу" ' +
+                        uid + '" data-tooltip="Измени адресу" ' +
                         'aria-label="Измени адресу">' +
                         '<i class="fa-solid fa-pen" aria-hidden="true"></i></button>'
                 );
+                added++;
             });
         }
         paint();
@@ -248,7 +282,6 @@
     }
 
     function startBodyObserver() {
-        if (document.body._adresaDdObs) return;
         var bo = new MutationObserver(function (muts) {
             muts.forEach(function (m) {
                 m.addedNodes.forEach(function (n) {
@@ -262,7 +295,8 @@
                 });
             });
         });
-        bo.observe(document.body, { childList: true, subtree: true });
+        // Widen scope to <html> so we catch dropdowns mounted outside body too.
+        bo.observe(document.documentElement, { childList: true, subtree: true });
         document.body._adresaDdObs = bo;
     }
 
