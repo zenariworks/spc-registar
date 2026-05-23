@@ -1,8 +1,11 @@
 """Test that /parohijani/ only shows Osobe with parohijan=True."""
 
+from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Osoba
+
+User = get_user_model()
 
 
 class SpisakParohijanaFiltersByParohijanFlag(TestCase):
@@ -10,6 +13,8 @@ class SpisakParohijanaFiltersByParohijanFlag(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(username="tester", password="x")
+        self.client.force_login(self.user)
         Osoba.objects.create(ime="Парохијан", prezime="Прави", parohijan=True)
         Osoba.objects.create(ime="Мати", prezime="Из крштења", parohijan=False)
         Osoba.objects.create(

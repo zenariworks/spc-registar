@@ -42,6 +42,14 @@ class Tenant(TenantMixin):
         help_text="Име парохије за приказ. У свакој парохијској шеми "
         "постоји сопствена Parohija инстанца; ово је само display label.",
     )
+    default_phone_region = models.CharField(
+        max_length=2,
+        default="RS",
+        verbose_name="подразумевана земља за телефон",
+        help_text="ISO 3166-1 alpha-2 (нпр. RS, NL, DE, AT, CH). "
+        "Када корисник укуца локални број без +префикса, "
+        "систем користи овај код за тумачење.",
+    )
     is_active = models.BooleanField(default=True, verbose_name="активан")
     is_default = models.BooleanField(
         default=False,

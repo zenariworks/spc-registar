@@ -1,10 +1,12 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'registar/components/istorija.css' %}">
 <div id="history-backdrop" class="history-backdrop" aria-hidden="true"></div>
 <aside id="history-panel" class="history-panel" role="dialog" aria-modal="false" aria-labelledby="history-panel-title" aria-hidden="true">
   <div class="history-panel__header">
     <h2 id="history-panel-title" class="history-panel__title">
-      <i class="fa-solid fa-clock-rotate-left" style="margin-right:6px;color:var(--color-text-muted);"></i>
+      <i class="fa-solid fa-clock-rotate-left"></i>
       Историја измена
-      <span style="color:var(--color-text-muted);font-weight:400;font-size:15px;">({{ history_entries|length }})</span>
+      <span class="history-panel__title-count">({{ history_entries|length }})</span>
     </h2>
     <button type="button" id="history-close" class="history-panel__close" aria-label="Затвори">
       <i class="fa-solid fa-xmark"></i>
@@ -12,18 +14,18 @@
   </div>
   <div class="history-panel__body">
     {% if not history_entries %}
-      <p style="color:var(--color-text-muted);">Нема записа.</p>
+      <p class="history-empty">Нема записа.</p>
     {% else %}
-      <ol class="history-list" style="list-style:none;padding:0;margin:0;">
+      <ol class="history-list">
         {% for entry in history_entries %}
-          <li style="border-left:3px solid var(--color-border);padding:var(--space-2) var(--space-3);margin-bottom:var(--space-3);">
-            <div style="display:flex;justify-content:space-between;gap:var(--space-3);color:var(--color-text-muted);font-size:13px;">
+          <li class="history-entry">
+            <div class="history-entry__meta">
               <span>
-                {% if entry.record.history_type == "+" %}<i class="fa-solid fa-circle-plus" style="color:var(--color-success);"></i> Креирано{% endif %}
-                {% if entry.record.history_type == "~" %}<i class="fa-solid fa-pen" style="color:var(--color-info);"></i> Измењено{% endif %}
-                {% if entry.record.history_type == "-" %}<i class="fa-solid fa-trash" style="color:var(--color-danger);"></i> Обрисано{% endif %}
+                {% if entry.record.history_type == "+" %}<span class="history-entry__action history-entry__action--create"><i class="fa-solid fa-circle-plus"></i> Креирано</span>{% endif %}
+                {% if entry.record.history_type == "~" %}<span class="history-entry__action history-entry__action--update"><i class="fa-solid fa-pen"></i> Измењено</span>{% endif %}
+                {% if entry.record.history_type == "-" %}<span class="history-entry__action history-entry__action--delete"><i class="fa-solid fa-trash"></i> Обрисано</span>{% endif %}
                 {% if entry.record.history_user %}
-                  — <strong style="color:var(--color-text);">{{ entry.record.history_user.username }}</strong>
+                  — <strong class="history-entry__user">{{ entry.record.history_user.username }}</strong>
                 {% else %}
                   — <span title="Систем или ручни упис">систем</span>
                 {% endif %}
@@ -31,13 +33,13 @@
               <span>{{ entry.record.history_date|date:"d.m.Y. H:i" }}</span>
             </div>
             {% if entry.changes %}
-              <ul style="margin:var(--space-2) 0 0;padding-left:var(--space-4);font-size:13px;">
+              <ul class="history-entry__changes">
                 {% for change in entry.changes %}
                   <li>
                     <strong>{{ change.field }}</strong>:
-                    <span style="color:var(--color-danger);text-decoration:line-through;">{{ change.old|default:"—"|truncatechars:60 }}</span>
+                    <span class="history-entry__old">{{ change.old|default:"—"|truncatechars:60 }}</span>
                     →
-                    <span style="color:var(--color-success);">{{ change.new|default:"—"|truncatechars:60 }}</span>
+                    <span class="history-entry__new">{{ change.new|default:"—"|truncatechars:60 }}</span>
                   </li>
                 {% endfor %}
               </ul>
@@ -56,7 +58,6 @@
     const backdrop = document.getElementById("history-backdrop");
     const closeBtn = document.getElementById("history-close");
     if (!btn || !panel) return;
-
     function open() {
       panel.classList.add("is-open");
       backdrop.classList.add("is-open");

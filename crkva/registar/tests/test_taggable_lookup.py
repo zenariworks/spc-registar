@@ -5,7 +5,7 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-from registar.models import Parohijan, Zanimanje
+from registar.models import Osoba, Zanimanje
 from tenants.models import Role, Tenant, UserMembership
 
 User = get_user_model()
@@ -36,7 +36,7 @@ class TaggableLookupTests(TestCase):
             },
         )
         self.assertEqual(r.status_code, 302)
-        p = Parohijan.objects.get(ime="Тест", prezime="Иван")
+        p = Osoba.objects.get(ime="Тест", prezime="Иван")
         self.assertEqual(p.zanimanje, self.existing_zanimanje)
 
     def test_create_new_lookup_from_typed_string(self):
@@ -55,7 +55,7 @@ class TaggableLookupTests(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Zanimanje.objects.count(), before + 1)
         new = Zanimanje.objects.get(naziv="Програмер")
-        p = Parohijan.objects.get(ime="Нови", prezime="Иван")
+        p = Osoba.objects.get(ime="Нови", prezime="Иван")
         self.assertEqual(p.zanimanje, new)
         self.assertEqual(p.veroispovest.naziv, "Православна")
         self.assertEqual(p.narodnost.naziv, "Српска")
@@ -73,5 +73,5 @@ class TaggableLookupTests(TestCase):
         )
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Zanimanje.objects.count(), before)
-        p = Parohijan.objects.get(ime="Дупликат")
+        p = Osoba.objects.get(ime="Дупликат")
         self.assertEqual(p.zanimanje, self.existing_zanimanje)

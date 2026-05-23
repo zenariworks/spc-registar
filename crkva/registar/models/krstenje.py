@@ -266,3 +266,4 @@ class Krstenje(TimeStampedModel):
         db_table = "krstenja"
         verbose_name = "Крштење"
         verbose_name_plural = "Крштења"
+        ordering = ["-datum"]

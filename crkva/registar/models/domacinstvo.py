@@ -5,7 +5,7 @@ import uuid
 from django.db import models
 from kalendar.models import Slava
 from model_utils.models import TimeStampedModel
-from phonenumber_field.modelfields import PhoneNumberField
+from registar.fields import TenantPhoneNumberField
 from simple_history.models import HistoricalRecords
 
 from .adresa import Adresa
@@ -42,11 +42,11 @@ class Domacinstvo(TimeStampedModel):
         verbose_name="слава домаћинства",
     )
 
-    tel_fiksni = PhoneNumberField(
-        region="RS", blank=True, null=True, verbose_name="фиксни телефон"
+    tel_fiksni = TenantPhoneNumberField(
+        blank=True, null=True, verbose_name="фиксни телефон"
     )
-    tel_mobilni = PhoneNumberField(
-        region="RS", blank=True, null=True, verbose_name="мобилни телефон"
+    tel_mobilni = TenantPhoneNumberField(
+        blank=True, null=True, verbose_name="мобилни телефон"
     )
     slavska_vodica = models.BooleanField(default=False)
     vaskrsnja_vodica = models.BooleanField(default=False)
@@ -58,6 +58,7 @@ class Domacinstvo(TimeStampedModel):
         db_table = "domacinstva"
         verbose_name = "Домаћинство"
         verbose_name_plural = "Домаћинства"
+        ordering = ["adresa__ulica", "adresa__broj", "domacin__prezime", "domacin__ime"]
 
     def __str__(self):
         return f"Домаћинство {self.domacin.prezime}"

@@ -1,0 +1,26 @@
+{
+  "name": "spc-registar",
+  "version": "1.0.0",
+  "description": "[![Pylint](https://github.com/zenariworks/crkva/actions/workflows/pylint.yml/badge.svg?branch=main)](https://github.com/zenariworks/crkva/actions/workflows/pylint.yml)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zenariworks/spc-registar.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zenariworks/spc-registar/issues"
+  },
+  "homepage": "https://github.com/zenariworks/spc-registar#readme",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4"
+  }
+}

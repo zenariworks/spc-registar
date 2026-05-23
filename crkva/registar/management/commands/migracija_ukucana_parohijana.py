@@ -21,6 +21,7 @@ from registar.migracija.osoba_repo import (
     lookup_osoba,
     warm_osoba_cache,
 )
+from registar.migracija.sex import infer_sex_from_name
 from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
 
 
@@ -194,6 +195,10 @@ class Command(MigrationCommand):
                         updates["tel_mobilni"] = tel_m
                     if not osoba.devojacko_prezime and devojacko_prezime:
                         updates["devojacko_prezime"] = devojacko_prezime
+                    if not osoba.pol:
+                        inferred_pol = infer_sex_from_name(ime)
+                        if inferred_pol:
+                            updates["pol"] = inferred_pol
                     if updates:
                         Osoba.objects.filter(pk=osoba.pk).update(**updates)
                         osoba.refresh_from_db()
@@ -208,6 +213,7 @@ class Command(MigrationCommand):
                             "adresa": adresa,
                             "tel_fiksni": tel_f,
                             "tel_mobilni": tel_m,
+                            "pol": infer_sex_from_name(ime),
                         },
                     )
                     if p_created:
@@ -280,7 +286,9 @@ class Command(MigrationCommand):
                 preminuo = raw_ime.startswith("+")
                 ime = raw_ime[1:].strip() if preminuo else raw_ime
 
-                osoba = find_or_create_osoba(ime, prezime, parohijan=False)
+                osoba = find_or_create_osoba(
+                    ime, prezime, parohijan=False, pol=infer_sex_from_name(ime)
+                )
                 if not osoba:
                     self.log_skip(f"Не могу креирати особу: {ime} {prezime}")
                     yield None

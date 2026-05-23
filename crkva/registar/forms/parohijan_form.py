@@ -3,8 +3,9 @@
 from django import forms
 from registar.forms.distinct_lookup import DistinctValuesCharField
 from registar.forms.lookup import TaggableLookupField, TaggableLookupWidget
+from registar.forms.phone import TenantPhoneField
 from registar.forms.select2 import ScriptAwareModelSelect2Widget
-from registar.models import Adresa, Narodnost, Parohijan, Veroispovest, Zanimanje
+from registar.models import Adresa, Narodnost, Osoba, Veroispovest, Zanimanje
 
 
 class ParohijanForm(forms.ModelForm):
@@ -43,9 +44,11 @@ class ParohijanForm(forms.ModelForm):
         model_label="registar.Osoba",
         source_fields=("mesto_rodjenja",),
     )
+    tel_mobilni = TenantPhoneField(label="Мобилни телефон", placeholder="061 234 5678")
+    tel_fiksni = TenantPhoneField(label="Фиксни телефон", placeholder="011 234 5678")
 
     class Meta:
-        model = Parohijan
+        model = Osoba
         fields = [
             "ime",
             "prezime",
@@ -61,6 +64,7 @@ class ParohijanForm(forms.ModelForm):
             "adresa",
             "tel_mobilni",
             "tel_fiksni",
+            "email",
         ]
         widgets = {
             "datum_rodjenja": forms.DateInput(
@@ -71,6 +75,9 @@ class ParohijanForm(forms.ModelForm):
             "adresa": ScriptAwareModelSelect2Widget(
                 model=Adresa,
                 search_fields=["ulica__icontains", "mesto__icontains"],
-                attrs={"data-minimum-input-length": 0},
+                attrs={
+                    "data-minimum-input-length": 0,
+                    "data-adresa-edit": "1",
+                },
             ),
         }

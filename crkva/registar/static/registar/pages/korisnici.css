@@ -1,0 +1,81 @@
+/* ==========================================================================
+   КОРИСНИЦИ — admin user list + add form styling
+   --------------------------------------------------------------------------
+   Used by users_list.html and users_add.html. All tokens, no hardcoded
+   colors. Table rows match the .stavka ledger feel from the rest of the app.
+   ========================================================================== */
+
+/* Data table (admin user list) */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--color-surface);
+    border-radius: var(--radius-2);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+}
+.data-table thead tr {
+    border-bottom: 2px solid var(--color-border);
+}
+.data-table th,
+.data-table td {
+    padding: var(--space-3);
+    text-align: left;
+    vertical-align: middle;
+}
+.data-table th {
+    font-family: var(--font-sans);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+.data-table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background 0.15s ease;
+}
+.data-table tbody tr:hover {
+    background: color-mix(in oklab, var(--color-accent) 5%, var(--color-surface));
+}
+.data-table tbody tr:last-child {
+    border-bottom: 0;
+}
+.data-table .data-table__actions {
+    text-align: right;
+}
+.data-table .data-table__empty {
+    padding: var(--space-5) var(--space-4);
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+/* Inline role-edit form within a table cell */
+.data-table__role-form {
+    display: inline-flex;
+    gap: var(--space-2);
+    align-items: center;
+}
+
+/* Active/inactive status indicator */
+.user-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: 0.875rem;
+}
+.user-status--active { color: var(--color-success); }
+.user-status--inactive { color: var(--color-danger); }
+
+/* Inline messages flash (success/info above the table) */
+.form-messages {
+    margin-bottom: var(--space-4);
+}
+.form-messages .alert {
+    background: color-mix(in oklab, var(--color-success) 12%, transparent);
+    border: 1px solid var(--color-success);
+    border-radius: var(--radius-2);
+    padding: var(--space-3) var(--space-4);
+    color: var(--color-success);
+}

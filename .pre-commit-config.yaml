@@ -66,6 +66,38 @@ repos:
         pass_filenames: false
         files: '\.py$'
 
+
+  # Biome — CSS + JS linter. Catches CSS parse errors, duplicate selectors,
+  # dead overrides, plus JS noConsoleLog / noDebugger / noVar / unused vars.
+  - repo: local
+    hooks:
+      - id: biome
+        name: biome lint (CSS + JS)
+        entry: npx --no-install @biomejs/biome lint --no-errors-on-unmatched
+        language: system
+        files: ^crkva/registar/static/registar/.*\.(css|js)$
+        exclude: \.min\.(css|js)$
+        pass_filenames: true
+
+
+  # djlint — django template lint (H021 catches inline styles + many more)
+  - repo: https://github.com/djlint/djLint
+    rev: v1.36.4
+    hooks:
+      - id: djlint-django
+        files: \.html$
+
+
+  # Inline-script debug guard — biome catches .js files; this catches inline
+  # <script> blocks inside Django templates that biome cannot reach.
+  - repo: local
+    hooks:
+      - id: no-inline-script-debug
+        name: no console.log / debugger in inline template scripts
+        language: pygrep
+        entry: '(console\.(log|debug)\b|(^|[^a-zA-Z_])debugger\s*;)'
+        files: \.html$
+
   # Validate commit message subject (feat: / fix: / refactor: / ...)
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v3.6.0

@@ -1,7 +1,10 @@
 """Smoke test: select2 skin CSS is bundled and active on edit pages."""
 
+from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
+
+User = get_user_model()
 
 
 @override_settings(COMPRESS_ENABLED=False)
@@ -10,6 +13,8 @@ class Select2SkinTestCase(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(username="tester", password="x")
+        self.client.force_login(self.user)
 
     def test_select2_skin_css_present_on_pages_with_select2(self):
         """The select2_skin.css link tag must appear on at least one page."""

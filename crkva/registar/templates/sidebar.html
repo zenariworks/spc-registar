@@ -121,7 +121,7 @@
     </a>
 
     <!-- Logout -->
-    <form method="post" action="{% url 'logout' %}" style="margin:0;padding:0;">
+    <form method="post" action="{% url 'logout' %}" class="sidebar-logout-form">
       {% csrf_token %}
       <button type="submit" class="sidebar-action-btn" aria-label="Одјава" title="Одјава">
         <i class="fa-solid fa-right-from-bracket"></i>
@@ -145,7 +145,7 @@
 </button>
 
 <!-- Search Overlay -->
-<div id="search-overlay" class="search-overlay" style="display: none;">
+<div id="search-overlay" class="search-overlay" hidden>
   <div class="search-overlay-content">
     <form method="get" action="{% url 'search_view' %}" class="search-form" id="search-form">
       <div class="search-box">
@@ -249,7 +249,7 @@
   let selectedIdx = -1;
 
   function openSearch() {
-    overlay.style.display = 'flex';
+    overlay.hidden = false;
     input.value = '';
     results.innerHTML = '';
     selectedIdx = -1;
@@ -257,7 +257,7 @@
   }
 
   function closeSearch() {
-    overlay.style.display = 'none';
+    overlay.hidden = true;
     results.innerHTML = '';
     selectedIdx = -1;
   }
@@ -267,7 +267,7 @@
 
   document.addEventListener('keydown', function(e) {
     if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
-    if (e.key === 'Escape' && overlay.style.display === 'flex') closeSearch();
+    if (e.key === 'Escape' && !overlay.hidden) closeSearch();
   });
 
   input.addEventListener('input', function() {
@@ -333,14 +333,32 @@
   }
 })();
 
-// Theme Toggle
+// Theme Toggle — cycles light -> sepia -> dark -> light
 (function() {
   const toggle = document.getElementById('theme-toggle');
   const iconEl = toggle ? toggle.querySelector('i') : null;
+  const order = ['light', 'sepia', 'dark'];
+  const meta = {
+    light: { icon: 'fa-sun',       label: 'Тема: светла (кликни за сепија)' },
+    sepia: { icon: 'fa-cloud-sun', label: 'Тема: сепија (кликни за тамна)' },
+    dark:  { icon: 'fa-moon',      label: 'Тема: тамна (кликни за светла)' },
+  };
 
   function setTheme(t) {
-    document.documentElement.setAttribute('data-theme', t);
+    if (t === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', t);
+    }
     try { localStorage.setItem('theme', t); } catch(e) {}
+    // Re-sync <meta name="theme-color"> after the cascade settles.
+    requestAnimationFrame(function() {
+      var m = document.querySelector('meta[name="theme-color"]');
+      if (!m) return;
+      var c = getComputedStyle(document.documentElement)
+        .getPropertyValue('--sidebar-theme-meta').trim();
+      if (c) m.setAttribute('content', c);
+    });
   }
 
   function getTheme() {
@@ -349,16 +367,11 @@
 
   function updateThemeIcon() {
     const current = getTheme();
-    if (!iconEl) return;
-
-    if (current === 'dark') {
-      iconEl.className = 'fa-solid fa-moon';
-      toggle.setAttribute('aria-label', 'Промени тему: светла');
-      toggle.setAttribute('aria-pressed', 'true');
-    } else {
-      iconEl.className = 'fa-solid fa-sun';
-      toggle.setAttribute('aria-label', 'Промени тему: тамна');
-      toggle.setAttribute('aria-pressed', 'false');
+    const info = meta[current] || meta.light;
+    if (iconEl) iconEl.className = 'fa-solid ' + info.icon;
+    if (toggle) {
+      toggle.setAttribute('aria-label', info.label);
+      toggle.setAttribute('aria-pressed', current === 'dark' ? 'true' : 'false');
     }
   }
 
@@ -366,7 +379,8 @@
     updateThemeIcon();
     toggle.addEventListener('click', function(e) {
       e.preventDefault();
-      const next = getTheme() === 'dark' ? 'light' : 'dark';
+      const i = order.indexOf(getTheme());
+      const next = order[(i + 1) % order.length];
       setTheme(next);
       updateThemeIcon();
     });

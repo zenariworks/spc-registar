@@ -32,22 +32,13 @@
   {% csrf_token %}
 
   <div class="u-page-header">
-    <a href="{% if is_edit and krstenje %}{% url 'krstenje_detail' uid=krstenje.uid %}{% else %}{% url 'krstenja' %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 class="u-page-title">
       {% if is_edit and not krstenje %}Унос крштења
-      {% elif is_edit %}Измена крштења{% if krstenje %} — {{ krstenje.ime_deteta }}{% endif %}
-      {% else %}Крштење — {{ krstenje.ime_deteta }} {{ krstenje.prezime_oca }}{% endif %}
+      {% elif is_edit %}Измена крштења{% if krstenje %}<span class="u-page-title__subtitle">{{ krstenje.ime_deteta }}</span>{% endif %}
+      {% else %}Крштење<span class="u-page-title__subtitle">{{ krstenje.ime_deteta }} {{ krstenje.prezime_oca }}</span>{% endif %}
     </h1>
     {% if krstenje %}
-      <span data-show-mode="view">
-        {% if can_edit_krstenje %}<a href="{% url 'izmena_krstenja' uid=krstenje.uid %}" data-action="enter-edit" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-        <a href="{% url 'krstenje_pdf' krstenje.uid %}" target="_blank" class="button button--primary button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
-        <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
-      </span>
-      <span data-show-mode="edit">
-        <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
-        <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
-      </span>
+      {% include "registar/_view_actions.html" with back_list_url_name="krstenja" back_detail_url_name="krstenje_detail" obj=krstenje edit_url_name="izmena_krstenja" can_edit=can_edit_krstenje pdf_url_name="krstenje_pdf" %}
     {% else %}
       <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}
@@ -56,14 +47,18 @@
   {% if form.errors %}{% include 'registar/_form_errors.html' %}{% endif %}
 
   {% if krstenje %}
-  <div class="tabs tabs--segmented" data-show-mode="view">
-    <div class="tabs__nav">
-      <input type="radio" id="krst-tab-podaci" name="krst-view" class="tabs__radio" checked>
-      <label for="krst-tab-podaci" class="tabs__tab"><i class="tabs__icon fa-solid fa-table-list"></i> Подаци</label>
-      <input type="radio" id="krst-tab-pregled" name="krst-view" class="tabs__radio">
-      <label for="krst-tab-pregled" class="tabs__tab"><i class="tabs__icon fa-solid fa-file-lines"></i> Крштеница</label>
+  <div class="tab-group tab-group--with-panels">
+    <div class="tab-group__nav" data-show-mode="view" role="tablist">
+      <label class="tab-group__item">
+        <input type="radio" name="krst-view" checked>
+        <i class="tab-group__icon fa-solid fa-table-list"></i><span>Подаци</span>
+      </label>
+      <label class="tab-group__item">
+        <input type="radio" name="krst-view">
+        <i class="tab-group__icon fa-solid fa-file-lines"></i><span>Крштеница</span>
+      </label>
     </div>
-    <section class="tabs__panel">
+    <section class="tab-group__panel">
   {% endif %}
 
       {# ============ ЗАПИС ============ #}
@@ -181,7 +176,7 @@
     </section>
 
     {# ============ CERTIFICATE PREVIEW ============ #}
-    <section class="tabs__panel">
+    <section class="tab-group__panel" data-show-mode="view">
       <div class="krstenica">
         <div class="krstenica-frame">
           <div class="krst-field-knjiga">{{ krstenje.knjiga }}</div>
@@ -218,5 +213,5 @@
 
   {% include 'registar/_modal_osoba.html' %}
 </form>
-{% if krstenje %}{% include "registar/_history_panel.html" %}{% endif %}
+{% if krstenje %}{% include "registar/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

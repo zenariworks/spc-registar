@@ -135,7 +135,7 @@
     max-width: 100%;
     box-sizing: border-box;
 }
-.info-row--editable .info-row__value > .toggle-group {
+.info-row--editable .info-row__value > .tab-group {
     max-width: 100%;
     flex-wrap: wrap;
 }
@@ -145,7 +145,7 @@
     align-items: center;
 }
 
-.info-row--editable .info-row__value > .visually-hidden + .toggle-group,
+.info-row--editable .info-row__value > .visually-hidden + .tab-group,
 .info-row--editable .info-row__value > .toggle-wrapper {
     margin: 0;
 }
@@ -188,8 +188,8 @@
     box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
 }
 .info-row--editable .info-row__value > input[type="checkbox"]:checked {
-    background: color-mix(in oklab, var(--color-success, #22c55e) 60%, var(--color-surface-2));
-    border-color: var(--color-success, #22c55e);
+    background: color-mix(in oklab, var(--color-success, var(--color-success)) 60%, var(--color-surface-2));
+    border-color: var(--color-success, var(--color-success));
 }
 .info-row--editable .info-row__value > input[type="checkbox"]:checked::after {
     transform: translateX(20px);
@@ -212,32 +212,6 @@
 /* Inline pencil button rendered next to the Adresa select2 in the editable
    Domacinstvo form. Sits on the right edge of the value column and shares
    the icon-only look of the page-header action buttons. */
-.info-row__value .adresa-edit-btn {
-    appearance: none;
-    border: 1px solid var(--color-border);
-    background: var(--color-surface-2);
-    color: var(--color-text);
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    margin-left: 8px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
-    vertical-align: middle;
-    transition: background 0.15s ease, border-color 0.15s ease;
-}
-.info-row__value .adresa-edit-btn:hover {
-    border-color: var(--color-primary);
-    background: color-mix(in oklab, var(--color-primary) 12%, var(--color-surface-2));
-}
-.info-row__value .adresa-edit-btn:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 20%, transparent);
-}
 .info-row--placeholder {
     color: var(--color-text-muted);
 }
@@ -357,10 +331,9 @@
 [data-mode="view"] .info-row--editable .info-row__value > textarea,
 [data-mode="view"] .info-row--editable .info-row__value > .select2,
 [data-mode="view"] .info-row--editable .info-row__value > .select2-container,
-[data-mode="view"] .info-row--editable .info-row__value > .adresa-edit-btn,
-[data-mode="view"] .info-row--editable .info-row__value > .toggle-group,
+[data-mode="view"] .info-row--editable .info-row__value > [data-mode="view"] .info-row--editable .info-row__value > .tab-group,
 [data-mode="view"] .info-row--editable .info-row__body--inline > input,
-[data-mode="view"] .info-row--editable .info-row__body--inline > .toggle-group,
+[data-mode="view"] .info-row--editable .info-row__body--inline > .tab-group,
 [data-mode="view"] .info-row--editable .info-row__body--inline > .info-row__label {
     display: none !important;
 }
@@ -389,3 +362,144 @@
 }
 .info-row__static a:hover { text-decoration: underline; }
 .info-row__static--muted { color: var(--color-text-muted); }
+
+/* ==========================================================================
+   BOOL ROW — view-mode disabled toggle (mirrors the edit-mode slider)
+   ========================================================================== */
+
+.info-row__bool-view {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 36px;
+    height: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    background: var(--color-surface-2);
+    position: relative;
+    margin: 0;
+    cursor: not-allowed;
+    vertical-align: middle;
+    flex-shrink: 0;
+    opacity: 0.85;
+}
+.info-row__bool-view::after {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 16px;
+    height: 16px;
+    background: var(--color-surface);
+    border-radius: 50%;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    transition: transform 0.15s ease;
+}
+.info-row__bool-view:checked {
+    background: color-mix(in oklab, var(--color-success) 55%, var(--color-surface-2));
+    border-color: color-mix(in oklab, var(--color-success) 70%, var(--color-border));
+}
+.info-row__bool-view:checked::after {
+    transform: translateX(16px);
+}
+
+.info-row__bool-static {
+    margin-left: var(--space-2);
+    color: var(--color-text);
+    vertical-align: middle;
+    font-size: 15px;
+}
+
+/* Default (no mode attribute) and view mode: show the disabled toggle,
+   keep the static value-label, hide the form checkbox + .info-row__static. */
+.info-row--bool .info-row__static { display: none; }
+
+[data-mode="view"] .info-row--bool .info-row__bool-view,
+.info-row--bool:not([data-mode]) .info-row__bool-view {
+    display: inline-block;
+}
+[data-mode="view"] .info-row--bool .info-row__bool-static {
+    display: inline;
+}
+
+/* Edit mode: hide the disabled view-toggle + its static label;
+   the form's own checkbox slider shows via existing rules above. */
+[data-mode="edit"] .info-row--bool .info-row__bool-view,
+[data-mode="edit"] .info-row--bool .info-row__bool-static {
+    display: none !important;
+}
+
+
+/* Move 8 — inline variant of info-row__sub (used inside .info-list__item) */
+.info-row__sub--inline { display: inline; }
+
+/* ─── Inline form errors ───────────────────────────────────────────────
+ * components/form-errors.js adds .info-row--has-error to rows whose input
+ * the server rejected. The row turns red, the icon shifts color, and a
+ * small bubble below the input carries the message.
+ *
+ * Token-only (no raw hex). Works across light/sepia/dark via theme tokens.
+ * ─────────────────────────────────────────────────────────────────── */
+
+/* Highlight the row icon to draw the eye toward the offending field. */
+.info-row--has-error > .info-row__icon {
+    color: var(--color-danger);
+}
+
+/* Red border + soft danger halo on the input itself. Covers the common
+   editable widgets seen in info-row__value: bare inputs, selects, textareas,
+   plus the .select2 wrapper used by django-select2. */
+.info-row--has-error .info-row__value > input:not([type='checkbox']):not([type='radio']),
+.info-row--has-error .info-row__value > select,
+.info-row--has-error .info-row__value > textarea,
+.info-row--has-error .info-row__value > .select2 .select2-selection,
+.info-row--has-error .info-row__value > .select2-container .select2-selection {
+    border-color: var(--color-danger);
+    box-shadow: 0 0 0 3px var(--color-primary-100);
+}
+
+/* Error bubble: lives inside .info-row__body (or row), positioned in flow
+   so it pushes the next field down rather than overlapping anything.
+   Subtle slide-down on first appearance so it doesn't snap. */
+.info-row__error {
+    margin-top: var(--space-1);
+    padding: 6px var(--space-2);
+    background: var(--color-primary-50);
+    color: var(--color-danger);
+    border-left: 3px solid var(--color-danger);
+    border-radius: var(--radius-1);
+    font-size: 0.85rem;
+    line-height: 1.35;
+    animation: info-row-error-in 180ms ease-out;
+}
+
+@keyframes info-row-error-in {
+    from { opacity: 0; transform: translateY(-2px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Compact banner above the form: leans on existing .u-alert--error styling
+   so the only thing this rule adds is rhythm with the rest of the form. */
+.form-errors-banner {
+    margin-bottom: var(--space-4);
+}
+.form-errors-banner .form-errors__list {
+    margin: var(--space-1) 0 0 var(--space-4);
+    padding: 0;
+    list-style: disc;
+}
+
+
+/* Sticky page header eats the top ~120px of viewport; give inputs that the
+   browser scrolls into view (TAB navigation, scrollIntoView from form-errors.js)
+   enough top breathing room that they land below the sticky header instead of
+   under it. */
+.info-row .info-row__value > input:not([type=checkbox]):not([type=radio]),
+.info-row .info-row__value > select,
+.info-row .info-row__value > textarea,
+.info-row .info-row__value > .select2,
+.info-row .info-row__value > .select2-container {
+    scroll-margin-top: 120px;
+}
+.info-row {
+    scroll-margin-top: 120px;
+}

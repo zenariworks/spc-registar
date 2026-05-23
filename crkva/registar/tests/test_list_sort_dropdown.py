@@ -8,9 +8,12 @@ old segmented radio toggle. Submission of the parent form keeps the existing
 import datetime
 import re
 
+from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Hram, Krstenje, Osoba, Svestenik, Vencanje
+
+User = get_user_model()
 
 
 class ListSortDropdownRendersAsSelectTests(TestCase):
@@ -18,6 +21,8 @@ class ListSortDropdownRendersAsSelectTests(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(username="tester", password="x")
+        self.client.force_login(self.user)
         # A handful of parohijani so the list has rows to render.
         Osoba.objects.create(ime="Ана", prezime="Андрић", parohijan=True)
         Osoba.objects.create(ime="Бојан", prezime="Бркић", parohijan=True)
@@ -134,6 +139,8 @@ class ListSortDropdownAcrossAllListPagesTests(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(username="tester", password="x")
+        self.client.force_login(self.user)
         self.hram = Hram.objects.create(naziv="Тест Храм")
         # parohijani
         Osoba.objects.create(ime="Петар", prezime="Петровић", parohijan=True)
@@ -198,6 +205,8 @@ class ListSortDropdownStillSortsTests(TestCase):
 
     def setUp(self):
         self.client = Client()
+        self.user = User.objects.create_user(username="tester", password="x")
+        self.client.force_login(self.user)
         # Three parohijani with surnames that have a deterministic order.
         Osoba.objects.create(ime="А", prezime="Аврамовић", parohijan=True)
         Osoba.objects.create(ime="Б", prezime="Бабић", parohijan=True)

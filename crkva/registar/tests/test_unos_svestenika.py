@@ -53,20 +53,20 @@ class UnosSvestenikaViewTests(TestCase):
             {
                 "ime": "Никола",
                 "prezime": "Тестић",
-                "zvanje": "Јереј",
+                "zvanje": "јереј",
             },
         )
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Svestenik.objects.count(), before + 1)
         s = Svestenik.objects.get(ime="Никола", prezime="Тестић")
-        self.assertEqual(s.zvanje, "Јереј")
+        self.assertEqual(s.zvanje, "јереј")
 
     def test_clerk_cannot_post(self):
         self.client.force_login(self.clerk)
         before = Svestenik.objects.count()
         r = self.client.post(
             reverse("unos_svestenika"),
-            {"ime": "Не", "prezime": "Може", "zvanje": "Јереј"},
+            {"ime": "Не", "prezime": "Може", "zvanje": "јереј"},
         )
         self.assertEqual(r.status_code, 403)
         self.assertEqual(Svestenik.objects.count(), before)
@@ -76,7 +76,7 @@ class UnosSvestenikaViewTests(TestCase):
         before = Svestenik.objects.count()
         r = self.client.post(
             reverse("unos_svestenika"),
-            {"ime": "Админ", "prezime": "Свештеник", "zvanje": "Протојереј"},
+            {"ime": "Админ", "prezime": "Свештеник", "zvanje": "протојереј"},
         )
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Svestenik.objects.count(), before + 1)
