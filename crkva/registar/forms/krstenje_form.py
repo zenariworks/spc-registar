@@ -49,12 +49,12 @@ class KrstenjeForm(forms.ModelForm):
             "kum",
             "svestenik",
             # Податци о детету
-            "dete_rodjeno_zivo",
-            "dete_po_redu_po_majci",
-            "dete_vanbracno",
-            "dete_blizanac",
-            "drugo_dete_blizanac_ime",
-            "dete_sa_telesnom_manom",
+            "zivorodjeno",
+            "po_redu",
+            "vanbracno",
+            "blizanac",
+            "ime_blizanca",
+            "telesna_mana",
             # Матична књига – анаграф
             "mesto_registracije",
             "datum_registracije",
@@ -101,8 +101,8 @@ class KrstenjeForm(forms.ModelForm):
             if role_a and role_b and role_a == role_b:
                 self.add_error(name_b, f"Иста особа не може бити и {name_a} и {name_b}.")
 
-        # If dete_blizanac is checked, the second twin's name is required.
-        if cleaned.get("dete_blizanac") and not (cleaned.get("drugo_dete_blizanac_ime") or "").strip():
-            self.add_error("drugo_dete_blizanac_ime",
+        # If blizanac is checked, the second twin's name is required.
+        if cleaned.get("blizanac") and not (cleaned.get("ime_blizanca") or "").strip():
+            self.add_error("ime_blizanca",
                            "Унесите име другог детета близанца.")
         return cleaned

@@ -82,9 +82,9 @@ class KrstenjeCreationIntegrationTest(TestCase):
             "datum": "2024-02-10",
             "vreme": "10:00",
             "mesto": "Београд",
-            "dete_vanbracno": False,
-            "dete_blizanac": False,
-            "dete_sa_telesnom_manom": False,
+            "vanbracno": False,
+            "blizanac": False,
+            "telesna_mana": False,
             "hram": self.hram.uid,
             "svestenik": self.svestenik.uid,
         }
@@ -118,9 +118,9 @@ class KrstenjeCreationIntegrationTest(TestCase):
             "redni_broj": 1,
             "godina_registracije": 2024,
             "datum": "2024-02-10",
-            "dete_vanbracno": False,
-            "dete_blizanac": False,
-            "dete_sa_telesnom_manom": False,
+            "vanbracno": False,
+            "blizanac": False,
+            "telesna_mana": False,
         }
 
         response = self.client.post(reverse("unos_krstenja"), krstenje_data)
@@ -232,9 +232,9 @@ class SearchIntegrationTest(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         from django.contrib.auth import get_user_model
 
@@ -306,9 +306,9 @@ class ModelRelationshipsIntegrationTest(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
 
         self.assertEqual(krstenje.dete, self.dete)
@@ -335,9 +335,9 @@ class ModelRelationshipsIntegrationTest(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
 
         self.dete.delete()
@@ -369,9 +369,9 @@ class FormValidationIntegrationTest(TestCase):
             "redni_broj": 1,
             "godina_registracije": 2024,
             "datum": "2024-02-10",
-            "dete_vanbracno": False,
-            "dete_blizanac": False,
-            "dete_sa_telesnom_manom": False,
+            "vanbracno": False,
+            "blizanac": False,
+            "telesna_mana": False,
         }
 
         response = self.client.post(reverse("unos_krstenja"), krstenje_data)
@@ -432,9 +432,9 @@ class CrossModelReferenceTest(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
 
         self.assertIsNotNone(vencanje)

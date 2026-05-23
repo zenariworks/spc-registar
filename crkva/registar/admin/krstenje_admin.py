@@ -26,12 +26,12 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "kum",
         "svestenik",
         # Остали подаци о детету
-        "dete_rodjeno_zivo",
-        "dete_po_redu_po_majci",
-        "dete_vanbracno",
-        "dete_blizanac",
-        "drugo_dete_blizanac_ime",
-        "dete_sa_telesnom_manom",
+        "zivorodjeno",
+        "po_redu",
+        "vanbracno",
+        "blizanac",
+        "ime_blizanca",
+        "telesna_mana",
         # Регистрација
         "mesto_registracije",
         "datum_registracije",

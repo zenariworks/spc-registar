@@ -84,10 +84,10 @@ class IncludingPagesDoNotLeakTemplateTokensTests(TestCase):
             strana=1,
             broj=1,
             datum=datetime.date(2024, 2, 10),
-            dete_rodjeno_zivo=True,
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            zivorodjeno=True,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         cls.vencanje = Vencanje.objects.create(
             godina_registracije=2024,

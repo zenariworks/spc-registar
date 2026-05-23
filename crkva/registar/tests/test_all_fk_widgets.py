@@ -142,10 +142,10 @@ class IzmenaKrstenjeFkSelect2Tests(_LoggedInAdminMixin, TestCase):
             strana=1,
             broj=1,
             datum=datetime.date(2024, 2, 10),
-            dete_rodjeno_zivo=True,
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            zivorodjeno=True,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
 
     def test_edit_page_keeps_select2_on_every_fk(self):

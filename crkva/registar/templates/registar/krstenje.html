@@ -98,21 +98,21 @@
               </div>
             </div>
           </li>
-          {% info_row_bool icon="fa-heart-pulse" label="Дете рођено живо" value_label="Дете рођено живо" field=form.dete_rodjeno_zivo value=krstenje.dete_rodjeno_zivo %}
-          {% info_row icon="fa-list-ol" label="Дете по реду (по мајци)" field=form.dete_po_redu_po_majci value=krstenje.dete_po_redu_po_majci %}
-          {% info_row_bool icon="fa-ring" label="Ванбрачно дете" value_label="Ванбрачно дете" field=form.dete_vanbracno value=krstenje.dete_vanbracno %}
+          {% info_row_bool icon="fa-heart-pulse" label="Дете рођено живо" value_label="Дете рођено живо" field=form.zivorodjeno value=krstenje.zivorodjeno %}
+          {% info_row icon="fa-list-ol" label="Дете по реду (по мајци)" field=form.po_redu value=krstenje.po_redu %}
+          {% info_row_bool icon="fa-ring" label="Ванбрачно дете" value_label="Ванбрачно дете" field=form.vanbracno value=krstenje.vanbracno %}
           {# Дете близанац keeps raw markup — sub format "(Петар)" with parens differs from generic info_row_bool sub. #}
           <li class="info-row info-row--editable info-row--stacked">
             <div class="info-row__icon" data-tooltip="Дете близанац"><i class="fa-solid fa-people-arrows"></i></div>
             <div class="info-row__body">
               <div class="info-row__value">
-                <span class="info-row__static">Дете близанац: {{ krstenje.dete_blizanac|yesno:"Да,Не" }}{% if krstenje.dete_blizanac and krstenje.drugo_dete_blizanac_ime %} <span class="info-row__sub">({{ krstenje.drugo_dete_blizanac_ime }})</span>{% endif %}</span>
-                {{ form.dete_blizanac }}<label class="info-row__bool-label" for="{{ form.dete_blizanac.id_for_label }}">Дете близанац</label>
+                <span class="info-row__static">Дете близанац: {{ krstenje.blizanac|yesno:"Да,Не" }}{% if krstenje.blizanac and krstenje.ime_blizanca %} <span class="info-row__sub">({{ krstenje.ime_blizanca }})</span>{% endif %}</span>
+                {{ form.blizanac }}<label class="info-row__bool-label" for="{{ form.blizanac.id_for_label }}">Дете близанац</label>
               </div>
             </div>
           </li>
-          {% info_row icon="fa-tag" label="Име другог детета близанца" field=form.drugo_dete_blizanac_ime value=krstenje.drugo_dete_blizanac_ime %}
-          {% info_row_bool icon="fa-hand-holding-medical" label="Дете са телесном маном" value_label="Дете са телесном маном" field=form.dete_sa_telesnom_manom value=krstenje.dete_sa_telesnom_manom %}
+          {% info_row icon="fa-tag" label="Име другог детета близанца" field=form.ime_blizanca value=krstenje.ime_blizanca %}
+          {% info_row_bool icon="fa-hand-holding-medical" label="Дете са телесном маном" value_label="Дете са телесном маном" field=form.telesna_mana value=krstenje.telesna_mana %}
         </ul>
       </div>
 
@@ -192,10 +192,10 @@
           <div class="krst-table-field krst-field-krstenje_mesto">{{ krstenje.hram.mesto }}, {{ krstenje.hram }}</div>
           <div class="krst-table-field krst-field-ime_pol">{{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}</div>
           <div class="krst-table-field krst-field-roditelji">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{{ krstenje.hram.mesto }}, {{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}</div>
-          <div class="krst-table-field krst-field-dete_po_redu">{{ krstenje.dete_po_redu_po_majci }}</div>
-          <div class="krst-table-field krst-field-bracno">{{ krstenje.dete_vanbracno|yesno:"није,јесте" }}</div>
-          <div class="krst-table-field krst-field-blizanac">{{ krstenje.dete_blizanac|yesno:"јесте,није" }}</div>
-          <div class="krst-table-field krst-field-telesna_mana">{{ krstenje.dete_sa_telesnom_manom|yesno:"јесте,није,непознато" }}</div>
+          <div class="krst-table-field krst-field-dete_po_redu">{{ krstenje.po_redu }}</div>
+          <div class="krst-table-field krst-field-bracno">{{ krstenje.vanbracno|yesno:"није,јесте" }}</div>
+          <div class="krst-table-field krst-field-blizanac">{{ krstenje.blizanac|yesno:"јесте,није" }}</div>
+          <div class="krst-table-field krst-field-telesna_mana">{{ krstenje.telesna_mana|yesno:"јесте,није,непознато" }}</div>
           <div class="krst-table-field krst-field-svestenik">{{ krstenje.svestenik|default_if_none:"" }}</div>
           <div class="krst-table-field krst-field-kum">{{ krstenje.ime_kuma }}, {{ krstenje.zanimanje_kuma }}<br>{{ krstenje.adresa_kuma_mesto }}</div>
           <div class="krst-table-field krst-field-domovnik"></div>

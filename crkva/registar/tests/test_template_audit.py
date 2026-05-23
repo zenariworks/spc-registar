@@ -187,9 +187,9 @@ class KrstenjePDFTemplateRenderTests(TestCase):
             otac=cls.otac,
             majka=cls.majka,
             kum=cls.kum,
-            dete_vanbracno=False,
-            dete_blizanac=True,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=True,
+            telesna_mana=False,
             strana_registracije="42",
         )
 
@@ -206,7 +206,7 @@ class KrstenjePDFTemplateRenderTests(TestCase):
 
     def test_pdf_stara_krstenica_renders_twin_and_anagraf(self):
         body = self._render("registar/pdf_krstenje_stara_krstenica.html")
-        # ``dete_blizanac=True`` is yesno-formatted as the Cyrillic "јесте".
+        # ``blizanac=True`` is yesno-formatted as the Cyrillic "јесте".
         self.assertIn("јесте", body)
         # ``strana_registracije`` (was the broken ``anagraf`` chain).
         self.assertIn("42", body)
