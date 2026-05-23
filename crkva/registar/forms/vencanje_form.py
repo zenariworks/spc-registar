@@ -1,7 +1,6 @@
 """Django форма за унос венчања."""
 
 from django import forms
-from django.db.models import Q
 from registar.forms.select2 import (
     FemaleOsobaSelect2Widget,
     HramSelect2Widget,
@@ -10,18 +9,9 @@ from registar.forms.select2 import (
     ScriptAwareModelSelect2Widget,
     SvestenikSelect2Widget,
 )
-from registar.models import Hram, Svestenik, Vencanje
-from registar.models.parohijan import Osoba
+from registar.models import Vencanje
 
 
-
-
-class HramSelect2Widget(ScriptAwareModelSelect2Widget):
-    """Autocomplete widget for Hram model."""
-
-    model = Hram
-    search_fields = ["naziv__icontains"]
-    attrs = {"data-minimum-input-length": 0}
 
 
 class VencanjeForm(forms.ModelForm):

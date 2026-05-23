@@ -101,7 +101,7 @@ class PublicSchemaModelSelect2Widget(ScriptAwareModelSelect2Widget):
 
 from django.db.models import Q  # noqa: E402
 
-from registar.models import Hram, Svestenik  # noqa: E402
+from registar.models import Adresa, Hram, Svestenik  # noqa: E402
 from registar.models.parohijan import Osoba  # noqa: E402
 
 
@@ -164,3 +164,25 @@ class HramSelect2Widget(ScriptAwareModelSelect2Widget):
     model = Hram
     search_fields = ["naziv__icontains"]
     attrs = {"data-minimum-input-length": 0}
+
+
+class AdresaSelect2Widget(ScriptAwareModelSelect2Widget):
+    """Autocomplete widget for Adresa.
+
+    Adds data-adresa-edit="1" via build_attrs so the inline-edit
+    pencil component (registar/static/registar/components/adresa_edit.js)
+    attaches its dropdown-row pencils to every dropdown opened from this
+    widget. Class-level attrs={...} would not work: Django's
+    Widget.__init__ overwrites self.attrs with {} when the widget is
+    instantiated without an attrs argument (which is how Meta.widgets
+    instantiates a widget class), so the only reliable place to inject
+    default attrs is build_attrs.
+    """
+
+    model = Adresa
+    search_fields = ["ulica__icontains", "mesto__icontains"]
+
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs["data-adresa-edit"] = "1"
+        return attrs
