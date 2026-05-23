@@ -25,6 +25,13 @@ def brzi_unos_osobe(request):
     if not ime or not prezime:
         return JsonResponse({"error": "Име и презиме су обавезни"}, status=400)
 
+    # Validate pol against the field's declared choices so a hand-crafted
+    # POST cannot store arbitrary single-character values that the UI later
+    # treats as "unknown".
+    valid_pol = {choice[0] for choice in Osoba._meta.get_field("pol").choices}
+    if pol and pol not in valid_pol:
+        return JsonResponse({"error": "Неважећа вредност за пол"}, status=400)
+
     osoba = Osoba.objects.create(
         ime=ime, prezime=prezime, pol=pol or None, parohijan=True
     )
@@ -39,10 +46,22 @@ def brzi_izmena_adrese(request, uid):
     Domacinstvo currently pointing at that row sees the fresh values
     without re-linking.
     """
-    if request.method != "POST":
-        return JsonResponse({"error": "POST only"}, status=405)
-
     adresa = get_object_or_404(Adresa, uid=uid)
+    # GET = pre-fill payload for the dropdown-pencil edit flow.
+    if request.method == "GET":
+        return JsonResponse(
+            {
+                "id": str(adresa.uid),
+                "text": str(adresa),
+                "ulica": adresa.ulica or "",
+                "broj": adresa.broj or "",
+                "broj_stana": adresa.broj_stana or "",
+                "mesto": adresa.mesto or "",
+            }
+        )
+    if request.method != "POST":
+        return JsonResponse({"error": "GET or POST only"}, status=405)
+
     adresa.ulica = request.POST.get("ulica", "").strip()
     adresa.broj = request.POST.get("broj", "").strip()
     adresa.broj_stana = request.POST.get("broj_stana", "").strip()

@@ -75,6 +75,9 @@ class ParohijanForm(forms.ModelForm):
             "adresa": ScriptAwareModelSelect2Widget(
                 model=Adresa,
                 search_fields=["ulica__icontains", "mesto__icontains"],
-                attrs={"data-minimum-input-length": 0},
+                attrs={
+                    "data-minimum-input-length": 0,
+                    "data-adresa-edit": "1",
+                },
             ),
         }

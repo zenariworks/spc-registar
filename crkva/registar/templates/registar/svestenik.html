@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% load info_components %}
 
 {% block extra_css %}{% if form %}{{ form.media.css }}{% endif %}{% endblock %}
-{% block extra_js %}{% if form %}{{ form.media.js }}{% endif %}{% endblock %}
+{% block extra_js %}{% if form %}{{ form.media.js }}<script src="{% static "registar/components/adresa_edit.js" %}"></script>{% endif %}{% endblock %}
 
 {% block content %}
 {% if svestenik %}
@@ -60,6 +61,7 @@
     {% endif %}
   {% endif %}
 
+  {% if form %}{% include "registar/_modal_adresa.html" %}{% endif %}
 </form>
 {% if svestenik %}{% include "registar/_istorija_izmena.html" %}{% endif %}
 {% endblock %}
