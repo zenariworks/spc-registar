@@ -235,13 +235,6 @@
 /* Search overlay */
 [data-theme="dark"] .search-overlay { background: rgba(0, 0, 0, 0.7); }
 
-/* Page-size pills */
-[data-theme="dark"] .page-size-link--active {
-    background: var(--color-primary) !important;
-    color: #fff !important;
-}
-
-
 /* On tamna the домаћин badge inherits --color-primary (deep red), which
    clashes against the dark ink palette. Override with olive (cooler on dark) —
    matches the sepia treatment for visual parity. */

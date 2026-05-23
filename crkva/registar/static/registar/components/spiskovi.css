@@ -140,15 +140,6 @@
 
 
 
-/* Спискови */
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 8px;
-}
-
 .form-container {
     display: flex;
     align-items: center;
@@ -218,12 +209,6 @@
 
 /* Mobile-friendly list and filters */
 @media (max-width: 768px) {
-    .header-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-    }
-
     .page-title {
         font-size: 1.5rem;
     }
@@ -380,82 +365,6 @@
     background: var(--color-surface-2);
     border-radius: 12px;
     border: 1px dashed var(--color-border);
-}
-
-/* ==========================================================================
-   LIST CONTROLS BAR (sort + per-page dropdowns)
-   ========================================================================== */
-
-.list-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 10px;
-    padding: 6px 0;
-    flex-wrap: wrap;
-}
-
-.list-controls__group {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.list-controls__group--right {
-    margin-left: auto;
-}
-
-.list-controls__label {
-    font-size: 13px;
-    color: var(--color-text-muted);
-    white-space: nowrap;
-}
-
-.list-controls__select {
-    font-size: 14px;
-    line-height: 20px;
-    padding: 7px 32px 7px 14px;
-    background-color: var(--color-surface);
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-2);
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 16 16%27 fill=%27%23888%27%3E%3Cpath d=%27M3.204 5h9.592L8 10.481 3.204 5zm-.753.659l4.796 5.48a1 1 0 0 0 1.506 0l4.796-5.48c.566-.647.106-1.659-.753-1.659H3.204a1 1 0 0 0-.753 1.659z%27/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 12px;
-    transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
-    font-family: inherit;
-    min-height: 36px;
-}
-
-.list-controls__select:hover {
-    background-color: var(--color-surface-2);
-    border-color: color-mix(in oklab, var(--color-primary) 40%, var(--color-border));
-}
-
-.list-controls__select:focus {
-    outline: none;
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-primary) 18%, transparent);
-}
-
-@media (max-width: 640px) {
-    .list-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .list-controls__group--right {
-        margin-left: 0;
-    }
-    .list-controls__select {
-        width: 100%;
-    }
 }
 
 /* Flex layout for items with structured metadata (parohijani) */
