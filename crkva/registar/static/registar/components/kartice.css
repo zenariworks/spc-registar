@@ -9,8 +9,7 @@
    lift for "act now" moments (quick actions, today's feast).
    ========================================================================== */
 .card,
-.quick-actions-card,
-.registry-overview {
+.quick-actions-card {
     background: var(--color-surface-2);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-3);
@@ -87,76 +86,6 @@
 
 .card__link:hover,
 .view-all-link:hover { color: var(--color-primary-700); text-decoration: none; }
-
-/* Registry Overview */
-.registry,
-.registry-overview { grid-column: 1 / -1; }
-
-.registry__grid,
-.registry-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: var(--space-3);
-}
-.registry__count,
-.registry-count {
-    font-family: var(--font-mono);
-    font-weight: 500;
-    font-variant-numeric: tabular-nums;
-    color: var(--color-text);
-    font-size: 1.5rem;
-    letter-spacing: -0.02em;
-}
-
-.registry__card,
-.registry-card {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 20px;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: 12px;
-    text-decoration: none;
-    color: var(--color-text);
-    transition: all 0.2s;
-}
-
-.registry__card:hover,
-.registry-card:hover {
-    background: var(--color-surface);
-    border-color: var(--color-accent);
-    box-shadow: inset 3px 0 0 var(--color-accent), var(--shadow-sm);
-    text-decoration: none;
-}
-
-.registry__icon,
-.registry-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--color-accent-50);
-    color: var(--color-accent-700);
-    border-radius: var(--radius-2);
-    border: 1px solid var(--color-accent-200);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-}
-
-.registry__info,
-.registry-info { flex: 1; }
-
-.registry__title,
-.registry-title { font-weight: 600; margin-bottom: 4px; }
-
-.registry__desc,
-.registry-desc { font-size: 0.875rem; color: var(--color-muted); }
-
-@media (max-width: 768px) {
-    .registry__grid,
-    .registry-grid { grid-template-columns: 1fr; }
-}
 
 /* Main Grid Layout — fills main edge-to-edge (no max-width cap).
    On wide monitors content used to sit in a centered 1440 box,
@@ -237,66 +166,13 @@
     border-radius: 4px;
 }
 
-.registry__count {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--color-primary);
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
-/* Registry as compact info-strip (used on home page below actions) */
-.registry--compact .registry__grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-2);
-}
-.registry--compact .registry__card {
-    padding: var(--space-3);
-    gap: var(--space-3);
-}
-.registry--compact .registry__icon {
-    width: 36px;
-    height: 36px;
-    font-size: 1.05rem;
-    border-radius: var(--radius-1);
-}
-.registry--compact .registry__count {
-    font-size: 1.25rem;
-}
-.registry--compact .registry__desc {
-    display: none;
-}
-@media (max-width: 768px) {
-    .registry--compact .registry__grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-@media (max-width: 480px) {
-    .registry--compact .registry__grid {
-        grid-template-columns: 1fr;
-    }
-}
-
 
 /* Move 6 — tablet tuning for action and registry cards */
 @media (max-width: 1024px) {
     .actions__title, .action-title { font-size: 0.9rem; }
     .actions__desc,  .action-desc  { font-size: 0.78rem; }
-    .registry__card { padding: var(--space-3); gap: var(--space-3); }
-    .registry__icon { width: 40px; height: 40px; font-size: 1.15rem; }
 }
 @media (max-width: 640px) {
     .card, .card--elevated, .card--hero { padding: var(--space-3); }
     .card__header { margin-bottom: var(--space-3); padding-bottom: var(--space-2); }
-    /* On phones the Регистри cards mirror Брзе акције (horizontal icon+text,
-       compact chrome) so the two sections read as the same component. */
-    .registry__card {
-        padding: var(--space-3) var(--space-4);
-        gap: var(--space-3);
-        background: var(--color-surface-2);
-        border-radius: var(--radius-2);
-    }
-    .registry__icon { width: 36px; height: 36px; font-size: 1.1rem; }
-    .registry__title { font-size: 0.95rem; }
-    .registry__desc  { font-size: 0.8rem; }
 }

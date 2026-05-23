@@ -174,8 +174,6 @@
 /* The "click" of the redesign: body sits on parchment, cards float as lighter
    cream sheets with a hairline of aged gold. */
 [data-theme="sepia"] .card,
-[data-theme="sepia"] .registry,
-[data-theme="sepia"] .registry-overview,
 [data-theme="sepia"] .quick-actions-card {
     background: var(--color-surface-2);
     border-color: var(--color-border);
@@ -194,16 +192,12 @@
 
 /* Action items + registry cards: lift above parchment body */
 [data-theme="sepia"] .actions__item,
-[data-theme="sepia"] .action-item,
-[data-theme="sepia"] .registry__card,
-[data-theme="sepia"] .registry-card {
+[data-theme="sepia"] .action-item {
     background: var(--color-surface-2);
     border-color: var(--color-border);
 }
 [data-theme="sepia"] .actions__item:hover,
-[data-theme="sepia"] .action-item:hover,
-[data-theme="sepia"] .registry__card:hover,
-[data-theme="sepia"] .registry-card:hover {
+[data-theme="sepia"] .action-item:hover {
     background: var(--color-surface-hover);
     border-color: var(--color-accent);
 }

@@ -154,37 +154,35 @@
     <div class="card__header">
       <h3><i class="fa-solid fa-box-archive"></i> Регистри</h3>
     </div>
-    <div class="registry registry--compact">
-    <div class="registry__grid">
-      <a href="{% url 'parohijani' %}" class="registry__card">
-        <div class="registry__icon"><i class="fa-solid fa-users"></i></div>
-        <div class="registry__count">{{ stats.parohijani }}</div>
-        <div class="registry__info">
-          <div class="registry__title">Парохијани</div>
+    <div class="actions">
+      <a href="{% url 'parohijani' %}" class="actions__item">
+        <div class="actions__icon"><i class="fa-solid fa-users"></i></div>
+        <div class="actions__text">
+          <div class="actions__title">Парохијани</div>
         </div>
+        <div class="actions__count">{{ stats.parohijani }}</div>
       </a>
-      <a href="{% url 'krstenja' %}" class="registry__card">
-        <div class="registry__icon"><i class="fa-solid fa-droplet"></i></div>
-        <div class="registry__count">{{ stats.krstenja }}</div>
-        <div class="registry__info">
-          <div class="registry__title">Крштења</div>
+      <a href="{% url 'krstenja' %}" class="actions__item">
+        <div class="actions__icon"><i class="fa-solid fa-droplet"></i></div>
+        <div class="actions__text">
+          <div class="actions__title">Крштења</div>
         </div>
+        <div class="actions__count">{{ stats.krstenja }}</div>
       </a>
-      <a href="{% url 'vencanja' %}" class="registry__card">
-        <div class="registry__icon"><i class="icon-rings"></i></div>
-        <div class="registry__count">{{ stats.vencanja }}</div>
-        <div class="registry__info">
-          <div class="registry__title">Венчања</div>
+      <a href="{% url 'vencanja' %}" class="actions__item">
+        <div class="actions__icon"><i class="icon-rings"></i></div>
+        <div class="actions__text">
+          <div class="actions__title">Венчања</div>
         </div>
+        <div class="actions__count">{{ stats.vencanja }}</div>
       </a>
-      <a href="{% url 'svestenici' %}" class="registry__card">
-        <div class="registry__icon"><i class="fa-solid fa-id-badge"></i></div>
-        <div class="registry__count">{{ stats.svestenici }}</div>
-        <div class="registry__info">
-          <div class="registry__title">Свештеници</div>
+      <a href="{% url 'svestenici' %}" class="actions__item">
+        <div class="actions__icon"><i class="fa-solid fa-id-badge"></i></div>
+        <div class="actions__text">
+          <div class="actions__title">Свештеници</div>
         </div>
+        <div class="actions__count">{{ stats.svestenici }}</div>
       </a>
-    </div>
     </div>
   </div>
 
