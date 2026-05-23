@@ -10,9 +10,17 @@ optional in-memory cache to keep the hot loop out of the database.
 
 from __future__ import annotations
 
+from django.db import connection
+
 from registar.models import Osoba
 
-_OSOBA_CACHE: dict[tuple[str, str], Osoba] = {}
+# Per-tenant cache: outer key is the schema name so two tenants running
+# back-to-back in the same process do not contaminate each other's lookups.
+_OSOBA_CACHE_BY_SCHEMA: dict[str, dict[tuple[str, str], Osoba]] = {}
+
+
+def _cache() -> dict[tuple[str, str], Osoba]:
+    return _OSOBA_CACHE_BY_SCHEMA.setdefault(connection.schema_name, {})
 
 
 def _key(ime: str, prezime: str) -> tuple[str, str]:
@@ -21,10 +29,10 @@ def _key(ime: str, prezime: str) -> tuple[str, str]:
 
 def warm_osoba_cache() -> int:
     """Prefill the cache with every existing Osoba indexed by (ime, prezime)."""
-    _OSOBA_CACHE.clear()
+    _cache().clear()
     for osoba in Osoba.objects.all().only("uid", "ime", "prezime"):
-        _OSOBA_CACHE[_key(osoba.ime or "", osoba.prezime or "")] = osoba
-    return len(_OSOBA_CACHE)
+        _cache()[_key(osoba.ime or "", osoba.prezime or "")] = osoba
+    return len(_cache())
 
 
 def lookup_osoba(ime: str | None, prezime: str | None) -> Osoba | None:
@@ -36,7 +44,7 @@ def lookup_osoba(ime: str | None, prezime: str | None) -> Osoba | None:
     if not ime or not prezime:
         return None
     key = _key(ime.strip(), prezime.strip())
-    return _OSOBA_CACHE.get(key)
+    return _cache().get(key)
 
 
 def cache_osoba(osoba: Osoba) -> None:
@@ -49,7 +57,7 @@ def cache_osoba(osoba: Osoba) -> None:
     if osoba is None or not osoba.ime or not osoba.prezime:
         return
     key = _key(osoba.ime, osoba.prezime)
-    _OSOBA_CACHE[key] = osoba
+    _cache()[key] = osoba
 
 
 def find_or_create_osoba(ime: str | None, prezime: str | None, **extra) -> Osoba | None:
@@ -67,7 +75,7 @@ def find_or_create_osoba(ime: str | None, prezime: str | None, **extra) -> Osoba
         return None
 
     key = _key(ime, prezime)
-    cached = _OSOBA_CACHE.get(key)
+    cached = _cache().get(key)
     if cached is not None:
         existing = cached
     else:
@@ -75,7 +83,7 @@ def find_or_create_osoba(ime: str | None, prezime: str | None, **extra) -> Osoba
             ime__iexact=ime, prezime__iexact=prezime
         ).first()
         if existing:
-            _OSOBA_CACHE[key] = existing
+            _cache()[key] = existing
 
     if existing:
         updates = {
@@ -84,11 +92,11 @@ def find_or_create_osoba(ime: str | None, prezime: str | None, **extra) -> Osoba
         if updates:
             Osoba.objects.filter(pk=existing.pk).update(**updates)
             existing.refresh_from_db()
-            _OSOBA_CACHE[key] = existing
+            _cache()[key] = existing
         return existing
 
     data = {"ime": ime, "prezime": prezime, "parohijan": False}
     data.update({k: v for k, v in extra.items() if v is not None})
     created = Osoba.objects.create(**data)
-    _OSOBA_CACHE[key] = created
+    _cache()[key] = created
     return created

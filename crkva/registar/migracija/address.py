@@ -8,9 +8,17 @@ avoid an N×1 DB query pattern.
 
 from __future__ import annotations
 
+from django.db import connection
+
 from registar.models import Adresa, Osoba
 
-_ADRESA_CACHE: dict[tuple[str, str, str, str], Adresa] = {}
+# Per-tenant cache: outer key is the schema name so two tenants running
+# back-to-back in the same process do not contaminate each other's lookups.
+_ADRESA_CACHE_BY_SCHEMA: dict[str, dict[tuple[str, str, str, str], Adresa]] = {}
+
+
+def _cache() -> dict[tuple[str, str, str, str], Adresa]:
+    return _ADRESA_CACHE_BY_SCHEMA.setdefault(connection.schema_name, {})
 
 
 def _norm(value: str | None) -> str:
@@ -28,12 +36,12 @@ def _key(
 
 def warm_adresa_cache() -> int:
     """Prefill the cache with every existing Adresa row."""
-    _ADRESA_CACHE.clear()
+    _cache().clear()
     for adresa in Adresa.objects.all():
-        _ADRESA_CACHE[
+        _cache()[
             _key(adresa.ulica, adresa.broj, adresa.broj_stana, adresa.mesto)
         ] = adresa
-    return len(_ADRESA_CACHE)
+    return len(_cache())
 
 
 def find_or_create_adresa(
@@ -45,7 +53,7 @@ def find_or_create_adresa(
 ) -> Adresa:
     """Return an Adresa matching the four normalized fields, creating if absent."""
     key = _key(ulica, broj, broj_stana, mesto)
-    cached = _ADRESA_CACHE.get(key)
+    cached = _cache().get(key)
     if cached is not None:
         return cached
     existing = Adresa.objects.filter(
@@ -55,16 +63,16 @@ def find_or_create_adresa(
         mesto__iexact=mesto or "",
     ).first()
     if existing:
-        _ADRESA_CACHE[key] = existing
+        _cache()[key] = existing
         return existing
     created = Adresa.objects.create(
         ulica=ulica or "",
-        broj=(broj or "")[:10],
+        broj=(broj or "")[:20],
         broj_stana=broj_stana or "",
         mesto=mesto or "",
         **extra,
     )
-    _ADRESA_CACHE[key] = created
+    _cache()[key] = created
     return created
 
 
@@ -74,7 +82,7 @@ def split_adresa(adresa_text: str | None, mesto: str | None) -> Adresa:
         return find_or_create_adresa(mesto=mesto)
     parts = adresa_text.rsplit(None, 1)
     if len(parts) == 2 and any(c.isdigit() for c in parts[1]):
-        return find_or_create_adresa(ulica=parts[0], broj=parts[1][:10], mesto=mesto)
+        return find_or_create_adresa(ulica=parts[0], broj=parts[1][:20], mesto=mesto)
     return find_or_create_adresa(ulica=adresa_text, mesto=mesto)
 
 
