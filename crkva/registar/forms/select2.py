@@ -91,3 +91,98 @@ class PublicSchemaModelSelect2Widget(ScriptAwareModelSelect2Widget):
             # so subsequent pagination/serialisation does not re-run the
             # query under the wrong search_path.
             return list(qs)
+
+
+# ----------------------------------------------------------------------------
+# Shared concrete widgets used by multiple forms. Living here avoids the
+# 60-line copy-paste that previously sat at the top of krstenje_form.py and
+# vencanje_form.py.
+# ----------------------------------------------------------------------------
+
+from django.db.models import Q  # noqa: E402
+
+from registar.models import Adresa, Hram, Svestenik  # noqa: E402
+from registar.models.parohijan import Osoba  # noqa: E402
+
+
+class OsobaSelect2Widget(ScriptAwareModelSelect2Widget):
+    """Autocomplete widget for Osoba (unfiltered).
+
+    Subclasses may set gender_filter to "М" or "Ж" to scope
+    suggestions, and default_pol to seed the "+ Додај нову особу"
+    modal that the JS layer opens from this widget.
+    """
+
+    model = Osoba
+    search_fields = ["ime__icontains", "prezime__icontains"]
+    gender_filter = None
+    default_pol = None
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.gender_filter in ("М", "Ж"):
+            # Lenient: include rows whose pol matches OR is NULL so legacy
+            # uncategorised data still surfaces. pol__in=[value, None] does
+            # NOT match NULL in SQL — OR an explicit isnull lookup instead.
+            qs = qs.filter(Q(pol=self.gender_filter) | Q(pol__isnull=True))
+        return qs
+
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs["data-minimum-input-length"] = 0
+        attrs["data-osoba-create"] = "1"
+        if self.default_pol in ("М", "Ж"):
+            attrs["data-osoba-default-pol"] = self.default_pol
+        return attrs
+
+
+class MaleOsobaSelect2Widget(OsobaSelect2Widget):
+    """Osoba lookup restricted to pol=М (plus pol=NULL)."""
+
+    gender_filter = "М"
+    default_pol = "М"
+
+
+class FemaleOsobaSelect2Widget(OsobaSelect2Widget):
+    """Osoba lookup restricted to pol=Ж (plus pol=NULL)."""
+
+    gender_filter = "Ж"
+    default_pol = "Ж"
+
+
+class SvestenikSelect2Widget(ScriptAwareModelSelect2Widget):
+    """Autocomplete widget for Svestenik."""
+
+    model = Svestenik
+    search_fields = ["ime__icontains", "prezime__icontains"]
+    attrs = {"data-minimum-input-length": 0}
+
+
+class HramSelect2Widget(ScriptAwareModelSelect2Widget):
+    """Autocomplete widget for Hram."""
+
+    model = Hram
+    search_fields = ["naziv__icontains"]
+    attrs = {"data-minimum-input-length": 0}
+
+
+class AdresaSelect2Widget(ScriptAwareModelSelect2Widget):
+    """Autocomplete widget for Adresa.
+
+    Adds data-adresa-edit="1" via build_attrs so the inline-edit
+    pencil component (registar/static/registar/components/adresa_edit.js)
+    attaches its dropdown-row pencils to every dropdown opened from this
+    widget. Class-level attrs={...} would not work: Django's
+    Widget.__init__ overwrites self.attrs with {} when the widget is
+    instantiated without an attrs argument (which is how Meta.widgets
+    instantiates a widget class), so the only reliable place to inject
+    default attrs is build_attrs.
+    """
+
+    model = Adresa
+    search_fields = ["ulica__icontains", "mesto__icontains"]
+
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs["data-adresa-edit"] = "1"
+        return attrs

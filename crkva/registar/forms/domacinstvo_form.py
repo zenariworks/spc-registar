@@ -4,6 +4,7 @@ from django import forms
 from django.forms import inlineformset_factory
 from registar.forms.phone import TenantPhoneField
 from registar.forms.select2 import (
+    AdresaSelect2Widget,
     PublicSchemaModelSelect2Widget,
     ScriptAwareModelSelect2Widget,
 )
@@ -34,14 +35,7 @@ class DomacinstvoForm(forms.ModelForm):
                 search_fields=["ime__icontains", "prezime__icontains"],
                 attrs={"data-minimum-input-length": 0},
             ),
-            "adresa": ScriptAwareModelSelect2Widget(
-                model=Adresa,
-                search_fields=["ulica__icontains", "mesto__icontains"],
-                attrs={
-                    "data-minimum-input-length": 0,
-                    "data-adresa-edit": "1",
-                },
-            ),
+            "adresa": AdresaSelect2Widget(),
             # Slava lives in the public schema (shared model); the dedicated
             # widget wraps every SQL call in schema_context("public") so the
             # select2 AJAX endpoint returns rows even inside a tenant request.
