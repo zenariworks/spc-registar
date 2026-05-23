@@ -108,3 +108,7 @@ class Osoba(TimeStampedModel):
         verbose_name = "Особа"
         verbose_name_plural = "Особе"
         ordering = ["prezime", "ime"]
+        indexes = [
+            # Supports the "-created" / "created" sort options on parohijani list.
+            models.Index(fields=["created"], name="osoba_created_idx"),
+        ]

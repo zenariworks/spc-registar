@@ -61,3 +61,7 @@ class Svestenik(TimeStampedModel):
         db_table: str = "svestenici"
         verbose_name: str = "Свештеник"
         verbose_name_plural: str = "Свештеници"
+        ordering = ["prezime", "ime"]
+        indexes = [
+            models.Index(fields=["created"], name="svestenik_created_idx"),
+        ]
