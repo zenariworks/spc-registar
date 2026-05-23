@@ -21,8 +21,16 @@ class Parohija(models.Model):
         verbose_name="црквена општина",
     )
 
+    _ROMAN_DIGITS = {"1": "I", "2": "II", "3": "III", "4": "IV", "5": "V"}
+
     def __str__(self) -> str:
-        return f"{'I' if self.naziv == '1' else 'II' if self.naziv == '2' else 'III' if self.naziv == '3' else ''}"
+        # Legacy data: a single digit naziv was rendered as the matching
+        # roman numeral. For any other (and now far more common) naziv,
+        # return the actual value so admin dropdowns / select2 widgets /
+        # history pages do not render the empty string.
+        if self.naziv in self._ROMAN_DIGITS:
+            return self._ROMAN_DIGITS[self.naziv]
+        return self.naziv or ""
 
     class Meta:
         managed = True
