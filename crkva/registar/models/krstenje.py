@@ -86,12 +86,12 @@ class Krstenje(TimeStampedModel):
     dete_po_redu_po_majci = models.CharField(
         verbose_name="дете по реду (по мајци)", null=True, blank=True
     )
-    dete_vanbracno = models.BooleanField(verbose_name="ванбрачно дете")
-    dete_blizanac = models.BooleanField(verbose_name="дете близанац")
+    dete_vanbracno = models.BooleanField(verbose_name="ванбрачно дете", default=False)
+    dete_blizanac = models.BooleanField(verbose_name="дете близанац", default=False)
     drugo_dete_blizanac_ime = models.CharField(
         max_length=255, verbose_name="име другог детета близанца", null=True, blank=True
     )
-    dete_sa_telesnom_manom = models.BooleanField(verbose_name="дете са телесном маном")
+    dete_sa_telesnom_manom = models.BooleanField(verbose_name="дете са телесном маном", default=False)
 
     # podaci o svesteniku
     svestenik = models.ForeignKey(

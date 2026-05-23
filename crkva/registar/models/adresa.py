@@ -13,7 +13,7 @@ class Adresa(models.Model):
     ulica = models.CharField(
         max_length=255, verbose_name="улица", blank=True, default=""
     )
-    broj = models.CharField(max_length=10, verbose_name="број", blank=True, default="")
+    broj = models.CharField(max_length=20, verbose_name="број", blank=True, default="")
     sprat = models.CharField(
         max_length=10, verbose_name="спрат", blank=True, default=""
     )
