@@ -1,6 +1,8 @@
 """Глобална претрага и AJAX аутокомплетер."""
 
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
+from django.db import connection
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -8,6 +10,28 @@ from registar.models import Domacinstvo, Krstenje, Osoba, Svestenik, Vencanje
 from registar.utils import get_query_variants
 
 SEARCH_PREVIEW_LIMIT = 5
+STATS_CACHE_TTL = 300  # 5 minutes - registry counts change slowly
+
+
+def _get_registry_stats() -> dict:
+    """Cached per-tenant homepage / search-page summary counts.
+
+    Tenant-scoped via the cache key (connection.schema_name) so two
+    tenants never see each other's totals. TTL is short enough that
+    new krstenja/vencanja appear in roughly 5 min - acceptable for a
+    sidebar widget.
+    """
+    key = f"search_stats:{connection.schema_name}"
+    stats = cache.get(key)
+    if stats is None:
+        stats = {
+            "parohijani": Osoba.objects.count(),
+            "krstenja":  Krstenje.objects.count(),
+            "vencanja":  Vencanje.objects.count(),
+            "svestenici": Svestenik.objects.count(),
+        }
+        cache.set(key, stats, STATS_CACHE_TTL)
+    return stats
 
 
 @login_required
@@ -84,12 +108,7 @@ def search_view(request) -> HttpResponse:
     total = sum(counts.values())
 
     context = {
-        "stats": {
-            "parohijani": Osoba.objects.count(),
-            "krstenja": Krstenje.objects.count(),
-            "vencanja": Vencanje.objects.count(),
-            "svestenici": Svestenik.objects.count(),
-        },
+        "stats": _get_registry_stats(),
         "query": query,
         "total": total,
         "parohijani": parohijani_qs[:SEARCH_PREVIEW_LIMIT],
