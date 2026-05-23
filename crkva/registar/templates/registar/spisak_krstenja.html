@@ -1,18 +1,5 @@
 {% extends "base.html" %}
-{% load marker_filter %}
 
 {% block content %}
-<div class="u-page-header">
-    <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад">
-        <i class="fa-solid fa-arrow-left"></i>
-    </a>
-    <h1 class="u-page-title">Крштења <span class="u-page-title__count">· {{ page_obj.paginator.count }}</span></h1>
-    {% include "registar/_list_toolbar.html" %}
-</div>
-
-{% include "registar/_filter_chips.html" %}
-<ul class="spisak" id="spisak-list">
-    {% include "registar/_stavka_krstenja.html" %}
-</ul>
-<div id="scroll-sentinel" class="scroll-sentinel" aria-hidden="true"><span class="scroll-sentinel__spinner"><i class="fa-solid fa-spinner fa-spin"></i></span></div>
+{% include "registar/_spisak.html" with title="Крштења" stavka_template="registar/_stavka_krstenja.html" %}
 {% endblock %}

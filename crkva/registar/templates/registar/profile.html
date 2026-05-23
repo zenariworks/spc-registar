@@ -5,12 +5,7 @@
 {% block content %}
 <div class="info-page">
 
-  <div class="u-page-header">
-    <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад">
-      <i class="fa-solid fa-arrow-left"></i>
-    </a>
-    <h1 class="u-page-title">Профил</h1>
-  </div>
+  {% include "registar/_page_header.html" with title="Профил" %}
 
   {% if messages %}
     <div class="form-messages u-message-strip">
