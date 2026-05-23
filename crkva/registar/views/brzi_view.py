@@ -46,10 +46,22 @@ def brzi_izmena_adrese(request, uid):
     Domacinstvo currently pointing at that row sees the fresh values
     without re-linking.
     """
-    if request.method != "POST":
-        return JsonResponse({"error": "POST only"}, status=405)
-
     adresa = get_object_or_404(Adresa, uid=uid)
+    # GET = pre-fill payload for the dropdown-pencil edit flow.
+    if request.method == "GET":
+        return JsonResponse(
+            {
+                "id": str(adresa.uid),
+                "text": str(adresa),
+                "ulica": adresa.ulica or "",
+                "broj": adresa.broj or "",
+                "broj_stana": adresa.broj_stana or "",
+                "mesto": adresa.mesto or "",
+            }
+        )
+    if request.method != "POST":
+        return JsonResponse({"error": "GET or POST only"}, status=405)
+
     adresa.ulica = request.POST.get("ulica", "").strip()
     adresa.broj = request.POST.get("broj", "").strip()
     adresa.broj_stana = request.POST.get("broj_stana", "").strip()

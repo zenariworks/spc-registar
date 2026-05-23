@@ -86,41 +86,23 @@
         const fieldId = $select.attr("id");
         if (!fieldId) return;
 
-        // Build a small pencil button immediately to the right of the
-        // .info-row__value wrapper holding this select.
-        const $container = $select.closest(".info-row__value");
-        if (!$container.length) return;
-        if ($container.find(".adresa-edit-btn").length) return;
-
-        const $btn = $(
-            '<button type="button" class="adresa-edit-btn" ' +
-                'data-tooltip="Измени адресу" aria-label="Измени адресу">' +
-                '<i class="fa-solid fa-pen" aria-hidden="true"></i>' +
-            "</button>"
-        );
-        $container.append($btn);
-
-        $btn.on("click", function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const uid = currentAdresaUid($select);
-            if (!uid) {
-                showError("Прво изаберите адресу из листе.");
-                if (window.Modal) Modal.open("adresa-modal");
-                fillModalFields({});
-                return;
+        // The outer side pencil is intentionally NOT rendered any more.
+        // Decoration of dropdown rows is handled by the body-level
+        // observer AND this direct select2:open backup, in case the
+        // observer does not fire (some select2 builds mount the dropdown
+        // via documentFragment, which can miss MutationObserver).
+        $select.on("select2:open.adresaEdit", function () {
+            // Try immediately, again on next frame, then again after ajax settles.
+            function findAndDecorate() {
+                var dd = document.querySelector(".select2-container--open .select2-dropdown")
+                      || document.querySelector(".select2-dropdown");
+                if (dd) decorateDropdown(dd);
             }
-            // Pull the cached payload if it matches the current select value;
-            // otherwise leave fields blank and let the user retype.
-            const payload = getInitialPayload();
-            fillModalFields(payload && payload.uid === uid ? payload : {});
-            const modal = document.getElementById("adresa-modal");
-            if (modal) {
-                modal.dataset.targetFieldId = fieldId;
-                modal.dataset.adresaUid = uid;
-            }
-            if (window.Modal) Modal.open("adresa-modal");
+            findAndDecorate();
+            requestAnimationFrame(findAndDecorate);
+            setTimeout(findAndDecorate, 200);
         });
+
 
         // Enter inside any modal input submits.
         document
@@ -177,7 +159,160 @@
         }
     }
 
+    // Reusable: fetch an address by uid, prefill the modal, open it.
+    function openEditModal(uid, sel) {
+        if (!uid) return;
+        if (sel && sel.length) {
+            try { sel.select2("close"); } catch (err) {}
+        }
+        fetch("/api/brzi-izmena-adrese/" + uid + "/", { credentials: "same-origin" })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data && data.error) return;
+                var modal = document.getElementById("adresa-modal");
+                if (modal) {
+                    modal.dataset.adresaUid = uid;
+                    if (sel && sel.length) modal.dataset.targetFieldId = sel.attr("id");
+                }
+                var map = {
+                    ulica: "modal-adresa-ulica",
+                    broj: "modal-adresa-broj",
+                    broj_stana: "modal-adresa-broj_stana",
+                    mesto: "modal-adresa-mesto",
+                };
+                Object.keys(map).forEach(function (k) {
+                    var el = document.getElementById(map[k]);
+                    if (el) el.value = (data && data[k]) || "";
+                });
+                var err = document.querySelector("#adresa-modal .error-text");
+                if (err) { err.style.display = "none"; err.textContent = ""; }
+                if (window.Modal) Modal.open("adresa-modal");
+            });
+    }
+
+
+    // ------------------------------------------------------------------
+    // Body-level dropdown decoration. Watches the document body for any
+    // .select2-dropdown being added; when one appears, finds the owning
+    // <select> via aria-owns and (if it has data-adresa-edit) decorates
+    // every result row with an inline pencil. A nested observer on the
+    // results <ul> keeps decorating as the rows are replaced on each
+    // search keystroke. This avoids any timing race with select2 init.
+    // ------------------------------------------------------------------
+    function findOwningSelect(dropdownEl) {
+        var $dropdown = $(dropdownEl);
+        // 1) The results UL has id="select2-{selectId}-results".
+        var ul = $dropdown.find(".select2-results__options")[0];
+        if (ul && ul.id) {
+            var m = ul.id.match(/^select2-(.+)-results$/);
+            if (m) {
+                var $s = $("#" + m[1]);
+                if ($s.length) return $s;
+            }
+        }
+        // 2) Fallback: match .select2-container--open[data-select2-id]
+        //    against the <select data-select2-id="...">.
+        var openSid = $(".select2-container--open").attr("data-select2-id") || "";
+        if (openSid) {
+            var $s2 = $("select[data-select2-id='" + openSid + "']");
+            if ($s2.length) return $s2;
+        }
+        return $();
+    }
+
+    function decorateDropdown(dropdownEl) {
+        if (!dropdownEl) return;
+        var $select = findOwningSelect(dropdownEl);
+        if (!$select.length || !$select.attr("data-adresa-edit")) return;
+        var $dropdown = $(dropdownEl);
+
+        function uidFromRow(li) {
+            // 1) jQuery .data() (vanilla select2 stores here).
+            var d = $(li).data("data");
+            if (d && d.id) return String(d.id);
+            // 2) select2 internal Utils.__cache (the canonical store).
+            if ($.fn.select2 && $.fn.select2.amd && $.fn.select2.amd.require) {
+                try {
+                    var Utils = $.fn.select2.amd.require("select2/utils");
+                    if (Utils && Utils.GetData) {
+                        d = Utils.GetData(li, "data");
+                        if (d && d.id) return String(d.id);
+                    }
+                } catch (e) {}
+            }
+            // 3) Fallback: id pattern "select2-XX-result-RRRR-{value}".
+            var id = li.id || "";
+            var m = id.match(/^select2-.+?-result-[^-]+-(.+)$/);
+            if (m && m[1]) return m[1];
+            return "";
+        }
+        function paint() {
+            var rows = $dropdown.find(".select2-results__option");
+            rows.each(function () {
+                if (this.classList.contains("loading-results")) return;
+                if (this.getAttribute("role") === "group") return;
+                var uid = uidFromRow(this);
+                if (!uid) return;
+                if (this.querySelector(".adresa-dd-edit")) return;
+                var btn = document.createElement("button");
+                btn.type = "button";
+                btn.className = "adresa-dd-edit";
+                btn.setAttribute("data-uid", uid);
+                btn.setAttribute("data-tooltip", "Измени адресу");
+                btn.setAttribute("aria-label", "Измени адресу");
+                btn.innerHTML = '<i class="fa-solid fa-pen" aria-hidden="true"></i>';
+                // Capture phase + stopImmediatePropagation so we beat
+                // select2 mouseup/click handlers bound on the parent <li>.
+                var capturedUid = uid;
+                function onPress(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+                    openEditModal(capturedUid, $select);
+                }
+                btn.addEventListener("mousedown", onPress, true);
+                btn.addEventListener("touchstart", onPress, true);
+                btn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+                }, true);
+                this.appendChild(btn);
+            });
+        }
+        paint();
+
+        // Observe the WHOLE dropdown subtree because select2 swaps the
+        // results <ul> wholesale on each ajax refresh; observing only the
+        // ul would orphan the observer on the next keystroke.
+        if (!dropdownEl._adresaEditObs) {
+            var ro = new MutationObserver(paint);
+            ro.observe(dropdownEl, { childList: true, subtree: true });
+            dropdownEl._adresaEditObs = ro;
+        }
+    }
+
+    function startBodyObserver() {
+        var bo = new MutationObserver(function (muts) {
+            muts.forEach(function (m) {
+                m.addedNodes.forEach(function (n) {
+                    if (n.nodeType !== 1) return;
+                    if (n.classList && n.classList.contains("select2-dropdown")) {
+                        decorateDropdown(n);
+                    } else if (n.querySelector) {
+                        var inner = n.querySelector(".select2-dropdown");
+                        if (inner) decorateDropdown(inner);
+                    }
+                });
+            });
+        });
+        // Widen scope to <html> so we catch dropdowns mounted outside body too.
+        bo.observe(document.documentElement, { childList: true, subtree: true });
+        document.body._adresaDdObs = bo;
+    }
+
     function init() {
+        startBodyObserver();
         $("select[data-adresa-edit]").each(function () { attach($(this)); });
     }
 
