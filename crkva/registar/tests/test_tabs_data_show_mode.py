@@ -87,9 +87,9 @@ class TabsDataShowModeRegressionTests(TestCase):
             broj="3",
             godina_registracije=2020,
             redni_broj=1,
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
 
         # Vencanje fixtures.

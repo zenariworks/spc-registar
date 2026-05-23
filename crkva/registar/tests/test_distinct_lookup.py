@@ -279,10 +279,10 @@ class KrstenjeAutoJsonEndpointTests(TestCase):
             strana=1,
             broj=1,
             datum=datetime.date(2024, 1, 1),
-            dete_rodjeno_zivo=True,
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            zivorodjeno=True,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
             mesto_registracije="Земун",
         )
         Krstenje.objects.create(
@@ -292,10 +292,10 @@ class KrstenjeAutoJsonEndpointTests(TestCase):
             strana=2,
             broj=2,
             datum=datetime.date(2024, 2, 1),
-            dete_rodjeno_zivo=True,
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            zivorodjeno=True,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
             mesto_registracije="Чачак",
         )
 

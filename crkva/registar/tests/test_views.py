@@ -53,9 +53,9 @@ class SpisakKrstenjaViewTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
             hram=self.hram,
         )
         from django.contrib.auth import get_user_model
@@ -107,9 +107,9 @@ class PrikazKrstenjaViewTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
             hram=self.hram,
         )
         from django.contrib.auth import get_user_model

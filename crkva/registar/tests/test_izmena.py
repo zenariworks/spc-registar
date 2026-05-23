@@ -211,10 +211,10 @@ class IzmenaKrstenjaTests(TestCase):
             strana=1,
             broj=1,
             datum=datetime.date(2024, 2, 10),
-            dete_rodjeno_zivo=True,
-            dete_vanbracno=True,
-            dete_blizanac=True,
-            dete_sa_telesnom_manom=True,
+            zivorodjeno=True,
+            vanbracno=True,
+            blizanac=True,
+            telesna_mana=True,
         )
         defaults.update(overrides)
         return Krstenje.objects.create(**defaults)
@@ -229,10 +229,10 @@ class IzmenaKrstenjaTests(TestCase):
         r = self.client.get(self.url(k))
         self.assertEqual(r.status_code, 200)
         for fname in [
-            "dete_rodjeno_zivo",
-            "dete_vanbracno",
-            "dete_blizanac",
-            "dete_sa_telesnom_manom",
+            "zivorodjeno",
+            "vanbracno",
+            "blizanac",
+            "telesna_mana",
         ]:
             self.assertContains(
                 r,
@@ -242,19 +242,19 @@ class IzmenaKrstenjaTests(TestCase):
 
     def test_all_bool_fields_unchecked_when_false(self):
         k = self._create_krstenje(
-            dete_rodjeno_zivo=False,
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            zivorodjeno=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.client.force_login(self.clerk)
         r = self.client.get(self.url(k))
         self.assertEqual(r.status_code, 200)
         for fname in [
-            "dete_rodjeno_zivo",
-            "dete_vanbracno",
-            "dete_blizanac",
-            "dete_sa_telesnom_manom",
+            "zivorodjeno",
+            "vanbracno",
+            "blizanac",
+            "telesna_mana",
         ]:
             self.assertNotContains(
                 r,
@@ -265,32 +265,32 @@ class IzmenaKrstenjaTests(TestCase):
     def test_mixed_bool_state_renders_per_field(self):
         """Mixed True/False on the same record renders each independently."""
         k = self._create_krstenje(
-            dete_rodjeno_zivo=True,
-            dete_vanbracno=False,
-            dete_blizanac=True,
-            dete_sa_telesnom_manom=False,
+            zivorodjeno=True,
+            vanbracno=False,
+            blizanac=True,
+            telesna_mana=False,
         )
         self.client.force_login(self.clerk)
         r = self.client.get(self.url(k))
         self.assertContains(
-            r, 'name="dete_rodjeno_zivo" id="id_dete_rodjeno_zivo" checked'
+            r, 'name="zivorodjeno" id="id_dete_rodjeno_zivo" checked'
         )
         self.assertNotContains(
-            r, 'name="dete_vanbracno" id="id_dete_vanbracno" checked'
+            r, 'name="vanbracno" id="id_dete_vanbracno" checked'
         )
-        self.assertContains(r, 'name="dete_blizanac" id="id_dete_blizanac" checked')
+        self.assertContains(r, 'name="blizanac" id="id_dete_blizanac" checked')
         self.assertNotContains(
-            r, 'name="dete_sa_telesnom_manom" id="id_dete_sa_telesnom_manom" checked'
+            r, 'name="telesna_mana" id="id_dete_sa_telesnom_manom" checked'
         )
 
     def test_dete_bool_fields_use_info_row_editable_markup(self):
         """Each Дете bool/text field must render as its own info-row--editable."""
         k = self._create_krstenje(
-            dete_rodjeno_zivo=True,
-            dete_vanbracno=False,
-            dete_blizanac=True,
-            dete_sa_telesnom_manom=False,
-            drugo_dete_blizanac_ime="Лука",
+            zivorodjeno=True,
+            vanbracno=False,
+            blizanac=True,
+            telesna_mana=False,
+            ime_blizanca="Лука",
         )
         self.client.force_login(self.clerk)
         html = self.client.get(self.url(k)).content.decode("utf-8")
@@ -342,10 +342,10 @@ class IzmenaKrstenjaTests(TestCase):
         self.client.force_login(self.clerk)
         html = self.client.get(self.url(k)).content.decode("utf-8")
         for fname in (
-            "dete_rodjeno_zivo",
-            "dete_vanbracno",
-            "dete_blizanac",
-            "dete_sa_telesnom_manom",
+            "zivorodjeno",
+            "vanbracno",
+            "blizanac",
+            "telesna_mana",
         ):
             self.assertIn(
                 f'<input type="checkbox" name="{fname}"',
@@ -386,11 +386,11 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
             strana=1,
             broj=1,
             datum=datetime.date(2024, 2, 10),
-            dete_rodjeno_zivo=True,
-            dete_vanbracno=False,
-            dete_blizanac=True,
-            dete_sa_telesnom_manom=False,
-            drugo_dete_blizanac_ime="Лука",
+            zivorodjeno=True,
+            vanbracno=False,
+            blizanac=True,
+            telesna_mana=False,
+            ime_blizanca="Лука",
         )
         defaults.update(overrides)
         return Krstenje.objects.create(**defaults)
@@ -425,18 +425,18 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
             )
 
     def test_view_mode_shows_twin_sibling_name_when_blizanac(self):
-        """If dete_blizanac is true, drugo_dete_blizanac_ime is shown beside it."""
-        k = self._create_krstenje(dete_blizanac=True, drugo_dete_blizanac_ime="Лука")
+        """If blizanac is true, ime_blizanca is shown beside it."""
+        k = self._create_krstenje(blizanac=True, ime_blizanca="Лука")
         r = self.client.get(self.url(k))
         self.assertContains(r, "Лука")
 
     def test_view_mode_renders_false_bools_as_ne(self):
         """All four bools set to False render Не (not omitted)."""
         k = self._create_krstenje(
-            dete_rodjeno_zivo=False,
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            zivorodjeno=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         html = self.client.get(self.url(k)).content.decode("utf-8")
         for tooltip in (

@@ -165,10 +165,10 @@ class KrstenjeRecord:  # pylint: disable=too-many-instance-attributes
     majka_adresa: str
     majka_veroispovest: str
 
-    dete_rodjeno_zivo: str
-    dete_po_redu_po_majci: int
-    dete_vanbracno: str
-    dete_blizanac: str
+    zivorodjeno: str
+    po_redu: int
+    vanbracno: str
+    blizanac: str
     blizanac_ime: str
     dete_sa_manom: str
 
@@ -232,10 +232,10 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         majka_zanimanje=cyr(row[31]),
         majka_adresa=cyr(row[32]),
         majka_veroispovest=cyr(row[33]),
-        dete_rodjeno_zivo=cyr(row[34]),
-        dete_po_redu_po_majci=cyr_int(row[35]),
-        dete_vanbracno=cyr(row[36]),
-        dete_blizanac=cyr(row[37]),
+        zivorodjeno=cyr(row[34]),
+        po_redu=cyr_int(row[35]),
+        vanbracno=cyr(row[36]),
+        blizanac=cyr(row[37]),
         blizanac_ime=cyr(row[38]),
         dete_sa_manom=cyr(row[39]),
         svestenik_id=cyr_int(row[40]),
@@ -440,12 +440,12 @@ class Command(MigrationCommand):
             "strana": cyr_int(r.strana, 0),
             "datum": r.datum_krstenja,
             "vreme": parse_time(r.krstenje_vreme),
-            "dete_rodjeno_zivo": r.dete_rodjeno_zivo.strip() == "1",
-            "dete_po_redu_po_majci": _ordinal_word(r.dete_po_redu_po_majci),
-            "dete_vanbracno": r.dete_vanbracno.strip() == "1",
-            "dete_blizanac": r.dete_blizanac.strip() == "1",
-            "drugo_dete_blizanac_ime": r.blizanac_ime,
-            "dete_sa_telesnom_manom": r.dete_sa_manom.strip() == "1",
+            "zivorodjeno": r.zivorodjeno.strip() == "1",
+            "po_redu": _ordinal_word(r.po_redu),
+            "vanbracno": r.vanbracno.strip() == "1",
+            "blizanac": r.blizanac.strip() == "1",
+            "ime_blizanca": r.blizanac_ime,
+            "telesna_mana": r.dete_sa_manom.strip() == "1",
             "mesto_registracije": r.registracija_mesto,
             "datum_registracije": r.registracija_datum,
             "maticni_broj": r.registracija_broj,

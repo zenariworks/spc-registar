@@ -63,9 +63,9 @@ class KrstenjeModelTestCase(TestCase):
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
             vreme=datetime.time(11, 0),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.assertIsInstance(krstenje.uid, uuid.UUID)
         self.assertEqual(krstenje.knjiga, 1)
@@ -80,9 +80,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.assertIn("Крштење", str(krstenje))
         self.assertIn("Петар", str(krstenje))
@@ -97,9 +97,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.assertEqual(krstenje.ime_deteta, "Петар")
 
@@ -113,9 +113,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.assertEqual(krstenje.ime_deteta, "")
 
@@ -129,9 +129,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.assertEqual(krstenje.datum_rodjenja, datetime.date(2024, 1, 15))
 
@@ -145,9 +145,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.assertEqual(krstenje.ime_oca, "Марко")
         self.assertEqual(krstenje.prezime_oca, "Петровић")
@@ -163,9 +163,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.assertEqual(krstenje.ime_majke, "Ана")
         self.assertEqual(krstenje.prezime_majke, "Петровић")
@@ -180,9 +180,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.assertEqual(krstenje.ime_kuma, "Стефан")
         self.assertEqual(krstenje.zanimanje_kuma, "адвокат")
@@ -196,9 +196,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         with self.assertRaises(ValidationError):
             krstenje.full_clean()
@@ -213,9 +213,9 @@ class KrstenjeModelTestCase(TestCase):
             redni_broj=1,
             godina_registracije=2024,
             datum=datetime.date(2024, 2, 10),
-            dete_vanbracno=False,
-            dete_blizanac=False,
-            dete_sa_telesnom_manom=False,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
         )
         self.dete.delete()
         krstenje.refresh_from_db()

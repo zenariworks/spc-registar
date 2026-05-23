@@ -106,12 +106,12 @@ class _BaseUnosKrstenjeAuditTest(TestCase):
             "kum": str(self.kum.pk),
             "svestenik": str(self.svestenik.pk),
             # Bool fields — checkbox semantics: presence = True.
-            "dete_rodjeno_zivo": "on",
-            # "dete_vanbracno" omitted == False
-            # "dete_blizanac" omitted == False
-            # "dete_sa_telesnom_manom" omitted == False
-            "dete_po_redu_po_majci": "1",
-            "drugo_dete_blizanac_ime": "",
+            "zivorodjeno": "on",
+            # "vanbracno" omitted == False
+            # "blizanac" omitted == False
+            # "telesna_mana" omitted == False
+            "po_redu": "1",
+            "ime_blizanca": "",
             "mesto_registracije": "Београд",
             "datum_registracije": "2024-02-12",
             "maticni_broj": "12345",
@@ -295,13 +295,13 @@ class DateTimePickerTests(_BaseUnosKrstenjeAuditTest):
 
 
 class BooleanInfoRowsTests(_BaseUnosKrstenjeAuditTest):
-    """dete_rodjeno_zivo / dete_vanbracno / dete_blizanac / dete_sa_telesnom_manom."""
+    """zivorodjeno / vanbracno / blizanac / telesna_mana."""
 
     BOOL_FIELDS = (
-        "dete_rodjeno_zivo",
-        "dete_vanbracno",
-        "dete_blizanac",
-        "dete_sa_telesnom_manom",
+        "zivorodjeno",
+        "vanbracno",
+        "blizanac",
+        "telesna_mana",
     )
 
     def test_every_bool_field_renders_a_checkbox(self):
@@ -317,42 +317,42 @@ class BooleanInfoRowsTests(_BaseUnosKrstenjeAuditTest):
         html = self._get_html()
         self.assertRegex(
             html,
-            r'<input[^>]*type="text"[^>]*name="drugo_dete_blizanac_ime"',
-            msg="drugo_dete_blizanac_ime must render as a text input",
+            r'<input[^>]*type="text"[^>]*name="ime_blizanca"',
+            msg="ime_blizanca must render as a text input",
         )
 
     def test_info_rows_use_editable_modifier_class(self):
         """The feat/krstenje-dete-info-rows refactor put these in
         info-row--editable so they share spacing with the rest of the page."""
         html = self._get_html()
-        # Pin the editable-row container around the dete_rodjeno_zivo input.
+        # Pin the editable-row container around the zivorodjeno input.
         m = re.search(
             r'<li[^>]*class="[^"]*info-row--editable[^"]*"[^>]*>'
-            r".*?dete_rodjeno_zivo",
+            r".*?zivorodjeno",
             html,
             re.DOTALL,
         )
         self.assertIsNotNone(
             m,
-            msg='dete_rodjeno_zivo checkbox must live inside "info-row--editable"',
+            msg='zivorodjeno checkbox must live inside "info-row--editable"',
         )
 
     def test_bool_field_values_persist_through_post(self):
         """Submit with a mix of checked/unchecked bools and verify storage."""
         payload = self._valid_payload(
-            dete_rodjeno_zivo="on",
-            dete_blizanac="on",
-            drugo_dete_blizanac_ime="Близанчић",
+            zivorodjeno="on",
+            blizanac="on",
+            ime_blizanca="Близанчић",
         )
-        # dete_vanbracno + dete_sa_telesnom_manom intentionally omitted (False).
+        # vanbracno + telesna_mana intentionally omitted (False).
         r = self.client.post(reverse("unos_krstenja"), payload, follow=False)
         self.assertEqual(r.status_code, 302, msg=r.content[:600])
         k = Krstenje.objects.latest("created")
-        self.assertTrue(k.dete_rodjeno_zivo)
-        self.assertTrue(k.dete_blizanac)
-        self.assertFalse(k.dete_vanbracno)
-        self.assertFalse(k.dete_sa_telesnom_manom)
-        self.assertEqual(k.drugo_dete_blizanac_ime, "Близанчић")
+        self.assertTrue(k.zivorodjeno)
+        self.assertTrue(k.blizanac)
+        self.assertFalse(k.vanbracno)
+        self.assertFalse(k.telesna_mana)
+        self.assertEqual(k.ime_blizanca, "Близанчић")
 
 
 # ---------------------------------------------------------------------------

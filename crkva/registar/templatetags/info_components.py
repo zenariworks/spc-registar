@@ -118,7 +118,7 @@ def info_row_bool(icon, label, value_label, field=None, value=None, sub=None):
         Static boolean value.  Renders as ``Да`` or ``Не``.
     sub : str, optional
         Small muted subline appended after the static value (e.g. the
-        twin's name on ``dete_blizanac``).
+        twin's name on ``blizanac``).
     """
     return {
         "icon": icon,
