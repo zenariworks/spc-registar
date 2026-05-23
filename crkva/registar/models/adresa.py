@@ -21,7 +21,7 @@ class Adresa(models.Model):
         max_length=10, verbose_name="број стана", blank=True, default=""
     )
     mesto = models.CharField(
-        max_length=100, verbose_name="место", blank=True, default=""
+        max_length=100, verbose_name="место", blank=True, default="", db_index=True
     )
     postkod = models.CharField(
         max_length=10, verbose_name="поштански број", blank=True, default=""

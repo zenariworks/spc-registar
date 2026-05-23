@@ -263,3 +263,12 @@ class Krstenje(TimeStampedModel):
         verbose_name = "Крштење"
         verbose_name_plural = "Крштења"
         ordering = ["-datum"]
+        indexes = [
+            # Protocol lookup: knjiga/strana/broj scoped by year. Composite
+            # serves both filter (find a specific protocol entry) and the
+            # natural year-then-page sort with a single index scan.
+            models.Index(
+                fields=["godina_registracije", "knjiga", "strana", "broj"],
+                name="krstenje_protocol_idx",
+            ),
+        ]

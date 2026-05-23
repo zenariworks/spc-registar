@@ -249,3 +249,9 @@ class Vencanje(TimeStampedModel):
         verbose_name = "Венчање"
         verbose_name_plural = "Венчања"
         ordering = ["-datum"]
+        indexes = [
+            models.Index(
+                fields=["godina_registracije", "knjiga", "strana", "broj"],
+                name="vencanje_protocol_idx",
+            ),
+        ]
