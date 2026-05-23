@@ -25,6 +25,8 @@
     --color-surface-2:      #FBF5E3;   /* cards lift via lighter cream */
     --color-surface-1:      #EBDFC1;   /* form controls / hover */
     --color-surface-hover:  #FFF8E6;   /* row/card hover state */
+    --color-surface-3:      #FFF8E6;   /* highest-elevation surface (parity) */
+    --color-placeholder:    #9C8E7D;   /* input placeholder text */
     --color-border:         rgba(176, 132, 67, 0.30);
     --color-border-strong:  rgba(176, 132, 67, 0.50);
 

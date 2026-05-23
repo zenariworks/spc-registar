@@ -232,7 +232,7 @@
     function sync() {
       var checked = document.querySelector("input[name=\"pol\"]:checked");
       var val = checked ? checked.value : "";
-      row.style.display = (val === "М") ? "none" : "";
+      row.hidden = (val === "М");
     }
     document.querySelectorAll("input[name=\"pol\"]").forEach(function (r) {
       r.addEventListener("change", sync);

@@ -11,11 +11,14 @@ from __future__ import annotations
 
 from typing import Callable
 
+import logging
+
 from django.db import connection
 from django.http import HttpRequest, HttpResponse
 from django_tenants.utils import schema_exists
 
 SESSION_TENANT_KEY = "active_tenant_id"
+logger = logging.getLogger(__name__)
 
 
 class SessionTenantMiddleware:
@@ -74,8 +77,16 @@ class SessionTenantMiddleware:
             if schema_exists(tenant.schema_name):
                 connection.set_tenant(tenant)
             else:
+                logger.warning(
+                    "tenant schema missing for %s (id=%s); falling back to public",
+                    tenant.schema_name, getattr(tenant, "pk", None),
+                )
                 connection.set_schema_to_public()
         except Exception:  # pylint: disable=broad-except
+            logger.exception(
+                "tenant activation failed for %s (id=%s); falling back to public",
+                tenant.schema_name, getattr(tenant, "pk", None),
+            )
             connection.set_schema_to_public()
 
     @staticmethod
@@ -86,4 +97,8 @@ class SessionTenantMiddleware:
             else:
                 connection.set_schema_to_public()
         except Exception:  # pylint: disable=broad-except
+            logger.exception(
+                "tenant restore failed for %s; falling back to public",
+                getattr(prior_tenant, "schema_name", None),
+            )
             connection.set_schema_to_public()

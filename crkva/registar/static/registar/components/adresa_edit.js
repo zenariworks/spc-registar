@@ -48,6 +48,7 @@
         if (err) {
             err.style.display = "none";
             err.textContent = "";
+            err.setAttribute("hidden", "");
         }
     }
 
@@ -55,6 +56,7 @@
         const err = document.querySelector("#adresa-modal .error-text");
         if (!err) return;
         err.textContent = msg;
+        err.removeAttribute("hidden");
         err.style.display = "block";
     }
 

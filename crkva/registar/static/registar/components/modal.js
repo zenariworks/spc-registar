@@ -57,7 +57,7 @@
             .querySelectorAll(".tab-group__item.is-active")
             .forEach((b) => b.classList.remove("is-active"));
         const err = overlay.querySelector(".error-text");
-        if (err) err.style.display = "none";
+        if (err) { err.style.display = "none"; err.setAttribute("hidden", ""); }
         // Focus the first input
         setTimeout(() => {
             const first = overlay.querySelector("input[type=text]");
@@ -133,6 +133,7 @@
             const err = overlay.querySelector(".error-text");
             if (err) {
                 err.textContent = msg;
+                err.removeAttribute("hidden");
                 err.style.display = "block";
             }
         }
@@ -155,7 +156,7 @@
             }
             _showError("");
             const err = overlay.querySelector(".error-text");
-            if (err) err.style.display = "none";
+            if (err) { err.style.display = "none"; err.setAttribute("hidden", ""); }
 
             const formData = new FormData();
             Object.entries(values).forEach(([k, v]) => formData.append(k, v || ""));
