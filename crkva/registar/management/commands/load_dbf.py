@@ -19,6 +19,8 @@ Usage:
 
 import tempfile
 import zipfile
+import os
+import re
 from pathlib import Path
 from typing import Iterator, Sequence
 
@@ -41,7 +43,9 @@ class Command(BaseCommand):
     }
 
     BATCH_SIZE = 1000
-    DEFAULT_SOURCE = Path("/mnt/c/HramSP/dbf")
+    # No hardcoded default path - operator must pass --src_dir or --crkva_zip
+    # or set the DBF_SOURCE_DIR env var.
+    DEFAULT_SOURCE = Path(os.environ.get("DBF_SOURCE_DIR", ""))
 
     def add_arguments(self, parser):
         group = parser.add_mutually_exclusive_group()
@@ -157,10 +161,21 @@ class Command(BaseCommand):
             self.stderr.write(self.style.ERROR(f"Failed to read {dbf_path.name}: {e}"))
             return 0
 
+    _SAFE_IDENT = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
     def _load_records(self, table: DBF, table_name: str) -> int:
         columns = table.field_names
         if not columns:
             return 0
+
+        # Whitelist column names + table name before SQL interpolation.
+        # DBF column names are operator-supplied; a maliciously crafted file
+        # could otherwise inject arbitrary SQL via the CREATE/INSERT templates.
+        if not self._SAFE_IDENT.match(table_name):
+            raise ValueError(f"unsafe table name: {table_name!r}")
+        bad = [c for c in columns if not self._SAFE_IDENT.match(c)]
+        if bad:
+            raise ValueError(f"unsafe DBF column name(s) in {table_name}: {bad!r}")
 
         column_defs = ", ".join(f'"{col}" TEXT' for col in columns)
         column_list = ", ".join(f'"{col}"' for col in columns)
