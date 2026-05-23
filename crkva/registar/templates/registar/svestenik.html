@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
 {% load info_components %}
 
 {% block extra_css %}{% if form %}{{ form.media.css }}{% endif %}{% endblock %}
-{% block extra_js %}{% if form %}{{ form.media.js }}{% endif %}{% endblock %}
+{% block extra_js %}{% if form %}{{ form.media.js }}<script src="{% static "registar/components/adresa_edit.js" %}"></script>{% endif %}{% endblock %}
 
 {% block content %}
 {% if svestenik %}
@@ -13,24 +14,13 @@
   {% csrf_token %}
 
   <div class="u-page-header">
-    <a href="{% if is_edit and svestenik %}{% url "svestenik_detail" uid=svestenik.uid %}{% else %}{% url "svestenici" %}{% endif %}" class="back-button" aria-label="Назад" title="Назад">
-      <i class="fa-solid fa-arrow-left"></i>
-    </a>
     <h1 class="u-page-title">
       {% if is_edit and not svestenik %}Додавање свештеника
-      {% elif is_edit %}Измена: {{ svestenik.ime }} {{ svestenik.prezime }}
-      {% else %}{{ svestenik.ime }} {{ svestenik.prezime }}{% endif %}
+      {% elif is_edit %}Измена свештеника{% if svestenik %}<span class="u-page-title__subtitle">{{ svestenik.ime }} {{ svestenik.prezime }}</span>{% endif %}
+      {% else %}Свештеник<span class="u-page-title__subtitle">{{ svestenik.ime }} {{ svestenik.prezime }}</span>{% endif %}
     </h1>
     {% if svestenik %}
-      <span data-show-mode="view">
-        {% if can_edit_svestenik %}<a href="{% url "izmena_svestenika" uid=svestenik.uid %}" data-action="enter-edit" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-        <a href="{% url "svestenik_pdf" svestenik.uid %}" target="_blank" class="button button--primary button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
-        <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
-      </span>
-      <span data-show-mode="edit">
-        <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
-        <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
-      </span>
+      {% include "registar/_view_actions.html" with back_list_url_name="svestenici" back_detail_url_name="svestenik_detail" obj=svestenik edit_url_name="izmena_svestenika" can_edit=can_edit_svestenik pdf_url_name="svestenik_pdf" %}
     {% else %}
       <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}
@@ -71,6 +61,7 @@
     {% endif %}
   {% endif %}
 
+  {% if form %}{% include "registar/_modal_adresa.html" %}{% endif %}
 </form>
-{% if svestenik %}{% include "registar/_history_panel.html" %}{% endif %}
+{% if svestenik %}{% include "registar/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

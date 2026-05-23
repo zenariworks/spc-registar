@@ -2,6 +2,7 @@
 Модул за приказ, унос и генерисање PDF докумената за крштења.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
@@ -41,7 +42,9 @@ def unos_krstenja(request):
     )
 
 
-class SpisakKrstenja(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
+class SpisakKrstenja(
+    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+):
     """Приказује списак крштења са могућностима претраге и пагинације."""
 
     model = Krstenje
@@ -71,7 +74,7 @@ class SpisakKrstenja(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
         )
 
 
-class KrstenjePDF(DetailView):
+class KrstenjePDF(LoginRequiredMixin, DetailView):
     """Генерише PDF документ за одређено крштење."""
 
     model = Krstenje
@@ -124,7 +127,7 @@ class KrstenjePDF(DetailView):
         return self.render_to_response(context)
 
 
-class PrikazKrstenja(DetailView):
+class PrikazKrstenja(LoginRequiredMixin, DetailView):
     """Приказује детаљне информације о појединачном крштењу."""
 
     model = Krstenje
@@ -147,7 +150,7 @@ class PrikazKrstenja(DetailView):
         return context
 
 
-# @login_required
+@tenant_role_required("krstenje")
 def calibrate_krstenje(request):
     """Калибрациона страница за подешавање позиција поља на крштеници."""
     return render(request, "registar/calibrate_krstenje.html")

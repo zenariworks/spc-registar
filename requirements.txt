@@ -1,32 +1,35 @@
+# Generated via audit-cleanup — all top-level deps pinned to exact versions.
+# Dev / lint tooling lives in requirements-dev.txt.
+# Run `pip install -r requirements.txt` for production deploy.
+
 # Utilities
-dbfread~=2.0.7
+dbfread==2.0.7
 # Django and related packages
-django~=6.0.1
-django-admin-searchable-dropdown~=1.2
-django-compressor~=4.4
-django-environ~=0.11.0
-django-extensions~=3.2.3
-django-filter~=24.3
-django-import-export~=4.2.0
-django-model-utils~=5.0.0
-django-phonenumber-field~=8.0.0
-django-select2~=8.2.1
-django-simple-history>=3.11
-django-tenants>=3.10
-djangorestframework~=3.15.2
-phonenumbers~=8.13.0
-pillow==12.0.0
-
+Django==6.0.1
+django-admin-searchable-dropdown==1.2
+django-axes==8.3.1
+django-compressor==4.5.1
+django-environ==0.11.2
+django-extensions==3.2.3
+django-filter==24.3
+django-import-export==4.2.1
+django-model-utils==5.0.0
+django-phonenumber-field==8.0.0
+django-select2==8.2.4
+django-simple-history==3.11.0
+django-tenants==3.10.1
+djangorestframework==3.15.2
+# WSGI Server (active in production)
+gunicorn==26.0.0
+phonenumbers==8.13.55
+Pillow==12.0.0
 # Database
-psycopg2-binary~=2.9.10
-python-dateutil~=2.8.2
-rcssmin~=1.1.0
-
-# WSGI Server
-uWSGI>=2.0.19.1,<2.1
-
+psycopg2-binary==2.9.11
+python-dateutil==2.8.2
+rcssmin==1.1.2
+# WSGI Server (kept for compatibility — prod uses gunicorn)
+uWSGI==2.0.31
 # PDF Generation
-WeasyPrint~=62.3
-
+WeasyPrint==62.3
 # Static file serving
-whitenoise~=6.12
+whitenoise==6.12.0

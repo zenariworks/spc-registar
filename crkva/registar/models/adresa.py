@@ -44,6 +44,9 @@ class Adresa(models.Model):
         db_table = "adrese"
         verbose_name = "Адреса"
         verbose_name_plural = "Адресе"
+        indexes = [
+            models.Index(fields=["ulica", "broj"], name="adresa_ulica_broj_idx"),
+        ]
         constraints = [
             models.UniqueConstraint(
                 Lower("ulica"),

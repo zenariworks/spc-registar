@@ -16,8 +16,12 @@
 }
 
 .dashboard-calendar .calendar-cell .date {
-  font-size: 1.375rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  font-size: 1rem;
+  color: var(--color-heading);
 }
 
 .dashboard-calendar .calendar-cell .weekday {
@@ -40,7 +44,7 @@
   right: 10px;
   width: 32px;
   height: 32px;
-  background: rgba(0, 0, 0, 0.08);
+  background: color-mix(in oklab, var(--color-text) 8%, transparent);
 }
 
 .dashboard-calendar .fasting-icon {
@@ -70,11 +74,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 20px 0;
-  padding: 15px;
+  gap: var(--space-4);
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
   background: var(--color-surface-2);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-3);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-arrow {
@@ -95,14 +101,6 @@
 }
 
 
-.nav-arrow:first-of-type {
-  margin-right: 20px;
-}
-
-.nav-arrow:last-of-type {
-  margin-left: 20px;
-}
-
 .current-month {
   text-align: center;
   min-width: 200px;
@@ -119,16 +117,27 @@
   color: var(--color-text-muted);
 }
 
-/* Calendar grid - fluid responsive */
+/* Calendar grid — 7 columns always, narrow screens stack to a list.
+   Previously used auto-fit minmax(140px, 1fr) which let the column count
+   change with viewport width, so the leading placeholders no longer
+   aligned month days under their weekday header. */
 .calendar-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: var(--space-2);
 }
 
 .weekday-header {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
   font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
   text-align: center;
+  color: var(--color-text-muted);
+  padding: var(--space-2) 0;
+  border-bottom: 2px solid var(--color-border);
+  margin-bottom: var(--space-1);
 }
 
 /* Calendar cells */
@@ -137,8 +146,8 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
-  padding: 10px;
+  border-radius: var(--radius-2);
+  padding: var(--space-2);
   background: var(--color-surface-2);
   position: relative;
   transition: all 0.2s ease;
@@ -147,12 +156,12 @@
 /* Only apply hover effects on devices that support hover */
 @media (hover: hover) and (pointer: fine) {
   .calendar-cell:not(.placeholder):hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-md);
     transform: translateY(-1px);
   }
 
   .calendar-cell.important:hover {
-    box-shadow: 0 0 0 2px var(--color-primary-200), 0 4px 12px rgba(162, 21, 20, 0.15);
+    box-shadow: 0 0 0 2px var(--color-primary-200), 0 4px 12px color-mix(in oklab, var(--color-primary) 15%, transparent);
   }
 
   .nav-arrow:hover {
@@ -161,7 +170,7 @@
   }
 
   .fasting-info:hover {
-    background: rgba(0, 0, 0, 0.1);
+    background: color-mix(in oklab, var(--color-text) 10%, transparent);
   }
 
   .fasting-info:hover .fasting-tooltip {
@@ -188,10 +197,21 @@
 }
 
 
-/* Today - golden border only, background preserved */
+/* Today — gold border + halo. Keeps gold (the accent) but tokenized. */
 .calendar-cell.today {
-  border: 3px solid var(--color-amber-500);
-  box-shadow: 0 0 0 1px var(--color-amber-400), 0 2px 8px rgba(245, 158, 11, 0.3);
+  border: 3px solid var(--color-accent);
+  box-shadow:
+    0 0 0 1px var(--color-accent-200),
+    var(--shadow-md);
+}
+/* Today AND crveno-slovo: the cell has a red gradient bg, so the gold
+   border needs an inner cream ring to read clearly against red. */
+.calendar-cell.today.crveno-slovo {
+  border-color: var(--color-accent);
+  box-shadow:
+    inset 0 0 0 2px color-mix(in oklab, var(--color-accent-100) 70%, transparent),
+    0 0 0 2px var(--color-accent-200),
+    var(--shadow-md);
 }
 
 
@@ -288,20 +308,17 @@
   color: var(--color-text-muted);
 }
 
-/* Tablet and mobile optimizations */
+/* Tablet: keep 7 columns, tighten the gutters and hide nothing.
+   (Previously dropped weekday headers + placeholders + used auto-fit,
+   which caused days to land under the wrong weekday.) */
 @media (max-width: 900px) {
   .calendar-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 8px;
+    gap: var(--space-1);
   }
-  .weekday-header { display: none; }
-  .calendar-cell.placeholder { display: none; }
 }
 
 @media (max-width: 768px) {
-  .calendar-grid {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  }
+  /* keep grid-template-columns from base (7 cols) — only relax cell sizing */
   .calendar-cell {
     height: auto;
     min-height: 110px;
@@ -342,13 +359,10 @@
 }
 
 @media (max-width: 600px) {
-  .calendar-grid {
-    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-    gap: 6px;
-  }
+  /* grid switches to single-column stack via the dedicated rule further down */
   .calendar-cell {
     min-height: 90px;
-    padding: 8px;
+    padding: var(--space-2);
   }
   .calendar-cell .date { font-size: 1rem; }
   .calendar-cell .weekday { font-size: 0.7rem; }
@@ -356,11 +370,10 @@
   .slava-link__count { font-size: 10px; padding: 0 4px; }
 }
 
-/* Small mobile - single column for better readability */
+/* Small mobile — covered by the single-column stack rule below */
 @media (max-width: 480px) {
   .calendar-grid {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 6px;
+    gap: var(--space-1);
   }
   .calendar-cell {
     height: auto;
@@ -419,7 +432,7 @@
     right: 10px;
     width: 32px;
     height: 32px;
-    background: rgba(0, 0, 0, 0.08);
+    background: color-mix(in oklab, var(--color-text) 8%, transparent);
   }
 
   .fasting-icon {
@@ -453,7 +466,7 @@
   top: 8px;
   right: 8px;
   padding: 4px;
-  background: rgba(0, 0, 0, 0.05);
+  background: color-mix(in oklab, var(--color-text) 5%, transparent);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -465,26 +478,22 @@
 }
 
 /* Water fasting - light blue background */
-.fasting-water .fasting-info,
-.fasting-вода .fasting-info {
+.fasting-water .fasting-info {
   background: var(--fasting-water-bg);
 }
 
 /* Oil fasting - amber/golden background */
-.fasting-oil .fasting-info,
-.fasting-уље .fasting-info {
+.fasting-oil .fasting-info {
   background: var(--fasting-oil-bg);
 }
 
 /* Fish fasting - teal background */
-.fasting-fish .fasting-info,
-.fasting-риба .fasting-info {
+.fasting-fish .fasting-info {
   background: var(--fasting-fish-bg);
 }
 
 /* Dairy fasting - cream background */
-.fasting-dairy .fasting-info,
-.fasting-бели_мрс .fasting-info {
+.fasting-dairy .fasting-info {
   background: var(--fasting-dairy-bg);
 }
 
@@ -500,7 +509,7 @@
   right: 0;
   margin-top: 8px;
   padding: 8px 12px;
-  /* Theme-aware tooltip tokens — see base/tokens.css + themes/tamna.css.
+  /* Theme-aware tooltip tokens — see themes/svetla.css + themes/tamna.css.
      Using --color-surface for text breaks dark mode (text == page bg). */
   background: var(--tooltip-bg);
   color: var(--tooltip-text);
@@ -617,4 +626,291 @@
   background: var(--color-primary);
   border-radius: 999px;
   vertical-align: middle;
+}
+
+/* ===== Home page: TODAY hero + compact upcoming list ============= */
+
+/* TODAY hero — big, ceremonial: date, weekday, today's feast(s), fasting */
+.dashboard-today {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) 1fr;
+  gap: var(--space-5);
+  align-items: stretch;
+  padding: var(--space-4) 0 var(--space-2);
+}
+@media (max-width: 640px) {
+  .dashboard-today {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+  }
+}
+
+.dashboard-today__date {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  background: color-mix(in oklab, var(--color-accent) 8%, var(--color-surface));
+  border: 1px solid var(--color-accent-200);
+  border-left: 4px solid var(--color-accent);
+  border-radius: var(--radius-2);
+  box-shadow: var(--shadow-sm);
+}
+.dashboard-today__day-label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-1);
+}
+.dashboard-today__date-num {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 3.2rem;
+  line-height: 1;
+  color: var(--color-heading);
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+}
+.dashboard-today__date-rest {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  margin-top: var(--space-1);
+}
+
+.dashboard-today__feast {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-3) 0;
+  min-width: 0;
+}
+.dashboard-today__feast-label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-2);
+}
+.dashboard-today__feast-name {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--color-heading);
+  margin: 0 0 var(--space-1) 0;
+  text-decoration: none;
+  display: block;
+}
+.dashboard-today__feast-name:hover { color: var(--color-primary); text-decoration: none; }
+.dashboard-today__feast-extra {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  color: var(--color-text-muted);
+}
+.dashboard-today__feast-extra a {
+  color: var(--color-text-muted);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--color-border-strong);
+}
+.dashboard-today__feast-extra a:hover {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+.dashboard-today__none {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--color-text-muted);
+  font-size: 1.1rem;
+}
+
+.dashboard-today__fasting {
+  margin-top: var(--space-3);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--color-accent-50);
+  border: 1px solid var(--color-accent-200);
+  color: var(--color-accent-700);
+  font-size: 0.85rem;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+.dashboard-today__fasting i { font-size: 0.95rem; }
+.dashboard-today__fasting--free {
+  background: color-mix(in oklab, var(--color-success) 12%, var(--color-surface));
+  border-color: color-mix(in oklab, var(--color-success) 35%, var(--color-surface));
+  color: var(--color-success);
+}
+
+/* UPCOMING list — six tight ledger rows */
+.dashboard-upcoming {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-3) 0 0;
+  border-top: 1px solid var(--color-border);
+}
+.dashboard-upcoming__row {
+  display: grid;
+  grid-template-columns: 56px 56px 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  text-decoration: none;
+  color: var(--color-text);
+  transition: background 0.15s ease, padding 0.15s ease;
+}
+.dashboard-upcoming__row:hover {
+  background: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface-2));
+  color: var(--color-text);
+  text-decoration: none;
+}
+.dashboard-upcoming__date {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  color: var(--color-heading);
+}
+.dashboard-upcoming__day {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: lowercase;
+  color: var(--color-text-muted);
+}
+.dashboard-upcoming__feast {
+  font-family: var(--font-serif);
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: var(--color-text);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dashboard-upcoming__feast--empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+.dashboard-upcoming__feast-more {
+  color: var(--color-text-muted);
+  font-style: normal;
+  margin-left: var(--space-1);
+  font-size: 0.85rem;
+}
+.dashboard-upcoming__fasting {
+  font-size: 0.9rem;
+  color: var(--color-accent-700);
+  width: 20px;
+  text-align: center;
+}
+.dashboard-upcoming__fasting--none { color: var(--color-border-strong); }
+
+/* Crveno-slovo (red letter) row gets a quiet red rail */
+.dashboard-upcoming__row--crveno {
+  border-left: 3px solid var(--color-primary);
+  padding-left: calc(var(--space-2) - 3px);
+}
+.dashboard-upcoming__row--important .dashboard-upcoming__feast {
+  font-weight: 700;
+  color: var(--color-heading);
+}
+
+@media (max-width: 560px) {
+  .dashboard-upcoming__row {
+    grid-template-columns: 48px 1fr auto;
+  }
+  .dashboard-upcoming__day { display: none; }
+}
+
+
+/* Move 6 — dashboard responsive */
+@media (max-width: 1024px) {
+    .dashboard-today { grid-template-columns: minmax(160px, 200px) 1fr; gap: var(--space-3); }
+    .dashboard-today__date-num { font-size: 2.6rem; }
+    .dashboard-today__feast-name { font-size: 1.5rem; }
+}
+@media (max-width: 640px) {
+    .dashboard-today { grid-template-columns: 1fr; padding: var(--space-2) 0 0; }
+    .dashboard-today__date { flex-direction: row; align-items: baseline; gap: var(--space-3); border-left-width: 4px; padding: var(--space-2) var(--space-3); }
+    .dashboard-today__day-label { margin-bottom: 0; }
+    .dashboard-today__date-num { font-size: 2rem; }
+    .dashboard-today__date-rest { margin-top: 0; margin-left: auto; font-size: 0.9rem; }
+    .dashboard-today__feast-name { font-size: 1.3rem; }
+    .dashboard-upcoming__row { padding: var(--space-2) var(--space-1); gap: var(--space-2); }
+    .dashboard-upcoming__date { font-size: 0.9rem; }
+    .dashboard-upcoming__feast { font-size: 0.88rem; }
+}
+
+/* Narrow viewport: drop the 7-col grid and stack days as a list */
+@media (max-width: 600px) {
+  .calendar-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+  .weekday-header,
+  .calendar-cell.placeholder { display: none; }
+  .calendar-cell { height: auto; min-height: 80px; }
+}
+
+
+/* ===== Print stylesheet — clean month grid for paper ===== */
+@media print {
+  /* hide chrome */
+  .sidebar,
+  .sidebar-toggle,
+  .mobile-sidebar-toggle,
+  .sidebar-backdrop,
+  .search-overlay,
+  .calendar-navigation .nav-arrow,
+  .back-button { display: none !important; }
+
+  body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+  body > main { padding: 0 !important; }
+  .u-page-header { padding: 0 0 var(--space-2) !important; margin-bottom: var(--space-2) !important; }
+
+  /* tighten the grid */
+  .calendar-grid {
+    gap: 0 !important;
+    page-break-inside: avoid;
+  }
+  .calendar-cell {
+    height: auto !important;
+    min-height: 90px;
+    border: 1px solid color-mix(in oklab, var(--color-text) 35%, transparent) !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    page-break-inside: avoid;
+  }
+  .calendar-cell.today { border-width: 2px !important; }
+  .calendar-cell.crveno-slovo {
+    background: transparent !important;
+    color: var(--color-primary) !important;
+  }
+  .calendar-cell.crveno-slovo .date,
+  .calendar-cell.crveno-slovo .weekday,
+  .calendar-cell.crveno-slovo .slavas,
+  .calendar-cell.crveno-slovo .slava-link { color: var(--color-primary) !important; }
+  .calendar-cell .slava-link { color: var(--color-text) !important; text-decoration: none !important; }
+  .slava-link__count { display: none !important; }
+  .fasting-info,
+  .fasting-tooltip { display: none !important; }
+
+  /* keep just the month + year visible */
+  .calendar-navigation {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
 }

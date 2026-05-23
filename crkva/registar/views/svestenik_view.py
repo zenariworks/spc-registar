@@ -2,6 +2,7 @@
 Модул за приказ, претрагу и генерисање PDF докумената за свештенике.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -30,7 +31,9 @@ def unos_svestenika(request):
     )
 
 
-class SpisakSvestenika(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
+class SpisakSvestenika(
+    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+):
     """Приказује списак свештеника са могућностима претраге и пагинације."""
 
     model = Svestenik
@@ -52,7 +55,7 @@ class SpisakSvestenika(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
         )
 
 
-class SvestenikPDF(DetailView):
+class SvestenikPDF(LoginRequiredMixin, DetailView):
     """Генерише PDF документ за одређеног свештеника."""
 
     model = Svestenik
@@ -79,7 +82,7 @@ class SvestenikPDF(DetailView):
         return self.render_to_response(context)
 
 
-class PrikazSvestenika(DetailView):
+class PrikazSvestenika(LoginRequiredMixin, DetailView):
     """Приказује детаљне информације о одређеном свештенику."""
 
     model = Svestenik

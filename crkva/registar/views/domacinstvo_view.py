@@ -2,6 +2,7 @@
 Модул за приказ домаћинстава и њихових чланова.
 """
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
@@ -29,7 +30,9 @@ def unos_domacinstva(request):
     )
 
 
-class SpisakDomacinsta(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView):
+class SpisakDomacinsta(
+    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+):
     """Приказује списак домаћинстава са могућношћу претраге и пагинације."""
 
     model = Domacinstvo
@@ -39,10 +42,12 @@ class SpisakDomacinsta(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
     paginate_by = 20
     search_fields = ["domacin__ime", "domacin__prezime", "adresa__ulica"]
     sort_options = [
+        ("adresa__ulica", "Адреса А-Ш"),
+        ("-adresa__ulica", "Адреса Ш-А"),
         ("domacin__prezime", "Презиме А-Ш"),
         ("-domacin__prezime", "Презиме Ш-А"),
     ]
-    ordering = ["domacin__prezime", "domacin__ime"]
+    ordering = ["adresa__ulica", "adresa__broj", "domacin__prezime", "domacin__ime"]
 
     def get_queryset(self):
         return self.get_search_queryset(
@@ -51,8 +56,16 @@ class SpisakDomacinsta(SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
             .all()
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        for d in context["domacinstva"]:
+            members = list(d.ukucani.all())
+            d.zivi_clanovi = [u for u in members if not u.preminuo]
+            d.preminuli_clanovi = [u for u in members if u.preminuo]
+        return context
 
-class PrikazDomacinstva(DetailView):
+
+class PrikazDomacinstva(LoginRequiredMixin, DetailView):
     """Приказује детаљне информације о одређеном домаћинству."""
 
     model = Domacinstvo

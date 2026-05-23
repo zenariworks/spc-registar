@@ -1,124 +1,196 @@
 /* ==========================================================================
-   ТАМНА ТЕМА (Dark Theme)
-   ==========================================================================
-
-   Goal of this file: define the dark-mode VALUES of the shared design
-   tokens. Components consume those tokens (var(--color-*)), so a refined
-   palette flows through the whole UI without per-component overrides.
-
-   Where a component still needs special treatment in dark mode (because
-   its base style hard-coded a colour, or because a particular effect
-   reads poorly), it goes in the OVERRIDES section near the bottom.
+   ТАМНА ТЕМА (Dark Theme) — night reading
+   --------------------------------------------------------------------------
+   Deep ink chrome + parchment-cream text + brightened gold accents.
    ========================================================================== */
-
-/* ==========================================================================
-   1. TOKENS
-   ========================================================================== */
-
 :root[data-theme="dark"] {
-  /* ---------- Brand ---------- */
-  /* Primary stays the SPC red, but brighter on dark so body text + buttons
-     keep WCAG contrast against the dark surface. */
-  --color-primary:       #ef4444;
-  --color-primary-700:   #dc2626;
-  --color-primary-hover: #f87171;
-  --color-primary-transparent: rgba(239, 68, 68, 0.18);
-  --color-primary-50:    color-mix(in oklab, var(--color-primary) 14%, #0d1117);
-  --color-primary-100:   color-mix(in oklab, var(--color-primary) 22%, #0d1117);
-  --color-primary-200:   color-mix(in oklab, var(--color-primary) 32%, #0d1117);
+    /* ---------- Brand ---------- */
+    --color-primary:       #E5605E;
+    --color-primary-700:   #B0302E;
+    --color-primary-hover: #F08886;
+    --color-primary-transparent: rgba(209, 74, 72, 0.18);
+    --color-primary-50:    color-mix(in oklab, var(--color-primary) 14%, var(--color-ink-900));
+    --color-primary-100:   color-mix(in oklab, var(--color-primary) 22%, var(--color-ink-900));
+    --color-primary-200:   color-mix(in oklab, var(--color-primary) 32%, var(--color-ink-900));
 
-  /* ---------- Surfaces (page → cards → controls) ---------- */
-  --color-surface:   #0d1117;   /* page background — true dark, slight blue tint */
-  --color-surface-2: #161b22;   /* cards, panels, info-rows */
-  --color-surface-1: #21262d;   /* form controls, inputs */
-  --color-surface-3: #30363d;   /* hover surfaces, active controls */
+    /* ---------- Accent (candlelight gold) ---------- */
+    --color-accent:        #D5B475;
+    --color-accent-700:    #B08443;
+    --color-accent-200:    color-mix(in oklab, #D5B475 30%, var(--color-ink-900));
+    --color-accent-100:    color-mix(in oklab, #D5B475 18%, var(--color-ink-900));
+    --color-accent-50:     color-mix(in oklab, #D5B475 10%, var(--color-ink-900));
 
-  /* ---------- Text ---------- */
-  --color-text:        #e6edf3;  /* primary */
-  --color-text-muted:  #9ba3af;  /* secondary */
-  --color-muted:       #9ba3af;  /* alias */
-  --color-placeholder: #6e7681;
+    /* ---------- Surfaces ---------- */
+    --color-surface:   #15161D;
+    --color-surface-2: #1F212B;
+    --color-surface-1: #2A2D3A;
+    --color-surface-3: #383C4D;
+    --color-surface-hover: #2A2F3B;  /* row/card hover state */
 
-  /* ---------- Borders ---------- */
-  --color-border:        #30363d;  /* subtle */
-  --color-border-strong: #484f58;  /* dividers, input borders */
+    /* ---------- Text (parchment cream) ---------- */
+    --color-text:        #EDE6D6;
+    --color-text-muted:  #B5A99A;   /* bumped from #9C8E7D for body contrast */
+    --color-muted:       #B5A99A;
+    --color-placeholder: #6C6457;
+    --color-heading:     #F5EFE0;   /* heading visible on dark */
 
-  /* ---------- Status ---------- */
-  --color-success: #3fb950;
-  --color-warning: #d29922;
-  --color-danger:  #f85149;
-  --color-info:    #58a6ff;
+    /* ---------- Borders ---------- */
+    --color-border:        rgba(213, 180, 117, 0.16);
+    --color-border-strong: rgba(213, 180, 117, 0.34);
 
-  /* Links: use the brighter dark-primary to keep contrast on dark surfaces */
-  --color-link:       var(--color-primary);
-  --color-link-hover: var(--color-primary-hover);
+    /* ---------- Status ---------- */
+    --color-success: #82A776;
+    --color-warning: #D5B475;
+    --color-danger:  #E26967;
+    --color-info:    #7BA6C6;
 
-  /* ---------- Sidebar / chrome ---------- */
-  --sidebar-bg: linear-gradient(180deg, var(--color-surface-2) 0%, #0a0f17 100%);
+    /* ---------- Sidebar ---------- */
+    --sidebar-bg-start:        #15161D;
+    --sidebar-bg-end:          #0B0C12;
+    --sidebar-text:            #EDE6D6;
+    --sidebar-muted:           #9C8E7D;
+    --sidebar-hover-bg:        rgba(237, 230, 214, 0.06);
+    --sidebar-active-bg-themed: rgba(213, 180, 117, 0.22);  /* gold on deep ink */
+    --sidebar-active-rail:     var(--color-accent);
+    --sidebar-active-text:     #F5E6BD;
+    --sidebar-divider:         rgba(213, 180, 117, 0.20);
+    --sidebar-scrollbar-track: rgba(213, 180, 117, 0.06);
+    --sidebar-scrollbar-thumb: rgba(213, 180, 117, 0.28);
+    --sidebar-scrollbar-thumb-hover: rgba(213, 180, 117, 0.45);
+    --sidebar-theme-meta:      #0B0C12;
 
-  /* ---------- Slava badge — keep amber readable on dark ---------- */
-  --color-slava-bg:     #2d2410;
-  --color-slava-border: #7c5e1c;
-  --color-slava-text:   #f1d27a;
+    /* ---------- Slava badge ---------- */
+    --color-slava-bg:     #2D2410;
+    --color-slava-border: #B08443;
+    --color-slava-text:   #F1D27A;
 
-  /* ---------- Fasting cells — derive from primary instead of bespoke hex ---------- */
-  --fasting-water-bg:  rgba(96, 165, 250, 0.22);
-  --fasting-oil-bg:    rgba(251, 191, 36, 0.22);
-  --fasting-fish-bg:   rgba(45, 212, 191, 0.18);
-  --fasting-dairy-bg:  rgba(252, 211, 77, 0.15);
+    /* ---------- Fasting (derived) ---------- */
+    --fasting-water-bg:  rgba(96, 165, 250, 0.22);
+    --fasting-oil-bg:    rgba(213, 180, 117, 0.22);
+    --fasting-fish-bg:   rgba(45, 212, 191, 0.18);
+    --fasting-dairy-bg:  rgba(213, 180, 117, 0.15);
 
-  --fasting-water-cell:     color-mix(in oklab, var(--color-primary) 35%, var(--color-surface-2));
-  --fasting-water-cell-end: color-mix(in oklab, var(--color-primary) 25%, var(--color-surface-2));
-  --fasting-water-border:   color-mix(in oklab, var(--color-primary) 45%, var(--color-surface-2));
+    --fasting-water-cell:     color-mix(in oklab, var(--color-primary) 35%, var(--color-surface-2));
+    --fasting-water-cell-end: color-mix(in oklab, var(--color-primary) 25%, var(--color-surface-2));
+    --fasting-water-border:   color-mix(in oklab, var(--color-primary) 45%, var(--color-surface-2));
 
-  --fasting-oil-cell:     color-mix(in oklab, var(--color-primary) 25%, var(--color-surface-2));
-  --fasting-oil-cell-end: color-mix(in oklab, var(--color-primary) 15%, var(--color-surface-2));
-  --fasting-oil-border:   color-mix(in oklab, var(--color-primary) 30%, var(--color-surface-2));
+    --fasting-oil-cell:     color-mix(in oklab, var(--color-accent) 25%, var(--color-surface-2));
+    --fasting-oil-cell-end: color-mix(in oklab, var(--color-accent) 15%, var(--color-surface-2));
+    --fasting-oil-border:   color-mix(in oklab, var(--color-accent) 32%, var(--color-surface-2));
 
-  --fasting-fish-cell:     color-mix(in oklab, var(--color-primary) 18%, var(--color-surface-2));
-  --fasting-fish-cell-end: color-mix(in oklab, var(--color-primary) 10%, var(--color-surface-2));
-  --fasting-fish-border:   color-mix(in oklab, var(--color-primary) 22%, var(--color-surface-2));
+    --fasting-fish-cell:     color-mix(in oklab, var(--color-accent) 18%, var(--color-surface-2));
+    --fasting-fish-cell-end: color-mix(in oklab, var(--color-accent) 10%, var(--color-surface-2));
+    --fasting-fish-border:   color-mix(in oklab, var(--color-accent) 22%, var(--color-surface-2));
 
-  --fasting-dairy-cell:     color-mix(in oklab, var(--color-primary) 10%, var(--color-surface-2));
-  --fasting-dairy-cell-end: var(--color-surface-2);
-  --fasting-dairy-border:   color-mix(in oklab, var(--color-primary) 15%, var(--color-surface-2));
+    --fasting-dairy-cell:     color-mix(in oklab, var(--color-accent) 10%, var(--color-surface-2));
+    --fasting-dairy-cell-end: var(--color-surface-2);
+    --fasting-dairy-border:   color-mix(in oklab, var(--color-accent) 16%, var(--color-surface-2));
 
-  /* ---------- Shadow tokens (deeper on dark) ---------- */
-  --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.5);
-  --shadow-md:    0 4px 12px rgba(0, 0, 0, 0.55);
-  --shadow-lg:    0 8px 24px rgba(0, 0, 0, 0.6);
-  --shadow-hover: 0 8px 14px -6px rgba(0, 0, 0, 0.7);
+    /* ---------- Shadows ---------- */
+    --shadow-sm:    0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md:    0 4px 12px rgba(0, 0, 0, 0.55);
+    --shadow-lg:    0 8px 24px rgba(0, 0, 0, 0.6);
+    --shadow-hover: 0 8px 14px -6px rgba(0, 0, 0, 0.7);
 
-  /* ---------- Tooltip — keep readable bubble on dark page ----------
-     Lighter slate bg + near-white text so the bubble pops over the
-     dark page and the label stays high-contrast. Crucially this does
-     NOT reuse --color-surface (which is dark here) or --color-text
-     (which can resolve dark on certain components). */
-  --tooltip-bg:     #374151;   /* slate-700, sits above page bg */
-  --tooltip-text:   #f9fafb;   /* near-white */
-  --tooltip-shadow: rgba(0, 0, 0, 0.6);
+    /* ---------- Tooltip ---------- */
+    --tooltip-bg:     #2A2D3A;
+    --tooltip-text:   #EDE6D6;
+    --tooltip-shadow: rgba(0, 0, 0, 0.6);
+
+    /* ---------- Token parity (Move 7) — explicit values for dark surfaces ---------- */
+
+    /* Info — dark-tinted instead of inheriting light cream */
+    --color-info-light:        #1A2A3A;
+    --color-info-border-light: #2E4868;
+    --color-info-link:         #7BA6C6;
+    --color-info-bg:           #1A2A3A;
+    --color-info-border:       #2E4868;
+
+    /* Warning — dark-tinted */
+    --color-warning-text:      #F5D88A;
+    --color-warning-bg:        #2D2410;
+    --color-warning-border:    #7C5E1C;
+
+    /* Error — dark-tinted */
+    --color-error-text:        #F5A5A3;
+    --color-error-bg:          #2A1311;
+    --color-error-border:      #7C2624;
+
+    /* Slava already overridden above; explicit for completeness */
+
+    /* Link tokens */
+    --color-link:        var(--color-primary);
+    --color-link-hover:  var(--color-primary-hover);
+
+    /* Ink family */
+    --color-ink-900:     #15161D;
+    --color-ink-800:     #1B1D26;
+    --color-ink-700:     #262934;
+    --color-ink-600:     #3A3E4C;
+
+    /* Greys — dark-friendly */
+    --color-gray-100: #2A2D3A;
+    --color-gray-200: #383C4D;
+    --color-gray-300: #484F58;
+    --color-gray-400: #6E7681;
+    --color-gray-500: #9C8E7D;
+    --color-gray-600: #B5A99A;
+    --color-gray-700: #EDE6D6;
+    --color-gray-800: #383C4D;
+    --color-gray-900: #2A2D3A;
+    --color-gray-light:  #484F58;
+    --color-gray-border: rgba(213, 180, 117, 0.16);
+    --color-gray-dark:   #6E7681;
+
+    /* Amber (today highlight) — bright on dark */
+    --color-amber-500: #D5B475;
+    --color-amber-400: #E3CFA6;
+    --color-amber-300: #F1E5C9;
+    --color-amber-200: #F8F1DF;
+    --color-amber-100: #FBF5E3;
+    --color-amber-900: #B08443;
+    --color-amber-800: #8C6B2F;
+
+    /* Accent transparent on dark */
+    --color-accent-transparent: rgba(213, 180, 117, 0.18);
+
+    /* Other utility */
+    --color-black-alpha-90: rgba(0, 0, 0, 0.95);
+    --color-white-alpha-20: rgba(237, 230, 214, 0.14);
+
+    /* Olive — warm theme accent, used for domacin badge to avoid red clash */
+    --color-olive:         #8DA055;
+    --color-olive-bg:      #2F3A1F;
+    --color-olive-border:  #4F5B1E;
+    /* Secondary */
+    --color-secondary: #B0302E;
+
+    /* Fasting cells — explicit dark values (Move 7b token parity) */
+    --fasting-oil-cell:       #2D2410;
+    --fasting-oil-cell-end:   #1F212B;
+    --fasting-oil-border:     #7C5E1C;
+    --fasting-dairy-cell:     #262934;
+    --fasting-dairy-cell-end: #1F212B;
+    --fasting-dairy-border:   #3A3E4C;
+    --fasting-fish-cell:      #1A2A3A;
+    --fasting-fish-cell-end:  #1F212B;
+    --fasting-fish-border:    #2E4868;
+    --fasting-water-cell:     #1F2E40;
+    --fasting-water-cell-end: #1F212B;
+    --fasting-water-border:   #2E4868;
 }
 
-/* ==========================================================================
-   2. ROOT BACKGROUND + TEXT
-   ========================================================================== */
-
 [data-theme="dark"] body {
-  background-color: var(--color-surface);
-  color: var(--color-text);
+    background-color: var(--color-surface);
+    color: var(--color-text);
 }
 
 [data-theme="dark"] body > footer {
-  background-color: #050a13;
-  color: var(--color-text);
+    background-color: #0B0C12;
+    color: var(--color-text);
 }
 
-/* ==========================================================================
-   3. OVERRIDES — components that can't be fully driven by tokens
-   ========================================================================== */
-
-/* Inputs: enforce surface-1 on dark since some component CSS uses
-   var(--color-surface) which would blend into the page bg. */
+/* Form controls — keep readable on dark */
 [data-theme="dark"] input[type="text"],
 [data-theme="dark"] input[type="search"],
 [data-theme="dark"] input[type="number"],
@@ -129,49 +201,52 @@
 [data-theme="dark"] input[type="password"],
 [data-theme="dark"] select,
 [data-theme="dark"] textarea {
-  background: var(--color-surface-1);
-  color: var(--color-text);
-  border-color: var(--color-border-strong);
+    background: var(--color-surface-1);
+    color: var(--color-text);
+    border-color: var(--color-border-strong);
 }
-
 [data-theme="dark"] input::placeholder,
-[data-theme="dark"] textarea::placeholder {
-  color: var(--color-placeholder);
-}
+[data-theme="dark"] textarea::placeholder { color: var(--color-placeholder); }
 
-/* Today highlight in calendar — amber works against dark, define here */
+/* Today highlight in calendar */
 [data-theme="dark"] .calendar-cell.today {
-  background: linear-gradient(135deg, #4a3410 0%, #6b4a16 100%);
-  border: 2px solid var(--color-warning);
-  box-shadow: 0 0 0 1px var(--color-warning), 0 2px 12px rgba(210, 153, 34, 0.35);
+    background: linear-gradient(135deg, #4a3410 0%, #6b4a16 100%);
+    border: 2px solid var(--color-warning);
+    box-shadow: 0 0 0 1px var(--color-warning), 0 2px 12px rgba(213, 180, 117, 0.35);
 }
 [data-theme="dark"] .calendar-cell.today .date     { color: #fde68a; font-weight: 800; }
 [data-theme="dark"] .calendar-cell.today .weekday  { color: #fcd34d; font-weight: 600; }
 [data-theme="dark"] .calendar-cell.today .slavas,
 [data-theme="dark"] .calendar-cell.today .slavas div { color: #fef3c7 !important; }
 
-/* Red letter day (Crveno slovo) reads cleaner with primary backdrop */
+/* Red letter day */
 [data-theme="dark"] .calendar-cell.crveno-slovo {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
-  border-color: var(--color-primary);
-  color: #fff !important;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-700) 100%);
+    border-color: var(--color-primary);
+    color: #fff !important;
 }
 [data-theme="dark"] .calendar-cell.crveno-slovo .weekday,
 [data-theme="dark"] .calendar-cell.crveno-slovo .slavas,
 [data-theme="dark"] .calendar-cell.crveno-slovo .slavas div,
 [data-theme="dark"] .calendar-cell.crveno-slovo .no-slavas-text,
 [data-theme="dark"] .calendar-cell.crveno-slovo .date,
-[data-theme="dark"] .calendar-cell.crveno-slovo .fasting-icon {
-  color: #fff !important;
-}
+[data-theme="dark"] .calendar-cell.crveno-slovo .fasting-icon { color: #fff !important; }
 
-/* Search overlay needs a darker scrim */
-[data-theme="dark"] .search-overlay {
-  background: rgba(0, 0, 0, 0.7);
-}
+/* Search overlay */
+[data-theme="dark"] .search-overlay { background: rgba(0, 0, 0, 0.7); }
 
-/* Page-size selector pills */
+/* Page-size pills */
 [data-theme="dark"] .page-size-link--active {
-  background: var(--color-primary) !important;
-  color: #fff !important;
+    background: var(--color-primary) !important;
+    color: #fff !important;
+}
+
+
+/* On tamna the домаћин badge inherits --color-primary (deep red), which
+   clashes against the dark ink palette. Override with olive (cooler on dark) —
+   matches the sepia treatment for visual parity. */
+[data-theme="dark"] .stavka__meta-badge--domacin {
+    color: var(--color-olive);
+    background: var(--color-olive-bg);
+    border-color: var(--color-olive-border);
 }

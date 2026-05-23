@@ -15,21 +15,13 @@
   {% csrf_token %}
 
   <div class="u-page-header">
-    <a href="{% if is_edit and domacinstvo %}{% url "domacinstvo_detail" uid=domacinstvo.uid %}{% else %}{% url "domacinstva" %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
     <h1 class="u-page-title">
       {% if is_edit and not domacinstvo %}Додавање домаћинства
-      {% elif is_edit %}Измена домаћинства{% if domacinstvo.domacin %} · {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}{% endif %}
-      {% else %}Домаћинство · {{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}{% endif %}
+      {% elif is_edit %}Измена домаћинства{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}
+      {% else %}Домаћинство{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}{% endif %}
     </h1>
     {% if domacinstvo %}
-      <span data-show-mode="view">
-        {% if can_edit_domacinstvo %}<a href="{% url "izmena_domacinstva" uid=domacinstvo.uid %}" data-action="enter-edit" class="button button--primary button--icon" data-tooltip="Измени"><i class="fa-solid fa-pen-to-square"></i></a>{% endif %}
-        <button type="button" id="history-toggle" class="button button--primary button--icon" data-tooltip="Историја измена"><i class="fa-solid fa-clock-rotate-left"></i></button>
-      </span>
-      <span data-show-mode="edit">
-        <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
-        <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
-      </span>
+      {% include "registar/_view_actions.html" with back_list_url_name="domacinstva" back_detail_url_name="domacinstvo_detail" obj=domacinstvo edit_url_name="izmena_domacinstva" can_edit=can_edit_domacinstvo %}
     {% else %}
       <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}
@@ -44,7 +36,7 @@
   {% endinfo_section %}
 
   <div class="info-section">
-    <h2 class="info-section__title"><i class="fa-solid fa-location-dot"></i> Адреса и слава</h2>
+    <h2 class="info-section__title"><i class="fa-solid fa-address-card"></i> Контакт</h2>
     <ul class="info-rows">
       {# Adresa keeps raw markup — view-mode renders an OSM link with external-link icon. #}
       <li class="info-row info-row--editable info-row--stacked">
@@ -52,19 +44,11 @@
         <div class="info-row__body">
           <label class="info-row__label" for="{{ form.adresa.id_for_label }}">Адреса</label>
           <div class="info-row__value">
-            <span class="info-row__static">{% if domacinstvo.adresa %}<a href="https://www.openstreetmap.org/search?query={{ domacinstvo.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ domacinstvo.adresa }} <i class="fa-solid fa-arrow-up-right-from-square" style="font-size:0.75em;opacity:0.55;margin-left:4px;"></i></a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            <span class="info-row__static">{% if domacinstvo.adresa %}<a href="https://www.openstreetmap.org/search?query={{ domacinstvo.adresa|urlencode }}" target="_blank" rel="noopener noreferrer" data-tooltip="Отвори у OpenStreetMap">{{ domacinstvo.adresa }} <i class="fa-solid fa-arrow-up-right-from-square u-icon-external"></i></a>{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
             {{ form.adresa }}
           </div>
         </div>
       </li>
-      {% if domacinstvo.slava %}{% url "slava_detail" uid=domacinstvo.slava.uid as slava_url %}{% endif %}
-      {% info_row icon="fa-gift" label="Слава" field=form.slava value=domacinstvo.slava link=slava_url %}
-    </ul>
-  </div>
-
-  <div class="info-section">
-    <h2 class="info-section__title"><i class="fa-solid fa-mobile-screen"></i> Контакт</h2>
-    <ul class="info-rows">
       {# Phone rows keep raw markup — view-mode renders tel: link + format_phone filter. #}
       <li class="info-row info-row--editable info-row--stacked">
         <div class="info-row__icon" data-tooltip="Мобилни телефон"><i class="fa-solid fa-mobile-screen"></i></div>
@@ -89,7 +73,9 @@
     </ul>
   </div>
 
-  {% info_section title="Обреди" icon="fa-droplet" %}
+  {% info_section title="Слава" icon="fa-gift" %}
+    {% if domacinstvo.slava %}{% url "slava_detail" uid=domacinstvo.slava.uid as slava_url %}{% endif %}
+    {% info_row icon="fa-gift" label="Слава" field=form.slava value=domacinstvo.slava link=slava_url %}
     {% info_row_bool icon="fa-droplet" label="Славска водица" value_label="Славска водица" field=form.slavska_vodica value=domacinstvo.slavska_vodica %}
     {% info_row_bool icon="fa-droplet" label="Васкршња водица" value_label="Васкршња водица" field=form.vaskrsnja_vodica value=domacinstvo.vaskrsnja_vodica %}
   {% endinfo_section %}
@@ -122,7 +108,7 @@
     {% if ukucani_preminuli %}
     <div class="info-section" data-show-mode="view">
       <h2 class="info-section__title">Преминули ({{ ukucani_preminuli|length }})</h2>
-      <ul class="info-list">{% for u in ukucani_preminuli %}<li class="info-list__item info-list__item--muted"><span>{% if u.osoba %}{{ u.osoba.ime }} {{ u.osoba.prezime }}{% else %}{{ u.ime_ukucana }}{% endif %} <i class="fa-solid fa-cross" style="opacity:0.5;margin-left:6px;"></i></span><span class="info-list__role">{{ u.get_uloga_display }}</span></li>{% endfor %}</ul>
+      <ul class="info-list">{% for u in ukucani_preminuli %}<li class="info-list__item info-list__item--muted"><span>{% if u.osoba %}{{ u.osoba.ime }} {{ u.osoba.prezime }}{% else %}{{ u.ime_ukucana }}{% endif %} <i class="fa-solid fa-cross info-list__cross"></i></span><span class="info-list__role">{{ u.get_uloga_display }}</span></li>{% endfor %}</ul>
     </div>
     {% endif %}
     {% if ukucanin_formset %}
@@ -164,12 +150,12 @@
         </li>
         {% endfor %}
       </ul>
-      <p class="info-row__sub" style="margin-top:8px;opacity:0.7;">Сачувајте промене да би се додатни редови појавили.</p>
+      <p class="info-row__sub u-section-note">Сачувајте промене да би се додатни редови појавили.</p>
     </div>
     {% endif %}
   {% endif %}
 
   {% if form %}{% include "registar/_modal_adresa.html" %}{% endif %}
 </form>
-{% if domacinstvo %}{% include "registar/_history_panel.html" %}{% endif %}
+{% if domacinstvo %}{% include "registar/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

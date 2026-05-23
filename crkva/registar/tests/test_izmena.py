@@ -95,7 +95,7 @@ class IzmenaSvestenikaTests(TestCase):
             user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
         )
         cls.svestenik = Svestenik.objects.create(
-            ime="Стари", prezime="Свештеник", zvanje="Јереј"
+            ime="Стари", prezime="Свештеник", zvanje="јереј"
         )
 
     def setUp(self):
@@ -108,7 +108,7 @@ class IzmenaSvestenikaTests(TestCase):
         self.client.force_login(self.priest)
         r = self.client.post(
             self.url(),
-            {"ime": "Стари", "prezime": "Свештеник", "zvanje": "Протојереј"},
+            {"ime": "Стари", "prezime": "Свештеник", "zvanje": "протојереј"},
         )
         self.assertEqual(r.status_code, 302)
         self.svestenik.refresh_from_db()
@@ -370,6 +370,13 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
 
     def setUp(self):
         self.client = Client()
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def _create_krstenje(self, **overrides):
         defaults = dict(

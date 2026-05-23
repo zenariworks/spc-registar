@@ -2,7 +2,7 @@
 
 from django.db import models
 from model_utils.models import TimeStampedModel
-from phonenumber_field.modelfields import PhoneNumberField
+from registar.fields import TenantPhoneNumberField
 from simple_history.models import HistoricalRecords
 
 from .adresa import Adresa
@@ -39,11 +39,14 @@ class Osoba(TimeStampedModel):
     adresa = models.ForeignKey(
         Adresa, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="адреса"
     )
-    tel_fiksni = PhoneNumberField(
-        region="RS", verbose_name="фиксни телефон", blank=True, null=True
+    tel_fiksni = TenantPhoneNumberField(
+        verbose_name="фиксни телефон", blank=True, null=True
     )
-    tel_mobilni = PhoneNumberField(
-        region="RS", verbose_name="мобилни телефон", blank=True, null=True
+    tel_mobilni = TenantPhoneNumberField(
+        verbose_name="мобилни телефон", blank=True, null=True
+    )
+    email = models.EmailField(
+        max_length=254, verbose_name="имејл", blank=True, null=True
     )
 
     # Основни подаци о особи
@@ -62,6 +65,7 @@ class Osoba(TimeStampedModel):
         choices=[("М", "мушки"), ("Ж", "женски")],
         blank=True,
         null=True,
+        db_index=True,
     )
 
     zanimanje = models.ForeignKey(
@@ -89,6 +93,13 @@ class Osoba(TimeStampedModel):
     history = HistoricalRecords()
 
     def __str__(self):
+        # Females with a maiden name surface it inline so they read as
+        # "Љиљана Ристивојевић (рођ. Јовановић)" wherever an Osoba renders
+        # as plain text (select2 options, vencanje role fields, admin
+        # labels). HTML-styled detail subtitles still render the parts
+        # by hand for distinct typography.
+        if self.pol == "Ж" and self.devojacko_prezime:
+            return f"{self.ime} {self.prezime} (рођ. {self.devojacko_prezime})"
         return f"{self.ime} {self.prezime}"
 
     class Meta:
@@ -97,7 +108,3 @@ class Osoba(TimeStampedModel):
         verbose_name = "Особа"
         verbose_name_plural = "Особе"
         ordering = ["prezime", "ime"]
-
-
-# Alias за компатибилност уназад
-Parohijan = Osoba

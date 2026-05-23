@@ -45,15 +45,19 @@
         const overlay = document.getElementById(modalId);
         if (!overlay) return;
         overlay._targetFieldId = targetFieldId || null;
+        // The overlay carries the HTML5 [hidden] attribute, which modali.css
+        // pins to display:none !important. Inline style alone cannot win that
+        // cascade — we have to drop the attribute too.
+        overlay.removeAttribute("hidden");
         overlay.style.display = "flex";
         _openModals.add(modalId);
         // Clear inputs / errors
         overlay.querySelectorAll("input[type=text]").forEach((i) => (i.value = ""));
         overlay
-            .querySelectorAll(".toggle-button.active")
-            .forEach((b) => b.classList.remove("active"));
+            .querySelectorAll(".tab-group__item.is-active")
+            .forEach((b) => b.classList.remove("is-active"));
         const err = overlay.querySelector(".error-text");
-        if (err) err.style.display = "none";
+        if (err) { err.style.display = "none"; err.setAttribute("hidden", ""); }
         // Focus the first input
         setTimeout(() => {
             const first = overlay.querySelector("input[type=text]");
@@ -64,7 +68,8 @@
     function close(modalId) {
         const overlay = document.getElementById(modalId);
         if (!overlay) return;
-        overlay.style.display = "none";
+        overlay.style.display = "";
+        overlay.setAttribute("hidden", "");
         overlay._targetFieldId = null;
         _openModals.delete(modalId);
     }
@@ -98,17 +103,17 @@
             options || {},
         );
 
-        // Wire toggle-group buttons (e.g. pol: M/Ж)
+        // Wire tab-group items (e.g. pol: M/Ж)
         const toggleState = {};
         Object.entries(opts.toggleGroups).forEach(([fieldName, groupId]) => {
             const group = document.getElementById(groupId);
             if (!group) return;
-            group.querySelectorAll(".toggle-button").forEach((btn) => {
+            group.querySelectorAll(".tab-group__item").forEach((btn) => {
                 btn.addEventListener("click", () => {
                     group
-                        .querySelectorAll(".toggle-button")
-                        .forEach((b) => b.classList.remove("active"));
-                    btn.classList.add("active");
+                        .querySelectorAll(".tab-group__item")
+                        .forEach((b) => b.classList.remove("is-active"));
+                    btn.classList.add("is-active");
                     toggleState[fieldName] = btn.dataset.value;
                 });
             });
@@ -128,6 +133,7 @@
             const err = overlay.querySelector(".error-text");
             if (err) {
                 err.textContent = msg;
+                err.removeAttribute("hidden");
                 err.style.display = "block";
             }
         }
@@ -150,7 +156,7 @@
             }
             _showError("");
             const err = overlay.querySelector(".error-text");
-            if (err) err.style.display = "none";
+            if (err) { err.style.display = "none"; err.setAttribute("hidden", ""); }
 
             const formData = new FormData();
             Object.entries(values).forEach(([k, v]) => formData.append(k, v || ""));

@@ -38,6 +38,7 @@ from registar.migracija.helpers import (
     split_full_name,
 )
 from registar.migracija.osoba_repo import find_or_create_osoba
+from registar.migracija.sex import infer_sex_from_name
 from registar.models import (
     Hram,
     Narodnost,
@@ -351,10 +352,10 @@ class Command(MigrationCommand):
         )
 
         kum = self._parse_person(r.kum_puno_ime, label="кум")
-        svekar = self._parse_parent(r.svekar)
-        svekrva = self._parse_parent(r.svekrva)
-        tast = self._parse_parent(r.tast)
-        tasta = self._parse_parent(r.tasta)
+        svekar = self._parse_parent(r.svekar, pol="М")
+        svekrva = self._parse_parent(r.svekrva, pol="Ж")
+        tast = self._parse_parent(r.tast, pol="М")
+        tasta = self._parse_parent(r.tasta, pol="Ж")
         stari_svat = self._parse_person(
             r.stari_svat_ime.split(",")[0] if r.stari_svat_ime else "",
             label="стари сват",
@@ -414,15 +415,19 @@ class Command(MigrationCommand):
             return None
         ime, prezime = split_full_name(full_str.split(",")[0].strip())
         if ime and prezime:
-            return find_or_create_osoba(ime=ime, prezime=prezime)
+            return find_or_create_osoba(
+                ime=ime, prezime=prezime, pol=infer_sex_from_name(ime)
+            )
         if self._verbose:
             self.log_warning(f"Неуспело цепање имена ({label}): '{full_str}'")
         return None
 
-    def _parse_parent(self, full_str: str) -> Optional[Osoba]:
+    def _parse_parent(
+        self, full_str: str, pol: Optional[str] = None
+    ) -> Optional[Osoba]:
         if not full_str:
             return None
         ime, prezime = split_full_name(full_str.split(",")[0].strip())
         if ime and prezime:
-            return find_or_create_osoba(ime=ime, prezime=prezime)
+            return find_or_create_osoba(ime=ime, prezime=prezime, pol=pol)
         return None

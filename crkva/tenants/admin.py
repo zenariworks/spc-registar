@@ -11,11 +11,12 @@ class TenantAdmin(admin.ModelAdmin):
         "naziv",
         "parohija_naziv",
         "schema_name",
+        "default_phone_region",
         "is_active",
         "is_default",
         "created_at",
     )
-    list_filter = ("is_active", "is_default")
+    list_filter = ("is_active", "is_default", "default_phone_region")
     search_fields = ("naziv", "schema_name", "parohija_naziv")
     readonly_fields = ("created_at",)
 

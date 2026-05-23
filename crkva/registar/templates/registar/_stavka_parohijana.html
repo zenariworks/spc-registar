@@ -2,12 +2,13 @@
 {% for parohijan in parohijani %}
 <li class="stavka">
     <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza">
+        {# safe-ok: markiraj filter escapes input before adding <span> highlight wrapping — see marker_filter.py for the contract #}
         <span class="stavka__primary">{{ parohijan.ime|markiraj:upit|safe }} {{ parohijan.prezime|markiraj:upit|safe }}</span>
-        <span class="stavka__secondary">{% if parohijan.datum_rodjenja %}{{ parohijan.datum_rodjenja }}{% endif %}{% if parohijan.adresa %}{% if parohijan.datum_rodjenja %} &middot; {% endif %}{{ parohijan.adresa }}{% endif %}</span>
+        <span class="stavka__secondary">{% if parohijan.datum_rodjenja %}<i class="fa-solid fa-cake-candles"></i> {{ parohijan.datum_rodjenja }}{% endif %}{% if parohijan.adresa %}{% if parohijan.datum_rodjenja %} &middot; {% endif %}<i class="fa-solid fa-location-dot"></i> {{ parohijan.adresa }}{% endif %}</span>
         {% if parohijan.domacinstvo %}
+        {# For домаћин the address is the same as the household address already shown in stavka__secondary above — surface only the role badge. #}
         <span class="stavka__meta">
             <span class="stavka__meta-badge stavka__meta-badge--domacin">домаћин</span>
-            {% if parohijan.domacinstvo.adresa %}<span class="stavka__meta-text">{{ parohijan.domacinstvo.adresa }}</span>{% endif %}
         </span>
         {% elif parohijan.prefetched_ukucanstva.0 %}
         {% with uk=parohijan.prefetched_ukucanstva.0 %}

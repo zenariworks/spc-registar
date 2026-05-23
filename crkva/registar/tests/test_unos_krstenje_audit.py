@@ -73,7 +73,7 @@ class _BaseUnosKrstenjeAuditTest(TestCase):
         cls.svestenik = Svestenik.objects.create(
             ime="Свештеник",
             prezime="Тестовић",
-            zvanje="Јереј",
+            zvanje="јереј",
             parohija=cls.parohija,
         )
         cls.dete = Osoba.objects.create(ime="Дете", prezime="Тестовић", pol="М")
@@ -556,6 +556,15 @@ class OsobaCreateInlineFlowTests(_BaseUnosKrstenjeAuditTest):
       * Modal.bindForm() is configured for the brzi_unos_osobe URL
       * POSTing to brzi_unos_osobe creates an Osoba and returns id+text
     """
+
+    def setUp(self):
+        from django.contrib.auth import get_user_model
+
+        _U = get_user_model()
+        self.user = _U.objects.create_superuser(
+            username="auto-test", email="a@a.test", password="x"
+        )
+        self.client.force_login(self.user)
 
     def test_modal_markup_is_included_on_page(self):
         html = self._get_html()

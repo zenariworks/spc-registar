@@ -17,9 +17,30 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.db import DatabaseError, connection
+from django.http import JsonResponse
 from django.urls import include, path
 
+
+def healthz(_request):
+    """Liveness probe: process is up."""
+    return JsonResponse({"status": "ok"})
+
+
+def readyz(_request):
+    """Readiness probe: process can talk to the database."""
+    try:
+        with connection.cursor() as cur:
+            cur.execute("SELECT 1")
+            cur.fetchone()
+    except DatabaseError:
+        return JsonResponse({"status": "db_error"}, status=503)
+    return JsonResponse({"status": "ok"})
+
+
 urlpatterns = [
+    path("healthz", healthz),
+    path("readyz", readyz),
     path("admin/", admin.site.urls),
     path("parohija/", include("tenants.urls")),
     path("", include("registar.urls")),

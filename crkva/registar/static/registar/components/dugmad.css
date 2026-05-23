@@ -218,7 +218,7 @@
     left: 50%;
     transform: translateX(-50%);
     padding: 6px 10px;
-    /* Theme-aware via dedicated tokens — see base/tokens.css + themes/tamna.css.
+    /* Theme-aware via dedicated tokens — see themes/svetla.css + themes/tamna.css.
        Never use --color-surface / --color-text here: they invert in dark mode
        and produce dark-on-dark bubbles. */
     background: var(--tooltip-bg);

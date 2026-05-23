@@ -59,6 +59,7 @@ SHARED_APPS = [
     "admin_searchable_dropdown",
     "django_filters",
     "phonenumber_field",
+    "axes",  # rate-limit/lockout on failed logins; admin UI under /admin/axes/
 ]
 
 TENANT_APPS = [
@@ -84,6 +85,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "registar.middleware.HandleMissingTablesMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
+    "axes.middleware.AxesMiddleware",  # must be LAST per django-axes docs
 ]
 
 ROOT_URLCONF = "crkva.urls"
@@ -171,8 +173,8 @@ USE_TZ = True
 STATIC_URL = "static/static/"
 MEDIA_URL = "static/media/"
 
-STATIC_ROOT = "/vol/web/static/"
-MEDIA_ROOT = "/vol/web/media/"
+STATIC_ROOT = os.environ.get("STATIC_ROOT", "/vol/web/static/")
+MEDIA_ROOT = os.environ.get("MEDIA_ROOT", "/vol/web/media/")
 
 # Staticfiles finders (include compressor)
 STATICFILES_FINDERS = [
@@ -208,9 +210,19 @@ LOGGING = {
             "class": "logging.StreamHandler",
         },
     },
-    "django": {
-        "handlers": ["console"],
-        "level": "DEBUG",
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": "INFO",
+        },
+        "tenants": {
+            "handlers": ["console"],
+            "level": "WARNING",
+        },
+        "registar": {
+            "handlers": ["console"],
+            "level": "WARNING",
+        },
     },
 }
 
@@ -245,3 +257,15 @@ CACHES = {
         "OPTIONS": {"MAX_ENTRIES": 5000},
     }
 }
+
+
+# django-axes: brute-force protection on login. AxesStandaloneBackend must be
+# first; ModelBackend stays as the fallback for actual authentication.
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+AXES_FAILURE_LIMIT = 5
+AXES_COOLOFF_TIME = 1  # hours
+AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
+AXES_RESET_ON_SUCCESS = True
