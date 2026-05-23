@@ -1,10 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="u-page-header">
-    <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
-    <h1 class="u-page-title">Дупликати адреса <span class="u-page-title__count">· {{ total_groups }}</span></h1>
-</div>
+{% include "registar/_page_header.html" with title="Дупликати адреса" count=total_groups %}
 
 {% if messages %}
   {% for m in messages %}

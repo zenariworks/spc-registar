@@ -1,0 +1,20 @@
+{% comment %}
+Reusable page header: back arrow on the left, h1 title (with optional
+"· count") on the right. Used by all spisak_*.html templates and by
+several detail pages (duplikati_adresa, kalendar, profile, search_view,
+slava_domacinstva, unos_korisnika).
+
+Required:
+  title           h1 text (string)
+Optional:
+  back_url        URL string for the back arrow. Defaults to '/' (pocetna)
+  count           integer; if passed (incl 0), renders as "· N" after title
+  include_toolbar truthy to render {% templatetag openblock %} include "registar/_list_toolbar.html" {% templatetag closeblock %}
+{% endcomment %}
+<div class="u-page-header">
+    <a href="{{ back_url|default:'/' }}" class="back-button" aria-label="Назад" title="Назад">
+        <i class="fa-solid fa-arrow-left"></i>
+    </a>
+    <h1 class="u-page-title">{{ title }}{% if count or count == 0 %} <span class="u-page-title__count">· {{ count }}</span>{% endif %}</h1>
+    {% if include_toolbar %}{% include "registar/_list_toolbar.html" %}{% endif %}
+</div>

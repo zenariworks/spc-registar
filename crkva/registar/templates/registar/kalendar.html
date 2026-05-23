@@ -7,12 +7,7 @@
 {% block title %}Календар{% endblock %}
 
 {% block content %}
-<div class="u-page-header">
-  <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад">
-    <i class="fa-solid fa-arrow-left"></i>
-  </a>
-<h1 class="u-page-title">Календар</h1>
-</div>
+{% include "registar/_page_header.html" with title="Календар" %}
 
 <!-- Single, centered navigation -->
 <div class="calendar-navigation">
