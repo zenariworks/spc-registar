@@ -174,6 +174,10 @@
                     modal.dataset.adresaUid = uid;
                     if (sel && sel.length) modal.dataset.targetFieldId = sel.attr("id");
                 }
+                // Open the modal BEFORE filling: Modal.open() clears every
+                // input[type=text] in the overlay, so filling first then opening
+                // wipes the pre-fill we just put in place.
+                if (window.Modal) Modal.open("adresa-modal");
                 var map = {
                     ulica: "modal-adresa-ulica",
                     broj: "modal-adresa-broj",
@@ -185,8 +189,7 @@
                     if (el) el.value = (data && data[k]) || "";
                 });
                 var err = document.querySelector("#adresa-modal .error-text");
-                if (err) { err.style.display = "none"; err.textContent = ""; }
-                if (window.Modal) Modal.open("adresa-modal");
+                if (err) { err.style.display = "none"; err.textContent = ""; err.setAttribute("hidden", ""); }
             });
     }
 
