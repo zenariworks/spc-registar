@@ -67,3 +67,24 @@ class VencanjeForm(forms.ModelForm):
             "svestenik": SvestenikSelect2Widget,
             "hram": HramSelect2Widget,
         }
+
+    def clean(self):
+        cleaned = super().clean()
+        roles = [
+            ("zenik",      cleaned.get("zenik")),
+            ("nevesta",    cleaned.get("nevesta")),
+            ("kum",        cleaned.get("kum")),
+            ("svekar",     cleaned.get("svekar")),
+            ("svekrva",    cleaned.get("svekrva")),
+            ("tast",       cleaned.get("tast")),
+            ("tasta",      cleaned.get("tasta")),
+            ("stari_svat", cleaned.get("stari_svat")),
+        ]
+        # Pairwise: same Osoba cannot fill two roles in the same vencanje.
+        for i, (name_a, val_a) in enumerate(roles):
+            if not val_a:
+                continue
+            for name_b, val_b in roles[i + 1:]:
+                if val_b and val_a == val_b:
+                    self.add_error(name_b, f"Иста особа не може бити и {name_a} и {name_b}.")
+        return cleaned

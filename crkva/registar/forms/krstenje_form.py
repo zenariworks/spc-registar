@@ -81,3 +81,28 @@ class KrstenjeForm(forms.ModelForm):
             "godina_registracije": "Година у којој је крштење забележено",
             "redni_broj": "Редни број крштења у текућој години",
         }
+
+    def clean(self):
+        cleaned = super().clean()
+        dete = cleaned.get("dete")
+        otac = cleaned.get("otac")
+        majka = cleaned.get("majka")
+        kum = cleaned.get("kum")
+
+        # Same Osoba cannot fill two roles.
+        for role_a, name_a, role_b, name_b in (
+            (dete, "dete", otac, "otac"),
+            (dete, "dete", majka, "majka"),
+            (dete, "dete", kum, "kum"),
+            (otac, "otac", majka, "majka"),
+            (otac, "otac", kum, "kum"),
+            (majka, "majka", kum, "kum"),
+        ):
+            if role_a and role_b and role_a == role_b:
+                self.add_error(name_b, f"Иста особа не може бити и {name_a} и {name_b}.")
+
+        # If dete_blizanac is checked, the second twin's name is required.
+        if cleaned.get("dete_blizanac") and not (cleaned.get("drugo_dete_blizanac_ime") or "").strip():
+            self.add_error("drugo_dete_blizanac_ime",
+                           "Унесите име другог детета близанца.")
+        return cleaned
