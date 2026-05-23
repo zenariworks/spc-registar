@@ -1565,40 +1565,6 @@
   },
   {
     "model": "kalendar.slava",
-    "pk": 93,
-    "fields": {
-      "naziv": "Лазарева субота",
-      "opsti_naziv": "Врбица",
-      "dan": 3,
-      "mesec": 4,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
-    "pk": 94,
-    "fields": {
-      "naziv": "Улазак Господа Исуса Христа у Јерусалим",
-      "opsti_naziv": "Цвети",
-      "dan": 4,
-      "mesec": 4,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
     "pk": 95,
     "fields": {
       "naziv": "Свети преподобномученик Никон и други",
@@ -1650,57 +1616,6 @@
   },
   {
     "model": "kalendar.slava",
-    "pk": 98,
-    "fields": {
-      "naziv": "Велики четвртак (Велико бденије)",
-      "opsti_naziv": "",
-      "dan": 8,
-      "mesec": 4,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
-    "pk": 99,
-    "fields": {
-      "naziv": "Велики петак",
-      "opsti_naziv": "",
-      "dan": 9,
-      "mesec": 4,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
-    "pk": 100,
-    "fields": {
-      "naziv": "Велика субота",
-      "opsti_naziv": "",
-      "dan": 10,
-      "mesec": 4,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
     "pk": 101,
     "fields": {
       "naziv": "Васкрсење Господа исуса Христа",
@@ -1723,23 +1638,6 @@
       "naziv": "Васкрски понедељак",
       "opsti_naziv": "",
       "dan": 12,
-      "mesec": 4,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
-    "pk": 103,
-    "fields": {
-      "naziv": "Васкрсни уторак",
-      "opsti_naziv": "",
-      "dan": 13,
       "mesec": 4,
       "pokretni": false,
       "offset_dani": null,
@@ -2364,23 +2262,6 @@
   },
   {
     "model": "kalendar.slava",
-    "pk": 140,
-    "fields": {
-      "naziv": "Вазнесење Господње",
-      "opsti_naziv": "Спасовдан",
-      "dan": 20,
-      "mesec": 5,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
     "pk": 141,
     "fields": {
       "naziv": "Свети апостол и јеванЂелист Јован Богослов",
@@ -2540,40 +2421,6 @@
       "opsti_naziv": "",
       "dan": 30,
       "mesec": 5,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
-    "pk": 151,
-    "fields": {
-      "naziv": "Духовски понедељак",
-      "opsti_naziv": "",
-      "dan": 31,
-      "mesec": 5,
-      "pokretni": false,
-      "offset_dani": null,
-      "offset_nedelje": null,
-      "post": false,
-      "post_od": null,
-      "post_do": null,
-      "crveno_slovo": false
-    }
-  },
-  {
-    "model": "kalendar.slava",
-    "pk": 152,
-    "fields": {
-      "naziv": "Духовски уторак",
-      "opsti_naziv": "",
-      "dan": 1,
-      "mesec": 6,
       "pokretni": false,
       "offset_dani": null,
       "offset_nedelje": null,
