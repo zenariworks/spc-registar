@@ -13,10 +13,11 @@ Routes:
 from collections import defaultdict
 
 from django.contrib import messages
+from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from registar.models import Adresa
-from registar.services.merge import adresa_fanout, merge_adrese
+from registar.services.merge import batch_adresa_fanout, merge_adrese
 from tenants.permissions import tenant_admin_required
 
 
@@ -38,11 +39,15 @@ def duplikati_adresa(request):
         if k == ("", "", "", ""):
             continue
         groups[k].append(a)
+    # Collect every row that lives in a duplicate group, then look up all
+    # fanout counts in 3 GROUP BY queries total instead of 3-per-row.
+    dup_rows = [a for rows in groups.values() if len(rows) >= 2 for a in rows]
+    fanouts = batch_adresa_fanout(dup_rows)
     dup_groups = []
     for k, rows in groups.items():
         if len(rows) < 2:
             continue
-        decorated = [(a, adresa_fanout(a)) for a in rows]
+        decorated = [(a, fanouts[a.uid]) for a in rows]
         dup_groups.append(
             {
                 "key": " / ".join(p for p in k if p),
@@ -60,10 +65,21 @@ def duplikati_adresa(request):
 @require_POST
 @tenant_admin_required
 def spoji_adresu(request, loser_uid, winner_uid):
-    loser = get_object_or_404(Adresa, uid=loser_uid)
-    winner = get_object_or_404(Adresa, uid=winner_uid)
+    # The whole flow runs in one transaction with a row-level lock on both
+    # rows so that two concurrent merges of the same pair cannot race -
+    # without this, request A could fetch loser, get scheduled out, request B
+    # could delete loser via its own merge, and request A's merge_adrese()
+    # would silently re-point 0 rows then UPDATE-NOT-FOUND on the delete and
+    # still flash 'success'.
     try:
-        moved = merge_adrese(loser, winner)
+        with transaction.atomic():
+            loser = get_object_or_404(
+                Adresa.objects.select_for_update(), uid=loser_uid
+            )
+            winner = get_object_or_404(
+                Adresa.objects.select_for_update(), uid=winner_uid
+            )
+            moved = merge_adrese(loser, winner)
     except ValueError as exc:
         messages.error(request, str(exc))
         return redirect("duplikati_adresa")

@@ -17,6 +17,7 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Iterator, Optional
 
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
 from registar.management.commands.base_migration import MigrationCommand
@@ -314,7 +315,9 @@ class Command(MigrationCommand):
             except RecordSkipped as skip:
                 self.log_skip(skip.ctx, skip.reason)
                 continue
-            except Exception as e:  # pylint: disable=broad-except
+            except (ValueError, IntegrityError, ValidationError) as e:
+                # Narrow except so OperationalError / ProgrammingError / KeyboardInterrupt
+                # propagate and abort the run instead of being silently logged.
                 self.log_error(r.context, str(e))
                 continue
             if data is None:

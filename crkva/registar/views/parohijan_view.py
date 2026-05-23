@@ -116,10 +116,48 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
     context_object_name = "parohijan"
     pk_url_kwarg = "uid"
 
+    def get_queryset(self):
+        """Prefetch every Krstenje / Vencanje / Ukucanin relation the
+        detail template touches so the whole page is a fixed cost (one
+        SELECT per relation + the parent), independent of how many rows
+        this parohijan has in each role. Without this the template fires
+        15+ separate queries per render."""
+        from django.db.models import Prefetch
+        from registar.models import Krstenje, Ukucanin, Vencanje
+        return Osoba.objects.prefetch_related(
+            Prefetch("krstenja_kao_dete",
+                     queryset=Krstenje.objects.select_related("otac", "majka", "kum")),
+            Prefetch("krstenja_kao_kum",
+                     queryset=Krstenje.objects.select_related("dete")),
+            Prefetch("krstenja_kao_otac",
+                     queryset=Krstenje.objects.select_related("dete", "majka")),
+            Prefetch("krstenja_kao_majka",
+                     queryset=Krstenje.objects.select_related("dete", "otac")),
+            Prefetch("vencanja_kao_zenik",
+                     queryset=Vencanje.objects.select_related("nevesta")),
+            Prefetch("vencanja_kao_nevesta",
+                     queryset=Vencanje.objects.select_related("zenik")),
+            Prefetch("vencanja_kao_kum",
+                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
+            Prefetch("vencanja_kao_svekar",
+                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
+            Prefetch("vencanja_kao_svekrva",
+                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
+            Prefetch("vencanja_kao_tast",
+                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
+            Prefetch("vencanja_kao_tasta",
+                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
+            Prefetch("vencanja_kao_stari_svat",
+                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
+            Prefetch("ukucanin_set",
+                     queryset=Ukucanin.objects.select_related("domacinstvo", "domacinstvo__domacin")),
+        )
+
     def get_object(self, queryset=None):
         """Преузима парохијана на основу UID-а."""
         uid = self.kwargs.get(self.pk_url_kwarg)
-        return get_object_or_404(Osoba, uid=uid)
+        qs = queryset if queryset is not None else self.get_queryset()
+        return get_object_or_404(qs, uid=uid)
 
     def get_context_data(self, **kwargs):
         from registar.history import history_for
@@ -130,70 +168,40 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
         context["is_edit"] = False
         p = self.object
 
-        # Крштења
-        context["krstenja_dete"] = p.krstenja_kao_dete.select_related(
-            "otac", "majka", "kum"
-        ).all()
-        context["krstenja_kum"] = p.krstenja_kao_kum.select_related("dete").all()
+        # All collections below hit the prefetched cache from get_queryset().
+        krstenja_dete   = list(p.krstenja_kao_dete.all())
+        krstenja_otac   = list(p.krstenja_kao_otac.all())
+        krstenja_majka  = list(p.krstenja_kao_majka.all())
+        context["krstenja_dete"]   = krstenja_dete
+        context["krstenja_kum"]    = list(p.krstenja_kao_kum.all())
+        context["krstenja_otac"]   = krstenja_otac
+        context["krstenja_majka"]  = krstenja_majka
 
-        # Венчања
-        context["vencanja_zenik"] = p.vencanja_kao_zenik.select_related("nevesta").all()
-        context["vencanja_nevesta"] = p.vencanja_kao_nevesta.select_related(
-            "zenik"
-        ).all()
-        context["vencanja_kum"] = p.vencanja_kao_kum.select_related(
-            "zenik", "nevesta"
-        ).all()
+        context["vencanja_zenik"]       = list(p.vencanja_kao_zenik.all())
+        context["vencanja_nevesta"]     = list(p.vencanja_kao_nevesta.all())
+        context["vencanja_kum"]         = list(p.vencanja_kao_kum.all())
+        context["vencanja_svekar"]      = list(p.vencanja_kao_svekar.all())
+        context["vencanja_svekrva"]     = list(p.vencanja_kao_svekrva.all())
+        context["vencanja_tast"]        = list(p.vencanja_kao_tast.all())
+        context["vencanja_tasta"]       = list(p.vencanja_kao_tasta.all())
+        context["vencanja_stari_svat"]  = list(p.vencanja_kao_stari_svat.all())
 
-        # Венчања — родитељи и старосват
-        roditelj_sel = ("zenik", "nevesta")
-        context["vencanja_svekar"] = p.vencanja_kao_svekar.select_related(
-            *roditelj_sel
-        ).all()
-        context["vencanja_svekrva"] = p.vencanja_kao_svekrva.select_related(
-            *roditelj_sel
-        ).all()
-        context["vencanja_tast"] = p.vencanja_kao_tast.select_related(
-            *roditelj_sel
-        ).all()
-        context["vencanja_tasta"] = p.vencanja_kao_tasta.select_related(
-            *roditelj_sel
-        ).all()
-        context["vencanja_stari_svat"] = p.vencanja_kao_stari_svat.select_related(
-            *roditelj_sel
-        ).all()
+        # Родитељи: reuse the first Krstenje where this person is the дете.
+        if krstenja_dete:
+            context["otac"]  = krstenja_dete[0].otac
+            context["majka"] = krstenja_dete[0].majka
 
-        # Крштења — родитељи (где је ова особа отац или мајка)
-        context["krstenja_otac"] = p.krstenja_kao_otac.select_related(
-            "dete", "majka"
-        ).all()
-        context["krstenja_majka"] = p.krstenja_kao_majka.select_related(
-            "dete", "otac"
-        ).all()
-
-        # Родитељи (из крштења где је ова особа дете)
-        krstenje_kao_dete = p.krstenja_kao_dete.select_related("otac", "majka").first()
-        if krstenje_kao_dete:
-            context["otac"] = krstenje_kao_dete.otac
-            context["majka"] = krstenje_kao_dete.majka
-
-        # Деца (из крштења где је ова особа отац или мајка)
-        deca_kao_otac = Krstenje.objects.filter(otac=p).select_related("dete")
-        deca_kao_majka = Krstenje.objects.filter(majka=p).select_related("dete")
-        deca = []
-        seen = set()
-        for k in list(deca_kao_otac) + list(deca_kao_majka):
+        # Деца: dedup across krstenja_kao_otac + krstenja_kao_majka. Reuse
+        # the already-loaded rows instead of re-querying Krstenje.
+        deca, seen = [], set()
+        for k in krstenja_otac + krstenja_majka:
             if k.dete and k.dete.uid not in seen:
                 deca.append(k.dete)
                 seen.add(k.dete.uid)
         context["deca"] = deca
 
-        # Домаћинство (као укућанин)
-        from registar.models import Ukucanin
-
-        context["ukucanstva"] = Ukucanin.objects.filter(osoba=p).select_related(
-            "domacinstvo", "domacinstvo__domacin"
-        )
+        # Домаћинства (member-of). Prefetched via ukucanin_set above.
+        context["ukucanstva"] = list(p.ukucanin_set.all())
 
         return context
 

@@ -11,7 +11,8 @@ from __future__ import annotations
 
 from typing import Dict, Iterable
 
-from django.db import connection
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError, connection
 from registar.management.commands.base_migration import MigrationCommand
 from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
 from registar.migracija.helpers import cyr, extract_maiden
@@ -246,7 +247,9 @@ class Command(MigrationCommand):
                 if d_created:
                     created_domacinstva += 1
 
-            except Exception as e:  # pylint: disable=broad-except
+            except (ValueError, IntegrityError, ValidationError) as e:
+                # Narrow except so OperationalError / ProgrammingError / KeyboardInterrupt
+                # propagate and abort the run instead of being silently logged.
                 self.log_error(f"Грешка за домаћина UID {uid_raw}: {e}")
                 continue
 
