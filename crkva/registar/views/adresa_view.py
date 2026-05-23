@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 from registar.models import Adresa
-from registar.services.merge import adresa_fanout, merge_adrese
+from registar.services.merge import batch_adresa_fanout, merge_adrese
 from tenants.permissions import tenant_admin_required
 
 
@@ -38,11 +38,15 @@ def duplikati_adresa(request):
         if k == ("", "", "", ""):
             continue
         groups[k].append(a)
+    # Collect every row that lives in a duplicate group, then look up all
+    # fanout counts in 3 GROUP BY queries total instead of 3-per-row.
+    dup_rows = [a for rows in groups.values() if len(rows) >= 2 for a in rows]
+    fanouts = batch_adresa_fanout(dup_rows)
     dup_groups = []
     for k, rows in groups.items():
         if len(rows) < 2:
             continue
-        decorated = [(a, adresa_fanout(a)) for a in rows]
+        decorated = [(a, fanouts[a.uid]) for a in rows]
         dup_groups.append(
             {
                 "key": " / ".join(p for p in k if p),

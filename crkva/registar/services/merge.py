@@ -83,3 +83,37 @@ def adresa_fanout(a: Adresa) -> AdresaMergeResult:
         domacinstvo=Domacinstvo.objects.filter(adresa=a).count(),
         svestenik=Svestenik.objects.filter(adresa=a).count(),
     )
+
+
+
+def batch_adresa_fanout(adresas) -> dict:
+    """Compute adresa_fanout for many addresses in 3 queries total.
+
+    Single-address fanout fires 3 COUNTs; doing that for N addresses is
+    3*N round-trips. This batched variant runs one GROUP BY per related
+    model (Osoba / Domacinstvo / Svestenik) and returns a uid -> counts
+    dict, so N addresses cost exactly 3 queries regardless of N.
+    """
+    from django.db.models import Count
+    uids = [a.uid for a in adresas]
+    if not uids:
+        return {}
+
+    def _grouped(model):
+        rows = (model.objects
+                .filter(adresa_id__in=uids)
+                .values("adresa_id")
+                .annotate(c=Count("uid")))
+        return {r["adresa_id"]: r["c"] for r in rows}
+
+    o = _grouped(Osoba)
+    d = _grouped(Domacinstvo)
+    sv = _grouped(Svestenik)
+    return {
+        uid: AdresaMergeResult(
+            osoba=o.get(uid, 0),
+            domacinstvo=d.get(uid, 0),
+            svestenik=sv.get(uid, 0),
+        )
+        for uid in uids
+    }
