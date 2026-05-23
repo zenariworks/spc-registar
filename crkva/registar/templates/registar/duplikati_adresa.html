@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="u-page-header">
+    <a href="{% url 'pocetna' %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
+    <h1 class="u-page-title">Дупликати адреса <span class="u-page-title__count">· {{ total_groups }}</span></h1>
+</div>
+
+{% if messages %}
+  {% for m in messages %}
+    <div class="alert alert--{{ m.tags|default:'info' }}">{{ m }}</div>
+  {% endfor %}
+{% endif %}
+
+{% if not groups %}
+  <p class="muted">Нема дупликата адреса (поклапање по улици, броју, стану и месту).</p>
+{% endif %}
+
+{% for g in groups %}
+  <section class="info-section">
+    <h2 class="info-section__title"><i class="fa-solid fa-location-dot"></i> {{ g.key }}</h2>
+    <ul class="info-rows">
+      {% for a, fanout in g.rows %}
+        <li class="info-row info-row--stacked">
+          <div class="info-row__icon" data-tooltip="Адреса"><i class="fa-solid fa-location-dot"></i></div>
+          <div class="info-row__body">
+            <div class="info-row__value">
+              <span class="info-row__static">{{ a }}</span>
+              <span class="info-row__sub">{{ fanout.osoba }} парохијана · {{ fanout.domacinstvo }} домаћинстава · {{ fanout.svestenik }} свештеника</span>
+            </div>
+            <div class="merge-actions">
+              {% for other, other_fanout in g.rows %}
+                {% if other.uid != a.uid %}
+                  <form method="post" action="{% url 'spoji_adresu' loser_uid=other.uid winner_uid=a.uid %}" class="merge-actions__form">
+                    {% csrf_token %}
+                    <button type="submit" class="button button--neutral" data-tooltip="Спој дупликат у овај ред" onclick="return confirm('Спојити \'{{ other|escapejs }}\' у \'{{ a|escapejs }}\'? Дупликат ће бити обрисан.');">
+                      <i class="fa-solid fa-code-merge"></i> Задржи овај, спој {{ other.uid|slice:':8' }}…
+                    </button>
+                  </form>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </section>
+{% endfor %}
+{% endblock %}
