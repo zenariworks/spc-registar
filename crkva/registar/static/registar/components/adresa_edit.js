@@ -103,6 +103,18 @@
             setTimeout(findAndDecorate, 200);
         });
 
+        // Tear down the per-dropdown observer when select2 closes. Without
+        // this, opening the dropdown N times during a session leaves N
+        // orphan observers attached to detached DOM nodes - small leak per
+        // open, adds up on long-running edit pages.
+        $select.on("select2:close.adresaEdit", function () {
+            var dd = document.querySelector(".select2-dropdown");
+            if (dd && dd._adresaEditObs) {
+                try { dd._adresaEditObs.disconnect(); } catch (e) {}
+                dd._adresaEditObs = null;
+            }
+        });
+
 
         // Enter inside any modal input submits.
         document
