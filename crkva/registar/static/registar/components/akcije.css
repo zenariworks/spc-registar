@@ -66,6 +66,17 @@
     line-height: 1.3;
 }
 
+.actions__count {
+    font-family: var(--font-mono);
+    font-size: 1.5rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: var(--color-primary);
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
 @media (max-width: 1024px) {
     .actions,
     .action-grid { grid-template-columns: repeat(2, 1fr); }
