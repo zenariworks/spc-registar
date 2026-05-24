@@ -63,7 +63,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--sidebar-bg);
+  background: var(--sidebar-bg-end);
   border: 2px solid var(--sidebar-divider);
   border-radius: 50%;
   color: var(--sidebar-text-color);
@@ -75,7 +75,7 @@
 }
 
 .sidebar-toggle:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: color-mix(in oklab, var(--sidebar-bg-end), var(--sidebar-text) 18%);
   transform: translateX(-50%) scale(1.1);
 }
 
