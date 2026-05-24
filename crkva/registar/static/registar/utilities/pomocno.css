@@ -195,7 +195,8 @@
         left: auto;
         right: 0;
     }
-    .u-page-header:has(.u-page-header__right) > .back-button:not(.u-page-header__right) {
+    .u-page-header:has(.u-page-header__right) > .back-button:not(.u-page-header__right),
+    .u-page-header:has(.u-page-header__action) > .back-button:not(.u-page-header__right) {
         right: calc(40px + var(--space-2));
     }
     /* When the header has a wide text+icon primary action (Add user /

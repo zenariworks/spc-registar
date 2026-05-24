@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "registar/_spisak.html" with title="Крштења" stavka_template="registar/_stavka_krstenja.html" %}
+{% if can_edit_krstenje %}{% url 'unos_krstenja' as add_url %}{% endif %}
+{% include "registar/_spisak.html" with title="Крштења" stavka_template="registar/_stavka_krstenja.html" add_url=add_url add_label="Додај крштење" %}
 {% endblock %}
