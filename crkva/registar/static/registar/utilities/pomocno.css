@@ -211,6 +211,11 @@
         left: auto;
         order: 1;
     }
+    /* Detail pages: on mobile, slide the back-arrow over to sit immediately
+       to the left of the print/edit/history cluster instead of hanging
+       alone at the bottom-left edge (where it visually disconnects from
+       the other action buttons). */
+    .view-actions { justify-content: flex-end; }
 }
 
 
