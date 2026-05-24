@@ -62,14 +62,20 @@
   {% endif %}
 
       {% if form %}
-      {# ============ ЗАПИС ============ #}
-      {% info_section title="Запис" icon="fa-file-lines" inline=True %}
-        {% info_row icon="fa-book" label="Књига" field=form.knjiga value=vencanje.knjiga inline=True muted_empty=False %}
-        {% info_row icon="fa-file" label="Страна" field=form.strana value=vencanje.strana inline=True muted_empty=False %}
-        {% info_row icon="fa-hashtag" label="Текући број" field=form.broj value=vencanje.broj inline=True muted_empty=False %}
-        {% info_row icon="fa-hashtag" label="Редни број" field=form.redni_broj value=vencanje.redni_broj inline=True muted_empty=False %}
-        {% info_row icon="fa-calendar" label="Година регистрације" field=form.godina_registracije value=vencanje.godina_registracije inline=True muted_empty=False %}
-        {% info_row icon="fa-note-sticky" label="Примедба" field=form.primedba value=vencanje.primedba inline=True full=True %}
+      {# ============ ВЕНЧАЊЕ ============ #}
+      {% info_section title="Венчање" icon="fa-ring" %}
+        {% info_row icon="fa-calendar-day" label="Датум" field=form.datum value=vencanje.datum %}
+        {% info_row icon="fa-clipboard-check" label="Датум испита" field=form.datum_ispita value=vencanje.datum_ispita %}
+        {% info_row icon="fa-church" label="Храм" field=form.hram value=vencanje.hram sub=vencanje.hram.mesto %}
+        {% if vencanje.svestenik %}{% url 'svestenik_detail' uid=vencanje.svestenik.uid as svestenik_url %}{% endif %}
+        {% info_row icon="fa-id-badge" label="Свештеник" field=form.svestenik value=vencanje.svestenik link=svestenik_url %}
+        {% info_row_bool icon="fa-file-signature" label="Разрешење" value_label="Разрешење" field=form.razresenje value=vencanje.razresenje %}
+        {% info_row icon="fa-book" label="Књига" field=form.knjiga value=vencanje.knjiga muted_empty=False %}
+        {% info_row icon="fa-file" label="Страна" field=form.strana value=vencanje.strana muted_empty=False %}
+        {% info_row icon="fa-hashtag" label="Текући број" field=form.broj value=vencanje.broj muted_empty=False %}
+        {% info_row icon="fa-hashtag" label="Редни број" field=form.redni_broj value=vencanje.redni_broj muted_empty=False %}
+        {% info_row icon="fa-calendar" label="Година регистрације" field=form.godina_registracije value=vencanje.godina_registracije muted_empty=False %}
+        {% info_row icon="fa-note-sticky" label="Примедба" field=form.primedba value=vencanje.primedba full=True %}
       {% endinfo_section %}
 
       {# ============ ЖЕНИК ============ #}
@@ -87,7 +93,13 @@
               </div>
             </div>
           </li>
-          {% info_row icon="fa-list-ol" label="Брак по реду женика" field=form.zenik_rb_brak value=vencanje.zenik_rb_brak %}
+          {% info_row icon="fa-list-ol" label="Брак по реду" field=form.zenik_rb_brak value=vencanje.zenik_rb_brak %}
+          {% if vencanje.svekar %}{% url 'parohijan_detail' uid=vencanje.svekar.uid as svekar_url %}{% endif %}
+          {% info_row icon="fa-person" label="Отац" field=form.svekar value=vencanje.svekar link=svekar_url %}
+          {% if vencanje.svekrva %}{% url 'parohijan_detail' uid=vencanje.svekrva.uid as svekrva_url %}{% endif %}
+          {% info_row icon="fa-person-dress" label="Мајка" field=form.svekrva value=vencanje.svekrva link=svekrva_url %}
+          {% if vencanje.kum %}{% url 'parohijan_detail' uid=vencanje.kum.uid as kum_url %}{% endif %}
+          {% info_row icon="fa-user-tag" label="Кум" field=form.kum value=vencanje.kum link=kum_url %}
         </ul>
       </div>
 
@@ -106,39 +118,15 @@
               </div>
             </div>
           </li>
-          {% info_row icon="fa-list-ol" label="Брак по реду невесте" field=form.nevesta_rb_brak value=vencanje.nevesta_rb_brak %}
+          {% info_row icon="fa-list-ol" label="Брак по реду" field=form.nevesta_rb_brak value=vencanje.nevesta_rb_brak %}
+          {% if vencanje.tast %}{% url 'parohijan_detail' uid=vencanje.tast.uid as tast_url %}{% endif %}
+          {% info_row icon="fa-person" label="Отац" field=form.tast value=vencanje.tast link=tast_url %}
+          {% if vencanje.tasta %}{% url 'parohijan_detail' uid=vencanje.tasta.uid as tasta_url %}{% endif %}
+          {% info_row icon="fa-person-dress" label="Мајка" field=form.tasta value=vencanje.tasta link=tasta_url %}
+          {% if vencanje.stari_svat %}{% url 'parohijan_detail' uid=vencanje.stari_svat.uid as stari_svat_url %}{% endif %}
+          {% info_row icon="fa-user-tie" label="Стари сват" field=form.stari_svat value=vencanje.stari_svat link=stari_svat_url %}
         </ul>
       </div>
-
-      {# ============ РОДИТЕЉИ ============ #}
-      {% info_section title="Родитељи" icon="fa-people-group" %}
-        {% if vencanje.svekar %}{% url 'parohijan_detail' uid=vencanje.svekar.uid as svekar_url %}{% endif %}
-        {% info_row icon="fa-person" label="Свекар (отац женика)" field=form.svekar value=vencanje.svekar link=svekar_url %}
-        {% if vencanje.svekrva %}{% url 'parohijan_detail' uid=vencanje.svekrva.uid as svekrva_url %}{% endif %}
-        {% info_row icon="fa-person-dress" label="Свекрва (мајка женика)" field=form.svekrva value=vencanje.svekrva link=svekrva_url %}
-        {% if vencanje.tast %}{% url 'parohijan_detail' uid=vencanje.tast.uid as tast_url %}{% endif %}
-        {% info_row icon="fa-person" label="Таст (отац невесте)" field=form.tast value=vencanje.tast link=tast_url %}
-        {% if vencanje.tasta %}{% url 'parohijan_detail' uid=vencanje.tasta.uid as tasta_url %}{% endif %}
-        {% info_row icon="fa-person-dress" label="Ташта (мајка невесте)" field=form.tasta value=vencanje.tasta link=tasta_url %}
-      {% endinfo_section %}
-
-      {# ============ СВЕДОЦИ ============ #}
-      {% info_section title="Сведоци" icon="fa-user-check" %}
-        {% if vencanje.kum %}{% url 'parohijan_detail' uid=vencanje.kum.uid as kum_url %}{% endif %}
-        {% info_row icon="fa-user-tag" label="Кум" field=form.kum value=vencanje.kum link=kum_url %}
-        {% if vencanje.stari_svat %}{% url 'parohijan_detail' uid=vencanje.stari_svat.uid as stari_svat_url %}{% endif %}
-        {% info_row icon="fa-user-tie" label="Стари сват" field=form.stari_svat value=vencanje.stari_svat link=stari_svat_url %}
-      {% endinfo_section %}
-
-      {# ============ ВЕНЧАЊЕ ============ #}
-      {% info_section title="Венчање" icon="fa-ring" %}
-        {% info_row icon="fa-calendar-day" label="Датум" field=form.datum value=vencanje.datum %}
-        {% info_row icon="fa-clipboard-check" label="Датум испита" field=form.datum_ispita value=vencanje.datum_ispita %}
-        {% info_row icon="fa-church" label="Храм" field=form.hram value=vencanje.hram sub=vencanje.hram.mesto %}
-        {% if vencanje.svestenik %}{% url 'svestenik_detail' uid=vencanje.svestenik.uid as svestenik_url %}{% endif %}
-        {% info_row icon="fa-id-badge" label="Свештеник" field=form.svestenik value=vencanje.svestenik link=svestenik_url %}
-        {% info_row_bool icon="fa-file-signature" label="Разрешење" value_label="Разрешење" field=form.razresenje value=vencanje.razresenje %}
-      {% endinfo_section %}
       {% endif %}
 
   {% if vencanje %}

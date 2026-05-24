@@ -18,7 +18,7 @@
     grid-template-columns: 28px 1fr;
     gap: 14px;
     align-items: baseline;
-    padding: 12px 0;
+    padding: 8px 0;
     border-bottom: 1px solid color-mix(in oklab, var(--color-border) 60%, transparent);
 }
 .info-row:last-child {
@@ -57,11 +57,11 @@
 
 .info-section {
     position: relative;
-    margin: 24px 0 16px;
+    margin: 16px 0 10px;
     background: var(--color-surface-2);
     border: 1px solid var(--color-border);
     border-radius: 12px;
-    padding: 22px 18px 14px;
+    padding: 18px 16px 10px;
 }
 .info-section__title {
     position: absolute;
@@ -341,7 +341,7 @@
 /* In view mode the row label sits on its own line; remove the form-row
    spacing so the static value sits flush like the legacy view layout. */
 [data-mode="view"] .info-row--editable {
-    padding: 12px 0;
+    padding: 8px 0;
 }
 
 /* Header action buttons grouped by mode. */
