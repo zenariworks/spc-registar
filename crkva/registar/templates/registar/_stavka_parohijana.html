@@ -3,21 +3,8 @@
 <li class="stavka">
     <a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-veza">
         {# safe-ok: markiraj filter escapes input before adding <span> highlight wrapping — see marker_filter.py for the contract #}
-        <span class="stavka__primary">{{ parohijan.ime|markiraj:upit|safe }} {{ parohijan.prezime|markiraj:upit|safe }}</span>
+        <span class="stavka__primary">{{ parohijan.ime|markiraj:upit|safe }} {{ parohijan.prezime|markiraj:upit|safe }}{% if parohijan.domacinstvo %} <span class="stavka__meta-badge stavka__meta-badge--domacin">домаћин</span>{% elif parohijan.prefetched_ukucanstva.0 %}{% with uk=parohijan.prefetched_ukucanstva.0 %} <span class="stavka__meta-badge stavka__meta-badge--clan">члан</span> <span class="stavka__meta-text">{{ uk.domacinstvo.domacin.ime }} {{ uk.domacinstvo.domacin.prezime }}</span>{% endwith %}{% endif %}</span>
         <span class="stavka__secondary">{% if parohijan.datum_rodjenja %}<i class="fa-solid fa-cake-candles"></i> {{ parohijan.datum_rodjenja }}{% endif %}{% if parohijan.adresa %}{% if parohijan.datum_rodjenja %} &middot; {% endif %}<i class="fa-solid fa-location-dot"></i> {{ parohijan.adresa }}{% endif %}</span>
-        {% if parohijan.domacinstvo %}
-        {# For домаћин the address is the same as the household address already shown in stavka__secondary above — surface only the role badge. #}
-        <span class="stavka__meta">
-            <span class="stavka__meta-badge stavka__meta-badge--domacin">домаћин</span>
-        </span>
-        {% elif parohijan.prefetched_ukucanstva.0 %}
-        {% with uk=parohijan.prefetched_ukucanstva.0 %}
-        <span class="stavka__meta">
-            <span class="stavka__meta-badge stavka__meta-badge--clan">члан</span>
-            <span class="stavka__meta-text">{{ uk.domacinstvo.domacin.ime }} {{ uk.domacinstvo.domacin.prezime }}</span>
-        </span>
-        {% endwith %}
-        {% endif %}
     </a>
     <a href="{% url 'parohijan_pdf' uid=parohijan.uid %}" target="_blank" class="button button--primary" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></a>
 </li>
