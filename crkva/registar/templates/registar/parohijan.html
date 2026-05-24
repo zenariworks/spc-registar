@@ -35,7 +35,7 @@
       {% else %}Парохијан<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}</span>{% endif %}
     </h1>
     {% if parohijan %}
-      {% include "registar/_view_actions.html" with back_list_url_name="parohijani" back_detail_url_name="parohijan_detail" obj=parohijan edit_url_name="izmena_parohijana" can_edit=can_edit_osoba pdf_url_name="parohijan_pdf" %}
+      {% include "registar/_view_actions.html" with back_list_url_name="parohijani" back_detail_url_name="parohijan_detail" obj=parohijan edit_url_name="izmena_parohijana" can_edit=can_edit_osoba %}
     {% else %}
       <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}

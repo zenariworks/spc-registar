@@ -3,12 +3,8 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'registar/pages/korisnici.css' %}">{% endblock %}
 
 {% block content %}
-  <div class="u-page-header">
-    <h1 class="u-page-title">Корисници — {{ parohija.parohija_naziv|default:parohija.naziv }}</h1>
-    <a href="{% url 'parohija:user_add' %}" class="button button--primary" title="Додај корисника">
-      <i class="fa-solid fa-user-plus"></i> Додај корисника
-    </a>
-  </div>
+  {% url 'parohija:user_add' as add_user_url %}
+  {% include "registar/_page_header.html" with title="Корисници" subtitle=parohija.parohija_naziv|default:parohija.naziv count=memberships|length primary_url=add_user_url primary_icon="fa-solid fa-user-plus" primary_label="Додај корисника" %}
 
   {% if messages %}
     <div class="form-messages">

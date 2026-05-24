@@ -210,6 +210,16 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
     right: 0;
 }
 
+/* Right-anchored text + icon primary action on the header (e.g.
+   "Додај корисника" in spisak_korisnika, "Сачувај" in unos_korisnika).
+   Sits as a regular flex child to the right of the title via the
+   header's justify-content: space-between, not absolutely positioned. */
+.u-page-header > .u-page-header__primary {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    white-space: nowrap;
+}
+
 /* The spacer DIV is now redundant - the clearance moved onto
    .u-page-header { margin-bottom: 28px } so every page (list, detail,
    kalendar) gets the same gap regardless of whether the _page_header.html
