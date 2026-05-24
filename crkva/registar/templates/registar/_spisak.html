@@ -17,7 +17,7 @@ Optional:
   add_url         URL of the corresponding unos_* view; renders "Додај ..." primary button
   add_label       button text (e.g. "Додај парохијана")
 {% endcomment %}
-{% include "registar/_page_header.html" with title=title count=page_obj.paginator.count include_toolbar=True primary_url=add_url primary_icon="fa-solid fa-circle-plus" primary_label=add_label %}
+{% include "registar/_page_header.html" with title=title count=page_obj.paginator.count include_toolbar=True action_url=add_url action_icon="fa-solid fa-circle-plus" action_label=add_label %}
 {% include "registar/_filter_chips.html" %}
 <ul class="spisak" id="spisak-list">
     {% include stavka_template %}

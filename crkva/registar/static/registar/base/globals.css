@@ -210,6 +210,17 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
     right: 0;
 }
 
+/* Icon-only neutral action button on the right edge of the header — same
+   visual placement as .u-page-header__right (kalendar source link, slava
+   print), same chrome as detail-page .view-actions print/edit buttons. */
+.u-page-header > .u-page-header__action {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    transform: translateY(50%);
+    z-index: 30;
+}
+
 /* Right-anchored text + icon primary action on the header (e.g.
    "Додај корисника" in spisak_korisnika, "Сачувај" in unos_korisnika).
    Sits as a regular flex child to the right of the title via the
