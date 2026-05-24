@@ -15,6 +15,21 @@ from registar.utils import MESECI
 from registar.utils_fasting import get_fasting_type
 
 
+# crkvenikalendar.rs uses Cyrillic-month-name spelled in Latin script in the URL.
+# Map our 1..12 to the slug they use:
+CRKVENIKALENDAR_MONTH_SLUG = {
+    1: "januar", 2: "februar", 3: "mart", 4: "april",
+    5: "maj", 6: "jun", 7: "jul", 8: "avgust",
+    9: "septembar", 10: "oktobar", 11: "novembar", 12: "decembar",
+}
+
+
+def crkvenikalendar_url(year: int, month: int) -> str:
+    """URL of the month page on crkvenikalendar.rs (Serbian Orthodox calendar)."""
+    slug = CRKVENIKALENDAR_MONTH_SLUG.get(month)
+    return f"https://crkvenikalendar.rs/{slug}-{year}/" if slug else ""
+
+
 @login_required
 def kalendar(
     request: HttpRequest, year: int | None = None, month: int | None = None
@@ -132,6 +147,7 @@ def kalendar(
         "year": year,
         "month": month,
         "month_name": MESECI.get(month, str(month)),
+        "source_url": crkvenikalendar_url(year, month),
         "weekday_labels": weekday_labels,
         "cells": cells,
         "prev_year": prev_year,

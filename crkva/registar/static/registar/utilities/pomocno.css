@@ -184,6 +184,22 @@
     }
 }
 
+/* On mobile the fixed hamburger button covers the left edge of the header.
+   Move the absolute back-button to the RIGHT edge instead so it sits next
+   to the other right-side buttons (u-page-header__right, view-actions).
+   When a .u-page-header__right exists too, push the PLAIN back-button
+   (not the right one - the :not() excludes it) further left so both fit
+   side by side on the bottom edge (mobile back-button is 40px). */
+@media (max-width: 768px) {
+    .u-page-header > .back-button:not(.u-page-header__right) {
+        left: auto;
+        right: 0;
+    }
+    .u-page-header:has(.u-page-header__right) > .back-button:not(.u-page-header__right) {
+        right: calc(40px + var(--space-2));
+    }
+}
+
 
 /* Move 8 — inline-style cleanup utilities */
 
@@ -280,12 +296,8 @@
     z-index: 30;
 }
 
-/* On phones the absolute back-button overlapped the wrapped list-toolbar
-   (search + sort) row. Revert to inline flex order on narrow screens so
-   the back-arrow sits beside the title like the rest of the chrome. */
-@media (max-width: 640px) {
-    .u-page-header > .back-button {
-        position: static;
-        transform: none;
-    }
-}
+/* (Previously: @media (max-width: 640px) reset .back-button to position:static
+   so it would not collide with a wrapping list-toolbar. Removed because the
+   button now stays absolutely anchored to the header edge at every width and
+   the .u-page-header__spacer below the header gives clearance for the
+   translateY(50%) overhang.) */
