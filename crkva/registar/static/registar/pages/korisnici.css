@@ -176,3 +176,33 @@
         gap: var(--space-1);
     }
 }
+
+
+/* ==========================================================================
+   PERMISSION COLUMNS — eye (read) + pen (write) per resource on user list
+   ========================================================================== */
+.data-table--perm th.data-table__perm,
+.data-table--perm td.data-table__perm {
+    text-align: center;
+    padding-left: 8px;
+    padding-right: 8px;
+    white-space: nowrap;
+    color: var(--color-text-muted);
+}
+.data-table--perm th.data-table__perm {
+    font-size: 1rem;
+}
+.data-table--perm td.data-table__perm i {
+    font-size: 0.85rem;
+    margin: 0 2px;
+}
+.data-table--perm td.data-table__perm i.fa-eye {
+    color: var(--color-text-muted);
+}
+.data-table--perm td.data-table__perm i.fa-pen-to-square {
+    color: var(--color-accent-700, var(--color-accent));
+}
+.data-table--perm .data-table__perm-none {
+    color: var(--color-text-muted);
+    opacity: 0.6;
+}
