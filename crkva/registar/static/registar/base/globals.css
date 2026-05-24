@@ -149,22 +149,22 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
     min-height: 36px;
     border-radius: var(--radius-2);
     border: 1px solid var(--color-border);
-    background-color: var(--color-surface-2);
+    background-color: var(--color-surface);
     color: var(--color-text);
     text-decoration: none;
     cursor: pointer;
     transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
 }
 .back-button:hover {
-    background-color: var(--color-surface);
+    background-color: var(--color-surface-2);
     color: var(--color-primary);
     border-color: var(--color-accent);
     box-shadow: var(--shadow-sm);
 }
-.back-button i { font-size: 18px; }
+.back-button i { font-size: 14px; line-height: 1; }
 
 @media (max-width: 768px) {
-    .back-button { width: 44px; height: 44px; min-width: 44px; min-height: 44px; }
+    .back-button { width: 40px; height: 40px; min-width: 40px; min-height: 40px; }
     body { font-size: 16px; line-height: 1.5; }
     h1 { font-size: 1.75rem; }
     h2 { font-size: 1.5rem; }
@@ -188,9 +188,44 @@ a:hover { color: var(--color-link-hover); text-decoration: underline; }
     gap: var(--space-3);
     padding: 0 var(--space-5);
     margin-top: var(--space-3);
+    /* Clearance for the absolutely-positioned buttons that straddle the
+       header bottom edge via translateY(50%): .back-button (left side),
+       .view-actions on detail pages (right side), .u-page-header__right
+       (kalendar). 28px is slightly more than half the mobile button (44/2)
+       so a visible gap remains before the first content row. Applies to
+       EVERY header - list/detail/kalendar - not just pages that use the
+       _page_header.html partial. */
+    margin-bottom: 28px;
+    position: relative;
     width: 100%;
     box-sizing: border-box;
 }
+/* Anchor the optional right-side icon button (e.g. crkvenikalendar.rs link
+   in the kalendar page header) to the far-right edge of the header, mirror
+   of the .back-button on the left. Inherits the .back-button visual chrome
+   AND its translateY(50%) bottom-straddle positioning from pomocno.css,
+   but overrides left:0 -> right:0 so it lands on the opposite edge. */
+.u-page-header > .back-button.u-page-header__right {
+    left: auto;
+    right: 0;
+}
+
+/* The spacer DIV is now redundant - the clearance moved onto
+   .u-page-header { margin-bottom: 28px } so every page (list, detail,
+   kalendar) gets the same gap regardless of whether the _page_header.html
+   partial was used. Left as a 0-height pass-through so removing it from
+   the partial is a separate cleanup. */
+.u-page-header__spacer {
+    height: 0;
+    pointer-events: none;
+}
+
+/* The slava-domacinstva page packs 4 items into the header (back, title with
+   subtitle, meta date pill, print button) - allow them to wrap on narrow
+   viewports and let the title push the meta+button to the right edge. Scoped
+   so the default page header keeps a clean single-row no-wrap layout. */
+.u-page-header--wrap { flex-wrap: wrap; gap: var(--space-2); }
+.u-page-header--wrap .u-page-title { margin-right: auto; }
 @media (max-width: 768px) {
     .u-page-header { padding: 0 var(--space-3); }
 }
