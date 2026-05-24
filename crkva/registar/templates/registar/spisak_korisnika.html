@@ -14,6 +14,42 @@
     </div>
   {% endif %}
 
+  <section class="role-help" aria-labelledby="role-help-title">
+    <header class="role-help__header">
+      <h2 class="role-help__title" id="role-help-title">
+        <i class="fa-solid fa-shield-halved"></i> Права улога
+      </h2>
+      <p class="role-help__lede">Сви корисници виде све податке у парохији. Улога одређује ко може да уноси и мења.</p>
+    </header>
+    <dl class="role-help__list">
+      <div class="role-help__row role-help__row--admin">
+        <dt class="role-help__role">Администратор</dt>
+        <dd class="role-help__caps">
+          <span class="role-help__cap role-help__cap--write"><i class="fa-solid fa-pen-to-square"></i> Све</span>
+          <span class="role-help__cap role-help__cap--users"><i class="fa-solid fa-users-gear"></i> Корисници</span>
+        </dd>
+      </div>
+      <div class="role-help__row role-help__row--kancelarija">
+        <dt class="role-help__role">Канцеларија</dt>
+        <dd class="role-help__caps">
+          <span class="role-help__cap role-help__cap--write"><i class="fa-solid fa-pen-to-square"></i> Парохијани, домаћинства, крштења, венчања</span>
+        </dd>
+      </div>
+      <div class="role-help__row role-help__row--svestenstvo">
+        <dt class="role-help__role">Свештенство</dt>
+        <dd class="role-help__caps">
+          <span class="role-help__cap role-help__cap--write"><i class="fa-solid fa-pen-to-square"></i> Свештеници</span>
+        </dd>
+      </div>
+      <div class="role-help__row role-help__row--pregled">
+        <dt class="role-help__role">Преглед</dt>
+        <dd class="role-help__caps">
+          <span class="role-help__cap role-help__cap--readonly"><i class="fa-solid fa-eye"></i> Само читање</span>
+        </dd>
+      </div>
+    </dl>
+  </section>
+
   <table class="data-table">
     <thead>
       <tr>
