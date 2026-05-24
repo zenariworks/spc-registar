@@ -319,29 +319,56 @@
 
 @media (max-width: 768px) {
   /* On mobile + tablet portrait we ditch the 7-col grid and stack each
-     day full-width (rule further down). Type sizes scale UP since each
-     row has the whole viewport to itself. */
+     day full-width (rule further down). Inside each row we switch from a
+     vertical flex stack (date-on-top, slavas-below) to a 2-col grid so the
+     date sits on the LEFT and slava names use the full RIGHT column — no
+     more wasted space under a tiny date with tiny slava text below. */
   .calendar-cell {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    column-gap: var(--space-3);
+    align-items: start;
     height: auto;
     min-height: 90px;
     padding: var(--space-3) var(--space-4);
   }
+  .calendar-cell .cell-header { margin: 0; }
   .calendar-cell .date {
     font-family: var(--font-mono);
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: 700;
+    line-height: 1;
   }
   .calendar-cell .weekday {
     font-size: 0.95rem;
-    margin-top: 2px;
+    margin-top: 4px;
   }
   .calendar-cell .slavas {
-    font-size: 1.0625rem;
-    line-height: 1.45;
-    margin-top: var(--space-2);
+    line-height: 1.4;
+    margin-top: 0;
   }
-  .calendar-cell .no-slavas-text { font-size: 0.95rem; }
-  .slava-link__count { font-size: 12px; padding: 1px 6px; }
+  /* Override the desktop sizes set on .slava-moveable / .slava-fixed
+     (which target 140px-tall grid cells). On mobile the row is
+     full-width so the slava text can — and should — be much larger. */
+  .calendar-cell .slava-moveable {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .calendar-cell .slava-fixed {
+    font-size: 1.1875rem;
+    line-height: 1.35;
+    opacity: 1;
+  }
+  .calendar-cell .no-slavas-text {
+    font-size: 1.0625rem;
+    margin-top: 0;
+  }
+  /* Fasting icon is absolutely positioned top-right; pad the slava column
+     so its first line does not slide under the icon. */
+  .calendar-cell.fasting .slavas,
+  .calendar-cell.fasting .no-slavas-text { padding-right: 36px; }
+  .slava-link__count { font-size: 13px; padding: 2px 8px; }
   .calendar-navigation {
     padding: 12px;
     margin: 15px 0;

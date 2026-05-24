@@ -198,6 +198,25 @@
     .u-page-header:has(.u-page-header__right) > .back-button:not(.u-page-header__right) {
         right: calc(40px + var(--space-2));
     }
+    /* When the header has a wide text+icon primary action (Add user /
+       Save), keep the primary on the header line and lift the back-arrow
+       up next to it as a regular flex child. Icon-only right buttons
+       (.u-page-header__right on kalendar / slava) keep the bottom-edge
+       cluster instead — they share back-button chrome (40px square) so
+       the bottom row reads as one navigation strip. */
+    .u-page-header:has(.u-page-header__primary) > .back-button:not(.u-page-header__right) {
+        position: static;
+        transform: none;
+        right: auto;
+        left: auto;
+        order: 1;
+    }
+    /* Detail pages: on mobile, slide the back-arrow over to sit immediately
+       to the left of the print/edit/history cluster instead of hanging
+       alone at the bottom-left edge (where it visually disconnects from
+       the other action buttons). Bumped specificity (>) so this beats the
+       base .view-actions rule defined later in this file. */
+    .u-page-header > .view-actions { justify-content: flex-end; }
 }
 
 
