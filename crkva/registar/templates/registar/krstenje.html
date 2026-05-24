@@ -61,27 +61,28 @@
     <section class="tab-group__panel">
   {% endif %}
 
-      {# ============ ЗАПИС ============ #}
       {% if form %}
-      {% info_section title="Запис" icon="fa-file-lines" inline=True %}
-        {% info_row icon="fa-book" label="Књига" field=form.knjiga value=krstenje.knjiga inline=True muted_empty=False %}
-        {% info_row icon="fa-file" label="Страна" field=form.strana value=krstenje.strana inline=True muted_empty=False %}
-        {% info_row icon="fa-hashtag" label="Текући број" field=form.broj value=krstenje.broj inline=True muted_empty=False %}
-        {% info_row icon="fa-hashtag" label="Редни број" field=form.redni_broj value=krstenje.redni_broj inline=True muted_empty=False %}
-        {% info_row icon="fa-calendar" label="Година регистрације" field=form.godina_registracije value=krstenje.godina_registracije inline=True muted_empty=False %}
-        {% info_row icon="fa-note-sticky" label="Примедба" field=form.primedba value=krstenje.primedba inline=True full=True %}
+      {# ============ КРШТЕЊЕ ============ #}
+      {% info_section title="Крштење" icon="fa-droplet" %}
+        {% info_row icon="fa-calendar-day" label="Датум" field=form.datum value=krstenje.datum %}
+        {% info_row icon="fa-clock" label="Време" field=form.vreme value=krstenje.vreme %}
+        {% info_row icon="fa-church" label="Храм" field=form.hram value=krstenje.hram sub=krstenje.hram.mesto %}
+        {% if krstenje.svestenik %}{% url 'svestenik_detail' uid=krstenje.svestenik.uid as svestenik_url %}{% endif %}
+        {% info_row icon="fa-id-badge" label="Свештеник" field=form.svestenik value=krstenje.svestenik link=svestenik_url %}
+        {# Anagraph fields render only in edit mode or when at least one is filled. #}
+        {% if is_edit or krstenje.mesto_registracije or krstenje.datum_registracije or krstenje.maticni_broj or krstenje.strana_registracije %}
+          {% info_row icon="fa-location-dot" label="Место регистрације" field=form.mesto_registracije value=krstenje.mesto_registracije %}
+          {% info_row icon="fa-calendar" label="Датум регистрације" field=form.datum_registracije value=krstenje.datum_registracije %}
+          {% info_row icon="fa-hashtag" label="Матични број" field=form.maticni_broj value=krstenje.maticni_broj %}
+          {% info_row icon="fa-bookmark" label="Страна регистрације" field=form.strana_registracije value=krstenje.strana_registracije %}
+        {% endif %}
+        {% info_row icon="fa-book" label="Књига" field=form.knjiga value=krstenje.knjiga muted_empty=False %}
+        {% info_row icon="fa-file" label="Страна" field=form.strana value=krstenje.strana muted_empty=False %}
+        {% info_row icon="fa-hashtag" label="Текући број" field=form.broj value=krstenje.broj muted_empty=False %}
+        {% info_row icon="fa-hashtag" label="Редни број" field=form.redni_broj value=krstenje.redni_broj muted_empty=False %}
+        {% info_row icon="fa-calendar" label="Година регистрације" field=form.godina_registracije value=krstenje.godina_registracije muted_empty=False %}
+        {% info_row icon="fa-note-sticky" label="Примедба" field=form.primedba value=krstenje.primedba full=True %}
       {% endinfo_section %}
-
-      {# ============ МАТИЧНА КЊИГА – АНАГРАФ ============ #}
-      {# Show only in edit mode OR in view mode if at least one anagraph field is set. #}
-      {% if is_edit or krstenje.mesto_registracije or krstenje.datum_registracije or krstenje.maticni_broj or krstenje.strana_registracije %}
-      {% info_section title="Матична књига – анаграф" icon="fa-book" inline=True %}
-        {% info_row icon="fa-location-dot" label="Место регистрације" field=form.mesto_registracije value=krstenje.mesto_registracije inline=True %}
-        {% info_row icon="fa-calendar" label="Датум регистрације" field=form.datum_registracije value=krstenje.datum_registracije inline=True %}
-        {% info_row icon="fa-hashtag" label="Матични број" field=form.maticni_broj value=krstenje.maticni_broj inline=True %}
-        {% info_row icon="fa-bookmark" label="Страна регистрације" field=form.strana_registracije value=krstenje.strana_registracije inline=True %}
-      {% endinfo_section %}
-      {% endif %}
 
       {# ============ ДЕТЕ ============ #}
       <div class="info-section">
@@ -162,14 +163,6 @@
         </ul>
       </div>
 
-      {# ============ КРШТЕЊЕ ============ #}
-      {% info_section title="Крштење" icon="fa-droplet" %}
-        {% info_row icon="fa-calendar-day" label="Датум" field=form.datum value=krstenje.datum %}
-        {% info_row icon="fa-clock" label="Време" field=form.vreme value=krstenje.vreme %}
-        {% info_row icon="fa-church" label="Храм" field=form.hram value=krstenje.hram sub=krstenje.hram.mesto %}
-        {% if krstenje.svestenik %}{% url 'svestenik_detail' uid=krstenje.svestenik.uid as svestenik_url %}{% endif %}
-        {% info_row icon="fa-id-badge" label="Свештеник" field=form.svestenik value=krstenje.svestenik link=svestenik_url %}
-      {% endinfo_section %}
       {% endif %}
 
   {% if krstenje %}
