@@ -14,6 +14,66 @@
     </div>
   {% endif %}
 
+  <section class="role-help" aria-labelledby="role-help-title">
+    <header class="role-help__header">
+      <h2 class="role-help__title" id="role-help-title">
+        <i class="fa-solid fa-shield-halved"></i> Права улога
+      </h2>
+      <p class="role-help__lede">Сви корисници виде све податке у парохији. Улога одређује ко може да уноси и мења.</p>
+    </header>
+    <table class="role-help__matrix">
+      <thead>
+        <tr>
+          <th></th>
+          <th data-tooltip="Парохијани"><i class="fa-solid fa-users"></i></th>
+          <th data-tooltip="Домаћинства"><i class="fa-solid fa-house"></i></th>
+          <th data-tooltip="Крштења"><i class="fa-solid fa-droplet"></i></th>
+          <th data-tooltip="Венчања"><i class="icon-rings"></i></th>
+          <th data-tooltip="Свештеници"><i class="fa-solid fa-id-badge"></i></th>
+          <th data-tooltip="Корисници"><i class="fa-solid fa-users-gear"></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Администратор</th>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Управља корисницима"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+        </tr>
+        <tr>
+          <th scope="row">Канцеларија</th>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Нема приступ"><span class="role-help__none">—</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Свештенство</th>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Нема приступ"><span class="role-help__none">—</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Преглед</th>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Нема приступ"><span class="role-help__none">—</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
   <table class="data-table">
     <thead>
       <tr>
