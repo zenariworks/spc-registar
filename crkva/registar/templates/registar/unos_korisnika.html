@@ -4,9 +4,7 @@
   <form method="post" class="form form--single-column">
     {% csrf_token %}
     {% url 'parohija:user_list' as user_list_url %}
-    {% with parohija_naziv=parohija.parohija_naziv|default:parohija.naziv %}
-    {% include "registar/_page_header.html" with title="Нови корисник — "|add:parohija_naziv back_url=user_list_url primary_submit=True primary_icon="fa-solid fa-floppy-disk" primary_label="Сачувај" %}
-    {% endwith %}
+    {% include "registar/_page_header.html" with title="Нови корисник" subtitle=parohija.parohija_naziv|default:parohija.naziv back_url=user_list_url primary_submit=True primary_icon="fa-solid fa-floppy-disk" primary_label="Сачувај" %}
 
     {% if form.non_field_errors %}
       <div class="u-alert u-alert--error">{{ form.non_field_errors }}</div>
