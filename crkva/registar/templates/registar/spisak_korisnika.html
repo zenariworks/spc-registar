@@ -21,48 +21,66 @@
       </h2>
       <p class="role-help__lede">Сви корисници виде све податке у парохији. Улога одређује ко може да уноси и мења.</p>
     </header>
-    <dl class="role-help__list">
-      <div class="role-help__row role-help__row--admin">
-        <dt class="role-help__role">Администратор</dt>
-        <dd class="role-help__caps">
-          <span class="role-help__cap role-help__cap--write"><i class="fa-solid fa-pen-to-square"></i> Све</span>
-          <span class="role-help__cap role-help__cap--users"><i class="fa-solid fa-users-gear"></i> Корисници</span>
-        </dd>
-      </div>
-      <div class="role-help__row role-help__row--kancelarija">
-        <dt class="role-help__role">Канцеларија</dt>
-        <dd class="role-help__caps">
-          <span class="role-help__cap role-help__cap--write"><i class="fa-solid fa-pen-to-square"></i> Парохијани, домаћинства, крштења, венчања</span>
-        </dd>
-      </div>
-      <div class="role-help__row role-help__row--svestenstvo">
-        <dt class="role-help__role">Свештенство</dt>
-        <dd class="role-help__caps">
-          <span class="role-help__cap role-help__cap--write"><i class="fa-solid fa-pen-to-square"></i> Свештеници</span>
-        </dd>
-      </div>
-      <div class="role-help__row role-help__row--pregled">
-        <dt class="role-help__role">Преглед</dt>
-        <dd class="role-help__caps">
-          <span class="role-help__cap role-help__cap--readonly"><i class="fa-solid fa-eye"></i> Само читање</span>
-        </dd>
-      </div>
-    </dl>
+    <table class="role-help__matrix">
+      <thead>
+        <tr>
+          <th></th>
+          <th data-tooltip="Парохијани"><i class="fa-solid fa-users"></i></th>
+          <th data-tooltip="Домаћинства"><i class="fa-solid fa-house"></i></th>
+          <th data-tooltip="Крштења"><i class="fa-solid fa-droplet"></i></th>
+          <th data-tooltip="Венчања"><i class="icon-rings"></i></th>
+          <th data-tooltip="Свештеници"><i class="fa-solid fa-id-badge"></i></th>
+          <th data-tooltip="Корисници"><i class="fa-solid fa-users-gear"></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">Администратор</th>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Управља корисницима"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+        </tr>
+        <tr>
+          <th scope="row">Канцеларија</th>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Нема приступ"><span class="role-help__none">—</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Свештенство</th>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Пише"><i class="fa-solid fa-pen-to-square role-help__write"></i></td>
+          <td data-tooltip="Нема приступ"><span class="role-help__none">—</span></td>
+        </tr>
+        <tr>
+          <th scope="row">Преглед</th>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Чита"><i class="fa-solid fa-eye role-help__read"></i></td>
+          <td data-tooltip="Нема приступ"><span class="role-help__none">—</span></td>
+        </tr>
+      </tbody>
+    </table>
   </section>
 
-  <table class="data-table data-table--perm">
+  <table class="data-table">
     <thead>
       <tr>
         <th>Корисник</th>
         <th>Име</th>
         <th>Е-маил</th>
         <th>Улога</th>
-        <th class="data-table__perm" data-tooltip="Парохијани"><i class="fa-solid fa-users"></i></th>
-        <th class="data-table__perm" data-tooltip="Домаћинства"><i class="fa-solid fa-house"></i></th>
-        <th class="data-table__perm" data-tooltip="Крштења"><i class="fa-solid fa-droplet"></i></th>
-        <th class="data-table__perm" data-tooltip="Венчања"><i class="icon-rings"></i></th>
-        <th class="data-table__perm" data-tooltip="Свештеници"><i class="fa-solid fa-id-badge"></i></th>
-        <th class="data-table__perm" data-tooltip="Корисници"><i class="fa-solid fa-users-gear"></i></th>
         <th>Активан</th>
         <th class="data-table__actions">Акције</th>
       </tr>
@@ -84,13 +102,6 @@
               </select>
             </form>
           </td>
-          {# fa-eye = read (universal), fa-pen-to-square = write (role-dependent). Корисници column is admin-only. #}
-          <td class="data-table__perm" data-tooltip="{% if m.role == 'admin' or m.role == 'kancelarija' %}Чита и пише парохијане{% else %}Само чита{% endif %}"><i class="fa-solid fa-eye"></i>{% if m.role == "admin" or m.role == "kancelarija" %}<i class="fa-solid fa-pen-to-square"></i>{% endif %}</td>
-          <td class="data-table__perm" data-tooltip="{% if m.role == 'admin' or m.role == 'kancelarija' %}Чита и пише домаћинства{% else %}Само чита{% endif %}"><i class="fa-solid fa-eye"></i>{% if m.role == "admin" or m.role == "kancelarija" %}<i class="fa-solid fa-pen-to-square"></i>{% endif %}</td>
-          <td class="data-table__perm" data-tooltip="{% if m.role == 'admin' or m.role == 'kancelarija' %}Чита и пише крштења{% else %}Само чита{% endif %}"><i class="fa-solid fa-eye"></i>{% if m.role == "admin" or m.role == "kancelarija" %}<i class="fa-solid fa-pen-to-square"></i>{% endif %}</td>
-          <td class="data-table__perm" data-tooltip="{% if m.role == 'admin' or m.role == 'kancelarija' %}Чита и пише венчања{% else %}Само чита{% endif %}"><i class="fa-solid fa-eye"></i>{% if m.role == "admin" or m.role == "kancelarija" %}<i class="fa-solid fa-pen-to-square"></i>{% endif %}</td>
-          <td class="data-table__perm" data-tooltip="{% if m.role == 'admin' or m.role == 'svestenstvo' %}Чита и пише свештенике{% else %}Само чита{% endif %}"><i class="fa-solid fa-eye"></i>{% if m.role == "admin" or m.role == "svestenstvo" %}<i class="fa-solid fa-pen-to-square"></i>{% endif %}</td>
-          <td class="data-table__perm" data-tooltip="{% if m.role == 'admin' %}Управља корисницима{% else %}Нема приступ{% endif %}">{% if m.role == "admin" %}<i class="fa-solid fa-eye"></i><i class="fa-solid fa-pen-to-square"></i>{% else %}<span class="data-table__perm-none">—</span>{% endif %}</td>
           <td>
             {% if m.user.is_active %}
               <span class="user-status user-status--active"><i class="fa-solid fa-circle-check"></i> Да</span>
@@ -110,7 +121,7 @@
           </td>
         </tr>
       {% empty %}
-        <tr><td colspan="11" class="data-table__empty">Нема корисника</td></tr>
+        <tr><td colspan="6" class="data-table__empty">Нема корисника</td></tr>
       {% endfor %}
     </tbody>
   </table>
