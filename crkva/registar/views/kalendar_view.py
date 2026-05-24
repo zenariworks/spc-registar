@@ -147,6 +147,7 @@ def kalendar(
         "year": year,
         "month": month,
         "month_name": MESECI.get(month, str(month)),
+        "month_label": f"{MESECI.get(month, str(month))} {year}",
         "source_url": crkvenikalendar_url(year, month),
         "weekday_labels": weekday_labels,
         "cells": cells,

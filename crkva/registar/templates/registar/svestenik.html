@@ -20,7 +20,7 @@
       {% else %}Свештеник<span class="u-page-title__subtitle">{{ svestenik.ime }} {{ svestenik.prezime }}</span>{% endif %}
     </h1>
     {% if svestenik %}
-      {% include "registar/_view_actions.html" with back_list_url_name="svestenici" back_detail_url_name="svestenik_detail" obj=svestenik edit_url_name="izmena_svestenika" can_edit=can_edit_svestenik pdf_url_name="svestenik_pdf" %}
+      {% include "registar/_view_actions.html" with back_list_url_name="svestenici" back_detail_url_name="svestenik_detail" obj=svestenik edit_url_name="izmena_svestenika" can_edit=can_edit_svestenik %}
     {% else %}
       <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     {% endif %}

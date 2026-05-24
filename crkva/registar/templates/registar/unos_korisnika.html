@@ -3,15 +3,10 @@
 {% block content %}
   <form method="post" class="form form--single-column">
     {% csrf_token %}
-    <div class="u-page-header">
-      <a href="{% url 'parohija:user_list' %}" class="back-button" aria-label="Назад" title="Назад">
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
-      <h1 class="u-page-title">Нови корисник — {{ parohija.parohija_naziv|default:parohija.naziv }}</h1>
-      <button class="button button--primary" type="submit" title="Сачувај">
-        <i class="fa-solid fa-floppy-disk"></i> Сачувај
-      </button>
-    </div>
+    {% url 'parohija:user_list' as user_list_url %}
+    {% with parohija_naziv=parohija.parohija_naziv|default:parohija.naziv %}
+    {% include "registar/_page_header.html" with title="Нови корисник — "|add:parohija_naziv back_url=user_list_url primary_submit=True primary_icon="fa-solid fa-floppy-disk" primary_label="Сачувај" %}
+    {% endwith %}
 
     {% if form.non_field_errors %}
       <div class="u-alert u-alert--error">{{ form.non_field_errors }}</div>

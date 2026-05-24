@@ -110,7 +110,7 @@ def user_add(request: HttpRequest) -> HttpResponse:
         )
         messages.success(request, f"Корисник {user.username} креиран.")
         return redirect("parohija:user_list")
-    return render(request, "registar/users_add.html", {"form": form})
+    return render(request, "registar/unos_korisnika.html", {"form": form})
 
 
 @tenant_admin_required

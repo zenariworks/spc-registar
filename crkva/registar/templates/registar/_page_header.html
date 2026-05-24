@@ -1,18 +1,22 @@
 {% comment %}
 Reusable page header: back arrow on the left, h1 title, optional toolbar,
-optional right-side icon button (used by the calendar to link out to
-crkvenikalendar.rs).
+optional right-side icon button (e.g. calendar's source link), and an
+optional right-side primary action (text + icon).
 
 Required:
   title           h1 text (string)
 Optional:
   back_url        URL string for the back arrow. Defaults to '/' (pocetna)
-  count           integer; if passed (incl 0), renders as "· N" after title
+  count           int or string; if passed (incl 0), renders as "· N" after title
   include_toolbar truthy to render {% templatetag openblock %} include "registar/_list_toolbar.html" {% templatetag closeblock %}
   right_url       URL for an icon button anchored at the far right of the header
   right_icon      Font Awesome class string (e.g. "fa-solid fa-up-right-from-square")
   right_label     accessible label (used as aria-label + title tooltip)
   right_external  truthy to add target="_blank" rel="noopener"
+  primary_url     URL for a text + icon primary action button on the right
+  primary_submit  truthy to render the primary action as <button type="submit"> instead of <a>
+  primary_icon    Font Awesome class for the primary action (e.g. "fa-solid fa-user-plus")
+  primary_label   visible button text + accessible label
 {% endcomment %}
 <div class="u-page-header">
     <a href="{{ back_url|default:'/' }}" class="back-button" aria-label="Назад" title="Назад">
@@ -21,5 +25,6 @@ Optional:
     <h1 class="u-page-title">{{ title }}{% if count or count == 0 %} <span class="u-page-title__count">· {{ count }}</span>{% endif %}</h1>
     {% if include_toolbar %}{% include "registar/_list_toolbar.html" %}{% endif %}
     {% if right_url %}<a href="{{ right_url }}" class="back-button u-page-header__right" aria-label="{{ right_label }}" title="{{ right_label }}"{% if right_external %} target="_blank" rel="noopener"{% endif %}><i class="{{ right_icon }}"></i></a>{% endif %}
+    {% if primary_url %}<a href="{{ primary_url }}" class="button button--primary u-page-header__primary" title="{{ primary_label }}"><i class="{{ primary_icon }}"></i> {{ primary_label }}</a>{% elif primary_submit %}<button type="submit" class="button button--primary u-page-header__primary" title="{{ primary_label }}"><i class="{{ primary_icon }}"></i> {{ primary_label }}</button>{% endif %}
 </div>
 <div class="u-page-header__spacer" aria-hidden="true"></div>
