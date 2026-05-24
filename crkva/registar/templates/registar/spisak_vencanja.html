@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "registar/_spisak.html" with title="Венчања" stavka_template="registar/_stavka_vencanja.html" %}
+{% if can_edit_vencanje %}{% url 'unos_vencanja' as add_url %}{% endif %}
+{% include "registar/_spisak.html" with title="Венчања" stavka_template="registar/_stavka_vencanja.html" add_url=add_url add_label="Додај венчање" %}
 {% endblock %}

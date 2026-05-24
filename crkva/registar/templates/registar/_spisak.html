@@ -13,8 +13,11 @@ Usage from a spisak template:
 Required:
   title           h1 text
   stavka_template path to the per-row partial (e.g. "registar/_stavka_parohijana.html")
+Optional:
+  add_url         URL of the corresponding unos_* view; renders "Додај ..." primary button
+  add_label       button text (e.g. "Додај парохијана")
 {% endcomment %}
-{% include "registar/_page_header.html" with title=title count=page_obj.paginator.count include_toolbar=True %}
+{% include "registar/_page_header.html" with title=title count=page_obj.paginator.count include_toolbar=True primary_url=add_url primary_icon="fa-solid fa-circle-plus" primary_label=add_label %}
 {% include "registar/_filter_chips.html" %}
 <ul class="spisak" id="spisak-list">
     {% include stavka_template %}

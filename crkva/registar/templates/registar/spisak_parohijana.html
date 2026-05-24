@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "registar/_spisak.html" with title="Парохијани" stavka_template="registar/_stavka_parohijana.html" %}
+{% if can_edit_osoba %}{% url 'unos_parohijana' as add_url %}{% endif %}
+{% include "registar/_spisak.html" with title="Парохијани" stavka_template="registar/_stavka_parohijana.html" add_url=add_url add_label="Додај парохијана" %}
 {% endblock %}

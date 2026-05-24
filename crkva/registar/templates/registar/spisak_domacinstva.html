@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "registar/_spisak.html" with title="Домаћинства" stavka_template="registar/_stavka_domacinstva.html" %}
+{% if can_edit_domacinstvo %}{% url 'unos_domacinstva' as add_url %}{% endif %}
+{% include "registar/_spisak.html" with title="Домаћинства" stavka_template="registar/_stavka_domacinstva.html" add_url=add_url add_label="Додај домаћинство" %}
 {% endblock %}
