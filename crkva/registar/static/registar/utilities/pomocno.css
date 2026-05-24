@@ -214,8 +214,9 @@
     /* Detail pages: on mobile, slide the back-arrow over to sit immediately
        to the left of the print/edit/history cluster instead of hanging
        alone at the bottom-left edge (where it visually disconnects from
-       the other action buttons). */
-    .view-actions { justify-content: flex-end; }
+       the other action buttons). Bumped specificity (>) so this beats the
+       base .view-actions rule defined later in this file. */
+    .u-page-header > .view-actions { justify-content: flex-end; }
 }
 
 
