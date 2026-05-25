@@ -138,12 +138,6 @@
           </div>
         </div>
       </li>
-      {% if parohijan.domacinstvo %}
-      <li class="info-row" data-show-mode="view">
-        <div class="info-row__icon" data-tooltip="Домаћин домаћинства"><i class="fa-solid fa-house"></i></div>
-        <div class="info-row__value"><a href="{% url "domacinstvo_detail" uid=parohijan.domacinstvo.uid %}">Прикажи домаћинство <i class="fa-solid fa-arrow-right u-icon-sm"></i></a></div>
-      </li>
-      {% endif %}
     </ul>
   </div>
   {% endif %}
