@@ -367,11 +367,53 @@
    ========================================================================== */
 
 @media print {
+    @page { size: A4 portrait; margin: 0; }
+
+    /* Hide the rest of the page so only the krstenica prints. */
+    .sidebar,
+    .sidebar-toggle,
+    .mobile-sidebar-toggle,
+    .sidebar-backdrop,
+    .search-overlay,
+    .u-page-header,
+    .u-page-header__spacer,
+    .view-actions,
+    .tab-group__nav,
+    .tab-group__panel:not([data-show-mode]),
+    .istorija-izmena,
+    .form-messages,
+    .u-alert,
+    #form-errors,
+    [data-show-mode="edit"] { display: none !important; }
+
+    /* Strip layout chrome so the certificate fills the page. */
+    body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+    body > main,
+    .u-container,
+    .info-page,
+    .tab-group,
+    .tab-group--with-panels { margin: 0 !important; padding: 0 !important; max-width: none !important; display: block !important; }
+
+    /* Always show the certificate panel, regardless of the current tab. */
+    .tab-group__panel[data-show-mode="view"] {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        animation: none !important;
+        width: auto !important;
+    }
+
     .krstenica {
-        margin: 0;
-        box-shadow: none;
+        margin: 0 !important;
+        box-shadow: none !important;
         page-break-after: always;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+        /* Drop the scanned form background so we print only the
+           data fields onto a pre-printed certificate (saves ink
+           and aligns text on the pre-existing form lines). */
+        background-image: none !important;
+        /* cert_fit.js sets transform: scale(...) on screen so the
+           cert fits narrow viewports — undo it on print. */
+        transform: none !important;
+        margin-bottom: 0 !important;
     }
 }
