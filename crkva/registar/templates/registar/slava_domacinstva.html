@@ -3,6 +3,8 @@
 
 {% block title %}{{ slava.naziv }} - Домаћинства{% endblock %}
 
+{% block extra_css %}<link rel="stylesheet" href="{% static 'registar/print/slava.css' %}" media="print">{% endblock %}
+
 {% block content %}
 <div class="u-page-header u-page-header--wrap">
   <a href="{% url 'kalendar' %}" class="back-button" aria-label="Назад на календар" title="Назад на календар">

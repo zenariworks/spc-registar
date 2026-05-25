@@ -394,11 +394,39 @@
    ========================================================================== */
 
 @media print {
+    @page { margin: 0; }
+
+    .sidebar,
+    .sidebar-toggle,
+    .mobile-sidebar-toggle,
+    .sidebar-backdrop,
+    .search-overlay,
+    .u-page-header,
+    .u-page-header__spacer,
+    .view-actions,
+    .tab-group__nav,
+    .tab-group__panel:not([data-show-mode]),
+    .istorija-izmena,
+    .form-messages,
+    .u-alert,
+    #form-errors,
+    [data-show-mode="edit"] { display: none !important; }
+
+    body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+    body > main,
+    .u-container,
+    .info-page,
+    .tab-group,
+    .tab-group--with-panels { margin: 0 !important; padding: 0 !important; max-width: none !important; display: block !important; }
+
+    .tab-group__panel[data-show-mode="view"] { display: block !important; }
+
     .vencanica {
-        margin: 0;
-        box-shadow: none;
+        margin: 0 !important;
+        box-shadow: none !important;
         page-break-after: always;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 }
+
