@@ -431,8 +431,10 @@
         margin: 0 !important;
         box-shadow: none !important;
         page-break-after: always;
-        -webkit-print-color-adjust: exact !important;
-        print-color-adjust: exact !important;
+        /* Drop the scanned form background so we print only the
+           data fields onto a pre-printed certificate (saves ink
+           and aligns text on the pre-existing form lines). */
+        background-image: none !important;
     }
 }
 
