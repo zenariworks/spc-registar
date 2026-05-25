@@ -244,40 +244,56 @@ class Command(BaseCommand):
         for k, lst in groups.items():
             if len(lst) < 2:
                 continue
-            # Determine safety signal
-            tels = {
-                p.tel_fiksni or p.tel_mobilni
-                for p in lst
-                if p.tel_fiksni or p.tel_mobilni
-            }
-            addrs = {p.adresa_id for p in lst if p.adresa_id}
-            dom_addrs = set()
-            for p in lst:
-                d = Domacinstvo.objects.filter(domacin=p).only("adresa_id").first()
-                if d and d.adresa_id:
-                    dom_addrs.add(d.adresa_id)
-            safe = (
-                (
-                    len(tels) == 1
-                    and sum(1 for p in lst if p.tel_fiksni or p.tel_mobilni) == len(lst)
+            # Sub-group same-name osobe by safety signal (canonical address,
+            # domacinstvo address, fiksni, mobilni). Each sub-group of size >= 2
+            # merges into one canonical osoba; remaining singletons are
+            # reported for human review. Previous code required the WHOLE
+            # group to share one signal, which left partial-match groups
+            # (e.g. row1 shares signal A; rows 2+3 share signal B) untouched.
+            subgroups: dict = defaultdict(list)
+            singletons = []
+            dom_by_osoba = {
+                d.domacin_id: d.adresa_id
+                for d in Domacinstvo.objects.filter(domacin__in=lst).only(
+                    "domacin_id", "adresa_id"
                 )
-                or (len(addrs) == 1 and addrs)
-                or (len(dom_addrs) == 1 and dom_addrs)
-            )
-            if not safe:
-                reported.append((k, lst))
-                continue
+                if d.adresa_id
+            }
+            for p in lst:
+                # Pick the strongest signal present, in priority order.
+                sig = None
+                if p.tel_fiksni:
+                    sig = ("tel_fiksni", str(p.tel_fiksni))
+                elif p.tel_mobilni:
+                    sig = ("tel_mobilni", str(p.tel_mobilni))
+                elif p.adresa_id:
+                    sig = ("adresa", p.adresa_id)
+                elif dom_by_osoba.get(p.pk):
+                    sig = ("dom_adresa", dom_by_osoba[p.pk])
+                if sig is None:
+                    singletons.append(p)
+                else:
+                    subgroups[sig].append(p)
 
-            canonical = max(lst, key=_osoba_richness)
-            for dupe in lst:
-                if dupe.pk == canonical.pk:
+            partial = False
+            for sig, members in subgroups.items():
+                if len(members) < 2:
+                    singletons.extend(members)
+                    partial = True
                     continue
-                if dry_run:
-                    merged += 1
-                    continue
-                with transaction.atomic():
-                    self._merge_osoba_into(canonical, dupe)
-                    merged += 1
+                canonical = max(members, key=_osoba_richness)
+                for dupe in members:
+                    if dupe.pk == canonical.pk:
+                        continue
+                    if dry_run:
+                        merged += 1
+                        continue
+                    with transaction.atomic():
+                        self._merge_osoba_into(canonical, dupe)
+                        merged += 1
+
+            if singletons and (len(singletons) + sum(1 for _ in subgroups) > 1 or partial):
+                reported.append((k, singletons))
 
         self.stdout.write(
             f"  {'би се' if dry_run else ''} спојено {merged} дупл. особа"
