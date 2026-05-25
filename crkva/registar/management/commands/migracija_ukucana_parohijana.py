@@ -18,8 +18,8 @@ from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
 from registar.migracija.helpers import cyr, extract_maiden
 from registar.migracija.osoba_repo import (
     cache_osoba,
+    find_matching_osoba,
     find_or_create_osoba,
-    lookup_osoba,
     warm_osoba_cache,
 )
 from registar.migracija.sex import infer_sex_from_name
@@ -168,23 +168,18 @@ class Command(MigrationCommand):
                 tel_f = (telefon_fiksni or "").strip() or None
                 tel_m = (telefon_mobilni or "").strip() or None
 
-                # Name-based dedup: if an Osoba with this (ime, prezime) already
-                # exists AND shares a safety signal (same canonical Adresa,
-                # tel_fiksni, or tel_mobilni), reuse it instead of creating a
-                # second row with a different uid.
-                cached = lookup_osoba(ime, prezime)
-                safe_to_merge = bool(cached) and (
-                    (adresa is not None and cached.adresa_id == adresa.uid)
-                    or (tel_f and cached.tel_fiksni and str(cached.tel_fiksni) == tel_f)
-                    or (
-                        tel_m
-                        and cached.tel_mobilni
-                        and str(cached.tel_mobilni) == tel_m
-                    )
+                # Name-based dedup: scan every same-name Osoba already in the
+                # cache; merge into the first one that shares a safety signal
+                # (canonical Adresa, tel_fiksni, or tel_mobilni). Comparing
+                # against ALL same-name candidates (not just the first cached)
+                # catches the case where row #1 has signal A and rows #2 and
+                # #3 share signal B — without this loop #3 would be created
+                # fresh instead of merging into #2.
+                match = find_matching_osoba(
+                    ime, prezime, adresa=adresa, tel_f=tel_f, tel_m=tel_m
                 )
-
-                if safe_to_merge:
-                    osoba = cached
+                if match is not None:
+                    osoba = match
                     updates = {}
                     if not osoba.parohijan:
                         updates["parohijan"] = True
@@ -219,12 +214,11 @@ class Command(MigrationCommand):
                     )
                     if p_created:
                         created_parohijani += 1
-                        # Only cache the FIRST occurrence of this name. If the
-                        # cache already holds an Osoba with this name (cached
-                        # was non-None above but we landed here because the
-                        # safety check failed), keep the original cache entry.
-                        if not lookup_osoba(ime, prezime):
-                            cache_osoba(osoba)
+                    # Always cache the newly-created (or reused-by-uid) Osoba
+                    # so subsequent rows with the same name can match against
+                    # it via find_matching_osoba. cache_osoba is idempotent
+                    # on pk so re-caching the same osoba is a no-op.
+                    cache_osoba(osoba)
 
                 # Track DBF UID -> canonical Osoba so the ukucani pass can resolve
                 # UK_RBRDOM even when we deduped onto an Osoba with a different uid.
