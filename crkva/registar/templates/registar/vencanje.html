@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="{% static 'registar/print/vencanica.css' %}">
   {% if form %}{{ form.media.css }}{% endif %}
 {% endblock %}
-{% block extra_js %}{% if request.GET.print %}<script>window.addEventListener('load',function(){window.print();});</script>{% endif %}{% if form %}{{ form.media.js }}{% endif %}{% endblock %}
+{% block extra_js %}<script src="{% static 'registar/components/cert_fit.js' %}"></script>{% if request.GET.print %}<script>window.addEventListener('load',function(){window.print();});</script>{% endif %}{% if form %}{{ form.media.js }}{% endif %}{% endblock %}
 
 {% comment %}
   Single template for /vencanje/<uid>/ (view), /unos/vencanje/ (create),

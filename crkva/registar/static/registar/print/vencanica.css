@@ -435,6 +435,10 @@
            data fields onto a pre-printed certificate (saves ink
            and aligns text on the pre-existing form lines). */
         background-image: none !important;
+        /* cert_fit.js sets transform: scale(...) on screen so the
+           cert fits narrow viewports — undo it on print. */
+        transform: none !important;
+        margin-bottom: 0 !important;
     }
 }
 
