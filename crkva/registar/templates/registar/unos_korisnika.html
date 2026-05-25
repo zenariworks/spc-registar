@@ -9,7 +9,7 @@
   {% csrf_token %}
 
   {% url 'parohija:user_list' as user_list_url %}
-  {% include "registar/_page_header.html" with title="Нови корисник" subtitle=parohija.parohija_naziv|default:parohija.naziv back_url=user_list_url primary_submit=True primary_icon="fa-solid fa-floppy-disk" primary_label="Сачувај" %}
+  {% include "registar/_page_header.html" with title="Нови корисник" subtitle=parohija.parohija_naziv|default:parohija.naziv back_url=user_list_url action_submit=True action_icon="fa-solid fa-floppy-disk" action_label="Сачувај" %}
 
   {% if form.non_field_errors %}{% include "registar/_form_errors.html" %}{% endif %}
 
