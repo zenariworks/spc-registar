@@ -367,7 +367,7 @@
    ========================================================================== */
 
 @media print {
-    @page { margin: 0; }
+    @page { size: A4 portrait; margin: 0; }
 
     /* Hide the rest of the page so only the krstenica prints. */
     .sidebar,
@@ -395,7 +395,13 @@
     .tab-group--with-panels { margin: 0 !important; padding: 0 !important; max-width: none !important; display: block !important; }
 
     /* Always show the certificate panel, regardless of the current tab. */
-    .tab-group__panel[data-show-mode="view"] { display: block !important; }
+    .tab-group__panel[data-show-mode="view"] {
+        display: block !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        animation: none !important;
+        width: auto !important;
+    }
 
     .krstenica {
         margin: 0 !important;

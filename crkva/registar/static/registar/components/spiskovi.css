@@ -997,3 +997,17 @@ body.history-open {
     opacity: 0.5;
     margin-left: var(--space-1);
 }
+
+
+/* In-page certificate print (krstenja/vencanja list rows). Hidden on screen,
+   replaces the page contents while printing. The certificate's own
+   print stylesheet (krstenica.css / vencanica.css) handles the layout. */
+#print-cert-wrap { display: none; }
+@media print {
+    body.printing-cert > main,
+    body.printing-cert > nav,
+    body.printing-cert > .sidebar,
+    body.printing-cert > script,
+    body.printing-cert > footer { display: none !important; }
+    body.printing-cert > #print-cert-wrap { display: block !important; }
+}
