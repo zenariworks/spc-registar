@@ -1,56 +1,29 @@
 {% extends "base.html" %}
+{% load info_components %}
+
+{% block extra_css %}{{ form.media.css }}{% endblock %}
+{% block extra_js %}{{ form.media.js }}{% endblock %}
 
 {% block content %}
-  <form method="post" class="form form--single-column">
-    {% csrf_token %}
-    {% url 'parohija:user_list' as user_list_url %}
-    {% include "registar/_page_header.html" with title="Нови корисник" subtitle=parohija.parohija_naziv|default:parohija.naziv back_url=user_list_url primary_submit=True primary_icon="fa-solid fa-floppy-disk" primary_label="Сачувај" %}
+<form method="post" class="info-page" data-edit-toggle-root data-mode="edit">
+  {% csrf_token %}
 
-    {% if form.non_field_errors %}
-      <div class="u-alert u-alert--error">{{ form.non_field_errors }}</div>
-    {% endif %}
+  {% url 'parohija:user_list' as user_list_url %}
+  {% include "registar/_page_header.html" with title="Нови корисник" subtitle=parohija.parohija_naziv|default:parohija.naziv back_url=user_list_url action_submit=True action_icon="fa-solid fa-floppy-disk" action_label="Сачувај" %}
 
-    <fieldset class="form-section">
-      <legend><i class="fa-solid fa-id-card"></i> Налог</legend>
-      <div class="form-row form-row--pair">
-        <div class="form-field">
-          {{ form.username.label_tag }} {{ form.username }}
-          {% if form.username.errors %}<div class="error-text">{{ form.username.errors|join:" " }}</div>{% endif %}
-        </div>
-        <div class="form-field">
-          {{ form.password.label_tag }} {{ form.password }}
-          {% if form.password.errors %}<div class="error-text">{{ form.password.errors|join:" " }}</div>{% endif %}
-        </div>
-      </div>
-      <div class="form-row form-row--pair">
-        <div class="form-field">
-          {{ form.first_name.label_tag }} {{ form.first_name }}
-          {% if form.first_name.errors %}<div class="error-text">{{ form.first_name.errors|join:" " }}</div>{% endif %}
-        </div>
-        <div class="form-field">
-          {{ form.last_name.label_tag }} {{ form.last_name }}
-          {% if form.last_name.errors %}<div class="error-text">{{ form.last_name.errors|join:" " }}</div>{% endif %}
-        </div>
-      </div>
-      <div class="form-row">
-        <div class="form-field">
-          {{ form.email.label_tag }} {{ form.email }}
-          {% if form.email.errors %}<div class="error-text">{{ form.email.errors|join:" " }}</div>{% endif %}
-        </div>
-      </div>
-    </fieldset>
+  {% if form.non_field_errors %}{% include "registar/_form_errors.html" %}{% endif %}
 
-    <fieldset class="form-section">
-      <legend><i class="fa-solid fa-shield-halved"></i> Приступ у парохији</legend>
-      <div class="form-row form-row--pair">
-        <div class="form-field">
-          {{ form.role.label_tag }} {{ form.role }}
-          {% if form.role.errors %}<div class="error-text">{{ form.role.errors|join:" " }}</div>{% endif %}
-        </div>
-        <div class="form-field">
-          {{ form.is_default }} <label for="{{ form.is_default.id_for_label }}">{{ form.is_default.label }}</label>
-        </div>
-      </div>
-    </fieldset>
-  </form>
+  {% info_section title="Налог" icon="fa-id-card" %}
+    {% info_row icon="fa-at" label="Корисничко име" field=form.username %}
+    {% info_row icon="fa-key" label="Лозинка" field=form.password %}
+    {% info_row icon="fa-user" label="Име" field=form.first_name %}
+    {% info_row icon="fa-user-tag" label="Презиме" field=form.last_name %}
+    {% info_row icon="fa-envelope" label="Е-маил" field=form.email %}
+  {% endinfo_section %}
+
+  {% info_section title="Приступ у парохији" icon="fa-shield-halved" %}
+    {% info_row icon="fa-shield-halved" label="Улога" field=form.role %}
+    {% info_row_bool icon="fa-star" label="Главна парохија за корисника" value_label="Главна парохија за корисника" field=form.is_default %}
+  {% endinfo_section %}
+</form>
 {% endblock %}

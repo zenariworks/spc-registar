@@ -18,8 +18,11 @@ Optional:
   primary_submit  truthy to render the primary action as <button type="submit"> instead of <a>
   primary_icon    Font Awesome class for the primary action (e.g. "fa-solid fa-user-plus")
   primary_label   visible button text + accessible label
-  action_url      URL for an icon-only neutral action button (e.g. "Додај" on list pages).
+  action_url      URL for an icon-only action button (e.g. "Додај" on list pages).
                   Matches detail-page print/edit chrome (button button--neutral button--icon).
+  action_submit   truthy to render the action as <button type="submit"> instead of <a>
+  action_variant  button color variant (e.g. "neutral", "primary"). Defaults to
+                  "neutral" for links and "primary" for submit buttons.
   action_icon     Font Awesome class for the action button
   action_label    accessible label rendered as aria-label + data-tooltip
 {% endcomment %}
@@ -31,6 +34,6 @@ Optional:
     {% if include_toolbar %}{% include "registar/_list_toolbar.html" %}{% endif %}
     {% if right_url %}<a href="{{ right_url }}" class="back-button u-page-header__right" aria-label="{{ right_label }}" title="{{ right_label }}"{% if right_external %} target="_blank" rel="noopener"{% endif %}><i class="{{ right_icon }}"></i></a>{% endif %}
     {% if primary_url %}<a href="{{ primary_url }}" class="button button--primary u-page-header__primary" title="{{ primary_label }}"><i class="{{ primary_icon }}"></i> {{ primary_label }}</a>{% elif primary_submit %}<button type="submit" class="button button--primary u-page-header__primary" title="{{ primary_label }}"><i class="{{ primary_icon }}"></i> {{ primary_label }}</button>{% endif %}
-    {% if action_url %}<a href="{{ action_url }}" class="button button--neutral button--icon u-page-header__action" aria-label="{{ action_label }}" data-tooltip="{{ action_label }}"><i class="{{ action_icon }}"></i></a>{% endif %}
+    {% if action_url %}<a href="{{ action_url }}" class="button button--{{ action_variant|default:'neutral' }} button--icon u-page-header__action" aria-label="{{ action_label }}" data-tooltip="{{ action_label }}"><i class="{{ action_icon }}"></i></a>{% elif action_submit %}<button type="submit" class="button button--{{ action_variant|default:'primary' }} button--icon u-page-header__action" aria-label="{{ action_label }}" data-tooltip="{{ action_label }}"><i class="{{ action_icon }}"></i></button>{% endif %}
 </div>
 <div class="u-page-header__spacer" aria-hidden="true"></div>
