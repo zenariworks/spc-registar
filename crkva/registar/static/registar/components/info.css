@@ -331,7 +331,7 @@
 [data-mode="view"] .info-row--editable .info-row__value > textarea,
 [data-mode="view"] .info-row--editable .info-row__value > .select2,
 [data-mode="view"] .info-row--editable .info-row__value > .select2-container,
-[data-mode="view"] .info-row--editable .info-row__value > [data-mode="view"] .info-row--editable .info-row__value > .tab-group,
+[data-mode="view"] .info-row--editable .info-row__value > .tab-group,
 [data-mode="view"] .info-row--editable .info-row__body--inline > input,
 [data-mode="view"] .info-row--editable .info-row__body--inline > .tab-group,
 [data-mode="view"] .info-row--editable .info-row__body--inline > .info-row__label {
