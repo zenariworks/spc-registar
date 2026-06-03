@@ -1,4 +1,4 @@
-.PHONY: help dev-up dev-down dev-logs prod-up prod-down prod-logs build clean
+.PHONY: help dev-up dev-down dev-logs prod-up prod-down prod-logs build clean coverage
 
 help:
 	@echo "Available commands:"
@@ -11,6 +11,7 @@ help:
 	@echo "  make prod-logs    - View production logs"
 	@echo "  make build        - Build Docker images"
 	@echo "  make clean        - Remove all containers, volumes, and images"
+	@echo "  make coverage     - Run test suite under coverage and print report"
 
 # Development commands
 dev-up:
@@ -51,3 +52,9 @@ build:
 clean:
 	docker-compose down -v --rmi all
 	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down -v --rmi all
+
+# Test coverage (bare-metal venv). Set SECRET_KEY + DB_* env vars first.
+# Runs from crkva/ so manage.py test discovers the app test packages.
+coverage:
+	cd crkva && coverage run --rcfile=../.coveragerc manage.py test --keepdb --parallel 1
+	cd crkva && coverage report --rcfile=../.coveragerc
