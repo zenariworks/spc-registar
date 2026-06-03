@@ -115,3 +115,14 @@ repos:
         stages: [commit-msg]
         args: [--multiline]
         entry: '(?i)^[ \t]*co-authored-by:'
+
+  # Catch multi-line Django {# ... #} comments. Django {# #} comments are
+  # single-line only; a multi-line one is NOT treated as a comment and its
+  # text leaks into the rendered page (regressed once in _view_actions.html).
+  - repo: local
+    hooks:
+      - id: no-multiline-django-comment
+        name: no multi-line Django {# #} comment
+        language: pygrep
+        entry: '{#(?![^\n]*#\})'
+        files: \.html$
