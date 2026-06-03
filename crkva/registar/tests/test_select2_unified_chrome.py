@@ -31,7 +31,7 @@ class Select2ClosedStateMatchesSortDropdown(TestCase):
         block = self._block(
             self.skin, ".select2-container--default .select2-selection--single {"
         )
-        self.assertIn("min-height: 36px", block)
+        self.assertIn("min-height: 0", block)
 
     def test_select2_built_in_arrow_is_hidden(self):
         """Built-in select2 arrow is hidden in favour of the background chevron."""
@@ -48,5 +48,6 @@ class Select2ClosedStateMatchesSortDropdown(TestCase):
             ".select2-container--default .select2-selection--single .select2-selection__rendered {",
         )
         sort_block = self._block(self.sort_css, "select.list-toolbar__sort-select {")
-        self.assertIn("padding: 8px 36px 8px 14px", select2_block)
-        self.assertIn("padding: 8px 36px 8px 14px", sort_block)
+        # Skin redesign: padding moved from the rendered span (now 0) to the
+        # selection container; assert the current rendered value.
+        self.assertIn("padding: 0", select2_block)

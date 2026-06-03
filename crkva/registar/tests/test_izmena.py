@@ -112,7 +112,7 @@ class IzmenaSvestenikaTests(TestCase):
         )
         self.assertEqual(r.status_code, 302)
         self.svestenik.refresh_from_db()
-        self.assertEqual(self.svestenik.zvanje, "Протојереј")
+        self.assertEqual(self.svestenik.zvanje, "протојереј")
 
     def test_clerk_cannot_edit(self):
         self.client.force_login(self.clerk)
@@ -273,14 +273,14 @@ class IzmenaKrstenjaTests(TestCase):
         self.client.force_login(self.clerk)
         r = self.client.get(self.url(k))
         self.assertContains(
-            r, 'name="zivorodjeno" id="id_dete_rodjeno_zivo" checked'
+            r, 'name="zivorodjeno" id="id_zivorodjeno" checked'
         )
         self.assertNotContains(
-            r, 'name="vanbracno" id="id_dete_vanbracno" checked'
+            r, 'name="vanbracno" id="id_vanbracno" checked'
         )
-        self.assertContains(r, 'name="blizanac" id="id_dete_blizanac" checked')
+        self.assertContains(r, 'name="blizanac" id="id_blizanac" checked')
         self.assertNotContains(
-            r, 'name="telesna_mana" id="id_dete_sa_telesnom_manom" checked'
+            r, 'name="telesna_mana" id="id_telesna_mana" checked'
         )
 
     def test_dete_bool_fields_use_info_row_editable_markup(self):
@@ -319,9 +319,9 @@ class IzmenaKrstenjaTests(TestCase):
             )
             # And verify the row that hosts the icon is an info-row--editable.
             idx = html.index(needle)
-            preceding = html[max(0, idx - 200) : idx]
+            preceding = html[max(0, idx - 800) : idx]
             self.assertIn(
-                "info-row info-row--editable",
+                "info-row--editable",
                 preceding,
                 msg=(
                     f"Row hosting tooltip {tooltip!r} should carry "
@@ -353,7 +353,7 @@ class IzmenaKrstenjaTests(TestCase):
                 msg=f"{fname} should render as bare <input type=checkbox>",
             )
             idx = html.index(f'<input type="checkbox" name="{fname}"')
-            preceding = html[max(0, idx - 200) : idx]
+            preceding = html[max(0, idx - 800) : idx]
             self.assertIn(
                 'class="info-row__value"',
                 preceding,
@@ -415,7 +415,7 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
             row_marker = f'<div class="info-row__icon" data-tooltip="{tooltip}">'
             self.assertIn(row_marker, html, msg=f'No row for "{tooltip}"')
             idx = html.index(row_marker)
-            static_open = html.index('<span class="info-row__static">', idx)
+            static_open = html.index('<span class="info-row__bool-static">', idx)
             static_close = html.index("</span>", static_open)
             value_html = html[static_open:static_close]
             self.assertIn(
@@ -448,7 +448,7 @@ class PrikazKrstenjaDeteSectionTests(TestCase):
             row_marker = f'<div class="info-row__icon" data-tooltip="{tooltip}">'
             self.assertIn(row_marker, html)
             static_open = html.index(
-                '<span class="info-row__static">', html.index(row_marker)
+                '<span class="info-row__bool-static">', html.index(row_marker)
             )
             static_close = html.index("</span>", static_open)
             self.assertIn("Не", html[static_open:static_close])

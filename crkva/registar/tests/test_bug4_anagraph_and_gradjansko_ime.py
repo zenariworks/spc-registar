@@ -47,7 +47,7 @@ class KrstenjeAnagraphDisplayTests(TestCase):
         r = self.client.get(reverse("krstenje_detail", kwargs={"uid": k.uid}))
         self.assertEqual(r.status_code, 200)
         body = r.content.decode()
-        self.assertIn("Матична књига", body)
+        self.assertIn("Матични број", body)
         self.assertIn("Београд", body)
         self.assertIn("МБ-1234567", body)
         self.assertIn("A-7", body)
@@ -69,7 +69,7 @@ class KrstenjeAnagraphDisplayTests(TestCase):
         r = self.client.get(reverse("krstenje_detail", kwargs={"uid": k.uid}))
         self.assertEqual(r.status_code, 200)
         body = r.content.decode()
-        self.assertNotIn("Матична књига – анаграф", body)
+        self.assertNotIn("Матични број", body)
 
 
 class ParohijanGradjanskoImeTests(TestCase):
