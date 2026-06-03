@@ -7,16 +7,19 @@
     RIGHT → mode-aware buttons:
               view: print → edit → history
               edit: cancel → save
+              add (no obj): save only
 
   Required:
-    obj                  model instance with .uid
+    obj                  model instance with .uid — OR falsy/None on the
+                         "add new" forms, which renders just the save button
+                         in the same right-aligned layout (issue #231).
 
   Optional:
     pdf_url_name         named URL for print (positional uid)
     edit_url_name        named URL for the edit form (uid kwarg)
     can_edit             falsy hides the edit button
     show_history         default True; pass False to suppress history toggle
-    back_list_url_name   list URL (view-mode back target)
+    back_list_url_name   list URL (view-mode / add-mode back target)
     back_detail_url_name detail URL (edit-mode back target)
 {% endcomment %}
 <div class="view-actions">
@@ -24,6 +27,7 @@
     <a href="{% if is_edit and obj %}{% url back_detail_url_name uid=obj.uid %}{% else %}{% url back_list_url_name %}{% endif %}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
   {% endif %}
   <span class="view-actions__right">
+    {% if obj %}
     <span data-show-mode="view">
       {% if pdf_url_name %}
         <button type="button" onclick="window.print()" class="button button--neutral button--icon" data-tooltip="Штампај"><i class="fa-solid fa-print"></i></button>
@@ -39,5 +43,10 @@
       <button type="button" data-action="cancel-edit" class="button button--secondary button--icon" data-tooltip="Откажи"><i class="fa-solid fa-xmark"></i></button>
       <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
     </span>
+    {% else %}
+    {# Add mode: no object yet — render the save button in the same
+       right-aligned .view-actions layout as edit mode (issue #231). #}
+    <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
+    {% endif %}
   </span>
 </div>

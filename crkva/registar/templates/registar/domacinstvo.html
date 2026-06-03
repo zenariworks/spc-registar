@@ -20,11 +20,7 @@
       {% elif is_edit %}Измена домаћинства{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}
       {% else %}Домаћинство{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}{% endif %}
     </h1>
-    {% if domacinstvo %}
       {% include "registar/_view_actions.html" with back_list_url_name="domacinstva" back_detail_url_name="domacinstvo_detail" obj=domacinstvo edit_url_name="izmena_domacinstva" can_edit=can_edit_domacinstvo %}
-    {% else %}
-      <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
-    {% endif %}
   </div>
 
   {% if form.errors %}{% include "registar/_form_errors.html" %}{% endif %}
