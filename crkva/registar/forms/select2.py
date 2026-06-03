@@ -165,6 +165,12 @@ class HramSelect2Widget(ScriptAwareModelSelect2Widget):
     search_fields = ["naziv__icontains"]
     attrs = {"data-minimum-input-length": 0}
 
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs["data-create-modal"] = "hram-create-modal"
+        attrs["data-create-label"] = "Додај нови храм"
+        return attrs
+
 
 class AdresaSelect2Widget(ScriptAwareModelSelect2Widget):
     """Autocomplete widget for Adresa.

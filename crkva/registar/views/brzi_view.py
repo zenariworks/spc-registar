@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import DatabaseError, IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from registar.models import Adresa, Osoba
+from registar.models import Adresa, Hram, Osoba
 from tenants.permissions import tenant_role_required
 
 logger = logging.getLogger(__name__)
@@ -83,3 +83,20 @@ def brzi_izmena_adrese(request, uid):
         logger.exception("DatabaseError saving Adresa uid=%s", uid)
         return JsonResponse({"error": "Грешка у бази података."}, status=500)
     return JsonResponse({"id": str(adresa.uid), "text": str(adresa)})
+
+
+@tenant_role_required("krstenje")
+def brzi_unos_hrama(request):
+    """AJAX endpoint за брзо креирање храма из модалног дијалога."""
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+
+    naziv = request.POST.get("naziv", "").strip()
+    mesto = request.POST.get("mesto", "").strip()
+    if not naziv:
+        return JsonResponse({"error": "Назив храма је обавезан"}, status=400)
+
+    # get_or_create on (naziv, mesto) so repeated quick-adds of the same temple
+    # return the existing row instead of piling up duplicates.
+    hram, _ = Hram.objects.get_or_create(naziv=naziv, mesto=mesto)
+    return JsonResponse({"id": str(hram.uid), "text": str(hram)})

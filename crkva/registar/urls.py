@@ -69,6 +69,7 @@ urlpatterns = [
     path("search/", views.search_view, name="search_view"),
     path("api/search/", views.search_autocomplete, name="search_autocomplete"),
     path("api/brzi-unos-osobe/", views.brzi_unos_osobe, name="brzi_unos_osobe"),
+    path("api/brzi-unos-hrama/", views.brzi_unos_hrama, name="brzi_unos_hrama"),
     path(
         "api/brzi-izmena-adrese/<uuid:uid>/",
         views.brzi_izmena_adrese,
