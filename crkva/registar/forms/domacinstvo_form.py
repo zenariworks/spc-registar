@@ -5,10 +5,10 @@ from django.forms import inlineformset_factory
 from registar.forms.phone import TenantPhoneField
 from registar.forms.select2 import (
     AdresaSelect2Widget,
+    OsobaSelect2Widget,
     PublicSchemaModelSelect2Widget,
-    ScriptAwareModelSelect2Widget,
 )
-from registar.models import Adresa, Domacinstvo, Osoba, Slava, Ukucanin
+from registar.models import Adresa, Domacinstvo, Slava, Ukucanin
 
 
 class DomacinstvoForm(forms.ModelForm):
@@ -30,11 +30,7 @@ class DomacinstvoForm(forms.ModelForm):
             "napomena",
         ]
         widgets = {
-            "domacin": ScriptAwareModelSelect2Widget(
-                model=Osoba,
-                search_fields=["ime__icontains", "prezime__icontains"],
-                attrs={"data-minimum-input-length": 0},
-            ),
+            "domacin": OsobaSelect2Widget(),
             "adresa": AdresaSelect2Widget(),
             # Slava lives in the public schema (shared model); the dedicated
             # widget wraps every SQL call in schema_context("public") so the
@@ -55,11 +51,7 @@ class UkucaninForm(forms.ModelForm):
         model = Ukucanin
         fields = ["osoba", "ime_ukucana", "uloga", "preminuo"]
         widgets = {
-            "osoba": ScriptAwareModelSelect2Widget(
-                model=Osoba,
-                search_fields=["ime__icontains", "prezime__icontains"],
-                attrs={"data-minimum-input-length": 0},
-            ),
+            "osoba": OsobaSelect2Widget(),
             "ime_ukucana": forms.TextInput(
                 attrs={"placeholder": "Име ако особа није у бази"}
             ),
