@@ -229,7 +229,11 @@ class DistinctValuesSelect2Widget(ModelSelect2Widget):
         attrs.setdefault("data-tags", "true")
         attrs.setdefault("data-token-separators", "[]")
         attrs["data-minimum-input-length"] = 0
-        attrs.setdefault("data-placeholder", "Изабери или унеси ново…")
+        # Set directly (not setdefault): the parent build_attrs already
+        # puts data-placeholder="" in attrs, and select2 with allow-clear
+        # fails to initialise on an empty placeholder — it falls back to a
+        # bare <select> with no tags UI. A non-empty placeholder fixes both.
+        attrs["data-placeholder"] = "Изабери или унеси ново…"
         return attrs
 
     def optgroups(self, name, value, attrs=None):
