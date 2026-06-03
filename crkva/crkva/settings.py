@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 from typing import List
 
@@ -269,3 +270,9 @@ AXES_FAILURE_LIMIT = 5
 AXES_COOLOFF_TIME = 1  # hours
 AXES_LOCKOUT_PARAMETERS = [["username", "ip_address"]]
 AXES_RESET_ON_SUCCESS = True
+
+# Disable django-axes during the test suite. The Django test client's
+# login() does not pass a request to the auth backend, but AxesBackend
+# requires one (raises AxesBackendRequestParameterRequired otherwise).
+if "test" in sys.argv:
+    AXES_ENABLED = False

@@ -110,7 +110,7 @@ class GatedViewTests(TestCase):
         self.client.force_login(self.priest)
         r = self.client.post(
             "/api/brzi-unos-osobe/",
-            {"ime": "Иван", "prezime": "Тест", "pol": "M"},
+            {"ime": "Иван", "prezime": "Тест", "pol": "М"},
         )
         self.assertEqual(r.status_code, 403)
 
@@ -118,7 +118,7 @@ class GatedViewTests(TestCase):
         self.client.force_login(self.clerk)
         r = self.client.post(
             "/api/brzi-unos-osobe/",
-            {"ime": "Иван", "prezime": "Тест", "pol": "M"},
+            {"ime": "Иван", "prezime": "Тест", "pol": "М"},
         )
         self.assertEqual(r.status_code, 200)
 

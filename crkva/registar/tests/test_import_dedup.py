@@ -90,13 +90,13 @@ class ImporterSafetyCheckedDedup(TestCase):
     def setUp(self):
         # The migracija helpers keep module-level caches that survive across
         # tests; clear them so a previous test's Adresa/Osoba refs don't leak in.
-        from registar.migracija.address import _ADRESA_CACHE, warm_adresa_cache
+        from registar.migracija.address import _cache, warm_adresa_cache
         from registar.migracija.osoba_repo import (
             _OSOBA_CACHE_BY_SCHEMA,
             warm_osoba_cache,
         )
 
-        _ADRESA_CACHE.clear()
+        _cache().clear()
         _OSOBA_CACHE_BY_SCHEMA.clear()
         warm_adresa_cache()
         warm_osoba_cache()
