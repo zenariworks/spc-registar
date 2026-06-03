@@ -37,11 +37,7 @@
       {% elif is_edit %}Измена венчања{% if vencanje %}<span class="u-page-title__subtitle">{{ vencanje.ime_zenika }} и {{ vencanje.ime_neveste }} {{ vencanje.prezime_zenika }}</span>{% endif %}
       {% else %}Венчање<span class="u-page-title__subtitle">{{ vencanje.ime_zenika }} и {{ vencanje.ime_neveste }} {{ vencanje.prezime_zenika }}</span>{% endif %}
     </h1>
-    {% if vencanje %}
       {% include "registar/_view_actions.html" with back_list_url_name="vencanja" back_detail_url_name="vencanje_detail" obj=vencanje edit_url_name="izmena_vencanja" can_edit=can_edit_vencanje pdf_url_name="vencanje_pdf" %}
-    {% else %}
-      <button type="submit" class="button button--primary button--icon" data-tooltip="Сачувај"><i class="fa-solid fa-floppy-disk"></i></button>
-    {% endif %}
   </div>
 
   {% if form.errors %}{% include 'registar/_form_errors.html' %}{% endif %}
