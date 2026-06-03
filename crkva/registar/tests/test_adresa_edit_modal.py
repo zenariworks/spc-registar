@@ -166,9 +166,11 @@ class AdresaEditEndpointTests(_BaseDomacinstvoMixin, TestCase):
         self.adresa.refresh_from_db()
         self.assertEqual(self.adresa.ulica, "Стара")
 
-    def test_endpoint_get_rejected(self):
+    def test_unsupported_method_rejected(self):
+        # GET is now supported (returns the pre-fill payload for the pencil
+        # edit flow); only DELETE/PUT etc. are rejected with 405.
         self.client.force_login(self.clerk)
-        r = self.client.get(self.url)
+        r = self.client.delete(self.url)
         self.assertEqual(r.status_code, 405)
 
     def test_endpoint_404_for_missing_uid(self):

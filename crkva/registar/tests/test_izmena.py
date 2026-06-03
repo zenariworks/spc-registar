@@ -112,7 +112,7 @@ class IzmenaSvestenikaTests(TestCase):
         )
         self.assertEqual(r.status_code, 302)
         self.svestenik.refresh_from_db()
-        self.assertEqual(self.svestenik.zvanje, "Протојереј")
+        self.assertEqual(self.svestenik.zvanje, "протојереј")
 
     def test_clerk_cannot_edit(self):
         self.client.force_login(self.clerk)
