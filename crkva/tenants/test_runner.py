@@ -68,3 +68,17 @@ class TenantTestRunner(DiscoverRunner):
             return original_func(self)
 
         SimpleTestCase._pre_setup = classmethod(_patched)
+
+        # _pre_setup only fires per test instance. setUpTestData runs once in
+        # setUpClass, BEFORE the first _pre_setup -- so if an earlier test class
+        # left the connection on another schema (e.g. test_switch calls
+        # connection.set_tenant() directly), this class would build its data in
+        # the wrong schema and request-driven assertions would 404. Guard
+        # setUpClass too so setUpTestData always runs on the test tenant.
+        original_setupclass = SimpleTestCase.__dict__["setUpClass"].__func__
+
+        def _patched_setupclass(cls):  # noqa: ANN001
+            connection.set_tenant(tenant)
+            return original_setupclass(cls)
+
+        SimpleTestCase.setUpClass = classmethod(_patched_setupclass)
