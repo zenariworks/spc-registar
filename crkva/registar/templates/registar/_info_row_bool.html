@@ -19,7 +19,7 @@
         tabindex="-1"
         aria-hidden="true"
       >
-      <span class="info-row__bool-static">{{ value_label }}{% if sub %} <span class="info-row__sub">{{ sub }}</span>{% endif %}</span>
+      <span class="info-row__bool-static">{{ value_label }}: {{ value|yesno:"Да,Не" }}{% if sub %} <span class="info-row__sub">{{ sub }}</span>{% endif %}</span>
       {% if field %}{{ field }}<label class="info-row__bool-label" for="{{ field.id_for_label }}">{{ label }}</label>{% endif %}
     </div>
   </div>

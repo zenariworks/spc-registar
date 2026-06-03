@@ -103,7 +103,7 @@
             <div class="info-row__icon" data-tooltip="Дете близанац"><i class="fa-solid fa-people-arrows"></i></div>
             <div class="info-row__body">
               <div class="info-row__value">
-                <span class="info-row__static">Дете близанац: {{ krstenje.blizanac|yesno:"Да,Не" }}{% if krstenje.blizanac and krstenje.ime_blizanca %} <span class="info-row__sub">({{ krstenje.ime_blizanca }})</span>{% endif %}</span>
+                <span class="info-row__bool-static">Дете близанац: {{ krstenje.blizanac|yesno:"Да,Не" }}{% if krstenje.blizanac and krstenje.ime_blizanca %} <span class="info-row__sub">({{ krstenje.ime_blizanca }})</span>{% endif %}</span>
                 {{ form.blizanac }}<label class="info-row__bool-label" for="{{ form.blizanac.id_for_label }}">Дете близанац</label>
               </div>
             </div>

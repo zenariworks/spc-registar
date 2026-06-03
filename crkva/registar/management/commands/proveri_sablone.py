@@ -262,7 +262,11 @@ def step(model: type[Model], attr: str) -> tuple[str, object]:
     # all our prefetch annotations are named ``prefetched_*`` (see e.g.
     # ``parohijan_view.SpisakParohijana``); treat them as opaque querysets so
     # the audit doesn't crow about a real-but-dynamic attribute.
-    if attr.startswith("prefetched_"):
+    # View-annotated attributes computed in the view loop (not via
+    # Prefetch(to_attr=...), so not prefetched_*-prefixed): e.g.
+    # Domacinstvo.zivi_clanovi / preminuli_clanovi set in
+    # domacinstvo_view / slava_view and guarded with {% if %} in templates.
+    if attr.startswith("prefetched_") or attr in {"zivi_clanovi", "preminuli_clanovi"}:
         return "queryset", None
 
     if field is not None:
