@@ -1,0 +1,62 @@
+{% comment %}
+Quick-add Adresa modal (create-new, distinct from _modal_adresa.html which
+edits the selected address in place). Uses the generic Modal.bindForm helper
+and the quick_create.js footer; registered in window.quickModals so the
+"+ Додај нову адресу" footer on Adresa select2 dropdowns can open it.
+{% endcomment %}
+<div id="adresa-create-modal" class="modal-overlay" hidden>
+  <div class="modal">
+    <div class="modal__header">
+      <h3><i class="fa-solid fa-location-dot"></i> Нова адреса</h3>
+      <button type="button" class="modal__close" onclick="Modal.close('adresa-create-modal')">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modal-ulica">Улица</label>
+          <input type="text" id="modal-ulica" autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="modal-broj">Број</label>
+          <input type="text" id="modal-broj" autocomplete="off">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modal-broj_stana">Број стана</label>
+          <input type="text" id="modal-broj_stana" autocomplete="off">
+        </div>
+        <div class="form-field">
+          <label for="modal-mesto">Место</label>
+          <input type="text" id="modal-mesto" autocomplete="off">
+        </div>
+      </div>
+      <div class="error-text" hidden></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="button button--neutral" onclick="Modal.close('adresa-create-modal')">Откажи</button>
+      <button type="button" class="button button--primary" onclick="window.quickModals && window.quickModals['adresa-create-modal'] && window.quickModals['adresa-create-modal'].save()">
+        <i class="fa-solid fa-check"></i> Сачувај
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    function init() {
+      var inst = Modal.bindForm("adresa-create-modal", {
+        url: "{% url 'brzi_unos_adrese' %}",
+        fields: ["ulica", "broj", "broj_stana", "mesto"],
+        requiredFields: [],
+      });
+      window.quickModals = window.quickModals || {};
+      window.quickModals["adresa-create-modal"] = inst;
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>
