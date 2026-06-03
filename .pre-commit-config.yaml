@@ -105,3 +105,13 @@ repos:
       - id: conventional-pre-commit
         stages: [commit-msg]
         args: [feat, fix, refactor, docs, test, chore, ci, perf, style, build, revert]
+
+  # Forbid ANY "Co-authored-by:" trailer in commit messages.
+  - repo: local
+    hooks:
+      - id: no-coauthored-by
+        name: no Co-authored-by trailer
+        language: pygrep
+        stages: [commit-msg]
+        args: [--multiline]
+        entry: '(?i)^[ \t]*co-authored-by:'
