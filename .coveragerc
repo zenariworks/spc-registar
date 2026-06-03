@@ -1,0 +1,20 @@
+[run]
+# Measured from the crkva/ working dir (where manage.py test discovers tests).
+source =
+    registar
+    kalendar
+    tenants
+omit =
+    */migrations/*
+    */tests/*
+    */test_*.py
+    */__init__.py
+    */apps.py
+
+[report]
+show_missing = false
+skip_covered = false
+exclude_also =
+    if TYPE_CHECKING:
+    raise NotImplementedError
+    def __repr__
