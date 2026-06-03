@@ -191,4 +191,6 @@ class AdresaSelect2Widget(ScriptAwareModelSelect2Widget):
     def build_attrs(self, base_attrs, extra_attrs=None):
         attrs = super().build_attrs(base_attrs, extra_attrs)
         attrs["data-adresa-edit"] = "1"
+        attrs["data-create-modal"] = "adresa-create-modal"
+        attrs["data-create-label"] = "Додај нову адресу"
         return attrs

@@ -100,3 +100,49 @@ def brzi_unos_hrama(request):
     # return the existing row instead of piling up duplicates.
     hram, _ = Hram.objects.get_or_create(naziv=naziv, mesto=mesto)
     return JsonResponse({"id": str(hram.uid), "text": str(hram)})
+
+
+@tenant_role_required("domacinstvo")
+def brzi_unos_adrese(request):
+    """AJAX endpoint за брзо креирање нове адресе из модалног дијалога.
+
+    Permission mirrors brzi_izmena_adrese ("domacinstvo"). Адреса се дели
+    међу особама/домаћинствима, па се исти нормализовани унос не дуплира —
+    ако постоји, враћа се постојећи ред.
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+
+    ulica = request.POST.get("ulica", "").strip()
+    broj = request.POST.get("broj", "").strip()
+    broj_stana = request.POST.get("broj_stana", "").strip()
+    mesto = request.POST.get("mesto", "").strip()
+    if not ulica and not mesto:
+        return JsonResponse({"error": "Унесите бар улицу или место."}, status=400)
+
+    # Match the unique_adresa_normalized constraint columns case-insensitively
+    # and reuse an existing row instead of erroring on a duplicate.
+    existing = Adresa.objects.filter(
+        ulica__iexact=ulica,
+        broj__iexact=broj,
+        broj_stana__iexact=broj_stana,
+        mesto__iexact=mesto,
+    ).first()
+    if existing:
+        return JsonResponse({"id": str(existing.uid), "text": str(existing)})
+
+    adresa = Adresa(ulica=ulica, broj=broj, broj_stana=broj_stana, mesto=mesto)
+    try:
+        adresa.full_clean()
+        adresa.save()
+    except ValidationError as exc:
+        return JsonResponse(
+            {"error": "Невалидни подаци адресе.", "detail": exc.message_dict},
+            status=400,
+        )
+    except IntegrityError:
+        logger.exception("IntegrityError creating Adresa")
+        return JsonResponse(
+            {"error": "Адреса се не може сачувати због конфликта."}, status=400
+        )
+    return JsonResponse({"id": str(adresa.uid), "text": str(adresa)})
