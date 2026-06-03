@@ -1,0 +1,52 @@
+{% comment %}
+Quick-add Hram modal. Uses the generic Modal.bindForm helper (modal.js) and
+the generic quick_create.js footer. Registered in window.quickModals so the
+"+ Додај нови храм" footer on Hram select2 dropdowns can open it.
+{% endcomment %}
+<div id="hram-create-modal" class="modal-overlay" hidden>
+  <div class="modal">
+    <div class="modal__header">
+      <h3><i class="fa-solid fa-church"></i> Нови храм</h3>
+      <button type="button" class="modal__close" onclick="Modal.close('hram-create-modal')">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modal-naziv">Назив *</label>
+          <input type="text" id="modal-naziv" autocomplete="off" required>
+        </div>
+        <div class="form-field">
+          <label for="modal-mesto">Место</label>
+          <input type="text" id="modal-mesto" autocomplete="off">
+        </div>
+      </div>
+      <div class="error-text" hidden></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="button button--neutral" onclick="Modal.close('hram-create-modal')">Откажи</button>
+      <button type="button" class="button button--primary" onclick="window.quickModals && window.quickModals['hram-create-modal'] && window.quickModals['hram-create-modal'].save()">
+        <i class="fa-solid fa-check"></i> Сачувај
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    function init() {
+      var inst = Modal.bindForm("hram-create-modal", {
+        url: "{% url 'brzi_unos_hrama' %}",
+        fields: ["naziv", "mesto"],
+        requiredFields: ["naziv"],
+        requiredMessage: "Назив храма је обавезан.",
+      });
+      window.quickModals = window.quickModals || {};
+      window.quickModals["hram-create-modal"] = inst;
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>

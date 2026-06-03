@@ -6,7 +6,7 @@ vencanje_view, ...) и по намени (home_view, search_view, brzi_view).
 """
 
 from .adresa_view import duplikati_adresa, spoji_adresu
-from .brzi_view import brzi_izmena_adrese, brzi_unos_osobe
+from .brzi_view import brzi_izmena_adrese, brzi_unos_hrama, brzi_unos_osobe
 from .domacinstvo_view import (
     PrikazDomacinstva,
     SpisakDomacinsta,
