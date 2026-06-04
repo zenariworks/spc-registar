@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Васкршња водица — по улицама{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'registar/print/vodica.css' %}" media="print">{% endblock %}
+
+{% block content %}
+<div class="u-page-header u-page-header--wrap">
+  <h1 class="u-page-title">
+    Васкршња водица
+    <span class="u-page-title__subtitle">преглед по улицама</span>
+  </h1>
+  {% if svestenik and redovi %}
+    <button type="button" onclick="window.print()" class="back-button u-page-header__right" aria-label="Штампај" title="Штампај"><i class="fa-solid fa-print"></i></button>
+  {% endif %}
+</div>
+
+<form method="get" class="vodica-toolbar" id="vodica-form">
+  <label for="svestenik-select" class="vodica-toolbar__label">Свештеник:</label>
+  <select name="svestenik" id="svestenik-select" class="list-toolbar__select" onchange="document.getElementById('vodica-form').submit()">
+    <option value="">— изаберите свештеника —</option>
+    {% for s in svestenici %}
+      <option value="{{ s.pk }}" {% if selected_id == s.pk|stringformat:"s" %}selected{% endif %}>{{ s.ime }} {{ s.prezime }}{% if s.parohija %} ({{ s.parohija }}){% endif %}</option>
+    {% endfor %}
+  </select>
+</form>
+
+{% if svestenik %}
+  <div class="vodica-report" id="vodica-report">
+    <div class="vodica-report__head">
+      <span class="vodica-report__priest">{{ svestenik.ime }} {{ svestenik.prezime }}{% if svestenik.parohija %} · парохија {{ svestenik.parohija }}{% endif %}</span>
+      {% if svestenik.parohija %}<span class="vodica-report__sub">територија парохије {{ svestenik.parohija }}</span>{% endif %}
+    </div>
+    {% if redovi %}
+      <table class="data-table vodica-table">
+        <thead>
+          <tr>
+            <th>Улица</th>
+            <th class="vodica-table__num">Број домаћинстава</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in redovi %}
+            <tr>
+              <td>{{ r.ulica }}</td>
+              <td class="vodica-table__num">{{ r.broj }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Укупно ({{ broj_ulica }} улица)</td>
+            <td class="vodica-table__num">{{ ukupno }}</td>
+          </tr>
+        </tfoot>
+      </table>
+    {% elif nema_parohije %}
+      <div class="spisak__empty">
+        Овај свештеник нема додељену парохију, па нема територију за приказ.
+        <br><small>Парохија се поставља на картици свештеника.</small>
+      </div>
+    {% else %}
+      <div class="spisak__empty">
+        Нема домаћинстава за васкршњу водицу на улицама парохије {{ svestenik.parohija }}.
+        <br><small>Улице се додељују парохији преко адресе (поље „свештеник (улица)“).</small>
+      </div>
+    {% endif %}
+  </div>
+{% else %}
+  <div class="spisak__empty">Изаберите свештеника да бисте видели улице и број домаћинстава.</div>
+{% endif %}
+{% endblock %}

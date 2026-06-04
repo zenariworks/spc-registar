@@ -2,15 +2,44 @@
 Модул за приказ домаћинстава и њихових чланова.
 """
 
+from itertools import groupby
+
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import DomacinstvoForm
 from registar.forms.domacinstvo_form import UkucaninFormSet
-from registar.models import Domacinstvo
+from registar.models import Domacinstvo, Svestenik
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from tenants.permissions import tenant_role_required
+
+
+def _resolve_svestenik(request: HttpRequest):
+    """Свештеник из ?svestenik=<uid>, или None."""
+    val = (request.GET.get("svestenik") or "").strip()
+    if not val:
+        return None
+    try:
+        return Svestenik.objects.filter(pk=int(val)).first()
+    except (ValueError, TypeError):
+        return None
+
+
+def _by_parish_filter(qs, svestenik):
+    """Домаћинства чија адреса припада парохији изабраног свештеника (#26).
+
+    Улице су додељене свештеницима, али свештеници ротирају — стабилна
+    јединица је парохија, па филтрирамо по `adresa.svestenik.parohija`.
+    """
+    if svestenik is not None and svestenik.parohija_id:
+        return qs.filter(adresa__svestenik__parohija=svestenik.parohija_id)
+    if svestenik is not None:
+        # Свештеник без парохије — ништа да се прикаже.
+        return qs.none()
+    return qs
 
 
 @tenant_role_required("domacinstvo")
@@ -50,11 +79,15 @@ class SpisakDomacinsta(
     ordering = ["adresa__ulica", "adresa__broj", "domacin__prezime", "domacin__ime"]
 
     def get_queryset(self):
-        return self.get_search_queryset(
-            Domacinstvo.objects.select_related("domacin", "adresa", "slava")
+        qs = (
+            Domacinstvo.objects.select_related(
+                "domacin", "adresa", "adresa__svestenik", "slava"
+            )
             .prefetch_related("ukucani", "ukucani__osoba")
             .all()
         )
+        qs = _by_parish_filter(qs, _resolve_svestenik(self.request))
+        return self.get_search_queryset(qs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -62,6 +95,13 @@ class SpisakDomacinsta(
             members = list(d.ukucani.all())
             d.zivi_clanovi = [u for u in members if not u.preminuo]
             d.preminuli_clanovi = [u for u in members if u.preminuo]
+        # Priest filter controls (issue #26).
+        svestenik = _resolve_svestenik(self.request)
+        context["svestenik_filter_options"] = Svestenik.objects.order_by(
+            "prezime", "ime"
+        )
+        context["current_svestenik"] = (self.request.GET.get("svestenik") or "").strip()
+        context["selected_svestenik"] = svestenik
         return context
 
 
@@ -132,5 +172,47 @@ def izmena_domacinstva(request, uid):
             "back_url": reverse("domacinstvo_detail", kwargs={"uid": instance.uid}),
             "is_edit": True,
             "domacinstvo": instance,
+        },
+    )
+
+
+@login_required
+def domacinstva_print(request: HttpRequest) -> HttpResponse:
+    """Штампа домаћинстава изабраног свештеника, груписано по улици (#26).
+
+    За разлику од листе са бесконачним скроловањем, овде се рендерују СВА
+    домаћинства парохије изабраног свештеника (адреса + телефони), погодно за
+    обилазак на терену.
+    """
+    svestenik = _resolve_svestenik(request)
+    domacinstva = []
+    if svestenik is not None and svestenik.parohija_id:
+        domacinstva = list(
+            _by_parish_filter(
+                Domacinstvo.objects.select_related(
+                    "domacin", "adresa", "adresa__svestenik"
+                ),
+                svestenik,
+            ).order_by(
+                "adresa__ulica", "adresa__broj", "domacin__prezime", "domacin__ime"
+            )
+        )
+
+    def _street(d):
+        if d.adresa and (d.adresa.ulica or "").strip():
+            return d.adresa.ulica.strip()
+        return ""
+
+    grupe = [
+        {"ulica": ulica or "Без улице", "domacinstva": list(items)}
+        for ulica, items in groupby(domacinstva, key=_street)
+    ]
+    return render(
+        request,
+        "registar/domacinstva_print.html",
+        {
+            "svestenik": svestenik,
+            "grupe": grupe,
+            "ukupno": len(domacinstva),
         },
     )

@@ -1039,3 +1039,47 @@ body.history-open {
     body.printing-cert > footer { display: none !important; }
     body.printing-cert > #print-cert-wrap { display: block !important; }
 }
+
+
+/* Vaskrsnja vodica report (#26) ----------------------------------------- */
+.vodica-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: 0 0 var(--space-4) 0;
+}
+.vodica-toolbar__label { font-weight: 600; color: var(--color-text-muted); }
+.dom-filter { justify-content: flex-start; }
+.dom-filter__form { display: flex; align-items: center; gap: var(--space-3); }
+.vodica-report__head {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin: 0 0 var(--space-3) 0;
+  color: var(--color-heading);
+}
+.vodica-report__sub { display:block; font-size:0.85rem; font-weight:400; color:var(--color-text-muted); font-style:italic; }
+.vodica-table { width: 100%; border-collapse: collapse; }
+.vodica-table th,
+.vodica-table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+.vodica-table thead th {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+.vodica-table .vodica-table__num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  width: 12rem;
+}
+.vodica-table tfoot td {
+  font-weight: 700;
+  border-top: 2px solid var(--color-border);
+  border-bottom: 0;
+  color: var(--color-heading);
+}

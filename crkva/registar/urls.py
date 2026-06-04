@@ -22,6 +22,11 @@ urlpatterns = [
         name="kalendar_mesec",
     ),
     path("slava/<int:uid>/", views.slava_domacinstva, name="slava_detail"),
+    path(
+        "izvestaj/vaskrsnja-vodica/",
+        views.vaskrsnja_vodica,
+        name="vaskrsnja_vodica",
+    ),
     path("parohijani/", views.SpisakParohijana.as_view(), name="parohijani"),
     path(
         "parohijan/<int:uid>/",
@@ -34,6 +39,11 @@ urlpatterns = [
         name="parohijan_pdf",
     ),
     path("domacinstva/", views.SpisakDomacinsta.as_view(), name="domacinstva"),
+    path(
+        "domacinstva/print/",
+        views.domacinstva_print,
+        name="domacinstva_print",
+    ),
     path(
         "domacinstvo/<uuid:uid>/",
         views.PrikazDomacinstva.as_view(),

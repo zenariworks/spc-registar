@@ -17,6 +17,7 @@
     {% url 'vencanja' as vencanja_url %}
     {% url 'svestenici' as svestenici_url %}
     {% url 'kalendar' as kalendar_url %}
+    {% url 'vaskrsnja_vodica' as vaskrsnja_vodica_url %}
     {% url 'unos_krstenja' as unos_krstenja_url %}
     {% url 'unos_vencanja' as unos_vencanja_url %}
     {% url 'unos_parohijana' as unos_parohijana_url %}
@@ -89,6 +90,13 @@
       <a href="{{ kalendar_url }}" class="{% if request.path == kalendar_url %}active{% endif %}" title="Календар">
         <i class="fa-solid fa-calendar-days"></i>
         <span class="sidebar-text">Календар</span>
+      </a>
+    </div>
+
+    <div class="sidebar-menu-item">
+      <a href="{{ vaskrsnja_vodica_url }}" class="{% if request.path == vaskrsnja_vodica_url %}active{% endif %}" title="Васкршња водица — по улицама">
+        <i class="fa-solid fa-route"></i>
+        <span class="sidebar-text">Васкршња водица</span>
       </a>
     </div>
   </nav>
