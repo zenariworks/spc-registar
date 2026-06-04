@@ -149,14 +149,45 @@ class UserManagementViewTests(TestCase):
 
     # ----- deactivate -----
 
-    def test_admin_can_deactivate_user(self):
+    def test_admin_can_deactivate_membership_not_global_user(self):
+        # Deactivation toggles the *membership*, never the shared User row.
         self.client.force_login(self.admin)
         r = self.client.post(
             reverse("parohija:user_deactivate", kwargs={"user_id": self.clerk.pk}),
         )
         self.assertEqual(r.status_code, 302)
+        membership = UserMembership.objects.get(
+            user=self.clerk, tenant=self.tenant
+        )
+        self.assertFalse(membership.is_active)
         self.clerk.refresh_from_db()
-        self.assertFalse(self.clerk.is_active)
+        self.assertTrue(self.clerk.is_active)  # global account untouched (#227)
+
+    def test_deactivation_does_not_leak_into_other_parish(self):
+        # A clerk who belongs to two parishes: deactivating membership in the
+        # active parish must leave the membership in the other parish alone.
+        UserMembership.objects.create(
+            user=self.clerk, tenant=self.other_tenant, role=Role.KANCELARIJA
+        )
+        self.client.force_login(self.admin)
+        self.client.post(
+            reverse("parohija:user_deactivate", kwargs={"user_id": self.clerk.pk}),
+        )
+        here = UserMembership.objects.get(user=self.clerk, tenant=self.tenant)
+        there = UserMembership.objects.get(user=self.clerk, tenant=self.other_tenant)
+        self.assertFalse(here.is_active)
+        self.assertTrue(there.is_active)  # other parish unaffected (#227)
+
+    def test_admin_can_reactivate_membership(self):
+        membership = UserMembership.objects.get(user=self.clerk, tenant=self.tenant)
+        membership.is_active = False
+        membership.save(update_fields=["is_active"])
+        self.client.force_login(self.admin)
+        self.client.post(
+            reverse("parohija:user_deactivate", kwargs={"user_id": self.clerk.pk}),
+        )
+        membership.refresh_from_db()
+        self.assertTrue(membership.is_active)
 
     def test_admin_cannot_deactivate_self(self):
         self.client.force_login(self.admin)
@@ -164,8 +195,8 @@ class UserManagementViewTests(TestCase):
             reverse("parohija:user_deactivate", kwargs={"user_id": self.admin.pk}),
         )
         self.assertEqual(r.status_code, 302)
-        self.admin.refresh_from_db()
-        self.assertTrue(self.admin.is_active)
+        membership = UserMembership.objects.get(user=self.admin, tenant=self.tenant)
+        self.assertTrue(membership.is_active)
 
     def test_admin_cannot_deactivate_other_tenants_user(self):
         self.client.force_login(self.admin)
@@ -175,5 +206,7 @@ class UserManagementViewTests(TestCase):
             ),
         )
         self.assertEqual(r.status_code, 404)
-        self.foreign_clerk.refresh_from_db()
-        self.assertTrue(self.foreign_clerk.is_active)
+        membership = UserMembership.objects.get(
+            user=self.foreign_clerk, tenant=self.other_tenant
+        )
+        self.assertTrue(membership.is_active)

@@ -131,16 +131,20 @@ def user_edit_role(request: HttpRequest, user_id: int) -> HttpResponse:
 @tenant_admin_required
 @require_POST
 def user_deactivate(request: HttpRequest, user_id: int) -> HttpResponse:
-    """Toggle User.is_active for a member of the active tenant."""
+    """Toggle membership.is_active for a member of the active tenant.
+
+    Scoped to request.tenant: this locks the user out of *this* parish only.
+    It never touches the shared User.is_active flag, so a user who belongs to
+    several parishes keeps access to the others (issue #227).
+    """
     membership = get_object_or_404(
         UserMembership, user_id=user_id, tenant=request.tenant
     )
-    target = membership.user
-    if target.pk == request.user.pk:
+    if membership.user_id == request.user.pk:
         messages.error(request, "Не можете деактивирати свој налог.")
         return redirect("parohija:user_list")
-    target.is_active = not target.is_active
-    target.save(update_fields=["is_active"])
-    verb = "активиран" if target.is_active else "деактивиран"
-    messages.success(request, f"Корисник {target.username} {verb}.")
+    membership.is_active = not membership.is_active
+    membership.save(update_fields=["is_active"])
+    verb = "активиран" if membership.is_active else "деактивиран"
+    messages.success(request, f"Корисник {membership.user.username} {verb}.")
     return redirect("parohija:user_list")
