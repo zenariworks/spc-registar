@@ -48,6 +48,9 @@ class Svestenik(TimeStampedModel):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        # No reverse accessor: frees the "svestenik" name on Adresa for the
+        # street->priest FK added in #26 (this reverse was unused).
+        related_name="+",
         verbose_name="адреса",
     )
 

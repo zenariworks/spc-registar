@@ -2,5 +2,23 @@
 
 {% block content %}
 {% if can_edit_domacinstvo %}{% url 'unos_domacinstva' as add_url %}{% endif %}
+{% if svestenik_filter_options %}
+<div class="vodica-toolbar dom-filter">
+  <form method="get" id="dom-svestenik-form" class="dom-filter__form">
+    {% if upit %}<input type="hidden" name="search" value="{{ upit }}">{% endif %}
+    {% if current_sort %}<input type="hidden" name="sort" value="{{ current_sort }}">{% endif %}
+    <label for="dom-svestenik" class="vodica-toolbar__label">Свештеник:</label>
+    <select name="svestenik" id="dom-svestenik" class="list-toolbar__select" onchange="document.getElementById('dom-svestenik-form').submit()">
+      <option value="">сви свештеници</option>
+      {% for s in svestenik_filter_options %}
+        <option value="{{ s.pk }}" {% if current_svestenik == s.pk|stringformat:"s" %}selected{% endif %}>{{ s.ime }} {{ s.prezime }}{% if s.parohija %} ({{ s.parohija }}){% endif %}</option>
+      {% endfor %}
+    </select>
+  </form>
+  {% if selected_svestenik %}
+    <a class="button button--neutral" href="{% url 'domacinstva_print' %}?svestenik={{ selected_svestenik.pk }}" target="_blank" rel="noopener" title="Штампај списак"><i class="fa-solid fa-print"></i> Штампај</a>
+  {% endif %}
+</div>
+{% endif %}
 {% include "registar/_spisak.html" with title="Домаћинства" stavka_template="registar/_stavka_domacinstva.html" add_url=add_url add_label="Додај домаћинство" %}
 {% endblock %}

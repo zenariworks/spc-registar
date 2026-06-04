@@ -15,6 +15,7 @@ from .brzi_view import (
 from .domacinstvo_view import (
     PrikazDomacinstva,
     SpisakDomacinsta,
+    domacinstva_print,
     izmena_domacinstva,
     unos_domacinstva,
 )
@@ -37,6 +38,7 @@ from .parohijan_view import (
 )
 from .search_view import SEARCH_PREVIEW_LIMIT, search_autocomplete, search_view
 from .slava_view import slava_domacinstva
+from .vodica_view import vaskrsnja_vodica
 from .svestenik_view import (
     PrikazSvestenika,
     SpisakSvestenika,
@@ -85,6 +87,8 @@ __all__ = [
     "izmena_krstenja",
     "izmena_parohijana",
     "custom_404",
+    "vaskrsnja_vodica",
+    "domacinstva_print",
     # Functions defined in this module
     "index",
     "search_view",

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static phone_filters %}
+
+{% block title %}Домаћинства — {{ svestenik.ime }} {{ svestenik.prezime }}{% endblock %}
+
+{% block extra_css %}<link rel="stylesheet" href="{% static 'registar/print/slava.css' %}" media="print">{% endblock %}
+
+{% block content %}
+<div class="u-page-header u-page-header--wrap">
+  <a href="{% url 'domacinstva' %}?svestenik={{ svestenik.pk }}" class="back-button" aria-label="Назад" title="Назад"><i class="fa-solid fa-arrow-left"></i></a>
+  <h1 class="u-page-title">
+    Домаћинства<span class="u-page-title__subtitle">{{ svestenik.ime }} {{ svestenik.prezime }}{% if svestenik.parohija %} · парохија {{ svestenik.parohija }}{% endif %}</span>{% if ukupno %} <span class="u-page-title__count">· {{ ukupno }}</span>{% endif %}
+  </h1>
+  {% if grupe %}<button type="button" onclick="window.print()" class="back-button u-page-header__right" aria-label="Штампај" title="Штампај"><i class="fa-solid fa-print"></i></button>{% endif %}
+</div>
+
+{% if grupe %}
+  <ul class="spisak spisak--grouped" id="spisak-list">
+    {% for grupa in grupe %}
+      <li class="spisak__group-head"><i class="fa-solid fa-road"></i> {{ grupa.ulica }}</li>
+      {% for d in grupa.domacinstva %}
+        <li class="stavka stavka--slava">
+          <span class="stavka__primary">{% if d.domacin and d.domacin.prezime %}{{ d.domacin.prezime|title }} {{ d.domacin.ime|title }}{% else %}<span class="muted">Непознат домаћин</span>{% endif %}</span>
+          <span class="stavka__secondary">
+            {% if d.adresa %}<i class="fa-solid fa-location-dot"></i> {{ d.adresa }}{% endif %}
+            {% if d.tel_fiksni %} &middot; <i class="fa-solid {{ d.tel_fiksni|phone_icon }}"></i> {{ d.tel_fiksni|format_phone }}{% endif %}
+            {% if d.tel_mobilni %} &middot; <i class="fa-solid {{ d.tel_mobilni|phone_icon }}"></i> {{ d.tel_mobilni|format_phone }}{% endif %}
+          </span>
+        </li>
+      {% endfor %}
+    {% endfor %}
+  </ul>
+{% else %}
+  <div class="spisak__empty">Нема домаћинстава за изабраног свештеника.</div>
+{% endif %}
+{% endblock %}

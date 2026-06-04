@@ -28,6 +28,20 @@ class Adresa(models.Model):
     )
     primedba = models.TextField(blank=True, default="", verbose_name="примедба")
 
+    # Street -> priest assignment (issue #26). The parish territory is split
+    # among priests by street; this drives the Easter-water (васкршња водица)
+    # route-planning report. String ref avoids a circular import (Svestenik
+    # already imports Adresa for its own FK).
+    svestenik = models.ForeignKey(
+        "registar.Svestenik",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="adrese",
+        verbose_name="свештеник (улица)",
+        help_text="Свештеник задужен за ову улицу (за васкршњу водицу).",
+    )
+
     def __str__(self):
         parts = [self.ulica, self.broj]
         if self.sprat:
