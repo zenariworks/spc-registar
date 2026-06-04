@@ -207,4 +207,34 @@
     }
     .stavka__roster-role::before { content: " ("; }
     .stavka__roster-role::after  { content: ")"; }
+
+    /* Street group header (#18) */
+    .spisak__group-head {
+        list-style: none !important;
+        font-family: "PT Serif", "Source Serif Pro", Georgia, serif !important;
+        font-size: 11pt !important;
+        font-weight: 700 !important;
+        font-variant: small-caps;
+        letter-spacing: 0.04em;
+        margin: 3mm 0 0.5mm 0 !important;
+        padding: 0 0 0.5mm 0 !important;
+        border: 0 !important;
+        border-bottom: 0.6pt solid #000 !important;
+        page-break-after: avoid;
+        break-after: avoid;
+        page-break-inside: avoid;
+    }
+    .spisak__group-head i { display: none !important; }
+
+    /* Holy-water yes/no (#18) */
+    .stavka__vodica {
+        display: block !important;
+        font-size: 9pt !important;
+        margin: 0.5mm 0 0 0 !important;
+    }
+    .stavka__vodica-item + .stavka__vodica-item::before {
+        content: "   \00B7   ";
+        font-weight: 400;
+    }
+    .stavka__vodica-val { font-weight: 700 !important; }
 }

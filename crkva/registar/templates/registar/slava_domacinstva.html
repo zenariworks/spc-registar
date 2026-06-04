@@ -23,9 +23,11 @@
   {% endif %}
 </div>
 
-{% if domacinstva %}
-  <ul class="spisak" id="spisak-list">
-    {% for domacinstvo in domacinstva %}
+{% if grupe %}
+  <ul class="spisak spisak--grouped" id="spisak-list">
+    {% for grupa in grupe %}
+      <li class="spisak__group-head"><i class="fa-solid fa-road"></i> {{ grupa.ulica }}</li>
+      {% for domacinstvo in grupa.domacinstva %}
       <li class="stavka stavka--slava">
         <a href="{% url 'domacinstvo_detail' uid=domacinstvo.uid %}" class="stavka-veza">
           <span class="stavka__primary">
@@ -36,6 +38,10 @@
             {% if domacinstvo.adresa %}<i class="fa-solid fa-location-dot"></i> {{ domacinstvo.adresa }}{% endif %}
             {% if domacinstvo.tel_fiksni %}{% if domacinstvo.adresa %} &middot; {% endif %}<i class="fa-solid {{ domacinstvo.tel_fiksni|phone_icon }}"></i> {{ domacinstvo.tel_fiksni|format_phone }}{% endif %}
             {% if domacinstvo.tel_mobilni %}{% if domacinstvo.adresa or domacinstvo.tel_fiksni %} &middot; {% endif %}<i class="fa-solid {{ domacinstvo.tel_mobilni|phone_icon }}"></i> {{ domacinstvo.tel_mobilni|format_phone }}{% endif %}
+          </span>
+          <span class="stavka__vodica">
+            <span class="stavka__vodica-item">Славска водица: <strong class="stavka__vodica-val{% if domacinstvo.slavska_vodica %} stavka__vodica-val--yes{% endif %}">{% if domacinstvo.slavska_vodica %}да{% else %}не{% endif %}</strong></span>
+            <span class="stavka__vodica-item">Васкршња водица: <strong class="stavka__vodica-val{% if domacinstvo.vaskrsnja_vodica %} stavka__vodica-val--yes{% endif %}">{% if domacinstvo.vaskrsnja_vodica %}да{% else %}не{% endif %}</strong></span>
           </span>
 
           {% if domacinstvo.ukucani.all %}
@@ -65,6 +71,7 @@
           {% endif %}
         </a>
       </li>
+      {% endfor %}
     {% endfor %}
   </ul>
 {% else %}

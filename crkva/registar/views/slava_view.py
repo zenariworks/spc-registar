@@ -1,5 +1,7 @@
 """Views for displaying households celebrating a specific slava."""
 
+from itertools import groupby
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, render
@@ -31,9 +33,23 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
         d.zivi_clanovi = [u for u in members if not u.preminuo]
         d.preminuli_clanovi = [u for u in members if u.preminuo]
 
+    # Group households by street for the printed report (issue #18). The
+    # queryset is already ordered by adresa__ulica, so consecutive items share
+    # a street; households without an address fall into a trailing group.
+    def _street(d):
+        if d.adresa and (d.adresa.ulica or "").strip():
+            return d.adresa.ulica.strip()
+        return ""
+
+    grupe = [
+        {"ulica": ulica or "Без улице", "domacinstva": list(items)}
+        for ulica, items in groupby(domacinstva, key=_street)
+    ]
+
     context = {
         "slava": slava,
         "domacinstva": domacinstva,
+        "grupe": grupe,
         "count": len(domacinstva),
     }
 
