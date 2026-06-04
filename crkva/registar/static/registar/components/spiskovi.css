@@ -915,6 +915,34 @@ body.history-open {
 .stavka--slava { flex-direction: column; align-items: stretch; }
 .stavka--slava .stavka-veza { display: block; }
 
+/* Street group header for the slava households report (#18) */
+.spisak__group-head {
+  list-style: none;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  background: color-mix(in oklab, var(--color-accent) 7%, var(--color-surface));
+  padding: var(--space-2) var(--space-4);
+  border-bottom: 1px solid var(--color-border);
+}
+.spisak__group-head i { margin-right: var(--space-2); opacity: 0.6; }
+
+/* Holy-water yes/no row (#18): slavska + vaskrsnja vodica */
+.stavka__vodica {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  margin-top: var(--space-2);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+}
+.stavka__vodica-val { font-weight: 600; }
+.stavka__vodica-val--yes { color: var(--color-primary); }
+
 .stavka__roster {
   display: flex;
   flex-direction: column;
