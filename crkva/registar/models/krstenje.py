@@ -42,7 +42,7 @@ class Krstenje(TimeStampedModel):
     datum = models.DateField(verbose_name="датум", null=True, blank=True, db_index=True)
     vreme = models.TimeField(verbose_name="време", null=True, blank=True)
     hram = models.ForeignKey(
-        Hram, on_delete=models.SET_NULL, null=True, verbose_name="храм"
+        Hram, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="храм"
     )
 
     dete = models.ForeignKey(
@@ -100,6 +100,7 @@ class Krstenje(TimeStampedModel):
         Svestenik,
         on_delete=models.SET_NULL,
         null=True,
+        blank=True,
         related_name="свештеник_крститељ",
         verbose_name="свештеник",
     )
