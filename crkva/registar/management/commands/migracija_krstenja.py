@@ -215,7 +215,7 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         majka_adresa=cyr(row[32]),
         majka_veroispovest=cyr(row[33]),
         zivorodjeno=cyr(row[34]),
-        po_redu=cyr_int(row[35]),
+        po_redu=cyr_int(row[35]) or 1,
         vanbracno=cyr(row[36]),
         blizanac=cyr(row[37]),
         blizanac_ime=cyr(row[38]),
