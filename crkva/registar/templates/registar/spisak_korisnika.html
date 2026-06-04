@@ -103,7 +103,7 @@
             </form>
           </td>
           <td>
-            {% if m.user.is_active %}
+            {% if m.is_active %}
               <span class="user-status user-status--active"><i class="fa-solid fa-circle-check"></i> Да</span>
             {% else %}
               <span class="user-status user-status--inactive"><i class="fa-solid fa-circle-xmark"></i> Не</span>
@@ -111,10 +111,10 @@
           </td>
           <td class="data-table__actions">
             {% if m.user.pk != request.user.pk %}
-              <form method="post" action="{% url 'parohija:user_deactivate' m.user.pk %}" class="data-table__role-form" onsubmit="return confirm('{% if m.user.is_active %}Деактивирати{% else %}Активирати{% endif %} {{ m.user.username }}?');">
+              <form method="post" action="{% url 'parohija:user_deactivate' m.user.pk %}" class="data-table__role-form" onsubmit="return confirm('{% if m.is_active %}Деактивирати{% else %}Активирати{% endif %} {{ m.user.username }}?');">
                 {% csrf_token %}
-                <button type="submit" class="button button--ghost" title="{% if m.user.is_active %}Деактивирај{% else %}Активирај{% endif %}">
-                  <i class="fa-solid {% if m.user.is_active %}fa-user-slash{% else %}fa-user-check{% endif %}"></i>
+                <button type="submit" class="button button--ghost" title="{% if m.is_active %}Деактивирај{% else %}Активирај{% endif %}">
+                  <i class="fa-solid {% if m.is_active %}fa-user-slash{% else %}fa-user-check{% endif %}"></i>
                 </button>
               </form>
             {% endif %}

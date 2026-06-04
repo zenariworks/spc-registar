@@ -79,6 +79,21 @@ class CanEditTests(TestCase):
     def test_no_tenant_means_no_edit(self):
         self.assertFalse(can_edit(self.admin, None, OSOBA))
 
+    def test_deactivated_membership_cannot_edit(self):
+        # A clerk normally edits osoba; deactivating the membership revokes it
+        # without touching the shared User account (#227).
+        m = UserMembership.objects.get(user=self.clerk, tenant=self.tenant)
+        m.is_active = False
+        m.save(update_fields=["is_active"])
+        for resource in [OSOBA, DOMACINSTVO, KRSTENJE, VENCANJE]:
+            self.assertFalse(can_edit(self.clerk, self.tenant, resource))
+        self.assertTrue(self.clerk.is_active)  # global account untouched
+
+    def test_superuser_unaffected_by_membership_state(self):
+        # Superusers have no membership row at all and still edit everything.
+        for resource in [OSOBA, DOMACINSTVO, KRSTENJE, VENCANJE, SVESTENIK]:
+            self.assertTrue(can_edit(self.superuser, self.tenant, resource))
+
 
 class GatedViewTests(TestCase):
     """End-to-end: GET /unos/parohijan/ returns 403 for non-permitted roles."""

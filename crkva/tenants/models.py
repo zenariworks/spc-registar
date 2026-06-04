@@ -127,6 +127,12 @@ class UserMembership(models.Model):
         default=False,
         help_text="Парохија у коју корисник аутоматски улази после пријаве.",
     )
+    is_active = models.BooleanField(
+        default=True,
+        verbose_name="активно чланство",
+        help_text="Деактивирано чланство закључава корисника из ове парохије, "
+        "али не утиче на глобални налог нити на приступ другим парохијама.",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

@@ -52,7 +52,9 @@ def can_edit(user, tenant, resource: str) -> bool:
         return True
     if tenant is None:
         return False
-    membership = UserMembership.objects.filter(user=user, tenant=tenant).first()
+    membership = UserMembership.objects.filter(
+        user=user, tenant=tenant, is_active=True
+    ).first()
     if membership is None:
         return False
     return resource in WRITE_BY_ROLE.get(membership.role, frozenset())
@@ -67,7 +69,7 @@ def is_tenant_admin(user, tenant) -> bool:
     if tenant is None:
         return False
     return UserMembership.objects.filter(
-        user=user, tenant=tenant, role=Role.ADMIN
+        user=user, tenant=tenant, role=Role.ADMIN, is_active=True
     ).exists()
 
 

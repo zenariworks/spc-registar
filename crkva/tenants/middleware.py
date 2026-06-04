@@ -41,6 +41,23 @@ class SessionTenantMiddleware:
     def _resolve_tenant(request: HttpRequest):
         from tenants.models import Tenant, UserMembership
 
+        user = getattr(request, "user", None)
+        is_authenticated = user is not None and user.is_authenticated
+        is_superuser = is_authenticated and user.is_superuser
+
+        def _may_access(tenant) -> bool:
+            # Superusers may enter any parish; everyone else needs an *active*
+            # membership in that specific tenant. A deactivated membership
+            # locks the user out of this parish only — never others, and
+            # never the shared User.is_active flag.
+            if is_superuser:
+                return True
+            if not is_authenticated:
+                return False
+            return UserMembership.objects.filter(
+                user=user, tenant=tenant, is_active=True
+            ).exists()
+
         session_tid = (
             request.session.get(SESSION_TENANT_KEY)
             if hasattr(request, "session")
@@ -48,20 +65,26 @@ class SessionTenantMiddleware:
         )
         if session_tid:
             try:
-                return Tenant.objects.get(pk=session_tid, is_active=True)
+                tenant = Tenant.objects.get(pk=session_tid, is_active=True)
             except Tenant.DoesNotExist:
                 request.session.pop(SESSION_TENANT_KEY, None)
+            else:
+                if _may_access(tenant):
+                    return tenant
+                request.session.pop(SESSION_TENANT_KEY, None)
 
-        user = getattr(request, "user", None)
-        if user is not None and user.is_authenticated:
-            memberships = (
-                UserMembership.objects.filter(user=user, tenant__is_active=True)
+        if is_authenticated:
+            membership = (
+                UserMembership.objects.filter(
+                    user=user, tenant__is_active=True, is_active=True
+                )
                 .select_related("tenant")
                 .order_by("-is_default", "created_at")
+                .first()
             )
-            for m in memberships:
-                request.session[SESSION_TENANT_KEY] = m.tenant_id
-                return m.tenant
+            if membership is not None:
+                request.session[SESSION_TENANT_KEY] = membership.tenant_id
+                return membership.tenant
 
         try:
             return Tenant.objects.get(is_default=True, is_active=True)
