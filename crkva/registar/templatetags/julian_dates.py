@@ -17,17 +17,25 @@ def gregorian_to_julian(datum):
 
 
 def to_julian_date(datum):
-    """Конверзија датума у јулијански."""
-    if isinstance(datum, datetime.date):
-        gregorijanski_mesec = MESECI[datum.month]
-        julijanski_datum = gregorian_to_julian(datum)
-        julianski_mesec = MESECI[julijanski_datum.month]
+    """Текстуални јулијански запис за штампу.
 
-        if gregorijanski_mesec == julianski_mesec:
-            return f"{datum.year}, {gregorijanski_mesec} {datum.day} / {julijanski_datum.day}"
-        else:
-            return f"{datum.year}, {gregorijanski_mesec} {datum.day} / {julianski_mesec} {julijanski_datum.day}"
-    return ""
+    - исти месец:      ``2022, октобар 10 / 27``
+    - различит месец:  ``2022, октобар 10 / септембар 27``
+    - прелаз у другу годину: ``2024, јануар 7 / 2023, децембар 25``
+      — година се понавља само када се грегоријанска и
+      јулијанска година разликују.
+    """
+    if not isinstance(datum, datetime.date):
+        return ""
+    julijanski = gregorian_to_julian(datum)
+    gregorijanski = f"{datum.year}, {MESECI[datum.month]} {datum.day}"
+    if datum.year != julijanski.year:
+        jul = f"{julijanski.year}, {MESECI[julijanski.month]} {julijanski.day}"
+    elif datum.month != julijanski.month:
+        jul = f"{MESECI[julijanski.month]} {julijanski.day}"
+    else:
+        jul = f"{julijanski.day}"
+    return f"{gregorijanski} / {jul}"
 
 
 register.filter("julian_date", to_julian_date)

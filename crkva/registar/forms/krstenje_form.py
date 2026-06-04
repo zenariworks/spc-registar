@@ -82,6 +82,15 @@ class KrstenjeForm(forms.ModelForm):
             "redni_broj": "Редни број крштења у текућој години",
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # A kum is frequently from another parish — default the quick-add
+        # “парохијан” toggle to off so they are not added to this roster.
+        self.fields["kum"].widget.attrs["data-osoba-parohijan-default"] = "0"
+        # po_redu is 1-based ("по реду мајци"): floor the HTML input at 1
+        # (server-side >=1 enforced by the model's MinValueValidator(1)).
+        self.fields["po_redu"].widget.attrs["min"] = "1"
+
     def clean(self):
         cleaned = super().clean()
         dete = cleaned.get("dete")

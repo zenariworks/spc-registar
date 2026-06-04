@@ -133,6 +133,9 @@ class OsobaSelect2Widget(ScriptAwareModelSelect2Widget):
         attrs["data-osoba-create"] = "1"
         if self.default_pol in ("М", "Ж"):
             attrs["data-osoba-default-pol"] = self.default_pol
+        # Seeds the modal's парохијан toggle. Forms flip this to "0" for
+        # roles usually not parishioners of this parish (kum / in-laws).
+        attrs.setdefault("data-osoba-parohijan-default", "1")
         return attrs
 
 

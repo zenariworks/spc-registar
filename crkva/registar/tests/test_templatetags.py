@@ -81,3 +81,13 @@ class ToJulianDateFilterTestCase(TestCase):
         self.assertIn("јануар", result)
         self.assertIn("децембар", result)
         self.assertIn("25", result)
+
+    def test_same_year_no_duplicate_year(self):
+        """Иста година: година се не понавља."""
+        result = to_julian_date(datetime.date(2022, 10, 10))
+        self.assertEqual(result, "2022, октобар 10 / септембар 27")
+
+    def test_year_rollover_shows_julian_year(self):
+        """Прелаз у претходну годину приказује јулијанску годину."""
+        result = to_julian_date(datetime.date(2024, 1, 5))
+        self.assertEqual(result, "2024, јануар 5 / 2023, децембар 23")

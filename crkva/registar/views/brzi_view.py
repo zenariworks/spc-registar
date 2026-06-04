@@ -32,8 +32,17 @@ def brzi_unos_osobe(request):
     if pol and pol not in valid_pol:
         return JsonResponse({"error": "Неважећа вредност за пол"}, status=400)
 
+    # The parohijan flag comes from the modal's “парохијан” toggle, defaulted
+    # per role (off for a kum / venčanje in-law usually from another parish, on
+    # for дете/отац/мајка/женик/невеста). Absent → parishioner, for
+    # backward compatibility. This lets an external kum be added with just
+    # име+презиме and stay selectable in select2 without polluting the
+    # parish roster.
+    parohijan = (
+        request.POST.get("parohijan", "1").strip().lower() in ("1", "true", "on", "да")
+    )
     osoba = Osoba.objects.create(
-        ime=ime, prezime=prezime, pol=pol or None, parohijan=True
+        ime=ime, prezime=prezime, pol=pol or None, parohijan=parohijan
     )
     return JsonResponse({"id": osoba.uid, "text": str(osoba)})
 
