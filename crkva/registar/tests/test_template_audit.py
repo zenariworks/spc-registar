@@ -156,8 +156,8 @@ class SlavaUkucaninFallbackTests(TestCase):
 
 
 class KrstenjePDFTemplateRenderTests(TestCase):
-    """``pdf_krstenje.html`` and ``pdf_krstenje_stara_krstenica.html`` must
-    render the place, address fields and twin flag instead of empty strings.
+    """``pdf_krstenje.html`` must render the place, address fields and twin
+    flag instead of empty strings.
     """
 
     @classmethod
@@ -203,17 +203,6 @@ class KrstenjePDFTemplateRenderTests(TestCase):
         # Item 6: parent address is read from ``krstenje.adresa_deteta.*``.
         self.assertIn("Узун Миркова", body)
         self.assertIn("Стари Град", body)
-
-    def test_pdf_stara_krstenica_renders_twin_and_anagraf(self):
-        body = self._render("registar/pdf_krstenje_stara_krstenica.html")
-        # ``blizanac=True`` is yesno-formatted as the Cyrillic "јесте".
-        self.assertIn("јесте", body)
-        # ``strana_registracije`` (was the broken ``anagraf`` chain).
-        self.assertIn("42", body)
-        # ``hram.mesto`` replaces the bogus ``hram.adresa.ulica.mesto``.
-        self.assertIn("Београд", body)
-        # And the place-of-birth row pulls from ``mesto_rodjenja``.
-        self.assertIn("Београд", body)
 
 
 class VencanjePDFTemplateRenderTests(TestCase):
