@@ -58,7 +58,7 @@
       <!-- 1. Година, месец, дан и време рођења -->
       <div style="width: 46%; vertical-align: middle;"></div>
       <div style="width: 53%; letter-spacing: 1px;">
-        {{ krstenje.datum_rodjenja|julian_date }}, {{ krstenje.vreme_rodjenja }} часова
+        {{ krstenje.datum_rodjenja|julian_date_numeric }}{% if krstenje.vreme_rodjenja %}  {{ krstenje.vreme_rodjenja|time:"H:i" }} часова{% endif %}
       </div>
     </div>
     <div class="row visible-div" style="height: 9mm">
@@ -74,8 +74,7 @@
       <!-- 3. Година, месец, дан и време крштења и миропомазања -->
       <div style="width: 46%"></div>
       <div style="width: 53%; letter-spacing: 1px;">
-        {{ krstenje.datum|julian_date|default_if_none:"" }}{% if krstenje.vreme is not none %}, {{ krstenje.vreme }}
-        часова{% endif %}
+        {{ krstenje.datum|julian_date_numeric }}
       </div>
     </div>
     <div class="row" style="height: 10mm">

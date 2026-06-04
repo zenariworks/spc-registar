@@ -143,12 +143,12 @@
           <div class="venc-table-field venc-field-ime_neveste"><span>{{ vencanje.ime_neveste }} | {{ vencanje.zanimanje_neveste|lower }} | {{ vencanje.adresa_neveste }} | {{ vencanje.veroispovest_neveste|lower }}, {{ vencanje.narodnost_neveste|lower }}</span></div>
           <div class="venc-table-field venc-field-roditelji_zenika"><span>{{ vencanje.svekar|default_if_none:"" }}</span><span>{{ vencanje.svekrva|default_if_none:"" }}</span></div>
           <div class="venc-table-field venc-field-roditelji_neveste"><span>{{ vencanje.tast|default_if_none:"" }}</span><span>{{ vencanje.tasta|default_if_none:"" }}</span></div>
-          <div class="venc-table-field venc-field-rodjenje_zenika"><span>{{ vencanje.datum_rodjenja_zenika|julian_date }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_zenika }}</span></div>
-          <div class="venc-table-field venc-field-rodjenje_neveste"><span>{{ vencanje.datum_rodjenja_neveste|julian_date }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_neveste }}</span></div>
+          <div class="venc-table-field venc-field-rodjenje_zenika"><span>{{ vencanje.datum_rodjenja_zenika|julian_date_numeric }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_zenika }}</span></div>
+          <div class="venc-table-field venc-field-rodjenje_neveste"><span>{{ vencanje.datum_rodjenja_neveste|julian_date_numeric }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_neveste }}</span></div>
           <div class="venc-table-field venc-field-brak_zenika">{{ vencanje.zenik_rb_brak }}</div>
           <div class="venc-table-field venc-field-brak_neveste">{{ vencanje.nevesta_rb_brak }}</div>
-          <div class="venc-table-field venc-field-ispit">{{ vencanje.datum_ispita|julian_date }}</div>
-          <div class="venc-table-field venc-field-datum_vencanja">{{ vencanje.datum|julian_date }}</div>
+          <div class="venc-table-field venc-field-ispit">{{ vencanje.datum_ispita|julian_date_numeric }}</div>
+          <div class="venc-table-field venc-field-datum_vencanja">{{ vencanje.datum|julian_date_numeric }}</div>
           <div class="venc-table-field venc-field-mesto_hram">{% if vencanje.adresa_zenika %}{{ vencanje.adresa_zenika.mesto }}{% endif %}, {{ vencanje.hram }}</div>
           <div class="venc-table-field venc-field-svestenik">{{ vencanje.svestenik|default_if_none:"" }}</div>
           <div class="venc-table-field venc-field-svedoci"><span>{{ vencanje.kum|default_if_none:"" }}</span><span>{{ vencanje.stari_svat|default_if_none:"" }}</span></div>

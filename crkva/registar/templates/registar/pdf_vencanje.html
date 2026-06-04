@@ -83,7 +83,7 @@
         <!-- 3. Godina, mesecm dan i mesto rodjenja vencanih a) zenika-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          {{ vencanje.datum_rodjenja_zenika|julian_date}}<br>
+          {{ vencanje.datum_rodjenja_zenika|julian_date_numeric}}<br>
           {{ vencanje.mesto_rodjenja_zenika }}
         </div>
       </div>
@@ -91,7 +91,7 @@
         <!-- 3. Godina, mesecm dan i mesto rodjenja vencanih b) neveste-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          {{ vencanje.datum_rodjenja_neveste|julian_date }}<br>
+          {{ vencanje.datum_rodjenja_neveste|julian_date_numeric }}<br>
           {{ vencanje.mesto_rodjenja_neveste }}
         </div>
       </div>
@@ -113,14 +113,14 @@
         <!-- 5. Koga su dana ispitani i oglaseni-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          {{ vencanje.datum_ispita|julian_date }}
+          {{ vencanje.datum_ispita|julian_date_numeric }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">
         <!-- 6. Godina, mesec i dan vencanja-->
         <div style="width: 42%;"></div>
         <div style="width: 55%; letter-spacing: 1px; font-size: 10pt; justify-content: center;">
-          {{ vencanje.datum|julian_date }}
+          {{ vencanje.datum|julian_date_numeric }}
         </div>
       </div>
       <div class="row" style="height: 9mm;">

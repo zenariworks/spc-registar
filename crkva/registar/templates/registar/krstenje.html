@@ -175,9 +175,9 @@
           <div class="krst-field-hram">{{ krstenje.hram }}</div>
           <div class="krst-field-mesto">{{ krstenje.hram.mesto }}у</div>
           <div class="krst-field-godina">{{ krstenje.datum|date:"y" }}</div>
-          <div class="krst-table-field krst-field-rodjenje_datum">{{ krstenje.datum_rodjenja|julian_date }}, {{ krstenje.vreme_rodjenja }} часова</div>
+          <div class="krst-table-field krst-field-rodjenje_datum">{{ krstenje.datum_rodjenja|julian_date_numeric }}{% if krstenje.vreme_rodjenja %}  {{ krstenje.vreme_rodjenja|time:"H:i" }} часова{% endif %}</div>
           <div class="krst-table-field krst-field-rodjenje_mesto">{{ krstenje.mesto_rodjenja }}</div>
-          <div class="krst-table-field krst-field-krstenje_datum">{{ krstenje.datum|julian_date|default_if_none:"" }}{% if krstenje.vreme is not none %}, {{ krstenje.vreme }} часова{% endif %}</div>
+          <div class="krst-table-field krst-field-krstenje_datum">{{ krstenje.datum|julian_date_numeric }}</div>
           <div class="krst-table-field krst-field-krstenje_mesto">{{ krstenje.hram.mesto }}, {{ krstenje.hram }}</div>
           <div class="krst-table-field krst-field-ime_pol">{{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}</div>
           <div class="krst-table-field krst-field-roditelji">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{{ krstenje.hram.mesto }}, {{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}</div>

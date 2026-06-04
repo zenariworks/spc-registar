@@ -5,7 +5,11 @@
 import datetime
 
 from django.test import TestCase
-from registar.templatetags.julian_dates import gregorian_to_julian, to_julian_date
+from registar.templatetags.julian_dates import (
+    gregorian_to_julian,
+    to_julian_date,
+    to_julian_date_numeric,
+)
 
 
 class GregorianToJulianTestCase(TestCase):
@@ -81,3 +85,25 @@ class ToJulianDateFilterTestCase(TestCase):
         self.assertIn("јануар", result)
         self.assertIn("децембар", result)
         self.assertIn("25", result)
+
+
+class ToJulianDateNumericFilterTestCase(TestCase):
+    """Тестови за нумерички julian_date_numeric филтер (штампа крштенице)."""
+
+    def test_same_month_shows_julian_day(self):
+        result = to_julian_date_numeric(datetime.date(2017, 3, 22))
+        self.assertEqual(result, "2017.03.22 / 09")
+
+    def test_year_rollover_shows_full_julian_date(self):
+        result = to_julian_date_numeric(datetime.date(2024, 1, 5))
+        self.assertEqual(result, "2024.01.05 / 2023.12.23")
+
+    def test_month_rollover_shows_full_julian_date(self):
+        result = to_julian_date_numeric(datetime.date(2020, 2, 1))
+        self.assertEqual(result, "2020.02.01 / 2020.01.19")
+
+    def test_none_input(self):
+        self.assertEqual(to_julian_date_numeric(None), "")
+
+    def test_string_input(self):
+        self.assertEqual(to_julian_date_numeric("2024-01-20"), "")

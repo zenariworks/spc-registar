@@ -30,4 +30,18 @@ def to_julian_date(datum):
     return ""
 
 
+def to_julian_date_numeric(datum):
+    """Нумерички јулијански запис за штампу: ``YYYY.MM.DD / DD`` када су
+    грегоријански и јулијански датум у истом месецу, односно
+    ``YYYY.MM.DD / YYYY.MM.DD`` када одузимање 13 дана пређе у претходни
+    месец/годину (нпр. 2024.01.05 → 2023.12.23)."""
+    if isinstance(datum, datetime.date):
+        julijanski = gregorian_to_julian(datum)
+        if (julijanski.year, julijanski.month) == (datum.year, datum.month):
+            return f"{datum:%Y.%m.%d} / {julijanski.day:02d}"
+        return f"{datum:%Y.%m.%d} / {julijanski:%Y.%m.%d}"
+    return ""
+
+
 register.filter("julian_date", to_julian_date)
+register.filter("julian_date_numeric", to_julian_date_numeric)
