@@ -83,9 +83,10 @@ class Krstenje(TimeStampedModel):
     zivorodjeno = models.BooleanField(verbose_name="живорођено", default=True)
     po_redu = models.PositiveSmallIntegerField(
         verbose_name="по реду мајци",
-        default=1,
+        null=True,
+        blank=True,
         validators=[MinValueValidator(1)],
-        help_text="Колико је дете по реду рођења мајци (1 = прво) — приказује се речима",
+        help_text="Колико је дете по реду рођења мајци (1 = прво). Празно = није уписано.",
     )
     vanbracno = models.BooleanField(verbose_name="ванбрачно", default=False)
     blizanac = models.BooleanField(verbose_name="близанац", default=False)
