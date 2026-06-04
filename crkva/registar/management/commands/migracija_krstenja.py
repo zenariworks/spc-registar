@@ -101,27 +101,9 @@ SOURCE_COLUMNS = (
     "K_REGSTR",
 )
 
-_ORDINAL_WORDS = [
-    "прво",
-    "друго",
-    "треће",
-    "четврто",
-    "пето",
-    "шесто",
-    "седмо",
-    "осмо",
-    "девето",
-    "десето",
-]
-
-
 def _date_or_default(y: int, m: int, d: int) -> date:
     """Pre-1900 / zero values are coerced to 1900-01-01 (matches legacy behaviour)."""
     return date(1900 if y == 0 else y, 1 if m == 0 else m, 1 if d == 0 else d)
-
-
-def _ordinal_word(num: int) -> str:
-    return _ORDINAL_WORDS[num - 1] if 1 <= num <= 10 else "прво"
 
 
 @dataclass
@@ -441,7 +423,7 @@ class Command(MigrationCommand):
             "datum": r.datum_krstenja,
             "vreme": parse_time(r.krstenje_vreme),
             "zivorodjeno": r.zivorodjeno.strip() == "1",
-            "po_redu": _ordinal_word(r.po_redu),
+            "po_redu": r.po_redu,
             "vanbracno": r.vanbracno.strip() == "1",
             "blizanac": r.blizanac.strip() == "1",
             "ime_blizanca": r.blizanac_ime,

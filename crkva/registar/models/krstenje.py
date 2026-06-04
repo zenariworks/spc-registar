@@ -81,7 +81,12 @@ class Krstenje(TimeStampedModel):
     )
     # ostali podaci o detetu
     zivorodjeno = models.BooleanField(verbose_name="живорођено", default=True)
-    po_redu = models.CharField(verbose_name="по реду мајци", null=True, blank=True)
+    po_redu = models.PositiveSmallIntegerField(
+        verbose_name="по реду мајци",
+        null=True,
+        blank=True,
+        help_text="Број (нпр. 1, 2, 3…) — приказује се речима",
+    )
     vanbracno = models.BooleanField(verbose_name="ванбрачно", default=False)
     blizanac = models.BooleanField(verbose_name="близанац", default=False)
     ime_blizanca = models.CharField(

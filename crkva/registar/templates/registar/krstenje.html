@@ -2,6 +2,7 @@
 {% load static %}
 {% load info_components %}
 {% load julian_dates %}
+{% load ordinal_filters %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'registar/print/krstenica.css' %}">
@@ -96,7 +97,7 @@
             </div>
           </li>
           {% info_row_bool icon="fa-heart-pulse" label="Дете рођено живо" value_label="Дете рођено живо" field=form.zivorodjeno value=krstenje.zivorodjeno %}
-          {% info_row icon="fa-list-ol" label="Дете по реду (по мајци)" field=form.po_redu value=krstenje.po_redu %}
+          {% info_row icon="fa-list-ol" label="Дете по реду (по мајци)" field=form.po_redu value=krstenje.po_redu|redni_rec %}
           {% info_row_bool icon="fa-ring" label="Ванбрачно дете" value_label="Ванбрачно дете" field=form.vanbracno value=krstenje.vanbracno %}
           {# Дете близанац keeps raw markup — sub format "(Петар)" with parens differs from generic info_row_bool sub. #}
           <li class="info-row info-row--editable info-row--stacked">
@@ -181,7 +182,7 @@
           <div class="krst-table-field krst-field-krstenje_mesto">{{ krstenje.hram.mesto }}, {{ krstenje.hram }}</div>
           <div class="krst-table-field krst-field-ime_pol">{{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}</div>
           <div class="krst-table-field krst-field-roditelji">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{{ krstenje.hram.mesto }}, {{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}</div>
-          <div class="krst-table-field krst-field-dete_po_redu">{{ krstenje.po_redu }}</div>
+          <div class="krst-table-field krst-field-dete_po_redu">{{ krstenje.po_redu|redni_rec }}</div>
           <div class="krst-table-field krst-field-bracno">{{ krstenje.vanbracno|yesno:"није,јесте" }}</div>
           <div class="krst-table-field krst-field-blizanac">{{ krstenje.blizanac|yesno:"јесте,није" }}</div>
           <div class="krst-table-field krst-field-telesna_mana">{{ krstenje.telesna_mana|yesno:"јесте,није,непознато" }}</div>

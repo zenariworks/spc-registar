@@ -1,5 +1,6 @@
 {% load static %}
 {% load julian_dates %}
+{% load ordinal_filters %}
 <!DOCTYPE html>
 <html>
 
@@ -109,7 +110,7 @@
       <!-- 7. Које је дете по рођењу матери (прво, друго...) -->
       <div style="width: 55.5%"></div>
       <div style="width: 43.5%; letter-spacing: 1px; font-size: 14pt;">
-        {{ krstenje.po_redu }}
+        {{ krstenje.po_redu|redni_rec }}
       </div>
     </div>
     <div class="row" style="height: 10mm">

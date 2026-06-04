@@ -92,7 +92,7 @@ class Command(BaseCommand):
                     kum=kum,
                     svestenik=svestenik,
                     zivorodjeno=True,
-                    po_redu="1",
+                    po_redu=1,
                     vanbracno=False,
                     blizanac=False,
                     telesna_mana=False,
