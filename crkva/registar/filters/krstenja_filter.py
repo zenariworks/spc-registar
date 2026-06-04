@@ -19,7 +19,12 @@ class KrstenjeFilter(django_filters.FilterSet):
         fields = []
 
     def filter_search(self, queryset, _name, value):
-        """Претражује уносе на основу више текстуалних поља, укључујући датум."""
+        """Претражује уносе на основу више текстуалних поља, укључујући датум.
+
+        Поља детета/оца/мајке/кума живе на везаним Osoba редовима, па се
+        претражују преко релација (dete__ime…), не преко @property имена
+        (ime_deteta…) која ORM не уме да разреши.
+        """
         termini_pretrage = value.split()
         queryset = queryset.annotate(datum_str=Cast("datum", models.CharField()))
 
@@ -29,14 +34,15 @@ class KrstenjeFilter(django_filters.FilterSet):
             inner = models.Q()
             for v in get_query_variants(rec):
                 inner |= (
-                    models.Q(ime_deteta__icontains=v)
-                    | models.Q(gradjansko_ime_deteta__icontains=v)
-                    | models.Q(ime_oca__icontains=v)
-                    | models.Q(prezime_oca__icontains=v)
-                    | models.Q(ime_majke__icontains=v)
-                    | models.Q(prezime_majke__icontains=v)
-                    | models.Q(ime_kuma__icontains=v)
-                    | models.Q(prezime_kuma__icontains=v)
+                    models.Q(dete__ime__icontains=v)
+                    | models.Q(dete__gradjansko_ime__icontains=v)
+                    | models.Q(dete__prezime__icontains=v)
+                    | models.Q(otac__ime__icontains=v)
+                    | models.Q(otac__prezime__icontains=v)
+                    | models.Q(majka__ime__icontains=v)
+                    | models.Q(majka__prezime__icontains=v)
+                    | models.Q(kum__ime__icontains=v)
+                    | models.Q(kum__prezime__icontains=v)
                     | models.Q(datum_str__icontains=v)
                 )
             # Сви термини морају да се пронађу (AND)

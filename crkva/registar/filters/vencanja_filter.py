@@ -19,7 +19,12 @@ class VencanjeFilter(django_filters.FilterSet):
         fields = []
 
     def filter_search(self, queryset, _name, value):
-        """Претражује уносе на основу више текстуалних поља, укључујући датум."""
+        """Претражује уносе на основу више текстуалних поља, укључујући датум.
+
+        Женик/невеста/кум/стари сват су FK на Osoba, а храм на Hram, па се
+        претражују преко релација (zenik__ime, hram__naziv…), не преко самих
+        FK поља која не подржавају icontains.
+        """
         termini_pretrage = value.split()
         queryset = queryset.annotate(datum_str=Cast("datum", models.CharField()))
 
@@ -28,12 +33,14 @@ class VencanjeFilter(django_filters.FilterSet):
             inner = models.Q()
             for v in get_query_variants(rec):
                 inner |= (
-                    models.Q(ime_zenika__icontains=v)
-                    | models.Q(prezime_zenika__icontains=v)
-                    | models.Q(ime_neveste__icontains=v)
-                    | models.Q(prezime_neveste__icontains=v)
-                    | models.Q(kum__icontains=v)
-                    | models.Q(stari_svat__icontains=v)
+                    models.Q(zenik__ime__icontains=v)
+                    | models.Q(zenik__prezime__icontains=v)
+                    | models.Q(nevesta__ime__icontains=v)
+                    | models.Q(nevesta__prezime__icontains=v)
+                    | models.Q(kum__ime__icontains=v)
+                    | models.Q(kum__prezime__icontains=v)
+                    | models.Q(stari_svat__ime__icontains=v)
+                    | models.Q(stari_svat__prezime__icontains=v)
                     | models.Q(hram__naziv__icontains=v)
                     | models.Q(datum_str__icontains=v)
                 )
