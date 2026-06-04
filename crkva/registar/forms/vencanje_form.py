@@ -68,6 +68,14 @@ class VencanjeForm(forms.ModelForm):
             "hram": HramSelect2Widget,
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Witnesses and in-laws are frequently not parishioners of this parish;
+        # default their quick-add “парохијан” toggle to off. The couple
+        # (женик/невеста) keep the on default.
+        for _f in ("kum", "svekar", "svekrva", "tast", "tasta", "stari_svat"):
+            self.fields[_f].widget.attrs["data-osoba-parohijan-default"] = "0"
+
     def clean(self):
         cleaned = super().clean()
         roles = [

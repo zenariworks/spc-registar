@@ -46,6 +46,21 @@
         }
     }
 
+    function applyToggle(groupId, value) {
+        var group = document.getElementById(groupId);
+        if (!group) return;
+        var matched = null;
+        group.querySelectorAll(".tab-group__item").forEach(function (btn) {
+            btn.classList.remove("is-active");
+            if (btn.dataset && btn.dataset.value === value) {
+                matched = btn;
+            }
+        });
+        if (matched) {
+            matched.click();
+        }
+    }
+
     function attach($select) {
         if ($select.data("osobaCreateBound")) return;
         $select.data("osobaCreateBound", true);
@@ -80,6 +95,7 @@
                     e.stopPropagation();
                     var parts = parseName($search.val());
                     var defaultPol = $select.attr("data-osoba-default-pol") || "";
+                    var defaultParohijan = $select.attr("data-osoba-parohijan-default") || "1";
                     $select.select2("close");
                     if (!window.osobaModal || typeof window.osobaModal.open !== "function") return;
                     window.osobaModal.open($select.attr("id"));
@@ -89,6 +105,7 @@
                         if (imeEl) imeEl.value = parts.ime;
                         if (prezimeEl) prezimeEl.value = parts.prezime;
                         applyDefaultPol(defaultPol);
+                        applyToggle("modal-parohijan-toggle", defaultParohijan);
                         var focusEl = parts.prezime ? prezimeEl : imeEl;
                         if (focusEl) {
                             focusEl.focus();

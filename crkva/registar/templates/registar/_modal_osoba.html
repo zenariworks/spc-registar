@@ -36,6 +36,15 @@ the click a silent no-op on every page that includes this partial.
           </div>
         </div>
       </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label>Парохијан</label>
+          <div class="tab-group" id="modal-parohijan-toggle">
+            <button type="button" class="tab-group__item" data-value="1">да</button>
+            <button type="button" class="tab-group__item" data-value="0">не</button>
+          </div>
+        </div>
+      </div>
       <div class="error-text" hidden></div>
     </div>
     <div class="modal__footer">
@@ -53,7 +62,7 @@ the click a silent no-op on every page that includes this partial.
       window.osobaModal = Modal.bindForm("osoba-modal", {
         url: "{% url 'brzi_unos_osobe' %}",
         fields: ["ime", "prezime", "pol"],
-        toggleGroups: { pol: "modal-pol-toggle" },
+        toggleGroups: { pol: "modal-pol-toggle", parohijan: "modal-parohijan-toggle" },
         requiredFields: ["ime", "prezime"],
         requiredMessage: "Име и презиме су обавезни.",
       });
