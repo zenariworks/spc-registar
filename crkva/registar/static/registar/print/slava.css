@@ -37,6 +37,25 @@
     }
     body > main, .u-container { padding: 0 !important; margin: 0 !important; max-width: none !important; }
 
+    /* The app shell makes html/body a viewport-height flex scroll container
+       (height:100%, display:flex, overflow-x:hidden -> overflow-y:auto), which
+       clips the printout to a single page. Restore normal block flow so the
+       list paginates across pages. */
+    html, body {
+        height: auto !important;
+        min-height: 0 !important;
+        display: block !important;
+        overflow: visible !important;
+        overflow-x: visible !important;
+        overflow-y: visible !important;
+    }
+    body > main {
+        flex: none !important;
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+
     /* ---- Header: title + date, centered, no chrome ---- */
     .u-page-header {
         position: static !important;
@@ -83,6 +102,7 @@
 
     /* ---- List of households ---- */
     .spisak {
+        display: block !important;
         list-style: none !important;
         padding: 0 !important;
         margin: 0 !important;
@@ -92,6 +112,7 @@
     }
 
     .stavka {
+        display: block !important;
         page-break-inside: avoid;
         break-inside: avoid;
         list-style: none !important;
