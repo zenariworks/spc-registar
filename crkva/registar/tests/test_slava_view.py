@@ -191,3 +191,12 @@ class SlavaDomacinstvaPriestFilterTests(TestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "slava-svestenik-form")
         self.assertContains(r, "Петар")
+
+    def test_dropdown_excludes_priests_without_parish(self):
+        # The filter narrows by parish, so a parish-less priest can filter
+        # nothing — he must not appear in the dropdown (#27 follow-up).
+        r = self.client.get(self.url)
+        ids = {s.pk for s in r.context["svestenici"]}
+        self.assertIn(self.sv3.pk, ids)
+        self.assertNotIn(self.sv_np.pk, ids)
+        self.assertNotContains(r, "Без Парохије")
