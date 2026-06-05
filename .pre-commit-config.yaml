@@ -14,6 +14,16 @@ repos:
         - id: check-merge-conflict
         - id: requirements-txt-fixer
 
+  # Enforce branch naming so auto-tag can version every merge (CONTRIBUTING.md).
+  - repo: local
+    hooks:
+      - id: branch-name
+        name: branch name follows the versioning convention
+        entry: scripts/check_branch_name.sh
+        language: script
+        pass_filenames: false
+        always_run: true
+
   # Python code formatting and linting
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.4

@@ -1,14 +1,17 @@
 name: Auto-tag on merge
 
-# Bumps the version tag on every PR merge into main, following our convention:
-#   feature/<slug>  → minor bump (0.X.0 → 0.(X+1).0)
-#   fix/<slug>      → patch bump (0.X.Y → 0.X.(Y+1))
-# Any other branch shape: skipped (a notice is logged).
+# Bumps the version tag on every PR merge into main, from the head-branch prefix:
+#   feature/, feat/                                   → minor bump
+#   fix/, bugfix/, hotfix/, perf/, refactor/,
+#   chore/, docs/, build/, ci/, test/, style/         → patch bump
+#   anything else                                     → job FAILS (no tag)
 #
-# The baseline is whatever's the latest semver tag reachable from main. Legacy
-# tags that aren't reachable (e.g. 1.0.0 / 2.0.0 on the pre-divergence history)
-# are ignored. When the team wants to bump the major (e.g. 1.0.0), tag manually
-# once and this workflow picks it up from there.
+# Failing loudly on an unrecognized prefix (instead of silently skipping) makes a
+# mis-named branch impossible to miss — a silent skip previously let several
+# merges land untagged. See CONTRIBUTING.md.
+#
+# Baseline is the latest semver tag reachable from main; legacy/divergent tags
+# are ignored. To bump the major, tag manually once and this picks up from there.
 
 on:
   pull_request:
@@ -33,23 +36,22 @@ jobs:
         run: |
           BRANCH="${{ github.event.pull_request.head.ref }}"
           echo "head branch: $BRANCH"
-          if [[ "$BRANCH" == feature/* ]]; then
-            echo "type=minor" >> "$GITHUB_OUTPUT"
-          elif [[ "$BRANCH" == fix/* ]]; then
-            echo "type=patch" >> "$GITHUB_OUTPUT"
-          else
-            echo "type=none" >> "$GITHUB_OUTPUT"
-            echo "::notice::Branch '$BRANCH' is not feature/* or fix/* — no tag created"
-          fi
+          PREFIX="${BRANCH%%/*}"
+          case "$PREFIX" in
+            feature|feat)
+              echo "type=minor" >> "$GITHUB_OUTPUT" ;;
+            fix|bugfix|hotfix|perf|refactor|chore|docs|build|ci|test|style)
+              echo "type=patch" >> "$GITHUB_OUTPUT" ;;
+            *)
+              echo "::error::Branch '$BRANCH' has an unrecognized prefix '$PREFIX/'. Allowed: feature/|feat/ (minor); fix/|bugfix/|hotfix/|perf/|refactor/|chore/|docs/|build/|ci/|test/|style/ (patch). See CONTRIBUTING.md. No tag created."
+              exit 1 ;;
+          esac
 
       - name: Compute next version
-        if: steps.bump.outputs.type != 'none'
         id: ver
         run: |
           git fetch --tags --quiet
           # Only consider semver tags that are ancestors of the current main HEAD.
-          # This intentionally ignores legacy tags (e.g. 1.0.0 / 2.0.0) sitting
-          # on a divergent history.
           LATEST=$(git tag --merged HEAD --sort=-v:refname \
                    | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
                    | head -n 1)
@@ -67,7 +69,6 @@ jobs:
           echo "::notice::Tagging $LATEST → $NEW (${{ steps.bump.outputs.type }} bump)"
 
       - name: Create + push tag
-        if: steps.bump.outputs.type != 'none'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

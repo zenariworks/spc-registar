@@ -62,11 +62,11 @@
 
 ## Доприношење
 
-1. Направите гранау по конвенцији: `feature/<кратки-опис>` или `fix/<кратки-опис>`
+1. Направите грану по конвенцији: `feature/<кратки-опис>` (minor) или `fix/<кратки-опис>` (patch). Остали префикси и детаљи: [CONTRIBUTING.md](CONTRIBUTING.md).
 2. Пре пуша покрените: `pre-commit run --files <измењени фајлови>`
 3. Отворите Pull Request на главној грани (`main`); auto-tag workflow ће подићи семвер при мерџу (feature → minor, fix → patch)
 
-Више о развојном току: [docs/testing.md](docs/testing.md).
+Више: [CONTRIBUTING.md](CONTRIBUTING.md) (начин рада), [docs/testing.md](docs/testing.md) (тестови).
 
 ## Лиценца
 
