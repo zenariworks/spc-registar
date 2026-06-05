@@ -14,32 +14,8 @@ from registar.forms import DomacinstvoForm
 from registar.forms.domacinstvo_form import UkucaninFormSet
 from registar.models import Domacinstvo, Svestenik
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from registar.views.territory import by_parish_filter, resolve_svestenik
 from tenants.permissions import tenant_role_required
-
-
-def _resolve_svestenik(request: HttpRequest):
-    """Свештеник из ?svestenik=<uid>, или None."""
-    val = (request.GET.get("svestenik") or "").strip()
-    if not val:
-        return None
-    try:
-        return Svestenik.objects.filter(pk=int(val)).first()
-    except (ValueError, TypeError):
-        return None
-
-
-def _by_parish_filter(qs, svestenik):
-    """Домаћинства чија адреса припада парохији изабраног свештеника (#26).
-
-    Улице су додељене свештеницима, али свештеници ротирају — стабилна
-    јединица је парохија, па филтрирамо по `adresa.svestenik.parohija`.
-    """
-    if svestenik is not None and svestenik.parohija_id:
-        return qs.filter(adresa__svestenik__parohija=svestenik.parohija_id)
-    if svestenik is not None:
-        # Свештеник без парохије — ништа да се прикаже.
-        return qs.none()
-    return qs
 
 
 @tenant_role_required("domacinstvo")
@@ -86,7 +62,7 @@ class SpisakDomacinsta(
             .prefetch_related("ukucani", "ukucani__osoba")
             .all()
         )
-        qs = _by_parish_filter(qs, _resolve_svestenik(self.request))
+        qs = by_parish_filter(qs, resolve_svestenik(self.request))
         return self.get_search_queryset(qs)
 
     def get_context_data(self, **kwargs):
@@ -96,7 +72,7 @@ class SpisakDomacinsta(
             d.zivi_clanovi = [u for u in members if not u.preminuo]
             d.preminuli_clanovi = [u for u in members if u.preminuo]
         # Priest filter controls (issue #26).
-        svestenik = _resolve_svestenik(self.request)
+        svestenik = resolve_svestenik(self.request)
         context["svestenik_filter_options"] = Svestenik.objects.order_by(
             "prezime", "ime"
         )
@@ -184,11 +160,11 @@ def domacinstva_print(request: HttpRequest) -> HttpResponse:
     домаћинства парохије изабраног свештеника (адреса + телефони), погодно за
     обилазак на терену.
     """
-    svestenik = _resolve_svestenik(request)
+    svestenik = resolve_svestenik(request)
     domacinstva = []
     if svestenik is not None and svestenik.parohija_id:
         domacinstva = list(
-            _by_parish_filter(
+            by_parish_filter(
                 Domacinstvo.objects.select_related(
                     "domacin", "adresa", "adresa__svestenik"
                 ),

@@ -23,6 +23,17 @@
   {% endif %}
 </div>
 
+<form method="get" class="vodica-toolbar" id="slava-svestenik-form">
+  <label for="svestenik-select" class="vodica-toolbar__label">Свештеник:</label>
+  <select name="svestenik" id="svestenik-select" class="list-toolbar__select" onchange="document.getElementById('slava-svestenik-form').submit()">
+    <option value="">— сва домаћинства —</option>
+    {% for s in svestenici %}
+      <option value="{{ s.pk }}" {% if selected_id == s.pk|stringformat:"s" %}selected{% endif %}>{{ s.ime }} {{ s.prezime }}{% if s.parohija %} ({{ s.parohija }}){% endif %}</option>
+    {% endfor %}
+  </select>
+  {% if svestenik and svestenik.parohija %}<span class="vodica-report__sub">територија парохије {{ svestenik.parohija }}</span>{% endif %}
+</form>
+
 {% if grupe %}
   <ul class="spisak spisak--grouped" id="spisak-list">
     {% for grupa in grupe %}
@@ -75,9 +86,21 @@
     {% endfor %}
   </ul>
 {% else %}
-  <div class="spisak__empty">
-    Нема домаћинстава која славе {{ slava.naziv }}.
-  </div>
+  {% if nema_parohije %}
+    <div class="spisak__empty">
+      Свештеник {{ svestenik.ime }} {{ svestenik.prezime }} нема додељену парохију, па нема територију за приказ.
+      <br><small>Парохија се поставља на картици свештеника.</small>
+    </div>
+  {% elif svestenik %}
+    <div class="spisak__empty">
+      Нема домаћинстава која славе {{ slava.naziv }} на територији парохије {{ svestenik.parohija }}.
+      <br><small>Улице се додељују парохији преко адресе (поље „свештеник (улица)“).</small>
+    </div>
+  {% else %}
+    <div class="spisak__empty">
+      Нема домаћинстава која славе {{ slava.naziv }}.
+    </div>
+  {% endif %}
 {% endif %}
 
 {% endblock %}
