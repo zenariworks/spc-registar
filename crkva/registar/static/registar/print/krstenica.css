@@ -9,46 +9,46 @@
     --krst-page-height: 297mm;
 
     /* Header fields - Књига/Страна/Број */
-    --krst-knjiga-top: 18.2mm;
-    --krst-knjiga-left: 36.2mm;
-    --krst-strana-top: 26.8mm;
-    --krst-strana-left: 36.2mm;
-    --krst-broj-top: 34.4mm;
-    --krst-broj-left: 36.2mm;
+    --krst-knjiga-top: 16.6mm;
+    --krst-knjiga-left: 35.1mm;
+    --krst-strana-top: 25.2mm;
+    --krst-strana-left: 34.9mm;
+    --krst-broj-top: 33.3mm;
+    --krst-broj-left: 34.3mm;
 
     /* Header fields - Епархија / Храм / Место / Година */
-    --krst-eparhija-top: 59.5mm;
-    --krst-eparhija-left: 31.3mm;
-    --krst-hram-top: 68.0mm;
+    --krst-eparhija-top: 57.1mm;
+    --krst-eparhija-left: 31.6mm;
+    --krst-hram-top: 66.1mm;
     --krst-hram-left: 31.6mm;
-    --krst-mesto-top: 67.8mm;
-    --krst-mesto-left: 122.4mm;
-    --krst-godina-top: 67.5mm;
-    --krst-godina-left: 186.4mm;
+    --krst-mesto-top: 64.9mm;
+    --krst-mesto-left: 121.9mm;
+    --krst-godina-top: 65.1mm;
+    --krst-godina-left: 185.3mm;
 
     /* Table fields 1-6 (left column) */
     --krst-field1-top: 78.0mm;
-    --krst-field1-left: 88.7mm;
+    --krst-field1-left: 88.0mm;
     --krst-field2-top: 88.1mm;
-    --krst-field2-left: 88.7mm;
-    --krst-field3-top: 98.4mm;
-    --krst-field3-left: 88.4mm;
+    --krst-field2-left: 88.0mm;
+    --krst-field3-top: 97.9mm;
+    --krst-field3-left: 88.0mm;
     --krst-field4-top: 108.4mm;
-    --krst-field4-left: 88.2mm;
-    --krst-field5-top: 120.0mm;
-    --krst-field5-left: 87.9mm;
-    --krst-field6-top: 131.0mm;
-    --krst-field6-left: 87.6mm;
+    --krst-field4-left: 88.0mm;
+    --krst-field5-top: 119.5mm;
+    --krst-field5-left: 88.0mm;
+    --krst-field6-top: 130.7mm;
+    --krst-field6-left: 88.0mm;
 
     /* Table fields 7-10 (right column answers) */
     --krst-field7-top: 156.9mm;
-    --krst-field7-left: 95.2mm;
+    --krst-field7-left: 95.0mm;
     --krst-field8-top: 167.5mm;
-    --krst-field8-left: 95.2mm;
+    --krst-field8-left: 95.0mm;
     --krst-field9-top: 177.3mm;
-    --krst-field9-left: 95.2mm;
+    --krst-field9-left: 95.0mm;
     --krst-field10-top: 187.9mm;
-    --krst-field10-left: 95.2mm;
+    --krst-field10-left: 95.0mm;
 
     /* Table fields 11-14 (left column continued) */
     --krst-field11-top: 197.9mm;
@@ -56,21 +56,21 @@
     --krst-field12-top: 210.4mm;
     --krst-field12-left: 95.0mm;
     --krst-field13-top: 224.1mm;
-    --krst-field13-left: 95.2mm;
-    --krst-field14-top: 234.6mm;
-    --krst-field14-left: 95.2mm;
+    --krst-field13-left: 95.0mm;
+    --krst-field14-top: 233.5mm;
+    --krst-field14-left: 95.0mm;
 
     /* Footer fields */
-    --krst-footer_br-top: 256.9mm;
-    --krst-footer_br-left: 18.5mm;
-    --krst-footer_godina-top: 263.7mm;
-    --krst-footer_godina-left: 40.9mm;
-    --krst-footer_u-top: 270.5mm;
+    --krst-footer_br-top: 253.2mm;
+    --krst-footer_br-left: 18.2mm;
+    --krst-footer_godina-top: 261.6mm;
+    --krst-footer_godina-left: 41.2mm;
+    --krst-footer_u-top: 268.1mm;
     --krst-footer_u-left: 16.3mm;
-    --krst-footer_paroh-top: 263.4mm;
-    --krst-footer_paroh-left: 141.6mm;
-    --krst-footer_parohija-top: 270.3mm;
-    --krst-footer_parohija-left: 141.6mm;
+    --krst-footer_paroh-top: 268.4mm;
+    --krst-footer_paroh-left: 128.6mm;
+    --krst-footer_parohija-top: 261.0mm;
+    --krst-footer_parohija-left: 139.2mm;
 }
 
 /* ==========================================================================

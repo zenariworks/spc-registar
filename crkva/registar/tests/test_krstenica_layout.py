@@ -29,7 +29,8 @@ def _var_mm(css: str, name: str) -> float:
 
 
 class KrstenicaFooterLayoutTests(SimpleTestCase):
-    """Подножје: име свештеника иде на ред „Парох“, парохија на ред „парохије“."""
+    """Подножје: назив парохије иде на ред „парохије“ (горњи), потпис
+    свештеника на доњи ред; „Парох“ је само наслов изнад."""
 
     @classmethod
     def setUpClass(cls):
@@ -37,15 +38,16 @@ class KrstenicaFooterLayoutTests(SimpleTestCase):
         with open(CSS_PATH, encoding="utf-8") as fh:
             cls.css = fh.read()
 
-    def test_paroh_line_is_above_parohija_line(self):
-        # Ред „Парох“ (име свештеника) мора бити ИЗНАД реда „парохије“
-        # (назив парохије) — мањи top значи виши положај на страни.
+    def test_parohija_line_is_above_paroh_line(self):
+        # На обрасцу: наслов „Парох“, испод њега ред „парохије [назив]“
+        # (горњи), па потпис свештеника (доњи). Дакле назив парохије мора
+        # бити ИЗНАД потписа свештеника — мањи top значи виши положај.
         paroh_top = _var_mm(self.css, "footer_paroh-top")
         parohija_top = _var_mm(self.css, "footer_parohija-top")
         self.assertLess(
-            paroh_top,
             parohija_top,
-            "footer_paroh мора бити изнад footer_parohija (били су замењени, #17)",
+            paroh_top,
+            "footer_parohija (назив парохије) мора бити изнад footer_paroh (потпис), #17",
         )
 
     def test_footer_fields_within_page(self):
