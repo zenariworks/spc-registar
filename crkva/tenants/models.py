@@ -42,6 +42,14 @@ class Tenant(TenantMixin):
         help_text="Име парохије за приказ. У свакој парохијској шеми "
         "постоји сопствена Parohija инстанца; ово је само display label.",
     )
+    mesto = models.CharField(
+        max_length=200,
+        blank=True,
+        default="",
+        verbose_name="место (за штампу)",
+        help_text="Место парохије како се штампа у заглављу сертификата, "
+        "у локативу иза „у“ (нпр. „Београду“, „Чукарици“, „Амстердаму“).",
+    )
     default_phone_region = models.CharField(
         max_length=2,
         default="RS",
