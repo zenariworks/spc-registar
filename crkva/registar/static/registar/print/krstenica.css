@@ -28,17 +28,17 @@
 
     /* Table fields 1-6 (left column) */
     --krst-field1-top: 80.0mm;
-    --krst-field1-left: 90.0mm;
+    --krst-field1-left: 97.0mm;
     --krst-field2-top: 90.1mm;
-    --krst-field2-left: 90.0mm;
+    --krst-field2-left: 97.0mm;
     --krst-field3-top: 99.9mm;
-    --krst-field3-left: 90.0mm;
+    --krst-field3-left: 97.0mm;
     --krst-field4-top: 110.4mm;
-    --krst-field4-left: 90.0mm;
+    --krst-field4-left: 97.0mm;
     --krst-field5-top: 121.5mm;
-    --krst-field5-left: 90.0mm;
+    --krst-field5-left: 97.0mm;
     --krst-field6-top: 132.7mm;
-    --krst-field6-left: 90.0mm;
+    --krst-field6-left: 97.0mm;
 
     /* Table fields 7-10 (right column answers) */
     --krst-field7-top: 158.9mm;
