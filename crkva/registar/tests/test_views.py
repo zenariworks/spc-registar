@@ -268,6 +268,12 @@ class CalibrateViewsTestCase(TestCase):
         response = self.client.get(reverse("calibrate_vencanje"))
         self.assertEqual(response.status_code, 200)
 
+    def test_calibrate_krstenje_links_live_css(self):
+        """Калибрација учитава продукциони krstenica.css да приказује
+        живе вредности (--krst-*), а не застареле подразумеване (#17)."""
+        response = self.client.get(reverse("calibrate_krstenje"))
+        self.assertContains(response, "print/krstenica.css")
+
 
 class UnosKrstenjaViewTestCase(TestCase):
     """Тестови за унос крштења."""

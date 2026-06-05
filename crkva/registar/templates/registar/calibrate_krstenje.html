@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 {% block extra_css %}
+<!-- Учитавамо продукциони стилски лист да би алат читао ЖИВЕ
+     калибрисане вредности (--krst-*), а не застареле подразумеване. -->
+<link rel="stylesheet" href="{% static 'registar/print/krstenica.css' %}">
 <style>
 .calibration-container {
     position: relative;
@@ -463,6 +466,20 @@ function resetPositions() {
     });
     updatePositionDisplay();
 }
+
+// Синхронизуј почетне позиције са продукционим CSS-ом (krstenica.css):
+// алат тако приказује СТВАРНЕ калибрисане вредности и омогућава поновну
+// проверу/дотеривање без губитка претходне калибрације.
+(function syncFromLiveCss() {
+    const rs = getComputedStyle(document.documentElement);
+    fields.forEach(f => {
+        const t = rs.getPropertyValue(`--krst-${f.id}-top`).trim();
+        const l = rs.getPropertyValue(`--krst-${f.id}-left`).trim();
+        const tv = parseFloat(t), lv = parseFloat(l);
+        if (t.endsWith('mm') && !isNaN(tv)) f.top = tv;
+        if (l.endsWith('mm') && !isNaN(lv)) f.left = lv;
+    });
+})();
 
 createFields();
 </script>
