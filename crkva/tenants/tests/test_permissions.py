@@ -163,3 +163,46 @@ class ContextProcessorTests(TestCase):
         self.assertTrue(ctx["can_edit_osoba"])
         self.assertTrue(ctx["can_edit_krstenje"])
         self.assertFalse(ctx["can_edit_svestenik"])
+
+    def test_context_processor_issues_single_membership_query(self):
+        # Regression for #256: every can_edit_* flag + is_admin derive from a
+        # single membership lookup, not one query per flag (was ~6 per render).
+        # We count only queries hitting the membership table, because
+        # django-tenants emits a "SET search_path" alongside each query in the
+        # test harness which would otherwise inflate a raw query count.
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        from tenants.context_processors import current_tenant
+
+        factory = RequestFactory()
+        request = factory.get("/")
+        request.user = self.clerk
+        request.tenant = self.tenant
+        with CaptureQueriesContext(connection) as captured:
+            current_tenant(request)
+        membership_queries = [
+            q
+            for q in captured.captured_queries
+            if "tenants_user_membership" in q["sql"]
+        ]
+        self.assertEqual(
+            len(membership_queries),
+            1,
+            "context processor must resolve the role in one membership query "
+            f"(got {len(membership_queries)})",
+        )
+
+    def test_context_processor_superuser_needs_no_query(self):
+        from tenants.context_processors import current_tenant
+
+        su = User.objects.create_superuser(
+            username="su256", password="x", email="su256@test"
+        )
+        factory = RequestFactory()
+        request = factory.get("/")
+        request.user = su
+        request.tenant = self.tenant
+        with self.assertNumQueries(0):
+            ctx = current_tenant(request)
+        self.assertTrue(ctx["can_edit_osoba"])
+        self.assertTrue(ctx["is_tenant_admin"])

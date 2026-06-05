@@ -8,8 +8,7 @@ from tenants.permissions import (
     OSOBA,
     SVESTENIK,
     VENCANJE,
-    can_edit,
-    is_tenant_admin,
+    tenant_permissions,
 )
 
 
@@ -19,20 +18,23 @@ def current_tenant(request):
     Templates may use either `tenant`/`is_tenant_admin` (django-tenants
     schema-level naming) or the user-facing aliases `parohija`/
     `is_parohija_admin` interchangeably.
+
+    The role is resolved once (a single membership query) and every flag is
+    derived from it in memory, so a render costs one query rather than six.
     """
     tenant = getattr(request, "tenant", None)
     user = getattr(request, "user", None)
-    admin_flag = is_tenant_admin(user, tenant)
+    is_admin, writable = tenant_permissions(user, tenant)
     return {
         # django-tenants infrastructure naming (kept for backwards compat)
         "tenant": tenant,
-        "is_tenant_admin": admin_flag,
+        "is_tenant_admin": is_admin,
         # User-facing aliases — preferred in new templates.
         "parohija": tenant,
-        "is_parohija_admin": admin_flag,
-        "can_edit_osoba": can_edit(user, tenant, OSOBA),
-        "can_edit_domacinstvo": can_edit(user, tenant, DOMACINSTVO),
-        "can_edit_krstenje": can_edit(user, tenant, KRSTENJE),
-        "can_edit_vencanje": can_edit(user, tenant, VENCANJE),
-        "can_edit_svestenik": can_edit(user, tenant, SVESTENIK),
+        "is_parohija_admin": is_admin,
+        "can_edit_osoba": OSOBA in writable,
+        "can_edit_domacinstvo": DOMACINSTVO in writable,
+        "can_edit_krstenje": KRSTENJE in writable,
+        "can_edit_vencanje": VENCANJE in writable,
+        "can_edit_svestenik": SVESTENIK in writable,
     }
