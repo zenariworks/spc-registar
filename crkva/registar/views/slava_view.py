@@ -19,7 +19,13 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
     """
     slava = get_object_or_404(Slava, uid=uid)
 
-    svestenici = list(Svestenik.objects.order_by("prezime", "ime"))
+    # Only priests with a parish can drive the territory filter (we filter
+    # households by the priest's parish), so omit parish-less priests (#27).
+    svestenici = list(
+        Svestenik.objects.filter(parohija__isnull=False)
+        .select_related("parohija")
+        .order_by("prezime", "ime")
+    )
     svestenik = resolve_svestenik(request)
     selected_id = (request.GET.get("svestenik") or "").strip()
     nema_parohije = svestenik is not None and not svestenik.parohija_id
