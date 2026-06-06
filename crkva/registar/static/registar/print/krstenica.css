@@ -63,14 +63,14 @@
     /* Footer fields */
     --krst-footer_br-top: 255.2mm;
     --krst-footer_br-left: 20.2mm;
-    --krst-footer_godina-top: 262.1mm;
+    --krst-footer_godina-top: 264.1mm;
     --krst-footer_godina-left: 43.2mm;
-    --krst-footer_u-top: 269.1mm;
-    --krst-footer_u-left: 18.3mm;
+    --krst-footer_u-top: 271.1mm;
+    --krst-footer_u-left: 17.3mm;
     --krst-footer_paroh-top: 270.4mm;
     --krst-footer_paroh-left: 124.6mm;
-    --krst-footer_parohija-top: 263.0mm;
-    --krst-footer_parohija-left: 141.1mm;
+    --krst-footer_parohija-top: 264.0mm;
+    --krst-footer_parohija-left: 143.1mm;
 }
 
 /* ==========================================================================
@@ -310,7 +310,7 @@
     height: 6mm;
     display: flex;
     align-items: center;
-    font-size: 11pt;
+    font-size: 13pt;
 }
 
 .krst-field-footer_u {
