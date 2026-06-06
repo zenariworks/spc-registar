@@ -446,8 +446,12 @@ function exportCSS() {
         if (el) {
             const top = pxToMm(parseFloat(el.style.top)).toFixed(1);
             const left = pxToMm(parseFloat(el.style.left)).toFixed(1);
+            const width = pxToMm(parseFloat(el.style.width) || el.offsetWidth).toFixed(1);
+            const height = pxToMm(parseFloat(el.style.height) || el.offsetHeight).toFixed(1);
             css += `    --krst-${field.id}-top: ${top}mm;\n`;
             css += `    --krst-${field.id}-left: ${left}mm;\n`;
+            css += `    --krst-${field.id}-width: ${width}mm;\n`;
+            css += `    --krst-${field.id}-height: ${height}mm;\n`;
         }
     });
     css += '}\n';
@@ -475,9 +479,13 @@ function resetPositions() {
     fields.forEach(f => {
         const t = rs.getPropertyValue(`--krst-${f.id}-top`).trim();
         const l = rs.getPropertyValue(`--krst-${f.id}-left`).trim();
-        const tv = parseFloat(t), lv = parseFloat(l);
+        const w = rs.getPropertyValue(`--krst-${f.id}-width`).trim();
+        const h = rs.getPropertyValue(`--krst-${f.id}-height`).trim();
+        const tv = parseFloat(t), lv = parseFloat(l), wv = parseFloat(w), hv = parseFloat(h);
         if (t.endsWith('mm') && !isNaN(tv)) f.top = tv;
         if (l.endsWith('mm') && !isNaN(lv)) f.left = lv;
+        if (w.endsWith('mm') && !isNaN(wv)) f.width = wv;
+        if (h.endsWith('mm') && !isNaN(hv)) f.height = hv;
     });
 })();
 

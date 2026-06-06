@@ -71,6 +71,59 @@
     --krst-footer_paroh-left: 124.6mm;
     --krst-footer_parohija-top: 264.0mm;
     --krst-footer_parohija-left: 143.1mm;
+    /* box sizes (calibratable) */
+    --krst-knjiga-width: 15mm;
+    --krst-knjiga-height: 6mm;
+    --krst-strana-width: 15mm;
+    --krst-strana-height: 6mm;
+    --krst-broj-width: 15mm;
+    --krst-broj-height: 6mm;
+    --krst-eparhija-width: 80mm;
+    --krst-eparhija-height: 6mm;
+    --krst-hram-width: 85mm;
+    --krst-hram-height: 6mm;
+    --krst-mesto-width: 55mm;
+    --krst-mesto-height: 6mm;
+    --krst-godina-width: 15mm;
+    --krst-godina-height: 6mm;
+    --krst-footer_br-width: 20mm;
+    --krst-footer_br-height: 6mm;
+    --krst-footer_godina-width: 15mm;
+    --krst-footer_godina-height: 6mm;
+    --krst-footer_u-width: 30mm;
+    --krst-footer_u-height: 6mm;
+    --krst-footer_paroh-width: 55mm;
+    --krst-footer_paroh-height: 6mm;
+    --krst-footer_parohija-width: 55mm;
+    --krst-footer_parohija-height: 6mm;
+    --krst-field1-width: 105mm;
+    --krst-field1-height: 8mm;
+    --krst-field2-width: 105mm;
+    --krst-field2-height: 8mm;
+    --krst-field3-width: 105mm;
+    --krst-field3-height: 8mm;
+    --krst-field4-width: 105mm;
+    --krst-field4-height: 8mm;
+    --krst-field5-width: 105mm;
+    --krst-field5-height: 8mm;
+    --krst-field6-width: 105mm;
+    --krst-field6-height: 24mm;
+    --krst-field7-width: 105mm;
+    --krst-field7-height: 8mm;
+    --krst-field8-width: 105mm;
+    --krst-field8-height: 8mm;
+    --krst-field9-width: 105mm;
+    --krst-field9-height: 8mm;
+    --krst-field10-width: 105mm;
+    --krst-field10-height: 8mm;
+    --krst-field11-width: 105mm;
+    --krst-field11-height: 8mm;
+    --krst-field12-width: 105mm;
+    --krst-field12-height: 12mm;
+    --krst-field13-width: 105mm;
+    --krst-field13-height: 8mm;
+    --krst-field14-width: 105mm;
+    --krst-field14-height: 8mm;
 }
 
 /* ==========================================================================
@@ -107,8 +160,8 @@
     position: absolute;
     top: var(--krst-knjiga-top);
     left: var(--krst-knjiga-left);
-    width: 15mm;
-    height: 6mm;
+    width: var(--krst-knjiga-width);
+    height: var(--krst-knjiga-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -119,8 +172,8 @@
     position: absolute;
     top: var(--krst-strana-top);
     left: var(--krst-strana-left);
-    width: 15mm;
-    height: 6mm;
+    width: var(--krst-strana-width);
+    height: var(--krst-strana-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -131,8 +184,8 @@
     position: absolute;
     top: var(--krst-broj-top);
     left: var(--krst-broj-left);
-    width: 15mm;
-    height: 6mm;
+    width: var(--krst-broj-width);
+    height: var(--krst-broj-height);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -143,8 +196,8 @@
     position: absolute;
     top: var(--krst-eparhija-top);
     left: var(--krst-eparhija-left);
-    width: 80mm;
-    height: 6mm;
+    width: var(--krst-eparhija-width);
+    height: var(--krst-eparhija-height);
     display: flex;
     align-items: center;
     font-size: 12pt;
@@ -154,8 +207,8 @@
     position: absolute;
     top: var(--krst-hram-top);
     left: var(--krst-hram-left);
-    width: 85mm;
-    height: 6mm;
+    width: var(--krst-hram-width);
+    height: var(--krst-hram-height);
     display: flex;
     align-items: center;
     font-size: 12pt;
@@ -165,8 +218,8 @@
     position: absolute;
     top: var(--krst-mesto-top);
     left: var(--krst-mesto-left);
-    width: 55mm;
-    height: 6mm;
+    width: var(--krst-mesto-width);
+    height: var(--krst-mesto-height);
     display: flex;
     align-items: center;
     font-size: 12pt;
@@ -176,8 +229,8 @@
     position: absolute;
     top: var(--krst-godina-top);
     left: var(--krst-godina-left);
-    width: 15mm;
-    height: 6mm;
+    width: var(--krst-godina-width);
+    height: var(--krst-godina-height);
     display: flex;
     align-items: center;
     font-size: 12pt;
@@ -189,7 +242,6 @@
 
 .krst-table-field {
     position: absolute;
-    width: 105mm;
     display: flex;
     align-items: center;
     font-size: 12pt;
@@ -200,37 +252,43 @@
 .krst-field-rodjenje_datum {
     top: var(--krst-field1-top);
     left: var(--krst-field1-left);
-    height: 8mm;
+    width: var(--krst-field1-width);
+    height: var(--krst-field1-height);
 }
 
 .krst-field-rodjenje_mesto {
     top: var(--krst-field2-top);
     left: var(--krst-field2-left);
-    height: 8mm;
+    width: var(--krst-field2-width);
+    height: var(--krst-field2-height);
 }
 
 .krst-field-krstenje_datum {
     top: var(--krst-field3-top);
     left: var(--krst-field3-left);
-    height: 8mm;
+    width: var(--krst-field3-width);
+    height: var(--krst-field3-height);
 }
 
 .krst-field-krstenje_mesto {
     top: var(--krst-field4-top);
     left: var(--krst-field4-left);
-    height: 8mm;
+    width: var(--krst-field4-width);
+    height: var(--krst-field4-height);
 }
 
 .krst-field-ime_pol {
     top: var(--krst-field5-top);
     left: var(--krst-field5-left);
-    height: 8mm;
+    width: var(--krst-field5-width);
+    height: var(--krst-field5-height);
 }
 
 .krst-field-roditelji {
     top: var(--krst-field6-top);
     left: var(--krst-field6-left);
-    height: 24mm;
+    width: var(--krst-field6-width);
+    height: var(--krst-field6-height);
     font-size: 11pt;
     line-height: 1.4;
 }
@@ -239,38 +297,44 @@
 .krst-field-dete_po_redu {
     top: var(--krst-field7-top);
     left: var(--krst-field7-left);
-    height: 8mm;
+    width: var(--krst-field7-width);
+    height: var(--krst-field7-height);
 }
 
 .krst-field-bracno {
     top: var(--krst-field8-top);
     left: var(--krst-field8-left);
-    height: 8mm;
+    width: var(--krst-field8-width);
+    height: var(--krst-field8-height);
 }
 
 .krst-field-blizanac {
     top: var(--krst-field9-top);
     left: var(--krst-field9-left);
-    height: 8mm;
+    width: var(--krst-field9-width);
+    height: var(--krst-field9-height);
 }
 
 .krst-field-telesna_mana {
     top: var(--krst-field10-top);
     left: var(--krst-field10-left);
-    height: 8mm;
+    width: var(--krst-field10-width);
+    height: var(--krst-field10-height);
 }
 
 /* Fields 11-14: Left column continued */
 .krst-field-svestenik {
     top: var(--krst-field11-top);
     left: var(--krst-field11-left);
-    height: 8mm;
+    width: var(--krst-field11-width);
+    height: var(--krst-field11-height);
 }
 
 .krst-field-kum {
     top: var(--krst-field12-top);
     left: var(--krst-field12-left);
-    height: 12mm;
+    width: var(--krst-field12-width);
+    height: var(--krst-field12-height);
     font-size: 11pt;
     line-height: 1.4;
 }
@@ -278,13 +342,15 @@
 .krst-field-domovnik {
     top: var(--krst-field13-top);
     left: var(--krst-field13-left);
-    height: 8mm;
+    width: var(--krst-field13-width);
+    height: var(--krst-field13-height);
 }
 
 .krst-field-primedba {
     top: var(--krst-field14-top);
     left: var(--krst-field14-left);
-    height: 8mm;
+    width: var(--krst-field14-width);
+    height: var(--krst-field14-height);
 }
 
 /* ==========================================================================
@@ -295,8 +361,8 @@
     position: absolute;
     top: var(--krst-footer_br-top);
     left: var(--krst-footer_br-left);
-    width: 20mm;
-    height: 6mm;
+    width: var(--krst-footer_br-width);
+    height: var(--krst-footer_br-height);
     display: flex;
     align-items: center;
     font-size: 13pt;
@@ -306,8 +372,8 @@
     position: absolute;
     top: var(--krst-footer_godina-top);
     left: var(--krst-footer_godina-left);
-    width: 15mm;
-    height: 6mm;
+    width: var(--krst-footer_godina-width);
+    height: var(--krst-footer_godina-height);
     display: flex;
     align-items: center;
     font-size: 13pt;
@@ -317,8 +383,8 @@
     position: absolute;
     top: var(--krst-footer_u-top);
     left: var(--krst-footer_u-left);
-    width: 30mm;
-    height: 6mm;
+    width: var(--krst-footer_u-width);
+    height: var(--krst-footer_u-height);
     display: flex;
     align-items: center;
     font-size: 11pt;
@@ -328,8 +394,8 @@
     position: absolute;
     top: var(--krst-footer_paroh-top);
     left: var(--krst-footer_paroh-left);
-    width: 55mm;
-    height: 6mm;
+    width: var(--krst-footer_paroh-width);
+    height: var(--krst-footer_paroh-height);
     display: flex;
     align-items: center;
     font-size: 11pt;
@@ -339,8 +405,8 @@
     position: absolute;
     top: var(--krst-footer_parohija-top);
     left: var(--krst-footer_parohija-left);
-    width: 55mm;
-    height: 6mm;
+    width: var(--krst-footer_parohija-width);
+    height: var(--krst-footer_parohija-height);
     display: flex;
     align-items: center;
     font-size: 11pt;
