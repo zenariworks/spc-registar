@@ -19,11 +19,11 @@
     /* Header fields - Епархија / Храм / Место / Година */
     --krst-eparhija-top: 59.1mm;
     --krst-eparhija-left: 33.6mm;
-    --krst-hram-top: 68.1mm;
+    --krst-hram-top: 69.1mm;
     --krst-hram-left: 33.6mm;
-    --krst-mesto-top: 66.9mm;
+    --krst-mesto-top: 69.1mm;
     --krst-mesto-left: 123.9mm;
-    --krst-godina-top: 67.1mm;
+    --krst-godina-top: 69.1mm;
     --krst-godina-left: 187.3mm;
 
     /* Table fields 1-6 (left column) */
@@ -61,7 +61,7 @@
     --krst-field14-left: 97.0mm;
 
     /* Footer fields */
-    --krst-footer_br-top: 255.2mm;
+    --krst-footer_br-top: 257.2mm;
     --krst-footer_br-left: 20.2mm;
     --krst-footer_godina-top: 264.1mm;
     --krst-footer_godina-left: 43.2mm;
@@ -299,7 +299,7 @@
     height: 6mm;
     display: flex;
     align-items: center;
-    font-size: 11pt;
+    font-size: 13pt;
 }
 
 .krst-field-footer_godina {
