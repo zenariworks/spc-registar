@@ -37,7 +37,10 @@ class ResolveTenantTests(TestCase):
         return request
 
     def resolve(self, request):
-        return SessionTenantMiddleware._resolve_tenant(request)
+        # _resolve_tenant now returns (tenant, membership); tests assert on the
+        # resolved tenant (membership is the perm-cache seed, see #256).
+        tenant, _membership = SessionTenantMiddleware._resolve_tenant(request)
+        return tenant
 
     def test_active_membership_resolves_and_sets_session(self):
         UserMembership.objects.create(

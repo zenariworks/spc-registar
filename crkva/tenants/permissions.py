@@ -48,10 +48,53 @@ WRITE_BY_ROLE: dict[str, frozenset[str]] = {
 }
 
 
+def _perms_from_membership(membership) -> tuple[bool, frozenset[str]]:
+    """Derive ``(is_admin, writable_resources)`` from a membership row."""
+    if membership is None:
+        return False, frozenset()
+    return membership.role == Role.ADMIN, WRITE_BY_ROLE.get(
+        membership.role, frozenset()
+    )
+
+
+def _perm_cache(user) -> dict:
+    """Per-request cache of resolved permissions, keyed by tenant pk.
+
+    Stored on the ``user`` instance — within a single request the same user
+    object flows through middleware, decorators and the context processor, so
+    one resolution is reused everywhere. A fresh request gets a fresh user
+    instance from the auth middleware, so the cache never goes stale.
+    """
+    cache = getattr(user, "_tenant_perms_cache", None)
+    if cache is None:
+        cache = {}
+        user._tenant_perms_cache = cache
+    return cache
+
+
+def prime_tenant_permissions(user, tenant, membership) -> None:
+    """Seed the per-request cache from a membership the caller already fetched.
+
+    Called by ``SessionTenantMiddleware`` after it resolves ``request.tenant``
+    (it loads the membership to route the schema anyway), so the context
+    processor and ``can_edit``/``is_tenant_admin`` reuse that single lookup
+    instead of re-querying. No-op for anonymous/superuser/missing tenant —
+    those need no query. ``membership`` may be ``None`` (user has no active
+    membership in ``tenant``), which correctly caches "no permissions".
+    """
+    if user is None or not user.is_authenticated or user.is_superuser:
+        return
+    if tenant is None:
+        return
+    _perm_cache(user)[tenant.pk] = _perms_from_membership(membership)
+
+
 def tenant_permissions(user, tenant) -> tuple[bool, frozenset[str]]:
     """Resolve ``(is_admin, writable_resources)`` for ``user`` in ``tenant``.
 
-    Issues at most **one** query. `UserMembership` is unique per
+    Issues at most **one** query per ``(user, tenant)`` per request, and zero
+    when the middleware has already primed the cache (see
+    ``prime_tenant_permissions``). `UserMembership` is unique per
     ``(user, tenant)``, so a single active row fully determines the role.
 
     - Anonymous users / missing tenant → ``(False, frozenset())`` (no query).
@@ -64,14 +107,15 @@ def tenant_permissions(user, tenant) -> tuple[bool, frozenset[str]]:
         return True, ALL_RESOURCES
     if tenant is None:
         return False, frozenset()
+    cache = _perm_cache(user)
+    if tenant.pk in cache:
+        return cache[tenant.pk]
     membership = UserMembership.objects.filter(
         user=user, tenant=tenant, is_active=True
     ).first()
-    if membership is None:
-        return False, frozenset()
-    return membership.role == Role.ADMIN, WRITE_BY_ROLE.get(
-        membership.role, frozenset()
-    )
+    result = _perms_from_membership(membership)
+    cache[tenant.pk] = result
+    return result
 
 
 def can_edit(user, tenant, resource: str) -> bool:

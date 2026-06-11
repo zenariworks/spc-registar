@@ -17,6 +17,8 @@ from django.db import connection
 from django.http import HttpRequest, HttpResponse
 from django_tenants.utils import schema_exists
 
+from tenants.permissions import prime_tenant_permissions
+
 SESSION_TENANT_KEY = "active_tenant_id"
 logger = logging.getLogger(__name__)
 
@@ -29,8 +31,12 @@ class SessionTenantMiddleware:
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
         prior_tenant = getattr(connection, "tenant", None)
-        tenant = self._resolve_tenant(request)
+        tenant, membership = self._resolve_tenant(request)
         request.tenant = tenant
+        # The membership loaded to route the schema also determines the user's
+        # permissions; seed the per-request cache so the context processor and
+        # can_edit/is_tenant_admin reuse it instead of re-querying (#256).
+        prime_tenant_permissions(getattr(request, "user", None), tenant, membership)
         self._activate(tenant)
         try:
             return self.get_response(request)
@@ -39,24 +45,28 @@ class SessionTenantMiddleware:
 
     @staticmethod
     def _resolve_tenant(request: HttpRequest):
+        """Return ``(tenant, membership)``.
+
+        ``membership`` is the caller's active ``UserMembership`` in the resolved
+        tenant when known (so callers can prime the permission cache), or
+        ``None`` for superusers (no row needed), anonymous users, or when the
+        user has no active membership in the resolved tenant.
+        """
         from tenants.models import Tenant, UserMembership
 
         user = getattr(request, "user", None)
         is_authenticated = user is not None and user.is_authenticated
         is_superuser = is_authenticated and user.is_superuser
 
-        def _may_access(tenant) -> bool:
-            # Superusers may enter any parish; everyone else needs an *active*
-            # membership in that specific tenant. A deactivated membership
-            # locks the user out of this parish only — never others, and
-            # never the shared User.is_active flag.
-            if is_superuser:
-                return True
+        def _membership(tenant):
+            # The single active membership for (user, tenant), or None. A
+            # deactivated membership locks the user out of this parish only —
+            # never others, and never the shared User.is_active flag.
             if not is_authenticated:
-                return False
+                return None
             return UserMembership.objects.filter(
                 user=user, tenant=tenant, is_active=True
-            ).exists()
+            ).first()
 
         session_tid = (
             request.session.get(SESSION_TENANT_KEY)
@@ -69,8 +79,12 @@ class SessionTenantMiddleware:
             except Tenant.DoesNotExist:
                 request.session.pop(SESSION_TENANT_KEY, None)
             else:
-                if _may_access(tenant):
-                    return tenant
+                # Superusers may enter any parish without a membership row.
+                if is_superuser:
+                    return tenant, None
+                membership = _membership(tenant)
+                if membership is not None:
+                    return tenant, membership
                 request.session.pop(SESSION_TENANT_KEY, None)
 
         if is_authenticated:
@@ -84,12 +98,14 @@ class SessionTenantMiddleware:
             )
             if membership is not None:
                 request.session[SESSION_TENANT_KEY] = membership.tenant_id
-                return membership.tenant
+                return membership.tenant, membership
 
+        # Fallback: the default parish. An authenticated user reaching here has
+        # no active membership anywhere, so (correctly) no permissions in it.
         try:
-            return Tenant.objects.get(is_default=True, is_active=True)
+            return Tenant.objects.get(is_default=True, is_active=True), None
         except Tenant.DoesNotExist:
-            return None
+            return None, None
 
     @staticmethod
     def _activate(tenant) -> None:

@@ -176,7 +176,7 @@ class ContextProcessorTests(TestCase):
 
         factory = RequestFactory()
         request = factory.get("/")
-        request.user = self.clerk
+        request.user = User.objects.get(pk=self.clerk.pk)  # cold per-request cache
         request.tenant = self.tenant
         with CaptureQueriesContext(connection) as captured:
             current_tenant(request)
@@ -206,3 +206,66 @@ class ContextProcessorTests(TestCase):
             ctx = current_tenant(request)
         self.assertTrue(ctx["can_edit_osoba"])
         self.assertTrue(ctx["is_tenant_admin"])
+
+
+class MembershipPrimingTests(TestCase):
+    """#256: the middleware's resolution membership primes the per-request
+    permission cache, so the context processor/decorators re-query zero times.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.clerk = User.objects.create_user(username="prime_kanc", password="x")
+        UserMembership.objects.create(
+            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        )
+
+    def _membership_queries(self, fn):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+
+        with CaptureQueriesContext(connection) as cap:
+            fn()
+        return [q for q in cap.captured_queries
+                if "tenants_user_membership" in q["sql"]]
+
+    def test_prime_makes_permission_checks_query_free(self):
+        from tenants.permissions import (
+            can_edit, is_tenant_admin, prime_tenant_permissions,
+        )
+        user = User.objects.get(pk=self.clerk.pk)  # fresh instance
+        membership = UserMembership.objects.get(user=user, tenant=self.tenant)
+        prime_tenant_permissions(user, self.tenant, membership)
+
+        q = self._membership_queries(lambda: (
+            can_edit(user, self.tenant, OSOBA),
+            can_edit(user, self.tenant, SVESTENIK),
+            is_tenant_admin(user, self.tenant),
+        ))
+        self.assertEqual(len(q), 0, "primed cache must avoid membership queries")
+        self.assertTrue(can_edit(user, self.tenant, OSOBA))
+        self.assertFalse(can_edit(user, self.tenant, SVESTENIK))
+        self.assertFalse(is_tenant_admin(user, self.tenant))
+
+    def test_middleware_resolution_primes_context_processor(self):
+        from tenants.context_processors import current_tenant
+        from tenants.middleware import SessionTenantMiddleware
+        from tenants.permissions import prime_tenant_permissions
+
+        request = RequestFactory().get("/")
+        request.user = User.objects.get(pk=self.clerk.pk)
+        request.session = {}
+
+        def resolve_and_prime():
+            tenant, membership = SessionTenantMiddleware._resolve_tenant(request)
+            request.tenant = tenant
+            prime_tenant_permissions(request.user, tenant, membership)
+
+        mw_q = self._membership_queries(resolve_and_prime)
+        cp_q = self._membership_queries(lambda: current_tenant(request))
+
+        self.assertLessEqual(len(mw_q), 1,
+                             "resolution should cost at most one membership query")
+        self.assertEqual(len(cp_q), 0,
+                         "context processor must reuse the primed cache")
