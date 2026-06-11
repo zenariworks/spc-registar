@@ -101,7 +101,7 @@ class PublicSchemaModelSelect2Widget(ScriptAwareModelSelect2Widget):
 
 from django.db.models import Q  # noqa: E402
 
-from registar.models import Adresa, Hram, Svestenik  # noqa: E402
+from registar.models import Adresa, Hram, Parohija, Svestenik  # noqa: E402
 from registar.models.parohijan import Osoba  # noqa: E402
 
 
@@ -154,11 +154,17 @@ class FemaleOsobaSelect2Widget(OsobaSelect2Widget):
 
 
 class SvestenikSelect2Widget(ScriptAwareModelSelect2Widget):
-    """Autocomplete widget for Svestenik."""
+    """Autocomplete widget for Svestenik with inline quick-create."""
 
     model = Svestenik
     search_fields = ["ime__icontains", "prezime__icontains"]
     attrs = {"data-minimum-input-length": 0}
+
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs["data-create-modal"] = "svestenik-create-modal"
+        attrs["data-create-label"] = "Додај свештеника"
+        return attrs
 
 
 class HramSelect2Widget(ScriptAwareModelSelect2Widget):
@@ -196,4 +202,17 @@ class AdresaSelect2Widget(ScriptAwareModelSelect2Widget):
         attrs["data-adresa-edit"] = "1"
         attrs["data-create-modal"] = "adresa-create-modal"
         attrs["data-create-label"] = "Додај нову адресу"
+        return attrs
+
+
+class ParohijaSelect2Widget(ScriptAwareModelSelect2Widget):
+    """Autocomplete widget for Parohija with inline quick-create."""
+
+    model = Parohija
+    search_fields = ["naziv__icontains"]
+
+    def build_attrs(self, base_attrs, extra_attrs=None):
+        attrs = super().build_attrs(base_attrs, extra_attrs)
+        attrs["data-create-modal"] = "parohija-create-modal"
+        attrs["data-create-label"] = "Додај парохију"
         return attrs

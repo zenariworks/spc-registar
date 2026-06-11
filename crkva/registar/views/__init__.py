@@ -11,6 +11,8 @@ from .brzi_view import (
     brzi_unos_adrese,
     brzi_unos_hrama,
     brzi_unos_osobe,
+    brzi_unos_parohije,
+    brzi_unos_svestenika,
 )
 from .domacinstvo_view import (
     PrikazDomacinstva,
