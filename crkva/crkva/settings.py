@@ -39,6 +39,14 @@ DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 ALLOWED_HOSTS: List[str] = ["*"]
 ALLOWED_HOSTS.extend(filter(None, os.environ.get("ALLOWED_HOSTS", "").split(",")))
 
+# Behind Caddy, which terminates TLS and reverse-proxies plain HTTP to
+# gunicorn. Trust its X-Forwarded-Proto header so request.is_secure(),
+# CSRF origin checks, and secure cookies work over the HTTPS hostname.
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+CSRF_TRUSTED_ORIGINS = list(
+    filter(None, os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(","))
+)
+
 # Application definition
 
 # django-tenants: SHARED_APPS live in the public schema (visible to every
