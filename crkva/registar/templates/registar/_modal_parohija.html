@@ -1,0 +1,48 @@
+{% comment %}
+Quick-add Parohija modal (#233). Uses the generic Modal.bindForm helper
+(modal.js) + quick_create.js footer. Registered in window.quickModals so the
+"+ Додај парохију" footer on Parohija select2 dropdowns can open it.
+{% endcomment %}
+<div id="parohija-create-modal" class="modal-overlay" hidden>
+  <div class="modal">
+    <div class="modal__header">
+      <h3><i class="fa-solid fa-place-of-worship"></i> Нова парохија</h3>
+      <button type="button" class="modal__close" onclick="Modal.close('parohija-create-modal')">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modal-naziv">Назив *</label>
+          <input type="text" id="modal-naziv" autocomplete="off" required>
+        </div>
+      </div>
+      <div class="error-text" hidden></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="button button--neutral" onclick="Modal.close('parohija-create-modal')">Откажи</button>
+      <button type="button" class="button button--primary" onclick="window.quickModals && window.quickModals['parohija-create-modal'] && window.quickModals['parohija-create-modal'].save()">
+        <i class="fa-solid fa-check"></i> Сачувај
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    function init() {
+      var inst = Modal.bindForm("parohija-create-modal", {
+        url: "{% url 'brzi_unos_parohije' %}",
+        fields: ["naziv"],
+        requiredFields: ["naziv"],
+        requiredMessage: "Назив парохије је обавезан.",
+      });
+      window.quickModals = window.quickModals || {};
+      window.quickModals["parohija-create-modal"] = inst;
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>

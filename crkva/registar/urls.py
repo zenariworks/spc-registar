@@ -82,6 +82,16 @@ urlpatterns = [
     path("api/brzi-unos-adrese/", views.brzi_unos_adrese, name="brzi_unos_adrese"),
     path("api/brzi-unos-hrama/", views.brzi_unos_hrama, name="brzi_unos_hrama"),
     path(
+        "api/brzi-unos-svestenika/",
+        views.brzi_unos_svestenika,
+        name="brzi_unos_svestenika",
+    ),
+    path(
+        "api/brzi-unos-parohije/",
+        views.brzi_unos_parohije,
+        name="brzi_unos_parohije",
+    ),
+    path(
         "api/brzi-izmena-adrese/<uuid:uid>/",
         views.brzi_izmena_adrese,
         name="brzi_izmena_adrese",

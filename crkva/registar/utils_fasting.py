@@ -68,8 +68,9 @@ def get_apostles_fast(year: int) -> set[dt.date]:
 
     vaskrs = Slava.calc_vaskrs(year)
 
-    # Духови (Педесетница) су 50 дана после Васкрса
-    duhovi = vaskrs + dt.timedelta(days=50)
+    # Духови (Педесетница) су 49 дана после Васкрса (50. дан рачунајући Васкрс
+    # као први дан), и увек падају у недељу.
+    duhovi = vaskrs + dt.timedelta(days=49)
 
     # Пост почиње следећег понедељка после Духова
     # Духови су увек недеља, тако да је следећи дан понедељак
@@ -132,8 +133,8 @@ def get_trapave_weeks(year: int) -> set[dt.date]:
         _date_range(vaskrs + dt.timedelta(days=1), vaskrs + dt.timedelta(days=7))
     )
 
-    # Седмица после Духова (50 дана после Васкрса + 7 дана)
-    duhovi = vaskrs + dt.timedelta(days=50)
+    # Седмица после Духова (49 дана после Васкрса; недеља после је трапава)
+    duhovi = vaskrs + dt.timedelta(days=49)
     trapave.update(
         _date_range(duhovi + dt.timedelta(days=1), duhovi + dt.timedelta(days=7))
     )
