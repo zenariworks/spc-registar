@@ -143,10 +143,11 @@ class ApostlesFastTestCase(TestCase):
             fast = get_apostles_fast(year)
             if not fast:
                 continue
-            duhovi = vaskrs + dt.timedelta(days=50)
-            expected_start = duhovi + dt.timedelta(days=1)
+            duhovi = vaskrs + dt.timedelta(days=49)  # Педесетница (увек недеља)
+            self.assertEqual(duhovi.weekday(), 6)  # недеља
+            expected_start = duhovi + dt.timedelta(days=1)  # понедељак после Духова
             self.assertIn(expected_start, fast)
-            self.assertEqual(expected_start.weekday(), 1)  # уторак
+            self.assertEqual(expected_start.weekday(), 0)  # понедељак
 
     def test_apostles_fast_ends_july_11(self):
         """Апостолски пост се завршава 11. јула (Петровдан eve)."""
@@ -213,6 +214,16 @@ class TrapaveWeeksTestCase(TestCase):
         self.assertIn(dt.date(2026, 1, 7), trapave)
         self.assertIn(dt.date(2026, 1, 17), trapave)
         self.assertNotIn(dt.date(2026, 1, 18), trapave)
+
+    def test_post_pentecost_trapava_starts_monday_after_duhovi(self):
+        """Трапава седмица после Педесетнице почиње понедељак после Духова (#253)."""
+        vaskrs = Slava.calc_vaskrs(2026)
+        trapave = get_trapave_weeks(2026)
+        duhovi = vaskrs + dt.timedelta(days=49)  # Педесетница
+        self.assertEqual(duhovi.weekday(), 6)  # недеља
+        # понедељак (Васкрс+50) кроз недељу (Васкрс+56) после Духова су трапави
+        for i in range(50, 57):
+            self.assertIn(vaskrs + dt.timedelta(days=i), trapave)
 
     def test_wednesday_in_trapava_not_fasting(self):
         """Среда у трапавој седмици није постни дан."""
