@@ -53,10 +53,16 @@ class ResolveSlavaTests(TestCase):
         self.assertNotIn(fix.uid, POKRETNE_SLAVE_OFFSET_BY_SIFRA)
         self.assertEqual(resolve_slava(fix.uid, Slava), fix)
 
-    def test_fixed_feast_uid_matches_sl_sifra_ordering(self):
-        # Поредак slave.jsonl прати SL_SIFRA: фиксни празник на (дан,месец)
-        # има PK == стара сифра. Провера на Никољдан (сифра 353, 19.12).
-        nikola = Slava.objects.filter(uid=353).first()
+    def test_seeded_fixed_feast_resolves_by_its_own_pk(self):
+        # Фиксни празник се разрешава преко свог PK. Не тврдимо апсолутну
+        # вредност uid-а: AutoField секвенца је дељена кроз цео тест-рун и
+        # напредује од претходних тестова, па uid==сифра важи само на
+        # свежем сеаду (rebuild), не у пуном сету. Тражимо стваран фиксни
+        # ред (Никола) по називу и проверавамо разрешење по његовом PK.
+        nikola = (
+            Slava.objects.filter(pokretni=False, naziv__icontains="Никола")
+            .exclude(uid__in=POKRETNE_SLAVE_OFFSET_BY_SIFRA)
+            .first()
+        )
         self.assertIsNotNone(nikola)
-        self.assertFalse(nikola.pokretni)
-        self.assertIn("Никола", nikola.naziv)
+        self.assertEqual(resolve_slava(nikola.uid, Slava), nikola)
