@@ -23,6 +23,7 @@ from registar.migracija.osoba_repo import (
     warm_osoba_cache,
 )
 from registar.migracija.sex import infer_sex_from_name
+from registar.migracija.slava_map import resolve_slava
 from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
 
 
@@ -161,9 +162,9 @@ class Command(MigrationCommand):
                     primedba=cyr(napomena or ""),
                 )
 
-                slava = None
-                if slava_uid:
-                    slava = Slava.objects.filter(uid=slava_uid).first()
+                # #255: покретне славе се преводе на засебни покретни
+                # ред (PK != стара DOM_RBRSL сифра); фиксне иду по PK.
+                slava = resolve_slava(slava_uid, Slava)
 
                 tel_f = (telefon_fiksni or "").strip() or None
                 tel_m = (telefon_mobilni or "").strip() or None
