@@ -15,14 +15,13 @@ from django.core.management.base import BaseCommand, CommandError
 
 # Run order matters: lookups → core entities → cleanups → calendar fixes.
 PIPELINE: list[tuple[str, str]] = [
-    ("migracija_slava",               "Slave (фиксне + покретне)"),
+    ("unos_slava",                    "Славе (из fixtures/slave.jsonl)"),
     ("migracija_svestenika",          "Свештеници"),
     ("migracija_ukucana_parohijana",  "Домаћинства + парохијани"),
     ("migracija_krstenja",            "Крштења"),
     ("migracija_vencanja",            "Венчања"),
     ("popravi_devojacka",             "Поправка девојачких презимена"),
     ("popravi_duplikate",             "Уклањање дупликата"),
-    ("fix_moveable_feasts",           "Корекција покретних празника"),
     ("mark_major_feasts",             "Обележавање црвених слова"),
 ]
 
