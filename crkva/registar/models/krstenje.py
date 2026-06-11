@@ -270,6 +270,20 @@ class Krstenje(TimeStampedModel):
         verbose_name = "Крштење"
         verbose_name_plural = "Крштења"
         ordering = ["-datum"]
+        constraints = [
+            # Протоколарни број је званична гаранција јединствености уписа:
+            # у оквиру једне године регистрације редни број мора бити
+            # јединствен. (knjiga, strana, broj) се намерно НЕ ограничава —
+            # постојећи подаци садрже легитимна понављања физичке локације.
+            models.UniqueConstraint(
+                fields=["godina_registracije", "redni_broj"],
+                name="krstenje_god_redni_uniq",
+                violation_error_message=(
+                    "Крштење са овим редним бројем у датој години "
+                    "регистрације већ постоји."
+                ),
+            ),
+        ]
         indexes = [
             # Protocol lookup: knjiga/strana/broj scoped by year. Composite
             # serves both filter (find a specific protocol entry) and the
