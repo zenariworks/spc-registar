@@ -1,73 +1,78 @@
-"""
-Модул команде за попуњавање табеле Слава са славама за целу годину.
+"""Попуњава табелу Слава из ``fixtures/slave.jsonl``.
+
+JSONL је јединствени извор празника (issue #259): сваки ред носи изричита
+поља — ``naziv``, ``opsti_naziv``, ``dan``, ``mesec``, ``pokretni``,
+``offset_dani``, ``crveno_slovo`` — па се и фиксни и покретни празници сеју из
+истог фајла, без накнадне конверзије. Идемпотентно (``update_or_create``).
 """
 
+import json
+import os
+
+from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-from kalendar.feasts import MOVEABLE_FEAST_NAMES, upsert_moveable_feasts
+
 from kalendar.models import Slava
+
+FIXTURE = os.path.join(settings.BASE_DIR, "fixtures", "slave.jsonl")
 
 
 class Command(BaseCommand):
-    """
-    Класа Ђанго команде за попуњавање табеле Слава са славама за целу годину.
-    """
-
-    help = "Попуњава табелу Слава са славама за целу годину"
+    help = "Попуњава табелу Слава из fixtures/slave.jsonl (фиксни и покретни празници)."
 
     def handle(self, *args, **kwargs):
-        parsed_data = self._parse_data()
-        created_count = 0
-
-        for name, opsti_naziv, day, month in parsed_data:
-            # Покретни празници се не уписују као фиксни — њих из
-            # канонског списка креира upsert_moveable_feasts() (issue #259).
-            if name in MOVEABLE_FEAST_NAMES:
-                continue
+        created = updated = 0
+        for row in self._parse_data():
             try:
-                _, created = Slava.objects.get_or_create(
-                    naziv=name,
-                    opsti_naziv=opsti_naziv if opsti_naziv else "",
-                    dan=day,
-                    mesec=month,
-                )
-
-                if created:
-                    created_count += 1
-
+                if row["pokretni"]:
+                    # Покретни празник: кључ је назив (међу покретнима
+                    # јединствен), датум празан, помак од Васкрса.
+                    _, was_created = Slava.objects.update_or_create(
+                        naziv=row["naziv"],
+                        pokretni=True,
+                        defaults={
+                            "opsti_naziv": row.get("opsti_naziv", ""),
+                            "dan": None,
+                            "mesec": None,
+                            "offset_dani": row.get("offset_dani"),
+                            "offset_nedelje": 0,
+                            "crveno_slovo": row.get("crveno_slovo", False),
+                        },
+                    )
+                else:
+                    # Фиксни празник: кључ је (назив, дан, месец) — дозвољава
+                    # легитимне истоимене празнике на различите дане.
+                    _, was_created = Slava.objects.update_or_create(
+                        naziv=row["naziv"],
+                        dan=row["dan"],
+                        mesec=row["mesec"],
+                        defaults={
+                            "opsti_naziv": row.get("opsti_naziv", ""),
+                            "pokretni": False,
+                            "offset_dani": None,
+                            "offset_nedelje": None,
+                            "crveno_slovo": row.get("crveno_slovo", False),
+                        },
+                    )
+                created += int(was_created)
+                updated += int(not was_created)
             except IntegrityError as e:
-                self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
-
-        # Покретни празници Васкршњег циклуса (канонски извор истине).
-        upsert_moveable_feasts(stdout=self.stdout)
+                self.stdout.write(self.style.ERROR(f"Грешка при упису „{row.get('naziv')}“: {e}"))
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Успешно попуњена табела Слава са {created_count} нових уноса."
+                f"Слава засејана из slave.jsonl: {created} нових, {updated} ажурираних."
             )
         )
 
-    def _parse_data(self):
-        """
-        Парсира податке из SQL фајла са славама.
-
-        :return: Листа парсираних података (назив, општи назив, дан, месец)
-        """
-        with open("fixtures/slave.sql", "r", encoding="utf-8") as file:
-            raw_data = [line.strip() for line in file]
-
-        parsed_data = []
-        for entry in raw_data:
-            parts = entry.split(";")
-
-            if len(parts) == 3:
-                name, opsti_naziv, date_part = parts
-            elif len(parts) == 2:
-                name, date_part = parts
-                opsti_naziv = None
-            else:
-                continue
-
-            day, month = map(int, date_part.split(","))
-            parsed_data.append((name, opsti_naziv, day, month))
-        return parsed_data
+    @staticmethod
+    def _parse_data():
+        """Чита ``fixtures/slave.jsonl`` (по један JSON објекат у реду)."""
+        rows = []
+        with open(FIXTURE, encoding="utf-8") as fh:
+            for line in fh:
+                line = line.strip()
+                if line:
+                    rows.append(json.loads(line))
+        return rows
