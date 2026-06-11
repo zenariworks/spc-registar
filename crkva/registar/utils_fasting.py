@@ -10,6 +10,9 @@
 from __future__ import annotations
 
 import datetime as dt
+from functools import lru_cache
+
+from django_tenants.utils import schema_context
 
 
 def _date_range(start: dt.date, end: dt.date) -> set[dt.date]:
@@ -22,25 +25,30 @@ def _date_range(start: dt.date, end: dt.date) -> set[dt.date]:
     return days
 
 
-def get_fasting_days_from_db(year: int) -> set[dt.date]:
-    """Врати скуп постних дана за дату годину из базе података."""
+@lru_cache(maxsize=128)
+def get_fasting_days_from_db(year: int) -> frozenset[dt.date]:
+    """Врати скуп постних дана за дату годину из базе података.
+
+    Резултат зависи само од године (Slava подаци су статични) па се кешира
+    по години — рендер месеца тако издаје 1 уместо ~30 истоветних упита
+    (#257). Slava живи у public шеми (дељени модел), па се чита у
+    schema_context("public") да буде исти за све закупце и безбедан за кеш.
+    """
     from registar.models import Slava
 
     fasting = set()
+    with schema_context("public"):
+        for post in Slava.objects.filter(post=True):
+            period = post.get_post(year)
+            if period and period[0] and period[1]:
+                start, end = period
+                fasting.update(_date_range(start, end))
 
-    # Узми све постове из базе
-    postovi = Slava.objects.filter(post=True)
-
-    for post in postovi:
-        period = post.get_post(year)
-        if period and period[0] and period[1]:
-            start, end = period
-            fasting.update(_date_range(start, end))
-
-    return fasting
+    return frozenset(fasting)
 
 
-def get_fixed_fasting_periods(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def get_fixed_fasting_periods(year: int) -> frozenset[dt.date]:
     """Врати фиксне постне периоде (који се не рачунају из базе)."""
     fasting = set()
 
@@ -56,10 +64,11 @@ def get_fixed_fasting_periods(year: int) -> set[dt.date]:
     # Крстовдан: 18. јануар (појединачни дан)
     fasting.add(dt.date(year, 1, 18))
 
-    return fasting
+    return frozenset(fasting)
 
 
-def get_apostles_fast(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def get_apostles_fast(year: int) -> frozenset[dt.date]:
     """Врати Апостолски (Петровдан) пост за дату годину.
 
     Почиње понедељак после Духова (Педесетнице) и траје до 11. јула (Петровдан eve).
@@ -81,12 +90,13 @@ def get_apostles_fast(year: int) -> set[dt.date]:
 
     # Ако је почетак после краја (кратак пост), врати празан скуп
     if start > end:
-        return set()
+        return frozenset()
 
-    return _date_range(start, end)
+    return frozenset(_date_range(start, end))
 
 
-def get_cheesefare_week(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def get_cheesefare_week(year: int) -> frozenset[dt.date]:
     """Врати Бели мрс (недеља пре Великог поста - делимични пост без меса)."""
     from registar.models import Slava
 
@@ -99,10 +109,11 @@ def get_cheesefare_week(year: int) -> set[dt.date]:
     start = cisti_ponedeljak - dt.timedelta(days=7)
     end = cisti_ponedeljak - dt.timedelta(days=1)
 
-    return _date_range(start, end)
+    return frozenset(_date_range(start, end))
 
 
-def get_great_lent(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def get_great_lent(year: int) -> frozenset[dt.date]:
     """Врати Велики пост за дату годину.
 
     Почиње Чистим понедељком (48 дана пре Васкрса) и
@@ -118,10 +129,11 @@ def get_great_lent(year: int) -> set[dt.date]:
     # Велика субота (Great Saturday) - 1 дан пре Васкрса
     end = vaskrs - dt.timedelta(days=1)
 
-    return _date_range(start, end)
+    return frozenset(_date_range(start, end))
 
 
-def get_trapave_weeks(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def get_trapave_weeks(year: int) -> frozenset[dt.date]:
     """Врати трапаве седмице (седмице без поста) за дату годину."""
     from registar.models import Slava
 
@@ -149,7 +161,24 @@ def get_trapave_weeks(year: int) -> set[dt.date]:
     # После Божића до Крстовдана (7-17. јануар)
     trapave.update(_date_range(dt.date(year, 1, 7), dt.date(year, 1, 17)))
 
-    return trapave
+    return frozenset(trapave)
+
+
+def clear_fasting_caches() -> None:
+    """Очисти годишње кешеве поста.
+
+    Позвати после измене Slava `post` података (нпр. reseed) или у тестовима
+    који мењају DB постове, да се не послужи устајали резултат.
+    """
+    for fn in (
+        get_fasting_days_from_db,
+        get_fixed_fasting_periods,
+        get_apostles_fast,
+        get_cheesefare_week,
+        get_great_lent,
+        get_trapave_weeks,
+    ):
+        fn.cache_clear()
 
 
 def is_fasting_day(date: dt.date) -> bool:

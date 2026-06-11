@@ -12,11 +12,15 @@
 
 import datetime as dt
 
+from django.db import connection
 from django.test import TestCase
+from django.test.utils import CaptureQueriesContext
 from kalendar.models import Slava
 from registar.utils_fasting import (
+    clear_fasting_caches,
     get_apostles_fast,
     get_cheesefare_week,
+    get_fasting_days_from_db,
     get_fasting_type,
     get_fixed_fasting_periods,
     get_great_lent,
@@ -378,3 +382,42 @@ class IsFastingDayTestCase(TestCase):
     def test_dormition_fast_is_fasting(self):
         """Дан у Успенском посту је постни дан."""
         self.assertTrue(is_fasting_day(dt.date(2026, 8, 5)))
+
+
+class FastingCacheTests(TestCase):
+    """#257: годишњи прорачуни поста се кеширају (N+1 → 1 упит/прорачун)."""
+
+    def setUp(self):
+        clear_fasting_caches()
+
+    def test_db_fasting_days_cached_per_year(self):
+        clear_fasting_caches()
+        with CaptureQueriesContext(connection) as cold:
+            get_fasting_days_from_db(2026)
+        self.assertGreaterEqual(len(cold.captured_queries), 1)
+        with CaptureQueriesContext(connection) as warm:
+            for _ in range(30):
+                get_fasting_days_from_db(2026)
+        self.assertEqual(len(warm.captured_queries), 0)
+
+    def test_is_fasting_day_loop_single_year_query(self):
+        clear_fasting_caches()
+        days = [dt.date(2026, m, 15) for m in range(1, 13)]
+        with CaptureQueriesContext(connection) as ctx:
+            for d in days:
+                is_fasting_day(d)
+        # Сви дани исте године → DB постови се читају једном, не по позиву
+        # (раније ~12 истоветних упита). Допуштамо и SET search_path.
+        self.assertLessEqual(len(ctx.captured_queries), 2)
+
+    def test_year_functions_return_frozenset(self):
+        self.assertIsInstance(get_great_lent(2026), frozenset)
+        self.assertIsInstance(get_apostles_fast(2026), frozenset)
+        self.assertIsInstance(get_fasting_days_from_db(2026), frozenset)
+
+    def test_clear_resets_cache(self):
+        get_great_lent(2026)
+        self.assertGreaterEqual(get_great_lent.cache_info().currsize, 1)
+        clear_fasting_caches()
+        self.assertEqual(get_great_lent.cache_info().currsize, 0)
+
