@@ -249,6 +249,20 @@ class Vencanje(TimeStampedModel):
         verbose_name = "Венчање"
         verbose_name_plural = "Венчања"
         ordering = ["-datum"]
+        constraints = [
+            # Протоколарни број је званична гаранција јединствености уписа:
+            # у оквиру једне године регистрације редни број мора бити
+            # јединствен. (knjiga, strana, broj) се намерно НЕ ограничава —
+            # постојећи подаци садрже легитимна понављања физичке локације.
+            models.UniqueConstraint(
+                fields=["godina_registracije", "redni_broj"],
+                name="vencanje_god_redni_uniq",
+                violation_error_message=(
+                    "Венчање са овим редним бројем у датој години "
+                    "регистрације већ постоји."
+                ),
+            ),
+        ]
         indexes = [
             models.Index(
                 fields=["godina_registracije", "knjiga", "strana", "broj"],
