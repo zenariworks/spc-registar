@@ -80,11 +80,14 @@ class VencanjeFilterTests(TestCase):
             zenik=cls.zenik, nevesta=cls.nevesta, kum=cls.kum,
             stari_svat=cls.stari_svat, hram=cls.hram,
             datum=datetime.date(2023, 9, 3),
+            godina_registracije=2023, redni_broj=1,
         )
         z2 = Osoba.objects.create(ime="Иван", prezime="Иванић", pol="М")
         n2 = Osoba.objects.create(ime="Маја", prezime="Мајић", pol="Ж")
+        # Различит (godina, redni_broj) — иначе крши vencanje_god_redni_uniq (#251).
         Vencanje.objects.create(
-            zenik=z2, nevesta=n2, datum=datetime.date(2019, 2, 2)
+            zenik=z2, nevesta=n2, datum=datetime.date(2019, 2, 2),
+            godina_registracije=2019, redni_broj=1,
         )
 
     def _search(self, term):
