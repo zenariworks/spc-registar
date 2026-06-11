@@ -5,6 +5,7 @@ Migracija tabele slava iz PostgreSQL staging tabele 'hsp_slave' u tabelu 'slave'
 from django.core.management.base import BaseCommand
 from django.db import connection
 from django.db.utils import IntegrityError
+from kalendar.feasts import MOVEABLE_FEAST_NAMES, upsert_moveable_feasts
 from kalendar.models import Slava
 from registar.management.commands.convert_utils import Konvertor
 
@@ -24,10 +25,15 @@ class Command(BaseCommand):
         created_count = 0
 
         for uid, naziv, dan, mesec in parsed_data:
+            ime = Konvertor.string(naziv)
+            # Покретни празници се не уписују као фиксни (issue #259);
+            # креира их upsert_moveable_feasts() из канонског списка.
+            if ime in MOVEABLE_FEAST_NAMES:
+                continue
             try:
                 _, created = Slava.objects.get_or_create(
                     uid=uid,
-                    naziv=Konvertor.string(naziv),
+                    naziv=ime,
                     opsti_naziv="",
                     dan=dan,
                     mesec=mesec,
@@ -44,6 +50,9 @@ class Command(BaseCommand):
                 f"Успешно попуњена табела 'славе': {created_count} нових уноса."
             )
         )
+
+        # Покретни празници Васкршњег циклуса (канонски извор истине).
+        upsert_moveable_feasts(stdout=self.stdout)
 
         # Drop staging table after successful migration
         self._drop_staging_table()

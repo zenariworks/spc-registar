@@ -4,6 +4,7 @@
 
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
+from kalendar.feasts import MOVEABLE_FEAST_NAMES, upsert_moveable_feasts
 from kalendar.models import Slava
 
 
@@ -19,6 +20,10 @@ class Command(BaseCommand):
         created_count = 0
 
         for name, opsti_naziv, day, month in parsed_data:
+            # Покретни празници се не уписују као фиксни — њих из
+            # канонског списка креира upsert_moveable_feasts() (issue #259).
+            if name in MOVEABLE_FEAST_NAMES:
+                continue
             try:
                 _, created = Slava.objects.get_or_create(
                     naziv=name,
@@ -32,6 +37,9 @@ class Command(BaseCommand):
 
             except IntegrityError as e:
                 self.stdout.write(self.style.ERROR(f"Грешка при креирању уноса: {e}"))
+
+        # Покретни празници Васкршњег циклуса (канонски извор истине).
+        upsert_moveable_feasts(stdout=self.stdout)
 
         self.stdout.write(
             self.style.SUCCESS(

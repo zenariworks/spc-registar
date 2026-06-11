@@ -1,44 +1,29 @@
-"""Django management command to fix moveable feasts in the database.
+"""Помирење покретних празника Васкршњег циклуса (issue #259).
 
-Idempotent and self-healing (see issue #259). For each Paschal-cycle feast it:
+Идемпотентно и самочистеће. За сваки празник из канонског списка
+``kalendar.feasts.MOVEABLE_FEASTS``:
 
-1. converts a single *canonical* Slava row to a moveable feast — ``pokretni``
-   with an offset from Pascha and ``dan``/``mesec`` cleared, and
-2. removes any leftover *fixed* duplicate rows of the same feast, after
-   repointing any household (``Domacinstvo``) references to the canonical row.
+1. осигурава тачно један **покретни** ред (``upsert_moveable_feasts``), и
+2. брише евентуалне вишак фиксне копије истог празника — претходно
+   премештајући ``Domacinstvo`` везе на канонски ред.
 
-Those stray fixed copies (e.g. uid 366–377 on production) are recreated every
-time the seeding commands (``migracija_slava`` / ``unos_slava``) run, because
-they key ``get_or_create`` on ``(naziv, dan, mesec)`` and therefore never match
-an already-converted moveable row whose ``dan``/``mesec`` are NULL. Re-running
-this command after a re-seed cleans them up again.
+Те вишак фиксне копије настајале су јер сејачи (``migracija_slava`` /
+``unos_slava``) уписиваху покретне празнике као фиксне. Од issue #259 сејачи
+користе исти канонски списак и **не** праве фиксне копије, па ова команда
+првенствено служи помирењу већ постојећих база и као последњи корак у
+``importuj_dbf``.
 """
 
 from django.core.management.base import BaseCommand
 from django.db import connection, transaction
 from django_tenants.utils import get_tenant_model, schema_context
 
+from kalendar.feasts import MOVEABLE_FEASTS, upsert_moveable_feasts
 from kalendar.models import Slava
-
-# Празници Васкршњег циклуса. Помак (offset) се рачуна од Васкрсне недеље.
-EASTER_FEASTS = [
-    {"name": "Лазарева субота", "offset_days": -8, "offset_weeks": 0},
-    {"name": "Улазак Господа Исуса Христа у Јерусалим", "offset_days": -7, "offset_weeks": 0},
-    {"name": "Велики четвртак (Велико бденије)", "offset_days": -3, "offset_weeks": 0},
-    {"name": "Велики петак", "offset_days": -2, "offset_weeks": 0},
-    {"name": "Велика субота", "offset_days": -1, "offset_weeks": 0},
-    {"name": "Васкрсење Господа исуса Христа", "offset_days": 0, "offset_weeks": 0},
-    {"name": "Васкрски понедељак", "offset_days": 1, "offset_weeks": 0},
-    {"name": "Васкрсни уторак", "offset_days": 2, "offset_weeks": 0},
-    {"name": "Вазнесење Господње", "offset_days": 39, "offset_weeks": 0},
-    {"name": "Силазак Светог Духа на апостоле-Педесетница-Тројице", "offset_days": 49, "offset_weeks": 0},
-    {"name": "Духовски понедељак", "offset_days": 50, "offset_weeks": 0},
-    {"name": "Духовски уторак", "offset_days": 51, "offset_weeks": 0},
-]
 
 
 class Command(BaseCommand):
-    help = "Convert Easter-cycle feasts to moveable dates and prune fixed duplicates"
+    help = "Осигурај покретне празнике Васкршњег циклуса и обриши фиксне дупликате"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -49,66 +34,54 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         dry_run = options["dry_run"]
-        converted = 0
-        deleted = 0
 
-        for feast in EASTER_FEASTS:
-            rows = list(Slava.objects.filter(naziv=feast["name"]).order_by("uid"))
-            if not rows:
-                self.stdout.write(
-                    self.style.WARNING(f'⚠ Празник „{feast["name"]}“ није пронађен')
+        if dry_run:
+            for feast in MOVEABLE_FEASTS:
+                rows = list(
+                    Slava.objects.filter(naziv=feast["naziv"]).order_by("uid")
                 )
-                continue
-
-            # Канонски ред: већ покретни ако постоји, иначе најмањи uid.
-            canonical = next((r for r in rows if r.pokretni), rows[0])
-            duplicates = [r for r in rows if r.uid != canonical.uid]
-
-            if dry_run:
-                self.stdout.write(
-                    f'• {feast["name"]}: канонски uid={canonical.uid}'
-                    + (
-                        f", за брисање: {[d.uid for d in duplicates]}"
-                        if duplicates
-                        else " (нема дупликата)"
+                if not rows:
+                    self.stdout.write(
+                        f'• {feast["naziv"]}: недостаје → биће креиран као покретни'
                     )
+                    continue
+                canonical = next((r for r in rows if r.pokretni), rows[0])
+                dupes = [r.uid for r in rows if r.uid != canonical.uid]
+                self.stdout.write(
+                    f'• {feast["naziv"]}: канонски uid={canonical.uid}'
+                    + (f", за брисање: {dupes}" if dupes else " (нема дупликата)")
                 )
-                continue
+            self.stdout.write(self.style.NOTICE("\n(dry-run — ништа није уписано)"))
+            return
 
-            with transaction.atomic():
-                canonical.pokretni = True
-                canonical.offset_dani = feast["offset_days"]
-                canonical.offset_nedelje = feast["offset_weeks"]
-                canonical.dan = None
-                canonical.mesec = None
-                canonical.save()
-                converted += 1
+        deleted = 0
+        with transaction.atomic():
+            # 1) осигурај тачно један покретни ред по празнику (исти извор
+            #    истине који користе и сејачи).
+            upsert_moveable_feasts(stdout=self.stdout)
 
-                for dup in duplicates:
+            # 2) обриши вишак фиксних копија, премештајући везе на канонски ред.
+            for feast in MOVEABLE_FEASTS:
+                rows = list(
+                    Slava.objects.filter(naziv=feast["naziv"]).order_by("uid")
+                )
+                canonical = next(r for r in rows if r.pokretni)
+                for dup in rows:
+                    if dup.uid == canonical.uid:
+                        continue
                     moved = self._reassign_households(dup.uid, canonical.uid)
-                    dup_uid = dup.uid
-                    self._delete_slava(dup_uid)
+                    self._delete_slava(dup.uid)
                     deleted += 1
                     note = f" (премештено {moved} домаћинстава)" if moved else ""
                     self.stdout.write(
                         self.style.WARNING(
-                            f"  ✗ обрисан вишак uid={dup_uid} за „{feast['name']}“{note}"
+                            f"  ✗ обрисан вишак uid={dup.uid} за „{feast['naziv']}“{note}"
                         )
                     )
 
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f'✓ „{feast["name"]}“ → покретни (uid={canonical.uid})'
-                )
-            )
-
-        if dry_run:
-            self.stdout.write(self.style.NOTICE("\n(dry-run — ништа није уписано)"))
-            return
-
         self.stdout.write(
             self.style.SUCCESS(
-                f"\nПретворено покретних: {converted}; обрисано дупликата: {deleted}"
+                f"\nОсигурано покретних: {len(MOVEABLE_FEASTS)}; обрисано дупликата: {deleted}"
             )
         )
 
