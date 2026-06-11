@@ -35,7 +35,6 @@ class Command(BaseCommand):
     DBF_MAPPING = {
         "HSPDOMACINI.DBF": "hsp_domacini",
         "HSPKRST.DBF": "hsp_krstenja",
-        "HSPSLAVE.DBF": "hsp_slave",
         "HSPSVEST.DBF": "hsp_svestenici",
         "HSPUKUCANI.DBF": "hsp_ukucani",
         "HSPULICE.DBF": "hsp_ulice",
