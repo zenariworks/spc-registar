@@ -2,8 +2,8 @@
 
 from django import forms
 from registar.forms.distinct_lookup import DistinctValuesCharField
-from registar.forms.select2 import AdresaSelect2Widget, ScriptAwareModelSelect2Widget
-from registar.models import Adresa, Parohija, Svestenik
+from registar.forms.select2 import AdresaSelect2Widget, ParohijaSelect2Widget
+from registar.models import Svestenik
 
 
 class SvestenikForm(forms.ModelForm):
@@ -28,11 +28,7 @@ class SvestenikForm(forms.ModelForm):
             "adresa",
         ]
         widgets = {
-            "parohija": ScriptAwareModelSelect2Widget(
-                model=Parohija,
-                search_fields=["naziv__icontains"],
-                attrs={"data-minimum-input-length": 0},
-            ),
+            "parohija": ParohijaSelect2Widget(),
             "adresa": AdresaSelect2Widget(),
             "datum_rodjenja": forms.DateInput(
                 attrs={"type": "date"}, format="%Y-%m-%d"

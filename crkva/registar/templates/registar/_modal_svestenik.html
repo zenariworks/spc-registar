@@ -1,0 +1,65 @@
+{% load svestenik_extras %}
+{% comment %}
+Quick-add Svestenik modal (#233). Uses the generic Modal.bindForm helper
+(modal.js) + quick_create.js footer. Registered in window.quickModals so the
+"+ Додај свештеника" footer on Svestenik select2 dropdowns can open it.
+Minimal fields (име/презиме/звање); остало се допуњује кроз пуну форму.
+{% endcomment %}
+<div id="svestenik-create-modal" class="modal-overlay" hidden>
+  <div class="modal">
+    <div class="modal__header">
+      <h3><i class="fa-solid fa-user-tie"></i> Нови свештеник</h3>
+      <button type="button" class="modal__close" onclick="Modal.close('svestenik-create-modal')">&times;</button>
+    </div>
+    <div class="modal__body">
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modal-ime">Име *</label>
+          <input type="text" id="modal-ime" autocomplete="off" required>
+        </div>
+        <div class="form-field">
+          <label for="modal-prezime">Презиме *</label>
+          <input type="text" id="modal-prezime" autocomplete="off" required>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-field">
+          <label for="modal-zvanje">Звање *</label>
+          <select id="modal-zvanje" required>
+            {% svestenik_zvanja as zvanja %}
+            {% for value, label in zvanja %}
+              <option value="{{ value }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="error-text" hidden></div>
+    </div>
+    <div class="modal__footer">
+      <button type="button" class="button button--neutral" onclick="Modal.close('svestenik-create-modal')">Откажи</button>
+      <button type="button" class="button button--primary" onclick="window.quickModals && window.quickModals['svestenik-create-modal'] && window.quickModals['svestenik-create-modal'].save()">
+        <i class="fa-solid fa-check"></i> Сачувај
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    function init() {
+      var inst = Modal.bindForm("svestenik-create-modal", {
+        url: "{% url 'brzi_unos_svestenika' %}",
+        fields: ["ime", "prezime", "zvanje"],
+        requiredFields: ["ime", "prezime", "zvanje"],
+        requiredMessage: "Име, презиме и звање су обавезни.",
+      });
+      window.quickModals = window.quickModals || {};
+      window.quickModals["svestenik-create-modal"] = inst;
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init);
+    } else {
+      init();
+    }
+  })();
+</script>

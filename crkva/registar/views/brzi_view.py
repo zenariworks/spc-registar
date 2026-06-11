@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.db import DatabaseError, IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
-from registar.models import Adresa, Hram, Osoba
+from registar.models import Adresa, Hram, Osoba, Parohija, Svestenik
 from tenants.permissions import tenant_role_required
 
 logger = logging.getLogger(__name__)
@@ -155,3 +155,49 @@ def brzi_unos_adrese(request):
             {"error": "Адреса се не може сачувати због конфликта."}, status=400
         )
     return JsonResponse({"id": str(adresa.uid), "text": str(adresa)})
+
+
+@tenant_role_required("svestenik")
+def brzi_unos_svestenika(request):
+    """AJAX endpoint за брзо креирање свештеника из модалног дијалога."""
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+
+    ime = request.POST.get("ime", "").strip()
+    prezime = request.POST.get("prezime", "").strip()
+    zvanje = request.POST.get("zvanje", "").strip()
+
+    if not ime or not prezime:
+        return JsonResponse({"error": "Име и презиме су обавезни"}, status=400)
+
+    # Validate zvanje against the field's declared choices so a hand-crafted
+    # POST cannot store an arbitrary rank.
+    valid_zvanja = {c[0] for c in Svestenik._meta.get_field("zvanje").choices}
+    if not zvanje or zvanje not in valid_zvanja:
+        return JsonResponse({"error": "Изаберите важеће звање"}, status=400)
+
+    # Свештеник нема ограничење јединствености; filter-first да поновљени
+    # унос не направи дупликат, без ризика од MultipleObjectsReturned.
+    svestenik = Svestenik.objects.filter(
+        ime=ime, prezime=prezime, zvanje=zvanje
+    ).first()
+    if svestenik is None:
+        svestenik = Svestenik.objects.create(ime=ime, prezime=prezime, zvanje=zvanje)
+    return JsonResponse({"id": svestenik.uid, "text": str(svestenik)})
+
+
+@tenant_role_required("svestenik")
+def brzi_unos_parohije(request):
+    """AJAX endpoint за брзо креирање парохије из модалног дијалога."""
+    if request.method != "POST":
+        return JsonResponse({"error": "POST only"}, status=405)
+
+    naziv = request.POST.get("naziv", "").strip()
+    if not naziv:
+        return JsonResponse({"error": "Назив парохије је обавезан"}, status=400)
+
+    # Реупотреби постојећу парохију истог назива уместо дуплирања.
+    parohija = Parohija.objects.filter(naziv__iexact=naziv).first()
+    if parohija is None:
+        parohija = Parohija.objects.create(naziv=naziv)
+    return JsonResponse({"id": str(parohija.uid), "text": str(parohija)})
