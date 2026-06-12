@@ -15,7 +15,6 @@
    ========================================================================== */
 
 (function ($) {
-    "use strict";
     if (!$) return;
 
     function csrfToken() {
@@ -28,7 +27,7 @@
         if (!node) return null;
         try {
             return JSON.parse(node.textContent);
-        } catch (e) {
+        } catch (_e) {
             return null;
         }
     }
@@ -42,7 +41,7 @@
         };
         Object.entries(map).forEach(function (entry) {
             const el = document.getElementById(entry[1]);
-            if (el) el.value = (payload && payload[entry[0]]) || "";
+            if (el) el.value = (payload?.[entry[0]]) || "";
         });
         const err = document.querySelector("#adresa-modal .error-text");
         if (err) {
@@ -94,7 +93,7 @@
         $select.on("select2:open.adresaEdit", function () {
             // Try immediately, again on next frame, then again after ajax settles.
             function findAndDecorate() {
-                var dd = document.querySelector(".select2-container--open .select2-dropdown")
+                const dd = document.querySelector(".select2-container--open .select2-dropdown")
                       || document.querySelector(".select2-dropdown");
                 if (dd) decorateDropdown(dd);
             }
@@ -108,9 +107,9 @@
         // orphan observers attached to detached DOM nodes - small leak per
         // open, adds up on long-running edit pages.
         $select.on("select2:close.adresaEdit", function () {
-            var dd = document.querySelector(".select2-dropdown");
-            if (dd && dd._adresaEditObs) {
-                try { dd._adresaEditObs.disconnect(); } catch (e) {}
+            const dd = document.querySelector(".select2-dropdown");
+            if (dd?._adresaEditObs) {
+                try { dd._adresaEditObs.disconnect(); } catch (_e) {}
                 dd._adresaEditObs = null;
             }
         });
@@ -174,33 +173,33 @@
     // Reusable: fetch an address by uid, prefill the modal, open it.
     function openEditModal(uid, sel) {
         if (!uid) return;
-        if (sel && sel.length) {
-            try { sel.select2("close"); } catch (err) {}
+        if (sel?.length) {
+            try { sel.select2("close"); } catch (_err) {}
         }
         fetch("/api/brzi-izmena-adrese/" + uid + "/", { credentials: "same-origin" })
             .then(function (r) { return r.json(); })
             .then(function (data) {
-                if (data && data.error) return;
-                var modal = document.getElementById("adresa-modal");
+                if (data?.error) return;
+                const modal = document.getElementById("adresa-modal");
                 if (modal) {
                     modal.dataset.adresaUid = uid;
-                    if (sel && sel.length) modal.dataset.targetFieldId = sel.attr("id");
+                    if (sel?.length) modal.dataset.targetFieldId = sel.attr("id");
                 }
                 // Open the modal BEFORE filling: Modal.open() clears every
                 // input[type=text] in the overlay, so filling first then opening
                 // wipes the pre-fill we just put in place.
                 if (window.Modal) Modal.open("adresa-modal");
-                var map = {
+                const map = {
                     ulica: "modal-adresa-ulica",
                     broj: "modal-adresa-broj",
                     broj_stana: "modal-adresa-broj_stana",
                     mesto: "modal-adresa-mesto",
                 };
                 Object.keys(map).forEach(function (k) {
-                    var el = document.getElementById(map[k]);
-                    if (el) el.value = (data && data[k]) || "";
+                    const el = document.getElementById(map[k]);
+                    if (el) el.value = (data?.[k]) || "";
                 });
-                var err = document.querySelector("#adresa-modal .error-text");
+                const err = document.querySelector("#adresa-modal .error-text");
                 if (err) { err.style.display = "none"; err.textContent = ""; err.setAttribute("hidden", ""); }
             });
     }
@@ -215,21 +214,21 @@
     // search keystroke. This avoids any timing race with select2 init.
     // ------------------------------------------------------------------
     function findOwningSelect(dropdownEl) {
-        var $dropdown = $(dropdownEl);
+        const $dropdown = $(dropdownEl);
         // 1) The results UL has id="select2-{selectId}-results".
-        var ul = $dropdown.find(".select2-results__options")[0];
-        if (ul && ul.id) {
-            var m = ul.id.match(/^select2-(.+)-results$/);
+        const ul = $dropdown.find(".select2-results__options")[0];
+        if (ul?.id) {
+            const m = ul.id.match(/^select2-(.+)-results$/);
             if (m) {
-                var $s = $("#" + m[1]);
+                const $s = $("#" + m[1]);
                 if ($s.length) return $s;
             }
         }
         // 2) Fallback: match .select2-container--open[data-select2-id]
         //    against the <select data-select2-id="...">.
-        var openSid = $(".select2-container--open").attr("data-select2-id") || "";
+        const openSid = $(".select2-container--open").attr("data-select2-id") || "";
         if (openSid) {
-            var $s2 = $("select[data-select2-id='" + openSid + "']");
+            const $s2 = $("select[data-select2-id='" + openSid + "']");
             if ($s2.length) return $s2;
         }
         return $();
@@ -237,39 +236,39 @@
 
     function decorateDropdown(dropdownEl) {
         if (!dropdownEl) return;
-        var $select = findOwningSelect(dropdownEl);
+        const $select = findOwningSelect(dropdownEl);
         if (!$select.length || !$select.attr("data-adresa-edit")) return;
-        var $dropdown = $(dropdownEl);
+        const $dropdown = $(dropdownEl);
 
         function uidFromRow(li) {
             // 1) jQuery .data() (vanilla select2 stores here).
-            var d = $(li).data("data");
-            if (d && d.id) return String(d.id);
+            let d = $(li).data("data");
+            if (d?.id) return String(d.id);
             // 2) select2 internal Utils.__cache (the canonical store).
-            if ($.fn.select2 && $.fn.select2.amd && $.fn.select2.amd.require) {
+            if ($.fn.select2?.amd?.require) {
                 try {
-                    var Utils = $.fn.select2.amd.require("select2/utils");
-                    if (Utils && Utils.GetData) {
+                    const Utils = $.fn.select2.amd.require("select2/utils");
+                    if (Utils?.GetData) {
                         d = Utils.GetData(li, "data");
-                        if (d && d.id) return String(d.id);
+                        if (d?.id) return String(d.id);
                     }
-                } catch (e) {}
+                } catch (_e) {}
             }
             // 3) Fallback: id pattern "select2-XX-result-RRRR-{value}".
-            var id = li.id || "";
-            var m = id.match(/^select2-.+?-result-[^-]+-(.+)$/);
-            if (m && m[1]) return m[1];
+            const id = li.id || "";
+            const m = id.match(/^select2-.+?-result-[^-]+-(.+)$/);
+            if (m?.[1]) return m[1];
             return "";
         }
         function paint() {
-            var rows = $dropdown.find(".select2-results__option");
+            const rows = $dropdown.find(".select2-results__option");
             rows.each(function () {
                 if (this.classList.contains("loading-results")) return;
                 if (this.getAttribute("role") === "group") return;
-                var uid = uidFromRow(this);
+                const uid = uidFromRow(this);
                 if (!uid) return;
                 if (this.querySelector(".adresa-dd-edit")) return;
-                var btn = document.createElement("button");
+                const btn = document.createElement("button");
                 btn.type = "button";
                 btn.className = "adresa-dd-edit";
                 btn.setAttribute("data-uid", uid);
@@ -278,7 +277,7 @@
                 btn.innerHTML = '<i class="fa-solid fa-pen" aria-hidden="true"></i>';
                 // Capture phase + stopImmediatePropagation so we beat
                 // select2 mouseup/click handlers bound on the parent <li>.
-                var capturedUid = uid;
+                const capturedUid = uid;
                 function onPress(e) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -301,21 +300,21 @@
         // results <ul> wholesale on each ajax refresh; observing only the
         // ul would orphan the observer on the next keystroke.
         if (!dropdownEl._adresaEditObs) {
-            var ro = new MutationObserver(paint);
+            const ro = new MutationObserver(paint);
             ro.observe(dropdownEl, { childList: true, subtree: true });
             dropdownEl._adresaEditObs = ro;
         }
     }
 
     function startBodyObserver() {
-        var bo = new MutationObserver(function (muts) {
+        const bo = new MutationObserver(function (muts) {
             muts.forEach(function (m) {
                 m.addedNodes.forEach(function (n) {
                     if (n.nodeType !== 1) return;
-                    if (n.classList && n.classList.contains("select2-dropdown")) {
+                    if (n.classList?.contains("select2-dropdown")) {
                         decorateDropdown(n);
                     } else if (n.querySelector) {
-                        var inner = n.querySelector(".select2-dropdown");
+                        const inner = n.querySelector(".select2-dropdown");
                         if (inner) decorateDropdown(inner);
                     }
                 });

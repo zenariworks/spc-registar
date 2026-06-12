@@ -99,7 +99,6 @@ class PublicSchemaModelSelect2Widget(ScriptAwareModelSelect2Widget):
 # vencanje_form.py.
 # ----------------------------------------------------------------------------
 
-from django.db.models import Q  # noqa: E402
 
 from registar.models import Adresa, Hram, Parohija, Svestenik  # noqa: E402
 from registar.models.parohijan import Osoba  # noqa: E402

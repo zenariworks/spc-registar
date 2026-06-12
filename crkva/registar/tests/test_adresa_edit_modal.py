@@ -47,9 +47,7 @@ class AdresaEditMarkupTests(_BaseDomacinstvoMixin, TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.url = reverse(
-            "izmena_domacinstva", kwargs={"uid": self.domacinstvo.uid}
-        )
+        self.url = reverse("izmena_domacinstva", kwargs={"uid": self.domacinstvo.uid})
 
     def test_adresa_edit_button_renders_on_domacinstvo_edit_page(self):
         """The Adresa select2 carries the data attribute the JS hooks into."""
@@ -110,9 +108,7 @@ class AdresaEditEndpointTests(_BaseDomacinstvoMixin, TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.url = reverse(
-            "brzi_izmena_adrese", kwargs={"uid": self.adresa.uid}
-        )
+        self.url = reverse("brzi_izmena_adrese", kwargs={"uid": self.adresa.uid})
 
     def test_endpoint_updates_existing_row(self):
         self.client.force_login(self.clerk)
@@ -197,18 +193,16 @@ class VodicaSliderToggleMarkupTests(_BaseDomacinstvoMixin, TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.url = reverse(
-            "izmena_domacinstva", kwargs={"uid": self.domacinstvo.uid}
-        )
+        self.url = reverse("izmena_domacinstva", kwargs={"uid": self.domacinstvo.uid})
 
     def _editable_value_block(self, html, field_name):
         marker = f'name="{field_name}"'
         idx = html.find(marker)
         self.assertGreater(idx, -1, f"{field_name} not in rendered HTML")
         # Look back for the enclosing info-row__value div.
-        start = html.rfind('info-row__value', 0, idx)
+        start = html.rfind("info-row__value", 0, idx)
         self.assertGreater(start, -1)
-        end = html.find('</li>', idx)
+        end = html.find("</li>", idx)
         return html[start:end]
 
     def test_slavska_vodica_renders_as_slider_toggle(self):
@@ -267,6 +261,7 @@ class VodicaSliderToggleMarkupTests(_BaseDomacinstvoMixin, TestCase):
         # Count `checked` attribute only within the disabled view-toggles —
         # the form's hidden edit-mode checkbox also has `checked` when truthy.
         import re
+
         view_toggles_checked = re.findall(
             r'class="info-row__bool-view"[^>]*\bchecked\b', body
         )
@@ -288,6 +283,7 @@ class VodicaSliderToggleMarkupTests(_BaseDomacinstvoMixin, TestCase):
         # Both view toggles render unchecked (no `checked` attribute inside
         # any .info-row__bool-view tag).
         import re
+
         view_toggles_checked = re.findall(
             r'class="info-row__bool-view"[^>]*\bchecked\b', body
         )

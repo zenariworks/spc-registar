@@ -8,12 +8,8 @@
 
 from django.core.management import call_command
 from django.test import TestCase
-
 from kalendar.models import Slava
-from registar.migracija.slava_map import (
-    POKRETNE_SLAVE_OFFSET_BY_SIFRA,
-    resolve_slava,
-)
+from registar.migracija.slava_map import POKRETNE_SLAVE_OFFSET_BY_SIFRA, resolve_slava
 
 
 class ResolveSlavaTests(TestCase):

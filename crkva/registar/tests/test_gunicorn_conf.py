@@ -1,7 +1,6 @@
 """scripts/gunicorn.conf.py must stay portable — no hardcoded install dir."""
 
 from django.test import SimpleTestCase
-
 from registar.tests.paths import repo_path
 
 

@@ -40,7 +40,6 @@ from .parohijan_view import (
 )
 from .search_view import SEARCH_PREVIEW_LIMIT, search_autocomplete, search_view
 from .slava_view import slava_domacinstva
-from .vodica_view import vaskrsnja_vodica
 from .svestenik_view import (
     PrikazSvestenika,
     SpisakSvestenika,
@@ -57,6 +56,7 @@ from .vencanje_view import (
     unos_vencanja,
 )
 from .view_404 import custom_404
+from .vodica_view import vaskrsnja_vodica
 
 __all__ = [
     # Re-exports for url config and other modules

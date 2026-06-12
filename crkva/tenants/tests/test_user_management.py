@@ -221,9 +221,7 @@ class UserManagementViewTests(TestCase):
             reverse("parohija:user_deactivate", kwargs={"user_id": self.clerk.pk}),
         )
         self.assertEqual(r.status_code, 302)
-        membership = UserMembership.objects.get(
-            user=self.clerk, tenant=self.tenant
-        )
+        membership = UserMembership.objects.get(user=self.clerk, tenant=self.tenant)
         self.assertFalse(membership.is_active)
         self.clerk.refresh_from_db()
         self.assertTrue(self.clerk.is_active)  # global account untouched (#227)

@@ -41,7 +41,9 @@ def _check_referrer_coverage() -> None:
     }
     # Drop historical mirrors (django-simple-history) - those snapshot the
     # original row and do not need re-pointing on merge.
-    referrers = {m for m in referrers if not m._meta.object_name.startswith("Historical")}
+    referrers = {
+        m for m in referrers if not m._meta.object_name.startswith("Historical")
+    }
     missing = referrers - _KNOWN_ADRESA_REFERRERS
     if missing:
         names = ", ".join(sorted(m._meta.label for m in missing))
@@ -85,7 +87,6 @@ def adresa_fanout(a: Adresa) -> AdresaMergeResult:
     )
 
 
-
 def batch_adresa_fanout(adresas) -> dict:
     """Compute adresa_fanout for many addresses in 3 queries total.
 
@@ -95,15 +96,17 @@ def batch_adresa_fanout(adresas) -> dict:
     dict, so N addresses cost exactly 3 queries regardless of N.
     """
     from django.db.models import Count
+
     uids = [a.uid for a in adresas]
     if not uids:
         return {}
 
     def _grouped(model):
-        rows = (model.objects
-                .filter(adresa_id__in=uids)
-                .values("adresa_id")
-                .annotate(c=Count("uid")))
+        rows = (
+            model.objects.filter(adresa_id__in=uids)
+            .values("adresa_id")
+            .annotate(c=Count("uid"))
+        )
         return {r["adresa_id"]: r["c"] for r in rows}
 
     o = _grouped(Osoba)

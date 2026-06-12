@@ -8,7 +8,6 @@ every same-name candidate, not just the first one written to the cache.
 from __future__ import annotations
 
 from django.db import connection
-
 from registar.models import Osoba
 
 # Per-tenant cache: schema -> {(ime_lower, prezime_lower): [Osoba, ...]}.
@@ -29,8 +28,15 @@ def warm_osoba_cache() -> int:
     bucket.clear()
     count = 0
     for osoba in Osoba.objects.all().only(
-        "uid", "ime", "prezime", "adresa_id", "tel_fiksni", "tel_mobilni", "parohijan",
-        "devojacko_prezime", "pol",
+        "uid",
+        "ime",
+        "prezime",
+        "adresa_id",
+        "tel_fiksni",
+        "tel_mobilni",
+        "parohijan",
+        "devojacko_prezime",
+        "pol",
     ):
         bucket.setdefault(_key(osoba.ime or "", osoba.prezime or ""), []).append(osoba)
         count += 1

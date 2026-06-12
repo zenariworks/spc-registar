@@ -164,11 +164,11 @@ class InfoRowBoolTagTestCase(TestCase):
         )
         # Truthy → disabled view toggle is checked.
         self.assertIn('class="info-row__bool-view"', out_da)
-        self.assertIn('checked', out_da)
+        self.assertIn("checked", out_da)
         self.assertIn("Велико X", out_da)
         # Falsy → disabled view toggle exists but has no checked attribute.
         self.assertIn('class="info-row__bool-view"', out_ne)
-        self.assertNotIn('checked', out_ne)
+        self.assertNotIn("checked", out_ne)
         self.assertIn("Велико X", out_ne)
 
     def test_sub_appended_to_static(self):

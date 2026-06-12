@@ -11,6 +11,7 @@ Currently:
   migracija_* + load_dbf commands handle the real DBF flow until those
   are unified in a follow-up.
 """
+
 from __future__ import annotations
 
 from collections.abc import Iterator

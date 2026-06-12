@@ -14,13 +14,21 @@ from kalendar.models import Slava
 from registar.utils import MESECI
 from registar.utils_fasting import tip_posta
 
-
 # crkvenikalendar.rs uses Cyrillic-month-name spelled in Latin script in the URL.
 # Map our 1..12 to the slug they use:
 CRKVENIKALENDAR_MONTH_SLUG = {
-    1: "januar", 2: "februar", 3: "mart", 4: "april",
-    5: "maj", 6: "jun", 7: "jul", 8: "avgust",
-    9: "septembar", 10: "oktobar", 11: "novembar", 12: "decembar",
+    1: "januar",
+    2: "februar",
+    3: "mart",
+    4: "april",
+    5: "maj",
+    6: "jun",
+    7: "jul",
+    8: "avgust",
+    9: "septembar",
+    10: "oktobar",
+    11: "novembar",
+    12: "decembar",
 }
 
 

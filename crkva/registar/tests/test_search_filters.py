@@ -25,24 +25,40 @@ class KrstenjeFilterTests(TestCase):
         cls.kum = Osoba.objects.create(ime="Лазар", prezime="Кумовић", pol="М")
         cls.hram = Hram.objects.create(naziv="Храм")
         cls.krstenje = Krstenje.objects.create(
-            dete=cls.dete, otac=cls.otac, majka=cls.majka, kum=cls.kum,
-            knjiga=1, broj=1, strana=1, redni_broj=1, godina_registracije=2024,
+            dete=cls.dete,
+            otac=cls.otac,
+            majka=cls.majka,
+            kum=cls.kum,
+            knjiga=1,
+            broj=1,
+            strana=1,
+            redni_broj=1,
+            godina_registracije=2024,
             datum=datetime.date(2024, 5, 17),
-            vanbracno=False, blizanac=False, telesna_mana=False, hram=cls.hram,
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
+            hram=cls.hram,
         )
         # Несродан запис да се потврди да филтер заиста сужава.
         other = Osoba.objects.create(ime="Никола", prezime="Илић", pol="М")
         Krstenje.objects.create(
-            dete=other, knjiga=1, broj=2, strana=1, redni_broj=2,
-            godina_registracije=2024, datum=datetime.date(2020, 1, 1),
-            vanbracno=False, blizanac=False, telesna_mana=False, hram=cls.hram,
+            dete=other,
+            knjiga=1,
+            broj=2,
+            strana=1,
+            redni_broj=2,
+            godina_registracije=2024,
+            datum=datetime.date(2020, 1, 1),
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
+            hram=cls.hram,
         )
 
     def _search(self, term):
         return list(
-            KrstenjeFilter(
-                data={"search": term}, queryset=Krstenje.objects.all()
-            ).qs
+            KrstenjeFilter(data={"search": term}, queryset=Krstenje.objects.all()).qs
         )
 
     def test_search_by_child_name(self):
@@ -77,24 +93,29 @@ class VencanjeFilterTests(TestCase):
         cls.stari_svat = Osoba.objects.create(ime="Вук", prezime="Сватић", pol="М")
         cls.hram = Hram.objects.create(naziv="Саборна црква")
         cls.vencanje = Vencanje.objects.create(
-            zenik=cls.zenik, nevesta=cls.nevesta, kum=cls.kum,
-            stari_svat=cls.stari_svat, hram=cls.hram,
+            zenik=cls.zenik,
+            nevesta=cls.nevesta,
+            kum=cls.kum,
+            stari_svat=cls.stari_svat,
+            hram=cls.hram,
             datum=datetime.date(2023, 9, 3),
-            godina_registracije=2023, redni_broj=1,
+            godina_registracije=2023,
+            redni_broj=1,
         )
         z2 = Osoba.objects.create(ime="Иван", prezime="Иванић", pol="М")
         n2 = Osoba.objects.create(ime="Маја", prezime="Мајић", pol="Ж")
         # Различит (godina, redni_broj) — иначе крши vencanje_god_redni_uniq (#251).
         Vencanje.objects.create(
-            zenik=z2, nevesta=n2, datum=datetime.date(2019, 2, 2),
-            godina_registracije=2019, redni_broj=1,
+            zenik=z2,
+            nevesta=n2,
+            datum=datetime.date(2019, 2, 2),
+            godina_registracije=2019,
+            redni_broj=1,
         )
 
     def _search(self, term):
         return list(
-            VencanjeFilter(
-                data={"search": term}, queryset=Vencanje.objects.all()
-            ).qs
+            VencanjeFilter(data={"search": term}, queryset=Vencanje.objects.all()).qs
         )
 
     def test_search_by_groom(self):

@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tenants', '0005_tenant_default_phone_region'),
+        ("tenants", "0005_tenant_default_phone_region"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='usermembership',
-            name='is_active',
-            field=models.BooleanField(default=True, help_text='Деактивирано чланство закључава корисника из ове парохије, али не утиче на глобални налог нити на приступ другим парохијама.', verbose_name='активно чланство'),
+            model_name="usermembership",
+            name="is_active",
+            field=models.BooleanField(
+                default=True,
+                help_text="Деактивирано чланство закључава корисника из ове парохије, али не утиче на глобални налог нити на приступ другим парохијама.",
+                verbose_name="активно чланство",
+            ),
         ),
     ]

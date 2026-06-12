@@ -24,16 +24,29 @@ from django.conf import settings
 from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase
 from django_tenants.utils import schema_context
-
 from kalendar.models import Slava
 
 JSONL = os.path.join(settings.BASE_DIR, "fixtures", "slave.jsonl")
-RESTORED_DAYS = [(4, 3), (4, 4), (4, 8), (4, 9), (4, 10), (4, 11),
-                 (4, 12), (4, 13), (5, 20), (5, 30), (5, 31), (6, 1)]
+RESTORED_DAYS = [
+    (4, 3),
+    (4, 4),
+    (4, 8),
+    (4, 9),
+    (4, 10),
+    (4, 11),
+    (4, 12),
+    (4, 13),
+    (5, 20),
+    (5, 30),
+    (5, 31),
+    (6, 1),
+]
 
 
 def _load_jsonl():
-    return [json.loads(l) for l in io.open(JSONL, encoding="utf-8") if l.strip()]
+    return [
+        json.loads(line) for line in io.open(JSONL, encoding="utf-8") if line.strip()
+    ]
 
 
 def _moveable_names(rows):
@@ -79,8 +92,11 @@ class SlaveJsonlSourceTests(TestCase):
             self.assertIn((m, d), bydate, f"{d}.{m} missing a fixed feast")
 
     def test_full_year_fixed_coverage(self):
-        days = {(m, d) for m in range(1, 13)
-                for d in range(1, calendar.monthrange(2025, m)[1] + 1)}
+        days = {
+            (m, d)
+            for m in range(1, 13)
+            for d in range(1, calendar.monthrange(2025, m)[1] + 1)
+        }
         covered = {(r["mesec"], r["dan"]) for r in self.fixed}
         # (28.2) је историјска празнина у изворним подацима, ван опсега #259.
         self.assertEqual(days - covered, {(2, 28)})
@@ -100,7 +116,9 @@ class UnosSlavaSeederTests(TestCase):
                 self.assertEqual(rows.count(), 1, name)
                 self.assertTrue(rows.get().pokretni, name)
             self.assertFalse(
-                Slava.objects.filter(naziv__in=self.moveable_names, pokretni=False).exists()
+                Slava.objects.filter(
+                    naziv__in=self.moveable_names, pokretni=False
+                ).exists()
             )
 
     def test_restored_days_get_a_fixed_saint(self):
@@ -129,7 +147,9 @@ class SlavaCalcTests(SimpleTestCase):
 
     def test_offset_shifts_from_vaskrs(self):
         vaskrs = Slava.calc_vaskrs(2025)
-        s = Slava(naziv="Духовски уторак", pokretni=True, offset_dani=51, offset_nedelje=0)
+        s = Slava(
+            naziv="Духовски уторак", pokretni=True, offset_dani=51, offset_nedelje=0
+        )
         self.assertEqual(s.get_datum(2025), vaskrs + datetime.timedelta(days=51))
 
     def test_fixed_feast_uses_date(self):

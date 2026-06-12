@@ -227,22 +227,28 @@ class MembershipPrimingTests(TestCase):
 
         with CaptureQueriesContext(connection) as cap:
             fn()
-        return [q for q in cap.captured_queries
-                if "tenants_user_membership" in q["sql"]]
+        return [
+            q for q in cap.captured_queries if "tenants_user_membership" in q["sql"]
+        ]
 
     def test_prime_makes_permission_checks_query_free(self):
         from tenants.permissions import (
-            can_edit, is_tenant_admin, prime_tenant_permissions,
+            can_edit,
+            is_tenant_admin,
+            prime_tenant_permissions,
         )
+
         user = User.objects.get(pk=self.clerk.pk)  # fresh instance
         membership = UserMembership.objects.get(user=user, tenant=self.tenant)
         prime_tenant_permissions(user, self.tenant, membership)
 
-        q = self._membership_queries(lambda: (
-            can_edit(user, self.tenant, OSOBA),
-            can_edit(user, self.tenant, SVESTENIK),
-            is_tenant_admin(user, self.tenant),
-        ))
+        q = self._membership_queries(
+            lambda: (
+                can_edit(user, self.tenant, OSOBA),
+                can_edit(user, self.tenant, SVESTENIK),
+                is_tenant_admin(user, self.tenant),
+            )
+        )
         self.assertEqual(len(q), 0, "primed cache must avoid membership queries")
         self.assertTrue(can_edit(user, self.tenant, OSOBA))
         self.assertFalse(can_edit(user, self.tenant, SVESTENIK))
@@ -265,7 +271,7 @@ class MembershipPrimingTests(TestCase):
         mw_q = self._membership_queries(resolve_and_prime)
         cp_q = self._membership_queries(lambda: current_tenant(request))
 
-        self.assertLessEqual(len(mw_q), 1,
-                             "resolution should cost at most one membership query")
-        self.assertEqual(len(cp_q), 0,
-                         "context processor must reuse the primed cache")
+        self.assertLessEqual(
+            len(mw_q), 1, "resolution should cost at most one membership query"
+        )
+        self.assertEqual(len(cp_q), 0, "context processor must reuse the primed cache")

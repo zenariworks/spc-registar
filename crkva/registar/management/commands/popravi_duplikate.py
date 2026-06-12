@@ -292,7 +292,9 @@ class Command(BaseCommand):
                         self._merge_osoba_into(canonical, dupe)
                         merged += 1
 
-            if singletons and (len(singletons) + sum(1 for _ in subgroups) > 1 or partial):
+            if singletons and (
+                len(singletons) + sum(1 for _ in subgroups) > 1 or partial
+            ):
                 reported.append((k, singletons))
 
         self.stdout.write(

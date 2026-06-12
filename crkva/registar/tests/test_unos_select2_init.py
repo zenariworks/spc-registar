@@ -26,7 +26,6 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Krstenje, Vencanje
-
 from registar.tests.paths import repo_path
 
 

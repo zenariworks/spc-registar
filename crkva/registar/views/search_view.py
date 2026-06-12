@@ -26,8 +26,8 @@ def _get_registry_stats() -> dict:
     if stats is None:
         stats = {
             "parohijani": Osoba.objects.count(),
-            "krstenja":  Krstenje.objects.count(),
-            "vencanja":  Vencanje.objects.count(),
+            "krstenja": Krstenje.objects.count(),
+            "vencanja": Vencanje.objects.count(),
             "svestenici": Svestenik.objects.count(),
         }
         cache.set(key, stats, STATS_CACHE_TTL)

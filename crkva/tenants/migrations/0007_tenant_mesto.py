@@ -4,15 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tenants', '0006_usermembership_is_active'),
+        ("tenants", "0006_usermembership_is_active"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tenant',
-            name='mesto',
-            field=models.CharField(blank=True, default='', help_text='Место парохије како се штампа у заглављу сертификата, у локативу иза „у“ (нпр. „Београду“, „Чукарици“, „Амстердаму“).', max_length=200, verbose_name='место (за штампу)'),
+            model_name="tenant",
+            name="mesto",
+            field=models.CharField(
+                blank=True,
+                default="",
+                help_text="Место парохије како се штампа у заглављу сертификата, у локативу иза „у“ (нпр. „Београду“, „Чукарици“, „Амстердаму“).",
+                max_length=200,
+                verbose_name="место (за штампу)",
+            ),
         ),
     ]

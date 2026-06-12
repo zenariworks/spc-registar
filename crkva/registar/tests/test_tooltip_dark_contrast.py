@@ -21,7 +21,6 @@ import re
 
 from django.test import TestCase
 
-
 # Resolve relative to this test file so cwd doesn't matter (manage.py test runs
 # from `crkva/`, pytest may run from repo root).
 _REGISTAR_APP_DIR = pathlib.Path(__file__).resolve().parent.parent
@@ -242,9 +241,7 @@ class TooltipBundleTests(TestCase):
             DARK_THEME_CSS.stat().st_mtime,
         )
         if tooltip_bundle.stat().st_mtime < source_mtime:
-            self.skipTest(
-                "tooltip CSS bundle is older than source — run collectstatic"
-            )
+            self.skipTest("tooltip CSS bundle is older than source — run collectstatic")
         text = tooltip_bundle.read_text(encoding="utf-8")
         # Bundle must reference the new tokens, not the broken --color-surface
         self.assertIn("--tooltip-bg", text)

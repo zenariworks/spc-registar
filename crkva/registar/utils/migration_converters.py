@@ -8,7 +8,6 @@ legacy data formats to modern Django model field values.
 import logging
 from datetime import date
 
-
 logger = logging.getLogger(__name__)
 
 

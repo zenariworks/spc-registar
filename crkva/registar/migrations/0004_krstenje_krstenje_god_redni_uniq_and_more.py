@@ -4,18 +4,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('registar', '0003_adresa_svestenik_alter_svestenik_adresa'),
+        ("registar", "0003_adresa_svestenik_alter_svestenik_adresa"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='krstenje',
-            constraint=models.UniqueConstraint(fields=('godina_registracije', 'redni_broj'), name='krstenje_god_redni_uniq', violation_error_message='Крштење са овим редним бројем у датој години регистрације већ постоји.'),
+            model_name="krstenje",
+            constraint=models.UniqueConstraint(
+                fields=("godina_registracije", "redni_broj"),
+                name="krstenje_god_redni_uniq",
+                violation_error_message="Крштење са овим редним бројем у датој години регистрације већ постоји.",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='vencanje',
-            constraint=models.UniqueConstraint(fields=('godina_registracije', 'redni_broj'), name='vencanje_god_redni_uniq', violation_error_message='Венчање са овим редним бројем у датој години регистрације већ постоји.'),
+            model_name="vencanje",
+            constraint=models.UniqueConstraint(
+                fields=("godina_registracije", "redni_broj"),
+                name="vencanje_god_redni_uniq",
+                violation_error_message="Венчање са овим редним бројем у датој години регистрације већ постоји.",
+            ),
         ),
     ]

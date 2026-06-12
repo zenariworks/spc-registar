@@ -11,23 +11,22 @@
    appends the freshly-created {id,text} option and selects it.
    ========================================================================== */
 (function ($) {
-    "use strict";
     if (!$) return;
 
     function attach($select) {
         if ($select.data("quickCreateBound")) return;
         $select.data("quickCreateBound", true);
 
-        var modalId = $select.attr("data-create-modal");
-        var label = $select.attr("data-create-label") || "Додај ново";
+        const modalId = $select.attr("data-create-modal");
+        const label = $select.attr("data-create-label") || "Додај ново";
 
         $select.on("select2:open.quickCreate", function () {
             requestAnimationFrame(function () {
-                var $dropdown = $(".select2-container--open .select2-dropdown");
+                const $dropdown = $(".select2-container--open .select2-dropdown");
                 if (!$dropdown.length) return;
                 if ($dropdown.find(".select2-create-new").length) return;
 
-                var $footer = $(
+                const $footer = $(
                     '<div class="select2-create-new" role="button" tabindex="0">' +
                         '<i class="fa-solid fa-plus" aria-hidden="true"></i> ' +
                         '<span class="select2-create-new__label"></span>' +
@@ -35,10 +34,10 @@
                 );
                 $dropdown.append($footer);
 
-                var $search = $dropdown.find(".select2-search__field");
+                const $search = $dropdown.find(".select2-search__field");
 
                 function refresh() {
-                    var q = ($search.val() || "").trim();
+                    const q = ($search.val() || "").trim();
                     $footer.find(".select2-create-new__label").text(
                         q ? 'Додај "' + q + '"' : label
                     );
@@ -49,19 +48,19 @@
                 $footer.on("mousedown touchstart", function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    var q = ($search.val() || "").trim();
+                    const q = ($search.val() || "").trim();
                     $select.select2("close");
-                    var inst = window.quickModals && window.quickModals[modalId];
+                    const inst = window.quickModals?.[modalId];
                     if (!inst || typeof inst.open !== "function") return;
                     inst.open($select.attr("id"));
                     // Prefill the modal's first text input with the typed query.
                     setTimeout(function () {
-                        var overlay = document.getElementById(modalId);
-                        var first = overlay && overlay.querySelector("input[type=text]");
+                        const overlay = document.getElementById(modalId);
+                        const first = overlay?.querySelector("input[type=text]");
                         if (first && q) {
                             first.value = q;
                             first.focus();
-                            try { first.setSelectionRange(q.length, q.length); } catch (e) {}
+                            try { first.setSelectionRange(q.length, q.length); } catch (_e) {}
                         }
                     }, 60);
                 });

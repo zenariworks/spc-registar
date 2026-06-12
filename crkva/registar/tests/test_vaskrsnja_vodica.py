@@ -9,7 +9,6 @@ and the household-list filter + print scoped to a priest's parish.
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
-
 from registar.models import Adresa, Domacinstvo, Osoba, Parohija, Svestenik
 
 User = get_user_model()
@@ -41,9 +40,7 @@ class VaskrsnjaVodicaTests(TestCase):
         a_sporedna = Adresa.objects.create(
             ulica="Споредна", broj="2", svestenik=cls.sv_old
         )
-        a_other = Adresa.objects.create(
-            ulica="Друга", broj="3", svestenik=cls.sv_other
-        )
+        a_other = Adresa.objects.create(ulica="Друга", broj="3", svestenik=cls.sv_other)
 
         def hh(ime, adresa, vodica):
             o = Osoba.objects.create(ime=ime, prezime="Тест", pol="М")

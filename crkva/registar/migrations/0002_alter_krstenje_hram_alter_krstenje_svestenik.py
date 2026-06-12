@@ -5,20 +5,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('registar', '0001_initial'),
+        ("registar", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='krstenje',
-            name='hram',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='registar.hram', verbose_name='храм'),
+            model_name="krstenje",
+            name="hram",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                to="registar.hram",
+                verbose_name="храм",
+            ),
         ),
         migrations.AlterField(
-            model_name='krstenje',
-            name='svestenik',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='свештеник_крститељ', to='registar.svestenik', verbose_name='свештеник'),
+            model_name="krstenje",
+            name="svestenik",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.SET_NULL,
+                related_name="свештеник_крститељ",
+                to="registar.svestenik",
+                verbose_name="свештеник",
+            ),
         ),
     ]

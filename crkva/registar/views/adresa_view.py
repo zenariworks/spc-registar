@@ -73,9 +73,7 @@ def spoji_adresu(request, loser_uid, winner_uid):
     # still flash 'success'.
     try:
         with transaction.atomic():
-            loser = get_object_or_404(
-                Adresa.objects.select_for_update(), uid=loser_uid
-            )
+            loser = get_object_or_404(Adresa.objects.select_for_update(), uid=loser_uid)
             winner = get_object_or_404(
                 Adresa.objects.select_for_update(), uid=winner_uid
             )

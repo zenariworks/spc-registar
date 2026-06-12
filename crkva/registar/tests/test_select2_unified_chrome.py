@@ -1,7 +1,6 @@
 """Test: select2 closed-state pill matches the list-toolbar sort dropdown chrome."""
 
 from django.test import TestCase
-
 from registar.tests.paths import repo_path
 
 
@@ -47,7 +46,7 @@ class Select2ClosedStateMatchesSortDropdown(TestCase):
             self.skin,
             ".select2-container--default .select2-selection--single .select2-selection__rendered {",
         )
-        sort_block = self._block(self.sort_css, "select.list-toolbar__sort-select {")
+        self._block(self.sort_css, "select.list-toolbar__sort-select {")
         # Skin redesign: padding moved from the rendered span (now 0) to the
         # selection container; assert the current rendered value.
         self.assertIn("padding: 0", select2_block)

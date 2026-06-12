@@ -8,8 +8,8 @@ from registar.forms.lookup import (
     TaggableLookupWidget,
 )
 from registar.forms.phone import TenantPhoneField
-from registar.forms.select2 import AdresaSelect2Widget, ScriptAwareModelSelect2Widget
-from registar.models import Adresa, Narodnost, Osoba, Veroispovest, Zanimanje
+from registar.forms.select2 import AdresaSelect2Widget
+from registar.models import Narodnost, Osoba, Veroispovest, Zanimanje
 
 
 class ParohijanForm(TaggableCreateMixin, forms.ModelForm):

@@ -56,9 +56,7 @@ class ModalOsobaPartialRendersCleanlyTests(TestCase):
 
     def test_partial_renders_without_leaking_template_tokens(self):
         body = render_to_string("registar/_modal_osoba.html")
-        assert_no_template_tokens(
-            self, body, where="_modal_osoba.html (direct render)"
-        )
+        assert_no_template_tokens(self, body, where="_modal_osoba.html (direct render)")
 
     def test_partial_does_not_render_modal_component_doc_string(self):
         """The original bug surfaced this exact substring -- pin it."""
@@ -106,21 +104,19 @@ class IncludingPagesDoNotLeakTemplateTokensTests(TestCase):
     def _assert_clean(self, url_name: str, **kwargs) -> None:
         url = reverse(url_name, **kwargs)
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200, msg=f"{url} returned {response.status_code}")
+        self.assertEqual(
+            response.status_code, 200, msg=f"{url} returned {response.status_code}"
+        )
         body = response.content.decode("utf-8")
         assert_no_template_tokens(self, body, where=url)
         # Pin the exact substring that the original bug leaked.
         self.assertNotIn("Uses the generic Modal component", body)
 
     def test_izmena_vencanje_does_not_leak(self):
-        self._assert_clean(
-            "izmena_vencanja", kwargs={"uid": self.vencanje.uid}
-        )
+        self._assert_clean("izmena_vencanja", kwargs={"uid": self.vencanje.uid})
 
     def test_izmena_krstenje_does_not_leak(self):
-        self._assert_clean(
-            "izmena_krstenja", kwargs={"uid": self.krstenje.uid}
-        )
+        self._assert_clean("izmena_krstenja", kwargs={"uid": self.krstenje.uid})
 
     def test_unos_krstenja_does_not_leak(self):
         self._assert_clean("unos_krstenja")

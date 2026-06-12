@@ -103,6 +103,7 @@ SOURCE_COLUMNS = (
     "K_REGSTR",
 )
 
+
 def _date_or_default(y: int, m: int, d: int) -> date:
     """Pre-1900 / zero values are coerced to 1900-01-01 (matches legacy behaviour)."""
     return date(1900 if y == 0 else y, 1 if m == 0 else m, 1 if d == 0 else d)

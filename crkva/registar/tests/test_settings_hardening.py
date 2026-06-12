@@ -26,9 +26,7 @@ class SecurityHardeningGatingTests(SimpleTestCase):
         # ALLOWED_HOSTS, fallback је ["*"]; ако задаје (нпр. .env на
         # серверу), ти хостови морају бити присутни. У оба случаја
         # test client (testserver, који Django сам додаје) пролази.
-        env_hosts = list(
-            filter(None, os.environ.get("ALLOWED_HOSTS", "").split(","))
-        )
+        env_hosts = list(filter(None, os.environ.get("ALLOWED_HOSTS", "").split(",")))
         if env_hosts:
             for host in env_hosts:
                 self.assertIn(host, settings.ALLOWED_HOSTS)

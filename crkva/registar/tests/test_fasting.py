@@ -17,15 +17,15 @@ from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 from kalendar.models import Slava
 from registar.utils_fasting import (
-    obrisi_kes_posta,
     apostolski_post,
     beli_mrs,
+    fiksni_postovi,
+    je_post,
+    obrisi_kes_posta,
     postni_dani_iz_baze,
     tip_posta,
-    fiksni_postovi,
-    veliki_post,
     trapave_sedmice,
-    je_post,
+    veliki_post,
 )
 
 
@@ -420,4 +420,3 @@ class FastingCacheTests(TestCase):
         self.assertGreaterEqual(veliki_post.cache_info().currsize, 1)
         obrisi_kes_posta()
         self.assertEqual(veliki_post.cache_info().currsize, 0)
-

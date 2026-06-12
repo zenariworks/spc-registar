@@ -272,16 +272,10 @@ class IzmenaKrstenjaTests(TestCase):
         )
         self.client.force_login(self.clerk)
         r = self.client.get(self.url(k))
-        self.assertContains(
-            r, 'name="zivorodjeno" id="id_zivorodjeno" checked'
-        )
-        self.assertNotContains(
-            r, 'name="vanbracno" id="id_vanbracno" checked'
-        )
+        self.assertContains(r, 'name="zivorodjeno" id="id_zivorodjeno" checked')
+        self.assertNotContains(r, 'name="vanbracno" id="id_vanbracno" checked')
         self.assertContains(r, 'name="blizanac" id="id_blizanac" checked')
-        self.assertNotContains(
-            r, 'name="telesna_mana" id="id_telesna_mana" checked'
-        )
+        self.assertNotContains(r, 'name="telesna_mana" id="id_telesna_mana" checked')
 
     def test_dete_bool_fields_use_info_row_editable_markup(self):
         """Each Дете bool/text field must render as its own info-row--editable."""
