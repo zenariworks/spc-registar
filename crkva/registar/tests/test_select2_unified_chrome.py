@@ -1,15 +1,15 @@
 """Test: select2 closed-state pill matches the list-toolbar sort dropdown chrome."""
 
-import pathlib
-
 from django.test import TestCase
+
+from registar.tests.paths import repo_path
 
 
 class Select2ClosedStateMatchesSortDropdown(TestCase):
     """The select2 selection pill must share frame/chevron with .list-toolbar__sort-select."""
 
-    SKIN = pathlib.Path("crkva/registar/static/registar/components/select2_skin.css")
-    SPISKOVI = pathlib.Path("crkva/registar/static/registar/components/spiskovi.css")
+    SKIN = repo_path("crkva/registar/static/registar/components/select2_skin.css")
+    SPISKOVI = repo_path("crkva/registar/static/registar/components/spiskovi.css")
 
     def setUp(self):
         self.skin = self.SKIN.read_text(encoding="utf-8")

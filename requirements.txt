@@ -31,5 +31,9 @@ rcssmin==1.1.2
 uWSGI==2.0.31
 # PDF Generation
 WeasyPrint==62.3
+# Pin pydyf: WeasyPrint 62.3's pdf/stream.py is incompatible with pydyf >= 0.12
+# (AttributeError: 'super' object has no attribute 'transform'). A fresh
+# install otherwise resolves a newer pydyf and breaks PDF printing. (#222)
+pydyf==0.11.0
 # Static file serving
 whitenoise==6.12.0

@@ -4,6 +4,8 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
+from registar.tests.paths import repo_path
+
 User = get_user_model()
 
 
@@ -29,10 +31,7 @@ class Select2SkinTestCase(TestCase):
 
     def test_select2_skin_css_overrides_known_classes(self):
         """The CSS file must target the key select2 classes we restyled."""
-        import pathlib
-
-        # Locate the bundled file via its real path
-        css_path = pathlib.Path(
+        css_path = repo_path(
             "crkva/registar/static/registar/components/select2_skin.css"
         )
         text = css_path.read_text(encoding="utf-8")

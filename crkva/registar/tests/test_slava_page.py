@@ -1,10 +1,10 @@
 """Tests for the slava-domacinstva page address rendering and dark-mode CSS."""
 
-import pathlib
-
 from django.test import TestCase
 from django.urls import reverse
 from registar.models import Adresa, Domacinstvo, Osoba, Slava
+
+from registar.tests.paths import repo_path
 
 
 class SlavaAddressRenderTest(TestCase):
@@ -49,7 +49,7 @@ class SlavaDarkModeCSSTest(TestCase):
 
     def test_u_info_header_uses_theme_token(self):
         """.u-info-header background must come from the theme token, not a hex literal."""
-        css = pathlib.Path(
+        css = repo_path(
             "crkva/registar/static/registar/components/kartice.css"
         ).read_text(encoding="utf-8")
         info_block = css.split(".u-info-header")[1].split("}")[0]
@@ -58,7 +58,7 @@ class SlavaDarkModeCSSTest(TestCase):
 
     def test_u_chip_muted_uses_theme_token(self):
         """.u-chip--muted background must come from the theme token."""
-        css = pathlib.Path(
+        css = repo_path(
             "crkva/registar/static/registar/components/oznake.css"
         ).read_text(encoding="utf-8")
         chip_block = css.split(".u-chip--muted")[1].split("}")[0]
