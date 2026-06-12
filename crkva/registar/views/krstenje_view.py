@@ -2,13 +2,13 @@
 Модул за приказ, унос и генерисање PDF докумената за крштења.
 """
 
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from registar.forms import KrstenjeForm
 from registar.models import Krstenje
+from registar.views.calibrate_view import render_calibrate
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from tenants.permissions import tenant_role_required
 from weasyprint import HTML
@@ -154,9 +154,7 @@ class PrikazKrstenja(LoginRequiredMixin, DetailView):
 @tenant_role_required("krstenje")
 def calibrate_krstenje(request):
     """Калибрациона страница за подешавање позиција поља на крштеници."""
-    if not settings.DEBUG:
-        raise Http404("Калибрација је искључена.")
-    return render(request, "registar/calibrate_krstenje.html")
+    return render_calibrate(request, "krstenje")
 
 
 @tenant_role_required("krstenje")

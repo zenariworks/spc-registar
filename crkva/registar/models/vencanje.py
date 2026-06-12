@@ -12,7 +12,7 @@ from .parohijan import Osoba
 from .svestenik import Svestenik
 
 
-class Vencanje(TimeStampedModel):
+class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
     """Класа која представља венчања."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
@@ -235,6 +235,68 @@ class Vencanje(TimeStampedModel):
     def adresa_neveste(self):
         """Адреса невесте из везаног Osoba objekta."""
         return self.nevesta.adresa if self.nevesta else None
+
+    @staticmethod
+    def _spoji(*delovi):
+        """Спаја непразне делове зарезом (без празнина и двоструких зареза)."""
+        return ", ".join(
+            str(d).strip() for d in delovi if d is not None and str(d).strip()
+        )
+
+    @staticmethod
+    def _mala(vrednost):
+        """Мала слова за заједничке именице (вера, народност)."""
+        return str(vrednost).lower() if vrednost else ""
+
+    @staticmethod
+    def _opis_osobe(osoba):
+        """Родитељ (особа) у реду: име презиме, занимање, место становања."""
+        if not osoba:
+            return ""
+        ime = " ".join(p for p in (osoba.ime, osoba.prezime) if p)
+        zanimanje = Vencanje._mala(osoba.zanimanje)
+        mesto = osoba.adresa.mesto if osoba.adresa_id and osoba.adresa else ""
+        return Vencanje._spoji(ime, zanimanje, mesto)
+
+    @property
+    def opis_zenika(self):
+        """Женик: име презиме, занимање, место становања, вера, народност."""
+        ime = " ".join(p for p in (self.ime_zenika, self.prezime_zenika) if p)
+        mesto = self.adresa_zenika.mesto if self.adresa_zenika else ""
+        return self._spoji(
+            ime, self._mala(self.zanimanje_zenika), mesto,
+            self._mala(self.veroispovest_zenika), self._mala(self.narodnost_zenika),
+        )
+
+    @property
+    def opis_neveste(self):
+        """Невеста: име презиме, занимање, место становања, вера, народност."""
+        ime = " ".join(p for p in (self.ime_neveste, self.prezime_neveste) if p)
+        mesto = self.adresa_neveste.mesto if self.adresa_neveste else ""
+        return self._spoji(
+            ime, self._mala(self.zanimanje_neveste), mesto,
+            self._mala(self.veroispovest_neveste), self._mala(self.narodnost_neveste),
+        )
+
+    @property
+    def opis_svekra(self):
+        """Отац женика (свекар)."""
+        return self._opis_osobe(self.svekar)
+
+    @property
+    def opis_svekrve(self):
+        """Мајка женика (свекрва)."""
+        return self._opis_osobe(self.svekrva)
+
+    @property
+    def opis_tasta(self):
+        """Отац невесте (таст)."""
+        return self._opis_osobe(self.tast)
+
+    @property
+    def opis_taste(self):
+        """Мајка невесте (ташта)."""
+        return self._opis_osobe(self.tasta)
 
     def __str__(self):
         z = self.ime_zenika or ""

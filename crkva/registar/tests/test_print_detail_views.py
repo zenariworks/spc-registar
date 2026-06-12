@@ -282,3 +282,60 @@ class IzmenaSaveBranchTests(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertTrue(r.context["is_edit"])
         self.assertEqual(r.context["svestenik"], self.svestenik)
+
+
+class VencanjeDetailRenderTests(TestCase):
+    """Детаљни (HTML) приказ венчања — регресије садржаја (#16)."""
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.admin = User.objects.create_superuser(
+            username="venc-detail", email="vd@a.test", password="x"
+        )
+        cls.hram = Hram.objects.create(naziv="Храм Свете Петке")
+        cls.svestenik = Svestenik.objects.create(
+            ime="Сава", prezime="Савић", zvanje="јереј"
+        )
+        cls.zenik = Osoba.objects.create(ime="Урош", prezime="Урошевић", pol="М")
+        cls.nevesta = Osoba.objects.create(ime="Тамара", prezime="Тамарић", pol="Ж")
+        # adresa_zenika остаје None → mesto_hram би имао водећи зарез без заштите
+        cls.vencanje = Vencanje.objects.create(
+            zenik=cls.zenik, nevesta=cls.nevesta,
+            hram=cls.hram, svestenik=cls.svestenik,
+            godina_registracije=2024, redni_broj=1, knjiga=1, strana=1, broj=1,
+            datum=datetime.date(2024, 6, 6),
+        )
+
+    def setUp(self):
+        self.client = Client()
+        self.client.force_login(self.admin)
+
+    def test_mesto_hram_nema_vodeci_zarez(self):
+        response = self.client.get(
+            reverse("vencanje_detail", kwargs={"uid": self.vencanje.uid})
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotContains(response, 'venc-field-mesto_hram">, ')
+
+    def test_opis_zenika_spaja_bez_praznih_delova(self):
+        # зеник има само име/презиме → нема празних делова ни зареза на крају
+        self.assertEqual(self.vencanje.opis_zenika, "Урош Урошевић")
+
+    def test_vera_i_narodnost_mala_slova(self):
+        # вера/народност су заједничке именице → мала слова (Православна→православна)
+        self.assertEqual(Vencanje._mala("Православна"), "православна")
+        self.assertEqual(Vencanje._mala("Српска"), "српска")
+        self.assertEqual(Vencanje._mala(None), "")
+
+    def test_prazni_roditelji_ne_prave_prazne_redove(self):
+        # родитељи нису постављени → празни описи и без празних <span> редова
+        self.assertEqual(self.vencanje.opis_svekra, "")
+        self.assertEqual(self.vencanje.opis_svekrve, "")
+        response = self.client.get(
+            reverse("vencanje_detail", kwargs={"uid": self.vencanje.uid})
+        )
+        # оба родитеља празна → ред је празан, без иједног <span> (нема празних редова)
+        self.assertContains(
+            response,
+            '<div class="venc-table-field venc-field-roditelji_zenika"></div>',
+        )

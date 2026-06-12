@@ -41,6 +41,11 @@ DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 # ALLOWED_HOSTS усред тестова. Откривамо тест-рун да то избегнемо (#223).
 _RUNNING_TESTS = "test" in sys.argv or sys.argv[0].endswith(("pytest", "py.test"))
 
+# Калибрационе странице (крштеница/венчаница) су подразумевано искључене у
+# продукцији; могу се привремено укључити поставком CALIBRATION_ENABLED=1 у
+# окружењу (нпр. .env + reload) ради калибрације на живом серверу (#16/#17).
+CALIBRATION_ENABLED = DEBUG or os.environ.get("CALIBRATION_ENABLED", "0") == "1"
+
 # Продукција прихвата само хостове из ALLOWED_HOSTS env; dev/тест дозвољавају све.
 ALLOWED_HOSTS: List[str] = list(
     filter(None, os.environ.get("ALLOWED_HOSTS", "").split(","))

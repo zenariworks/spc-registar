@@ -2,13 +2,13 @@
 Модул за приказ, унос, претрагу и генерисање PDF докумената за венчања.
 """
 
-from django.conf import settings
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404, HttpResponse
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from registar.forms import VencanjeForm
 from registar.models.vencanje import Vencanje
+from registar.views.calibrate_view import render_calibrate
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from tenants.permissions import tenant_role_required
 from weasyprint import HTML
@@ -163,9 +163,7 @@ def unos_vencanja(request):
 @tenant_role_required("vencanje")
 def calibrate_vencanje(request):
     """Приказује страницу за калибрацију позиција поља на венчаници."""
-    if not settings.DEBUG:
-        raise Http404("Калибрација је искључена.")
-    return render(request, "registar/calibrate_vencanje.html")
+    return render_calibrate(request, "vencanje")
 
 
 @tenant_role_required("vencanje")
