@@ -167,7 +167,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11pt;
+    font-size: 13pt;
 }
 
 .venc-field-strana {
@@ -179,7 +179,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11pt;
+    font-size: 13pt;
 }
 
 .venc-field-tekuci {
@@ -191,7 +191,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 11pt;
+    font-size: 13pt;
 }
 
 /* Храм and Епархија line */
@@ -203,9 +203,7 @@
     height: var(--venc-hram-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 10pt;
-    text-align: center;
+    font-size: 12pt;
 }
 
 .venc-field-eparhija {
@@ -216,9 +214,7 @@
     height: var(--venc-eparhija-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 10pt;
-    text-align: center;
+    font-size: 12pt;
 }
 
 /* Место and Година line */
@@ -230,9 +226,7 @@
     height: var(--venc-mesto-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 10pt;
-    text-align: center;
+    font-size: 12pt;
 }
 
 .venc-field-godina {
@@ -243,8 +237,7 @@
     height: var(--venc-godina-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 10pt;
+    font-size: 12pt;
 }
 
 /* ==========================================================================
@@ -253,13 +246,6 @@
 
 .venc-table-field {
     position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    font-size: 9pt;
-    line-height: 1.3;
-    overflow: hidden;
 }
 
 /* Individual row positions */
@@ -269,6 +255,13 @@
     left: var(--venc-ime_zenika-left);
     width: var(--venc-ime_zenika-width);
     height: var(--venc-ime_zenika-height);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5mm;
+    font-size: 11pt;
+    line-height: 1.4;
 }
 
 .venc-field-ime_neveste {
@@ -277,6 +270,13 @@
     left: var(--venc-ime_neveste-left);
     width: var(--venc-ime_neveste-width);
     height: var(--venc-ime_neveste-height);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5mm;
+    font-size: 11pt;
+    line-height: 1.4;
 }
 
 .venc-field-roditelji_zenika {
@@ -285,6 +285,13 @@
     left: var(--venc-roditelji_zenika-left);
     width: var(--venc-roditelji_zenika-width);
     height: var(--venc-roditelji_zenika-height);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5mm;
+    font-size: 11pt;
+    line-height: 1.4;
 }
 
 .venc-field-roditelji_neveste {
@@ -293,6 +300,13 @@
     left: var(--venc-roditelji_neveste-left);
     width: var(--venc-roditelji_neveste-width);
     height: var(--venc-roditelji_neveste-height);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5mm;
+    font-size: 11pt;
+    line-height: 1.4;
 }
 
 .venc-field-rodjenje_zenika {
@@ -301,6 +315,13 @@
     left: var(--venc-rodjenje_zenika-left);
     width: var(--venc-rodjenje_zenika-width);
     height: var(--venc-rodjenje_zenika-height);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5mm;
+    font-size: 11pt;
+    line-height: 1.4;
 }
 
 .venc-field-rodjenje_neveste {
@@ -309,6 +330,13 @@
     left: var(--venc-rodjenje_neveste-left);
     width: var(--venc-rodjenje_neveste-width);
     height: var(--venc-rodjenje_neveste-height);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5mm;
+    font-size: 11pt;
+    line-height: 1.4;
 }
 
 .venc-field-brak_zenika {
@@ -317,6 +345,10 @@
     left: var(--venc-brak_zenika-left);
     width: var(--venc-brak_zenika-width);
     height: var(--venc-brak_zenika-height);
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    line-height: 1.3;
 }
 
 .venc-field-brak_neveste {
@@ -325,6 +357,10 @@
     left: var(--venc-brak_neveste-left);
     width: var(--venc-brak_neveste-width);
     height: var(--venc-brak_neveste-height);
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    line-height: 1.3;
 }
 
 .venc-field-ispit {
@@ -333,6 +369,10 @@
     left: var(--venc-ispit-left);
     width: var(--venc-ispit-width);
     height: var(--venc-ispit-height);
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    line-height: 1.3;
 }
 
 .venc-field-datum_vencanja {
@@ -341,6 +381,10 @@
     left: var(--venc-datum_vencanja-left);
     width: var(--venc-datum_vencanja-width);
     height: var(--venc-datum_vencanja-height);
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    line-height: 1.3;
 }
 
 .venc-field-mesto_hram {
@@ -349,6 +393,10 @@
     left: var(--venc-mesto_hram-left);
     width: var(--venc-mesto_hram-width);
     height: var(--venc-mesto_hram-height);
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    line-height: 1.3;
 }
 
 .venc-field-svestenik {
@@ -357,6 +405,10 @@
     left: var(--venc-svestenik-left);
     width: var(--venc-svestenik-width);
     height: var(--venc-svestenik-height);
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    line-height: 1.3;
 }
 
 .venc-field-svedoci {
@@ -365,7 +417,13 @@
     left: var(--venc-svedoci-left);
     width: var(--venc-svedoci-width);
     height: var(--venc-svedoci-height);
+    display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5mm;
+    font-size: 11pt;
+    line-height: 1.4;
 }
 
 .venc-field-razresenje {
@@ -374,6 +432,10 @@
     left: var(--venc-razresenje-left);
     width: var(--venc-razresenje-width);
     height: var(--venc-razresenje-height);
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    line-height: 1.3;
 }
 
 .venc-field-primedba {
@@ -382,6 +444,10 @@
     left: var(--venc-primedba-left);
     width: var(--venc-primedba-width);
     height: var(--venc-primedba-height);
+    display: flex;
+    align-items: center;
+    font-size: 12pt;
+    line-height: 1.3;
 }
 
 /* ==========================================================================
@@ -396,9 +462,7 @@
     height: var(--venc-footer_hram-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 10pt;
-    text-align: center;
+    font-size: 11pt;
 }
 
 .venc-field-footer_eparhija {
@@ -409,9 +473,7 @@
     height: var(--venc-footer_eparhija-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 10pt;
-    text-align: center;
+    font-size: 11pt;
 }
 
 .venc-field-footer_mesto {
@@ -422,8 +484,7 @@
     height: var(--venc-footer_mesto-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 9pt;
+    font-size: 11pt;
 }
 
 .venc-field-footer_datum {
@@ -434,8 +495,7 @@
     height: var(--venc-footer_datum-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 9pt;
+    font-size: 13pt;
 }
 
 .venc-field-footer_godina {
@@ -446,8 +506,7 @@
     height: var(--venc-footer_godina-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 9pt;
+    font-size: 13pt;
 }
 
 .venc-field-footer_paroh {
@@ -458,8 +517,7 @@
     height: var(--venc-footer_paroh-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 9pt;
+    font-size: 11pt;
 }
 
 .venc-field-footer_parohija {
@@ -470,8 +528,7 @@
     height: var(--venc-footer_parohija-height);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 9pt;
+    font-size: 11pt;
 }
 
 /* ==========================================================================
@@ -479,19 +536,9 @@
    ========================================================================== */
 
 .venc-text-sm {
-    font-size: 8pt;
+    font-size: 10pt;
 }
 
-/* Multi-line table fields need vertical stacking */
-.venc-field-ime_zenika,
-.venc-field-ime_neveste,
-.venc-field-roditelji_zenika,
-.venc-field-roditelji_neveste,
-.venc-field-rodjenje_zenika,
-.venc-field-rodjenje_neveste {
-    flex-direction: column;
-    gap: 0.5mm;
-}
 
 /* ==========================================================================
    PRINT STYLES
