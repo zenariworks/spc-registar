@@ -3,7 +3,6 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
-
 from registar.tests.paths import repo_path
 
 User = get_user_model()

@@ -38,8 +38,11 @@ def brzi_unos_osobe(request):
     # backward compatibility. This lets an external kum be added with just
     # име+презиме and stay selectable in select2 without polluting the
     # parish roster.
-    parohijan = (
-        request.POST.get("parohijan", "1").strip().lower() in ("1", "true", "on", "да")
+    parohijan = request.POST.get("parohijan", "1").strip().lower() in (
+        "1",
+        "true",
+        "on",
+        "да",
     )
     osoba = Osoba.objects.create(
         ime=ime, prezime=prezime, pol=pol or None, parohijan=parohijan

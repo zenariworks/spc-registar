@@ -64,7 +64,7 @@ class FindMatchingOsobaTest(TestCase):
 
         addr_a = Adresa.objects.create(ulica="Прва", broj="1", mesto="Чукарица")
         addr_b = Adresa.objects.create(ulica="Друга", broj="2", mesto="Чукарица")
-        first = Osoba.objects.create(ime="Бранко", prezime=".", adresa=addr_a)
+        Osoba.objects.create(ime="Бранко", prezime=".", adresa=addr_a)
         second = Osoba.objects.create(ime="Бранко", prezime=".", adresa=addr_b)
         warm_osoba_cache()
         # Should pick `second` because its adresa matches.
@@ -74,11 +74,7 @@ class FindMatchingOsobaTest(TestCase):
     def test_returns_none_when_nothing_shares_signal(self):
         Osoba.objects.create(ime="Никола", prezime="Петровић", tel_fiksni="+38111")
         warm_osoba_cache()
-        self.assertIsNone(
-            find_matching_osoba(
-                "Никола", "Петровић", tel_f="+38122"
-            )
-        )
+        self.assertIsNone(find_matching_osoba("Никола", "Петровић", tel_f="+38122"))
 
     def test_returns_none_for_blank_names(self):
         self.assertIsNone(find_matching_osoba("", "."))

@@ -7,22 +7,22 @@
     python manage.py importuj_dbf
     python manage.py importuj_dbf --dry-run
 """
+
 from __future__ import annotations
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 
-
 # Run order matters: lookups → core entities → cleanups → calendar fixes.
 PIPELINE: list[tuple[str, str]] = [
-    ("unos_slava",                    "Славе (из fixtures/slave.jsonl)"),
-    ("migracija_svestenika",          "Свештеници"),
-    ("migracija_ukucana_parohijana",  "Домаћинства + парохијани"),
-    ("migracija_krstenja",            "Крштења"),
-    ("migracija_vencanja",            "Венчања"),
-    ("popravi_devojacka",             "Поправка девојачких презимена"),
-    ("popravi_duplikate",             "Уклањање дупликата"),
-    ("mark_major_feasts",             "Обележавање црвених слова"),
+    ("unos_slava", "Славе (из fixtures/slave.jsonl)"),
+    ("migracija_svestenika", "Свештеници"),
+    ("migracija_ukucana_parohijana", "Домаћинства + парохијани"),
+    ("migracija_krstenja", "Крштења"),
+    ("migracija_vencanja", "Венчања"),
+    ("popravi_devojacka", "Поправка девојачких презимена"),
+    ("popravi_duplikate", "Уклањање дупликата"),
+    ("mark_major_feasts", "Обележавање црвених слова"),
 ]
 
 
@@ -61,9 +61,11 @@ class Command(BaseCommand):
                 )
             idx = names.index(from_step)
             steps = PIPELINE[idx:]
-            self.stdout.write(self.style.WARNING(
-                f"Прескакам првих {idx} корак(а), почињем од {from_step}."
-            ))
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Прескакам првих {idx} корак(а), почињем од {from_step}."
+                )
+            )
 
         for i, (cmd, label) in enumerate(steps, start=1):
             heading = f"[{i}/{len(steps)}] {label}  (manage.py {cmd})"

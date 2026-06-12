@@ -24,7 +24,9 @@ class SearchAutocompleteTests(TestCase):
             username="auto", email="a@a.test", password="x"
         )
         cls.parohijan = Osoba.objects.create(
-            ime="Стефан", prezime="Стефановић", pol="М",
+            ime="Стефан",
+            prezime="Стефановић",
+            pol="М",
             datum_rodjenja=datetime.date(1990, 1, 1),
         )
         cls.svestenik = Svestenik.objects.create(
@@ -33,14 +35,24 @@ class SearchAutocompleteTests(TestCase):
         cls.hram = Hram.objects.create(naziv="Храм")
         dete = Osoba.objects.create(ime="Михаило", prezime="Михаиловић", pol="М")
         cls.krstenje = Krstenje.objects.create(
-            dete=dete, knjiga=1, broj=1, strana=1, redni_broj=1,
-            godina_registracije=2024, datum=datetime.date(2024, 1, 2),
-            vanbracno=False, blizanac=False, telesna_mana=False, hram=cls.hram,
+            dete=dete,
+            knjiga=1,
+            broj=1,
+            strana=1,
+            redni_broj=1,
+            godina_registracije=2024,
+            datum=datetime.date(2024, 1, 2),
+            vanbracno=False,
+            blizanac=False,
+            telesna_mana=False,
+            hram=cls.hram,
         )
         zenik = Osoba.objects.create(ime="Урош", prezime="Урошевић", pol="М")
         nevesta = Osoba.objects.create(ime="Тамара", prezime="Тамарић", pol="Ж")
         cls.vencanje = Vencanje.objects.create(
-            zenik=zenik, nevesta=nevesta, hram=cls.hram,
+            zenik=zenik,
+            nevesta=nevesta,
+            hram=cls.hram,
             datum=datetime.date(2023, 6, 6),
         )
 

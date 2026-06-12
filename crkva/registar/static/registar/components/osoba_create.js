@@ -14,13 +14,12 @@
    ========================================================================== */
 
 (function ($) {
-    "use strict";
     if (!$) return;
 
     function parseName(q) {
-        var trimmed = (q || "").trim();
+        const trimmed = (q || "").trim();
         if (!trimmed) return { ime: "", prezime: "" };
-        var idx = trimmed.indexOf(" ");
+        const idx = trimmed.indexOf(" ");
         if (idx < 0) return { ime: trimmed, prezime: "" };
         return {
             ime: trimmed.slice(0, idx).trim(),
@@ -30,10 +29,10 @@
 
     function applyDefaultPol(defaultPol) {
         if (defaultPol !== "М" && defaultPol !== "Ж") return;
-        var group = document.getElementById("modal-pol-toggle");
+        const group = document.getElementById("modal-pol-toggle");
         if (!group) return;
-        var buttons = group.querySelectorAll(".tab-group__item");
-        var matched = null;
+        const buttons = group.querySelectorAll(".tab-group__item");
+        let matched = null;
         buttons.forEach(function (btn) {
             btn.classList.remove("is-active");
             if (btn.dataset && btn.dataset.value === defaultPol) {
@@ -47,9 +46,9 @@
     }
 
     function applyToggle(groupId, value) {
-        var group = document.getElementById(groupId);
+        const group = document.getElementById(groupId);
         if (!group) return;
-        var matched = null;
+        let matched = null;
         group.querySelectorAll(".tab-group__item").forEach(function (btn) {
             btn.classList.remove("is-active");
             if (btn.dataset && btn.dataset.value === value) {
@@ -67,11 +66,11 @@
 
         $select.on("select2:open.osobaCreate", function () {
             requestAnimationFrame(function () {
-                var $dropdown = $(".select2-container--open .select2-dropdown");
+                const $dropdown = $(".select2-container--open .select2-dropdown");
                 if (!$dropdown.length) return;
                 if ($dropdown.find(".select2-create-new").length) return;
 
-                var $footer = $(
+                const $footer = $(
                     '<div class="select2-create-new" role="button" tabindex="0">' +
                         '<i class="fa-solid fa-plus" aria-hidden="true"></i> ' +
                         '<span class="select2-create-new__label"></span>' +
@@ -79,10 +78,10 @@
                 );
                 $dropdown.append($footer);
 
-                var $search = $dropdown.find(".select2-search__field");
+                const $search = $dropdown.find(".select2-search__field");
 
                 function refresh() {
-                    var q = ($search.val() || "").trim();
+                    const q = ($search.val() || "").trim();
                     $footer.find(".select2-create-new__label").text(
                         q ? 'Додај "' + q + '"' : "Додај нову особу"
                     );
@@ -93,23 +92,23 @@
                 $footer.on("mousedown touchstart", function (e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    var parts = parseName($search.val());
-                    var defaultPol = $select.attr("data-osoba-default-pol") || "";
-                    var defaultParohijan = $select.attr("data-osoba-parohijan-default") || "1";
+                    const parts = parseName($search.val());
+                    const defaultPol = $select.attr("data-osoba-default-pol") || "";
+                    const defaultParohijan = $select.attr("data-osoba-parohijan-default") || "1";
                     $select.select2("close");
                     if (!window.osobaModal || typeof window.osobaModal.open !== "function") return;
                     window.osobaModal.open($select.attr("id"));
                     setTimeout(function () {
-                        var imeEl = document.getElementById("modal-ime");
-                        var prezimeEl = document.getElementById("modal-prezime");
+                        const imeEl = document.getElementById("modal-ime");
+                        const prezimeEl = document.getElementById("modal-prezime");
                         if (imeEl) imeEl.value = parts.ime;
                         if (prezimeEl) prezimeEl.value = parts.prezime;
                         applyDefaultPol(defaultPol);
                         applyToggle("modal-parohijan-toggle", defaultParohijan);
-                        var focusEl = parts.prezime ? prezimeEl : imeEl;
+                        const focusEl = parts.prezime ? prezimeEl : imeEl;
                         if (focusEl) {
                             focusEl.focus();
-                            try { focusEl.setSelectionRange(focusEl.value.length, focusEl.value.length); } catch (e) {}
+                            try { focusEl.setSelectionRange(focusEl.value.length, focusEl.value.length); } catch (_e) {}
                         }
                     }, 60);
                 });

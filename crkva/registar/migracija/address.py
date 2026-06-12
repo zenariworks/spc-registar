@@ -9,7 +9,6 @@ avoid an N×1 DB query pattern.
 from __future__ import annotations
 
 from django.db import connection
-
 from registar.models import Adresa, Osoba
 
 # Per-tenant cache: outer key is the schema name so two tenants running
@@ -38,9 +37,9 @@ def warm_adresa_cache() -> int:
     """Prefill the cache with every existing Adresa row."""
     _cache().clear()
     for adresa in Adresa.objects.all():
-        _cache()[
-            _key(adresa.ulica, adresa.broj, adresa.broj_stana, adresa.mesto)
-        ] = adresa
+        _cache()[_key(adresa.ulica, adresa.broj, adresa.broj_stana, adresa.mesto)] = (
+            adresa
+        )
     return len(_cache())
 
 

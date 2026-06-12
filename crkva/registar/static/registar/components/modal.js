@@ -32,7 +32,6 @@
    ========================================================================== */
 
 (function () {
-    "use strict";
 
     const _openModals = new Set();
 
@@ -199,7 +198,7 @@
         close(last);
     });
     document.addEventListener("click", (e) => {
-        if (e.target.classList && e.target.classList.contains("modal-overlay")) {
+        if (e.target.classList?.contains("modal-overlay")) {
             close(e.target.id);
         }
     });

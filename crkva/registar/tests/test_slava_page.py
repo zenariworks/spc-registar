@@ -3,7 +3,6 @@
 from django.test import TestCase
 from django.urls import reverse
 from registar.models import Adresa, Domacinstvo, Osoba, Slava
-
 from registar.tests.paths import repo_path
 
 

@@ -11,11 +11,7 @@ from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 from registar.models import Adresa, Domacinstvo, Osoba, Svestenik
-from registar.services.merge import (
-    adresa_fanout,
-    batch_adresa_fanout,
-    merge_adrese,
-)
+from registar.services.merge import adresa_fanout, batch_adresa_fanout, merge_adrese
 
 
 class MergeAdreseTests(TestCase):
@@ -88,6 +84,4 @@ class FanoutTests(TestCase):
         with CaptureQueriesContext(connection) as ctx_many:
             batch_adresa_fanout(many)
 
-        self.assertEqual(
-            len(ctx_many.captured_queries), len(ctx_few.captured_queries)
-        )
+        self.assertEqual(len(ctx_many.captured_queries), len(ctx_few.captured_queries))

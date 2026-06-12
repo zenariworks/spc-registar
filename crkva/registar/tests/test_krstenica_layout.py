@@ -54,6 +54,4 @@ class KrstenicaFooterLayoutTests(SimpleTestCase):
         # Оба реда су у зони подножја А4 стране (255–285mm), не ван папира.
         for name in ("footer_paroh-top", "footer_parohija-top"):
             top = _var_mm(self.css, name)
-            self.assertTrue(
-                255.0 <= top <= 285.0, f"{name}={top}mm ван зоне подножја"
-            )
+            self.assertTrue(255.0 <= top <= 285.0, f"{name}={top}mm ван зоне подножја")

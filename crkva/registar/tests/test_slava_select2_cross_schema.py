@@ -63,7 +63,7 @@ class SlavaFilterQuerysetCrossSchemaTests(TestCase):
         results = widget.filter_queryset(request, "Јован", queryset=None)
         labels = [str(o) for o in results]
         self.assertTrue(
-            any("Јован" in l for l in labels),
+            any("Јован" in label for label in labels),
             f"expected Свети Јован in {labels!r}",
         )
 
@@ -100,9 +100,7 @@ class SlavaSelect2AjaxEndpointTests(TestCase):
         cls.domacin = Osoba.objects.create(ime="Ђ", prezime="Тест", pol="М")
         cls.dom = Domacinstvo.objects.create(domacin=cls.domacin)
         with schema_context("public"):
-            cls.slava = Slava.objects.create(
-                naziv="Аранђеловдан", dan=21, mesec=11
-            )
+            cls.slava = Slava.objects.create(naziv="Аранђеловдан", dan=21, mesec=11)
 
     def setUp(self):
         self.client = Client()

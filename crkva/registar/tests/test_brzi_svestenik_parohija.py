@@ -10,7 +10,6 @@ data-create-modal атрибуте на виџетима.
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-
 from registar.forms.select2 import ParohijaSelect2Widget, SvestenikSelect2Widget
 from registar.models import Parohija, Svestenik
 from tenants.models import Role, Tenant, UserMembership
@@ -43,7 +42,8 @@ class BrziSvestenikParohijaTests(TestCase):
 
     def test_svestenik_missing_name_400(self):
         r = self.client.post(
-            reverse("brzi_unos_svestenika"), {"ime": "", "prezime": "", "zvanje": "јереј"}
+            reverse("brzi_unos_svestenika"),
+            {"ime": "", "prezime": "", "zvanje": "јереј"},
         )
         self.assertEqual(r.status_code, 400)
 

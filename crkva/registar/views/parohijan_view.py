@@ -123,34 +123,62 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
         this parohijan has in each role. Without this the template fires
         15+ separate queries per render."""
         from django.db.models import Prefetch
-        from registar.models import Krstenje, Ukucanin, Vencanje
+        from registar.models import Ukucanin, Vencanje
+
         return Osoba.objects.prefetch_related(
-            Prefetch("krstenja_kao_dete",
-                     queryset=Krstenje.objects.select_related("otac", "majka", "kum")),
-            Prefetch("krstenja_kao_kum",
-                     queryset=Krstenje.objects.select_related("dete")),
-            Prefetch("krstenja_kao_otac",
-                     queryset=Krstenje.objects.select_related("dete", "majka")),
-            Prefetch("krstenja_kao_majka",
-                     queryset=Krstenje.objects.select_related("dete", "otac")),
-            Prefetch("vencanja_kao_zenik",
-                     queryset=Vencanje.objects.select_related("nevesta")),
-            Prefetch("vencanja_kao_nevesta",
-                     queryset=Vencanje.objects.select_related("zenik")),
-            Prefetch("vencanja_kao_kum",
-                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
-            Prefetch("vencanja_kao_svekar",
-                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
-            Prefetch("vencanja_kao_svekrva",
-                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
-            Prefetch("vencanja_kao_tast",
-                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
-            Prefetch("vencanja_kao_tasta",
-                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
-            Prefetch("vencanja_kao_stari_svat",
-                     queryset=Vencanje.objects.select_related("zenik", "nevesta")),
-            Prefetch("ukucanin_set",
-                     queryset=Ukucanin.objects.select_related("domacinstvo", "domacinstvo__domacin")),
+            Prefetch(
+                "krstenja_kao_dete",
+                queryset=Krstenje.objects.select_related("otac", "majka", "kum"),
+            ),
+            Prefetch(
+                "krstenja_kao_kum", queryset=Krstenje.objects.select_related("dete")
+            ),
+            Prefetch(
+                "krstenja_kao_otac",
+                queryset=Krstenje.objects.select_related("dete", "majka"),
+            ),
+            Prefetch(
+                "krstenja_kao_majka",
+                queryset=Krstenje.objects.select_related("dete", "otac"),
+            ),
+            Prefetch(
+                "vencanja_kao_zenik",
+                queryset=Vencanje.objects.select_related("nevesta"),
+            ),
+            Prefetch(
+                "vencanja_kao_nevesta",
+                queryset=Vencanje.objects.select_related("zenik"),
+            ),
+            Prefetch(
+                "vencanja_kao_kum",
+                queryset=Vencanje.objects.select_related("zenik", "nevesta"),
+            ),
+            Prefetch(
+                "vencanja_kao_svekar",
+                queryset=Vencanje.objects.select_related("zenik", "nevesta"),
+            ),
+            Prefetch(
+                "vencanja_kao_svekrva",
+                queryset=Vencanje.objects.select_related("zenik", "nevesta"),
+            ),
+            Prefetch(
+                "vencanja_kao_tast",
+                queryset=Vencanje.objects.select_related("zenik", "nevesta"),
+            ),
+            Prefetch(
+                "vencanja_kao_tasta",
+                queryset=Vencanje.objects.select_related("zenik", "nevesta"),
+            ),
+            Prefetch(
+                "vencanja_kao_stari_svat",
+                queryset=Vencanje.objects.select_related("zenik", "nevesta"),
+            ),
+            Prefetch(
+                "ukucanin_set",
+                queryset=Ukucanin.objects.select_related(
+                    "domacinstvo", "domacinstvo__domacin"
+                ),
+            ),
         )
 
     def get_object(self, queryset=None):
@@ -169,26 +197,26 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
         p = self.object
 
         # All collections below hit the prefetched cache from get_queryset().
-        krstenja_dete   = list(p.krstenja_kao_dete.all())
-        krstenja_otac   = list(p.krstenja_kao_otac.all())
-        krstenja_majka  = list(p.krstenja_kao_majka.all())
-        context["krstenja_dete"]   = krstenja_dete
-        context["krstenja_kum"]    = list(p.krstenja_kao_kum.all())
-        context["krstenja_otac"]   = krstenja_otac
-        context["krstenja_majka"]  = krstenja_majka
+        krstenja_dete = list(p.krstenja_kao_dete.all())
+        krstenja_otac = list(p.krstenja_kao_otac.all())
+        krstenja_majka = list(p.krstenja_kao_majka.all())
+        context["krstenja_dete"] = krstenja_dete
+        context["krstenja_kum"] = list(p.krstenja_kao_kum.all())
+        context["krstenja_otac"] = krstenja_otac
+        context["krstenja_majka"] = krstenja_majka
 
-        context["vencanja_zenik"]       = list(p.vencanja_kao_zenik.all())
-        context["vencanja_nevesta"]     = list(p.vencanja_kao_nevesta.all())
-        context["vencanja_kum"]         = list(p.vencanja_kao_kum.all())
-        context["vencanja_svekar"]      = list(p.vencanja_kao_svekar.all())
-        context["vencanja_svekrva"]     = list(p.vencanja_kao_svekrva.all())
-        context["vencanja_tast"]        = list(p.vencanja_kao_tast.all())
-        context["vencanja_tasta"]       = list(p.vencanja_kao_tasta.all())
-        context["vencanja_stari_svat"]  = list(p.vencanja_kao_stari_svat.all())
+        context["vencanja_zenik"] = list(p.vencanja_kao_zenik.all())
+        context["vencanja_nevesta"] = list(p.vencanja_kao_nevesta.all())
+        context["vencanja_kum"] = list(p.vencanja_kao_kum.all())
+        context["vencanja_svekar"] = list(p.vencanja_kao_svekar.all())
+        context["vencanja_svekrva"] = list(p.vencanja_kao_svekrva.all())
+        context["vencanja_tast"] = list(p.vencanja_kao_tast.all())
+        context["vencanja_tasta"] = list(p.vencanja_kao_tasta.all())
+        context["vencanja_stari_svat"] = list(p.vencanja_kao_stari_svat.all())
 
         # Родитељи: reuse the first Krstenje where this person is the дете.
         if krstenja_dete:
-            context["otac"]  = krstenja_dete[0].otac
+            context["otac"] = krstenja_dete[0].otac
             context["majka"] = krstenja_dete[0].majka
 
         # Деца: dedup across krstenja_kao_otac + krstenja_kao_majka. Reuse

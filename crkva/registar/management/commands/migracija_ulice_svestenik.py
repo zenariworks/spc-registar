@@ -17,7 +17,6 @@ import zipfile
 
 from django.core.management.base import BaseCommand
 from django_tenants.utils import schema_context
-
 from registar.management.commands.convert_utils import Konvertor
 from registar.models import Adresa, Svestenik
 
@@ -34,20 +33,20 @@ def _read_dbf(raw: bytes):
     fields = []
     pos = 32
     while raw[pos] != 0x0D:
-        name = raw[pos:pos + 11].split(b"\x00")[0].decode("latin1")
+        name = raw[pos : pos + 11].split(b"\x00")[0].decode("latin1")
         ftype = chr(raw[pos + 11])
         flen = raw[pos + 16]
         fields.append((name, ftype, flen))
         pos += 32
     rows = []
     for i in range(nrec):
-        rec = raw[hlen + i * rlen: hlen + (i + 1) * rlen]
+        rec = raw[hlen + i * rlen : hlen + (i + 1) * rlen]
         if not rec or rec[0:1] == b"\x2a":  # deleted
             continue
         off = 1
         row = {}
-        for (name, ftype, flen) in fields:
-            chunk = rec[off:off + flen]
+        for name, ftype, flen in fields:
+            chunk = rec[off : off + flen]
             off += flen
             if ftype == "I" and flen == 4:
                 row[name] = struct.unpack("<i", chunk)[0]
@@ -99,7 +98,9 @@ class Command(BaseCommand):
             naziv = Konvertor.string(u.get("UL_NAZIV") or "")
             if not (rbrsv and naziv):
                 continue
-            entry = by_street.setdefault(_norm(naziv), {"naziv": naziv, "priests": set()})
+            entry = by_street.setdefault(
+                _norm(naziv), {"naziv": naziv, "priests": set()}
+            )
             entry["priests"].add(rbrsv)
 
         self.stdout.write(

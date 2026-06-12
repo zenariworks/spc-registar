@@ -155,7 +155,9 @@ def trapave_sedmice(godina: int) -> frozenset[dt.date]:
     cisti_ponedeljak = vaskrs - dt.timedelta(days=48)
     mitar_i_farisej_start = cisti_ponedeljak - dt.timedelta(days=21)
     trapave.update(
-        _opseg_datuma(mitar_i_farisej_start, mitar_i_farisej_start + dt.timedelta(days=6))
+        _opseg_datuma(
+            mitar_i_farisej_start, mitar_i_farisej_start + dt.timedelta(days=6)
+        )
     )
 
     # После Божића до Крстовдана (7-17. јануар)

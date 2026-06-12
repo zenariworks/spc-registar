@@ -108,7 +108,9 @@ class TaggableLookupTests(TestCase):
         )
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Zanimanje.objects.count(), before)
-        self.assertEqual(Osoba.objects.get(ime="Мала").zanimanje, self.existing_zanimanje)
+        self.assertEqual(
+            Osoba.objects.get(ime="Мала").zanimanje, self.existing_zanimanje
+        )
 
     def test_typed_string_whitespace_normalized(self):
         r = self.client.post(
@@ -163,4 +165,3 @@ class TaggableLookupFieldUnitTests(TestCase):
         self.assertIsInstance(result, PendingLookup)
         self.assertEqual(result.label, "НовоЗанимање")
         self.assertEqual(Zanimanje.objects.count(), before)
-

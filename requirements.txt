@@ -25,15 +25,15 @@ phonenumbers==8.13.55
 Pillow==12.0.0
 # Database
 psycopg2-binary==2.9.11
+# Pin pydyf: WeasyPrint 62.3's pdf/stream.py is incompatible with pydyf >= 0.12
+# (AttributeError: 'super' object has no attribute 'transform'). A fresh
+# install otherwise resolves a newer pydyf and breaks PDF printing. (#222)
+pydyf==0.11.0
 python-dateutil==2.8.2
 rcssmin==1.1.2
 # WSGI Server (kept for compatibility — prod uses gunicorn)
 uWSGI==2.0.31
 # PDF Generation
 WeasyPrint==62.3
-# Pin pydyf: WeasyPrint 62.3's pdf/stream.py is incompatible with pydyf >= 0.12
-# (AttributeError: 'super' object has no attribute 'transform'). A fresh
-# install otherwise resolves a newer pydyf and breaks PDF printing. (#222)
-pydyf==0.11.0
 # Static file serving
 whitenoise==6.12.0

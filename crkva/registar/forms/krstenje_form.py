@@ -7,12 +7,9 @@ from registar.forms.select2 import (
     HramSelect2Widget,
     MaleOsobaSelect2Widget,
     OsobaSelect2Widget,
-    ScriptAwareModelSelect2Widget,
     SvestenikSelect2Widget,
 )
 from registar.models import Krstenje
-
-
 
 
 class KrstenjeForm(forms.ModelForm):
@@ -108,10 +105,11 @@ class KrstenjeForm(forms.ModelForm):
             (majka, "majka", kum, "kum"),
         ):
             if role_a and role_b and role_a == role_b:
-                self.add_error(name_b, f"Иста особа не може бити и {name_a} и {name_b}.")
+                self.add_error(
+                    name_b, f"Иста особа не може бити и {name_a} и {name_b}."
+                )
 
         # If blizanac is checked, the second twin's name is required.
         if cleaned.get("blizanac") and not (cleaned.get("ime_blizanca") or "").strip():
-            self.add_error("ime_blizanca",
-                           "Унесите име другог детета близанца.")
+            self.add_error("ime_blizanca", "Унесите име другог детета близанца.")
         return cleaned

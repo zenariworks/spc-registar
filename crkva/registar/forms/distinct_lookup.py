@@ -32,7 +32,6 @@ from django import forms
 from django.apps import apps
 from django.db.models import Q
 from django_select2.forms import ModelSelect2Widget
-
 from registar.utils import get_query_variants
 
 
@@ -155,15 +154,20 @@ class DistinctValuesSelect2Widget(ModelSelect2Widget):
     model_label: str = ""
     source_fields: tuple[str, ...] = ()
 
-    def __init__(self, *args, model_label: str | None = None,
-                 source_fields: Iterable[str] | None = None, **kwargs):
+    def __init__(
+        self,
+        *args,
+        model_label: str | None = None,
+        source_fields: Iterable[str] | None = None,
+        **kwargs,
+    ):
         if model_label is not None:
             self.model_label = model_label
         if source_fields is not None:
             self.source_fields = tuple(source_fields)
-        kwargs.setdefault("queryset", _DistinctValueQuerySet(
-            self.model_label, self.source_fields
-        ))
+        kwargs.setdefault(
+            "queryset", _DistinctValueQuerySet(self.model_label, self.source_fields)
+        )
         super().__init__(*args, **kwargs)
 
     def get_queryset(self):
@@ -248,21 +252,25 @@ class DistinctValuesSelect2Widget(ModelSelect2Widget):
             for val in value:
                 if not val:
                     continue
-                groups.append((
-                    None,
-                    [{
-                        "name": name,
-                        "value": val,
-                        "label": val,
-                        "selected": True,
-                        "index": "0",
-                        "attrs": {"selected": True},
-                        "type": "select",
-                        "template_name": "django/forms/widgets/select_option.html",
-                        "wrap_label": True,
-                    }],
-                    0,
-                ))
+                groups.append(
+                    (
+                        None,
+                        [
+                            {
+                                "name": name,
+                                "value": val,
+                                "label": val,
+                                "selected": True,
+                                "index": "0",
+                                "attrs": {"selected": True},
+                                "type": "select",
+                                "template_name": "django/forms/widgets/select_option.html",
+                                "wrap_label": True,
+                            }
+                        ],
+                        0,
+                    )
+                )
         return groups
 
 
@@ -274,8 +282,7 @@ class DistinctValuesCharField(forms.CharField):
     the model.
     """
 
-    def __init__(self, *args, model_label: str, source_fields: Iterable[str],
-                 **kwargs):
+    def __init__(self, *args, model_label: str, source_fields: Iterable[str], **kwargs):
         widget = kwargs.pop(
             "widget",
             DistinctValuesSelect2Widget(

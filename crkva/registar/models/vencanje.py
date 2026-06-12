@@ -264,8 +264,11 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
         ime = " ".join(p for p in (self.ime_zenika, self.prezime_zenika) if p)
         mesto = self.adresa_zenika.mesto if self.adresa_zenika else ""
         return self._spoji(
-            ime, self._mala(self.zanimanje_zenika), mesto,
-            self._mala(self.veroispovest_zenika), self._mala(self.narodnost_zenika),
+            ime,
+            self._mala(self.zanimanje_zenika),
+            mesto,
+            self._mala(self.veroispovest_zenika),
+            self._mala(self.narodnost_zenika),
         )
 
     @property
@@ -274,8 +277,11 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
         ime = " ".join(p for p in (self.ime_neveste, self.prezime_neveste) if p)
         mesto = self.adresa_neveste.mesto if self.adresa_neveste else ""
         return self._spoji(
-            ime, self._mala(self.zanimanje_neveste), mesto,
-            self._mala(self.veroispovest_neveste), self._mala(self.narodnost_neveste),
+            ime,
+            self._mala(self.zanimanje_neveste),
+            mesto,
+            self._mala(self.veroispovest_neveste),
+            self._mala(self.narodnost_neveste),
         )
 
     @property

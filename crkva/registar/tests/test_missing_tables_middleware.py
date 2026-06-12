@@ -29,7 +29,7 @@ class MissingTablesMiddlewareTests(TestCase):
 
     def _missing(self, table):
         return ProgrammingError(
-            f"relation \"{table}\" does not exist\nLINE 1: SELECT ..."
+            f'relation "{table}" does not exist\nLINE 1: SELECT ...'
         )
 
     def test_domacinstva_missing_returns_503(self):

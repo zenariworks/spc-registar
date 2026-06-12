@@ -5,22 +5,30 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('registar', '0004_krstenje_krstenje_god_redni_uniq_and_more'),
+        ("registar", "0004_krstenje_krstenje_god_redni_uniq_and_more"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='narodnost',
-            constraint=models.UniqueConstraint(django.db.models.functions.text.Lower('naziv'), name='narodnost_naziv_ci_uniq'),
+            model_name="narodnost",
+            constraint=models.UniqueConstraint(
+                django.db.models.functions.text.Lower("naziv"),
+                name="narodnost_naziv_ci_uniq",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='veroispovest',
-            constraint=models.UniqueConstraint(django.db.models.functions.text.Lower('naziv'), name='veroispovest_naziv_ci_uniq'),
+            model_name="veroispovest",
+            constraint=models.UniqueConstraint(
+                django.db.models.functions.text.Lower("naziv"),
+                name="veroispovest_naziv_ci_uniq",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='zanimanje',
-            constraint=models.UniqueConstraint(django.db.models.functions.text.Lower('naziv'), name='zanimanje_naziv_ci_uniq'),
+            model_name="zanimanje",
+            constraint=models.UniqueConstraint(
+                django.db.models.functions.text.Lower("naziv"),
+                name="zanimanje_naziv_ci_uniq",
+            ),
         ),
     ]

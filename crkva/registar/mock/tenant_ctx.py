@@ -3,6 +3,7 @@
 Wraps the boilerplate of switching connection.tenant + restoring it on
 exit. All seed_* commands use this.
 """
+
 from __future__ import annotations
 
 from contextlib import contextmanager
@@ -10,7 +11,6 @@ from contextlib import contextmanager
 from django.core.management.base import CommandError
 from django.db import connection
 from django_tenants.utils import schema_exists
-
 from tenants.models import Tenant
 
 

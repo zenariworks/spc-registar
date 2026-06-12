@@ -1,0 +1,9 @@
+# Ruff configuration.
+# Rule selection stays at Ruff's defaults (E, F, ...); this file only
+# records project-wide, intentional exceptions.
+
+[lint.per-file-ignores]
+# Package __init__.py files re-export names to form the package public API
+# (consumed e.g. by urls.py via `from registar.views import ...`). Such
+# imports are "unused" only within the __init__ itself — not a defect.
+"__init__.py" = ["F401"]

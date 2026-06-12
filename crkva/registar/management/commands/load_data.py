@@ -1,4 +1,5 @@
 """Top-level data load orchestrator (mock / DBF / fixture)."""
+
 from __future__ import annotations
 
 import random as random_module
@@ -9,9 +10,18 @@ from django.core.management.base import BaseCommand, CommandError
 
 # Per-step config: which kwargs each accepts + default count.
 class Step:
-    def __init__(self, name, label, *, takes_source=True, takes_count=True,
-                 takes_tenant=True, takes_seed=True, takes_reset=True,
-                 default_count=None):
+    def __init__(
+        self,
+        name,
+        label,
+        *,
+        takes_source=True,
+        takes_count=True,
+        takes_tenant=True,
+        takes_seed=True,
+        takes_reset=True,
+        default_count=None,
+    ):
         self.name = name
         self.label = label
         self.takes_source = takes_source
@@ -23,26 +33,32 @@ class Step:
 
 
 PIPELINE: list[Step] = [
-    Step("seed_lookups",    "Lookup табеле",
-         takes_source=False, takes_count=False, takes_seed=False, takes_reset=False),
-    Step("seed_adrese",     "Адресе",       default_count=30),
-    Step("seed_svestenici", "Свештеници",   default_count=5),
-    Step("seed_parohijani",   "Парохијани",   default_count=100),
-    Step("seed_domacinstva",  "Домаћинства",  default_count=33),
-    Step("seed_krstenja",     "Крштења",      default_count=25),
-    Step("seed_vencanja",     "Венчања",      default_count=10),
+    Step(
+        "seed_lookups",
+        "Lookup табеле",
+        takes_source=False,
+        takes_count=False,
+        takes_seed=False,
+        takes_reset=False,
+    ),
+    Step("seed_adrese", "Адресе", default_count=30),
+    Step("seed_svestenici", "Свештеници", default_count=5),
+    Step("seed_parohijani", "Парохијани", default_count=100),
+    Step("seed_domacinstva", "Домаћинства", default_count=33),
+    Step("seed_krstenja", "Крштења", default_count=25),
+    Step("seed_vencanja", "Венчања", default_count=10),
 ]
 
 
 # Scale rule: when user gives --count N, parohijani gets N,
 # others get N/divisor (rough realistic ratios).
 SCALE_DIVISORS = {
-    "seed_parohijani":   1,
-    "seed_svestenici":   20,
-    "seed_adrese":       3,
-    "seed_domacinstva":  3,
-    "seed_krstenja":     4,
-    "seed_vencanja":     10,
+    "seed_parohijani": 1,
+    "seed_svestenici": 20,
+    "seed_adrese": 3,
+    "seed_domacinstva": 3,
+    "seed_krstenja": 4,
+    "seed_vencanja": 10,
 }
 
 
@@ -50,19 +66,38 @@ class Command(BaseCommand):
     help = "Орк. за сејање/учитавање ентитета (mock / DBF / fixture)."
 
     def add_arguments(self, parser):
-        parser.add_argument("--from", dest="source", default="mock",
-                            help="Извор: mock | dbf-zip:<path> | dbf-dir:<path> | fixture:<path>")
-        parser.add_argument("--tenant", default=None,
-                            help="Schema name тенанта (обавезно за per-tenant seedere).")
-        parser.add_argument("--count", type=int, default=None,
-                            help="Базни број (parohijani). Остали се скалирају.")
-        parser.add_argument("--only", type=str, default=None,
-                            help="Само наведени корак(и), зарезом-одвојено.")
+        parser.add_argument(
+            "--from",
+            dest="source",
+            default="mock",
+            help="Извор: mock | dbf-zip:<path> | dbf-dir:<path> | fixture:<path>",
+        )
+        parser.add_argument(
+            "--tenant",
+            default=None,
+            help="Schema name тенанта (обавезно за per-tenant seedere).",
+        )
+        parser.add_argument(
+            "--count",
+            type=int,
+            default=None,
+            help="Базни број (parohijani). Остали се скалирају.",
+        )
+        parser.add_argument(
+            "--only",
+            type=str,
+            default=None,
+            help="Само наведени корак(и), зарезом-одвојено.",
+        )
         parser.add_argument("--seed", type=int, default=None, help="RNG seed.")
-        parser.add_argument("--reset", action="store_true",
-                            help="ОПАСНО: брише постојеће редове пре сваког корака.")
-        parser.add_argument("--dry-run", action="store_true",
-                            help="Само прикажи редослед.")
+        parser.add_argument(
+            "--reset",
+            action="store_true",
+            help="ОПАСНО: брише постојеће редове пре сваког корака.",
+        )
+        parser.add_argument(
+            "--dry-run", action="store_true", help="Само прикажи редослед."
+        )
 
     def handle(self, *args, **opts):
         source = opts["source"]
@@ -94,15 +129,17 @@ class Command(BaseCommand):
 
         base_count = opts["count"]
 
-        self.stdout.write(self.style.MIGRATE_HEADING(
-            f"load_data --from {source}  ({len(steps)} корака, "
-            f"tenant={opts['tenant'] or '—'}, reset={opts['reset']})"
-        ))
+        self.stdout.write(
+            self.style.MIGRATE_HEADING(
+                f"load_data --from {source}  ({len(steps)} корака, "
+                f"tenant={opts['tenant'] or '—'}, reset={opts['reset']})"
+            )
+        )
 
         for step in steps:
-            self.stdout.write(self.style.MIGRATE_HEADING(
-                f"\n→ {step.label}  (manage.py {step.name})"
-            ))
+            self.stdout.write(
+                self.style.MIGRATE_HEADING(f"\n→ {step.label}  (manage.py {step.name})")
+            )
             if opts["dry_run"]:
                 self.stdout.write("  (dry-run — прескачем)")
                 continue

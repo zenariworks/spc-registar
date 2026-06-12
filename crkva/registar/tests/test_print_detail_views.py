@@ -77,9 +77,16 @@ class KrstenjePDFTests(_PdfBase):
         cls.majka = Osoba.objects.create(ime="Марија", prezime="Лазић", pol="Ж")
         # kum остаје None → покрива `else: context[...] = None` грану.
         cls.krstenje = Krstenje.objects.create(
-            dete=cls.dete, otac=cls.otac, majka=cls.majka,
-            hram=cls.hram, svestenik=cls.svestenik,
-            godina_registracije=2024, redni_broj=1, knjiga=1, strana=1, broj=1,
+            dete=cls.dete,
+            otac=cls.otac,
+            majka=cls.majka,
+            hram=cls.hram,
+            svestenik=cls.svestenik,
+            godina_registracije=2024,
+            redni_broj=1,
+            knjiga=1,
+            strana=1,
+            broj=1,
             datum=datetime.date(2024, 2, 10),
         )
 
@@ -96,8 +103,14 @@ class KrstenjePDFTests(_PdfBase):
         # datum=None → event_date пада на created → as_of враћа снимак особе
         # → покрива успешну грану доделе историјског снимка.
         k = Krstenje.objects.create(
-            dete=self.dete, hram=self.hram, svestenik=self.svestenik,
-            godina_registracije=2025, redni_broj=1, knjiga=2, strana=1, broj=1,
+            dete=self.dete,
+            hram=self.hram,
+            svestenik=self.svestenik,
+            godina_registracije=2025,
+            redni_broj=1,
+            knjiga=2,
+            strana=1,
+            broj=1,
             datum=None,
         )
         self._get_pdf(
@@ -118,9 +131,15 @@ class VencanjePDFTests(_PdfBase):
         cls.zenik = Osoba.objects.create(ime="Урош", prezime="Урошевић", pol="М")
         cls.nevesta = Osoba.objects.create(ime="Тамара", prezime="Тамарић", pol="Ж")
         cls.vencanje = Vencanje.objects.create(
-            zenik=cls.zenik, nevesta=cls.nevesta,
-            hram=cls.hram, svestenik=cls.svestenik,
-            godina_registracije=2024, redni_broj=1, knjiga=1, strana=1, broj=1,
+            zenik=cls.zenik,
+            nevesta=cls.nevesta,
+            hram=cls.hram,
+            svestenik=cls.svestenik,
+            godina_registracije=2024,
+            redni_broj=1,
+            knjiga=1,
+            strana=1,
+            broj=1,
             datum=datetime.date(2024, 6, 6),
         )
 
@@ -133,9 +152,15 @@ class VencanjePDFTests(_PdfBase):
 
     def test_pdf_without_datum_falls_back_to_created(self):
         v = Vencanje.objects.create(
-            zenik=self.zenik, nevesta=self.nevesta,
-            hram=self.hram, svestenik=self.svestenik,
-            godina_registracije=2025, redni_broj=1, knjiga=2, strana=1, broj=1,
+            zenik=self.zenik,
+            nevesta=self.nevesta,
+            hram=self.hram,
+            svestenik=self.svestenik,
+            godina_registracije=2025,
+            redni_broj=1,
+            knjiga=2,
+            strana=1,
+            broj=1,
             datum=None,
         )
         self._get_pdf(
@@ -164,15 +189,28 @@ class PrikazSvestenikaDetailTests(_PdfBase):
         super().setUpTestData()
         dete = Osoba.objects.create(ime="Дете", prezime="Детић", pol="М")
         cls.krstenje = Krstenje.objects.create(
-            dete=dete, hram=cls.hram, svestenik=cls.svestenik,
-            godina_registracije=2024, redni_broj=2, knjiga=1, strana=1, broj=2,
+            dete=dete,
+            hram=cls.hram,
+            svestenik=cls.svestenik,
+            godina_registracije=2024,
+            redni_broj=2,
+            knjiga=1,
+            strana=1,
+            broj=2,
             datum=datetime.date(2024, 3, 1),
         )
         z = Osoba.objects.create(ime="Жен", prezime="Женић", pol="М")
         n = Osoba.objects.create(ime="Нев", prezime="Невић", pol="Ж")
         cls.vencanje = Vencanje.objects.create(
-            zenik=z, nevesta=n, hram=cls.hram, svestenik=cls.svestenik,
-            godina_registracije=2024, redni_broj=3, knjiga=1, strana=1, broj=3,
+            zenik=z,
+            nevesta=n,
+            hram=cls.hram,
+            svestenik=cls.svestenik,
+            godina_registracije=2024,
+            redni_broj=3,
+            knjiga=1,
+            strana=1,
+            broj=3,
             datum=datetime.date(2024, 4, 1),
         )
 
@@ -217,27 +255,42 @@ class IzmenaSaveBranchTests(TestCase):
 
     def test_izmena_krstenja_post_saves_and_redirects(self):
         k = Krstenje.objects.create(
-            dete=self.dete, otac=self.otac, majka=self.majka,
-            hram=self.hram, svestenik=self.svestenik,
-            godina_registracije=2024, redni_broj=10, knjiga=1, strana=1, broj=10,
+            dete=self.dete,
+            otac=self.otac,
+            majka=self.majka,
+            hram=self.hram,
+            svestenik=self.svestenik,
+            godina_registracije=2024,
+            redni_broj=10,
+            knjiga=1,
+            strana=1,
+            broj=10,
             datum=datetime.date(2024, 2, 10),
         )
         self.client.force_login(self.clerk)
         payload = {
-            "redni_broj": "10", "godina_registracije": "2024",
-            "knjiga": "1", "strana": "1", "broj": "10",
-            "datum": "2024-02-10", "vreme": "11:30",
-            "hram": str(self.hram.pk), "dete": str(self.dete.pk),
-            "otac": str(self.otac.pk), "majka": str(self.majka.pk),
-            "kum": str(self.kum.pk), "svestenik": str(self.svestenik.pk),
-            "po_redu": "1", "ime_blizanca": "",
-            "mesto_registracije": "Београд", "datum_registracije": "2024-02-12",
-            "maticni_broj": "12345", "strana_registracije": "7",
+            "redni_broj": "10",
+            "godina_registracije": "2024",
+            "knjiga": "1",
+            "strana": "1",
+            "broj": "10",
+            "datum": "2024-02-10",
+            "vreme": "11:30",
+            "hram": str(self.hram.pk),
+            "dete": str(self.dete.pk),
+            "otac": str(self.otac.pk),
+            "majka": str(self.majka.pk),
+            "kum": str(self.kum.pk),
+            "svestenik": str(self.svestenik.pk),
+            "po_redu": "1",
+            "ime_blizanca": "",
+            "mesto_registracije": "Београд",
+            "datum_registracije": "2024-02-12",
+            "maticni_broj": "12345",
+            "strana_registracije": "7",
             "primedba": "измењено",
         }
-        r = self.client.post(
-            reverse("izmena_krstenja", kwargs={"uid": k.uid}), payload
-        )
+        r = self.client.post(reverse("izmena_krstenja", kwargs={"uid": k.uid}), payload)
         self.assertEqual(r.status_code, 302, msg=r.content[:600])
         self.assertEqual(
             r["Location"],
@@ -248,24 +301,36 @@ class IzmenaSaveBranchTests(TestCase):
 
     def test_izmena_vencanja_post_saves_and_redirects(self):
         v = Vencanje.objects.create(
-            zenik=self.zenik, nevesta=self.nevesta,
-            hram=self.hram, svestenik=self.svestenik,
-            godina_registracije=2024, redni_broj=11, knjiga=1, strana=1, broj=11,
-            datum=datetime.date(2024, 6, 1), razresenje=False,
+            zenik=self.zenik,
+            nevesta=self.nevesta,
+            hram=self.hram,
+            svestenik=self.svestenik,
+            godina_registracije=2024,
+            redni_broj=11,
+            knjiga=1,
+            strana=1,
+            broj=11,
+            datum=datetime.date(2024, 6, 1),
+            razresenje=False,
         )
         self.client.force_login(self.clerk)
         payload = {
-            "zenik": str(self.zenik.pk), "nevesta": str(self.nevesta.pk),
+            "zenik": str(self.zenik.pk),
+            "nevesta": str(self.nevesta.pk),
             "kum": str(self.kum.pk),
-            "godina_registracije": "2024", "redni_broj": "11",
-            "knjiga": "1", "strana": "1", "broj": "11",
-            "datum": "2024-06-01", "zenik_rb_brak": "1", "nevesta_rb_brak": "1",
-            "hram": str(self.hram.pk), "svestenik": str(self.svestenik.pk),
+            "godina_registracije": "2024",
+            "redni_broj": "11",
+            "knjiga": "1",
+            "strana": "1",
+            "broj": "11",
+            "datum": "2024-06-01",
+            "zenik_rb_brak": "1",
+            "nevesta_rb_brak": "1",
+            "hram": str(self.hram.pk),
+            "svestenik": str(self.svestenik.pk),
             "razresenje": "on",
         }
-        r = self.client.post(
-            reverse("izmena_vencanja", kwargs={"uid": v.uid}), payload
-        )
+        r = self.client.post(reverse("izmena_vencanja", kwargs={"uid": v.uid}), payload)
         self.assertEqual(r.status_code, 302, msg=r.content[:600])
         self.assertEqual(
             r["Location"],
@@ -300,9 +365,15 @@ class VencanjeDetailRenderTests(TestCase):
         cls.nevesta = Osoba.objects.create(ime="Тамара", prezime="Тамарић", pol="Ж")
         # adresa_zenika остаје None → mesto_hram би имао водећи зарез без заштите
         cls.vencanje = Vencanje.objects.create(
-            zenik=cls.zenik, nevesta=cls.nevesta,
-            hram=cls.hram, svestenik=cls.svestenik,
-            godina_registracije=2024, redni_broj=1, knjiga=1, strana=1, broj=1,
+            zenik=cls.zenik,
+            nevesta=cls.nevesta,
+            hram=cls.hram,
+            svestenik=cls.svestenik,
+            godina_registracije=2024,
+            redni_broj=1,
+            knjiga=1,
+            strana=1,
+            broj=1,
             datum=datetime.date(2024, 6, 6),
         )
 

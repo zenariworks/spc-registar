@@ -15,7 +15,6 @@ from __future__ import annotations
 from django import forms
 from django.core.exceptions import ValidationError
 from django_select2.forms import ModelSelect2Widget
-
 from registar.text_utils import normalize_naziv
 
 
@@ -91,9 +90,7 @@ class TaggableLookupWidget(ModelSelect2Widget):
         groups = super().optgroups(name, pk_values, attrs=attrs)
         default = groups[0][1]
         for label in literal:
-            default.append(
-                self.create_option(name, label, label, True, len(default))
-            )
+            default.append(self.create_option(name, label, label, True, len(default)))
         return groups
 
 

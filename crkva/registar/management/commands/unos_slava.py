@@ -12,7 +12,6 @@ import os
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
-
 from kalendar.models import Slava
 
 FIXTURE = os.path.join(settings.BASE_DIR, "fixtures", "slave.jsonl")
@@ -58,7 +57,9 @@ class Command(BaseCommand):
                 created += int(was_created)
                 updated += int(not was_created)
             except IntegrityError as e:
-                self.stdout.write(self.style.ERROR(f"Грешка при упису „{row.get('naziv')}“: {e}"))
+                self.stdout.write(
+                    self.style.ERROR(f"Грешка при упису „{row.get('naziv')}“: {e}")
+                )
 
         self.stdout.write(
             self.style.SUCCESS(

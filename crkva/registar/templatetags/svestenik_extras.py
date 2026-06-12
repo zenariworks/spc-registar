@@ -1,7 +1,6 @@
 """Template tags за свештеничке податке у модалима."""
 
 from django import template
-
 from registar.models.svestenik import zvanja as ZVANJA
 
 register = template.Library()

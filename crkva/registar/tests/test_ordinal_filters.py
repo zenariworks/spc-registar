@@ -8,11 +8,7 @@ Issue #222 — филтер уведен у #243 имао је само 53% по
 # pylint: disable=missing-function-docstring
 
 from django.test import SimpleTestCase
-from registar.templatetags.ordinal_filters import (
-    NIJE_UPISANO,
-    redni_rec,
-    redni_rec_m,
-)
+from registar.templatetags.ordinal_filters import NIJE_UPISANO, redni_rec, redni_rec_m
 
 
 class RedniRecTests(SimpleTestCase):

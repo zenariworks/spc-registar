@@ -17,10 +17,10 @@ Usage:
     python manage.py load_dbf --src_zip /path/to/crkva.zip
 """
 
-import tempfile
-import zipfile
 import os
 import re
+import tempfile
+import zipfile
 from pathlib import Path
 from typing import Iterator, Sequence
 

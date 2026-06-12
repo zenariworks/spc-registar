@@ -8,7 +8,7 @@ from registar.forms.select2 import (
     OsobaSelect2Widget,
     PublicSchemaModelSelect2Widget,
 )
-from registar.models import Adresa, Domacinstvo, Slava, Ukucanin
+from registar.models import Domacinstvo, Slava, Ukucanin
 
 
 class DomacinstvoForm(forms.ModelForm):

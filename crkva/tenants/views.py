@@ -109,9 +109,7 @@ def user_add(request: HttpRequest) -> HttpResponse:
                 email=data["email"],
             )
         if UserMembership.objects.filter(user=user, tenant=request.tenant).exists():
-            form.add_error(
-                None, f"Корисник {user.username} је већ члан ове парохије."
-            )
+            form.add_error(None, f"Корисник {user.username} је већ члан ове парохије.")
         else:
             if data["is_default"]:
                 # Тачно једна подразумевана парохија по кориснику.

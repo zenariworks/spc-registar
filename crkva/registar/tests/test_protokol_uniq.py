@@ -14,7 +14,6 @@
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
-
 from registar.models import Krstenje, Vencanje
 
 
@@ -45,9 +44,7 @@ class KrstenjeProtokolUniqTests(TestCase):
     def test_same_year_different_redni_allowed(self):
         Krstenje.objects.create(godina_registracije=2020, redni_broj=1, strana=1)
         Krstenje.objects.create(godina_registracije=2020, redni_broj=2, strana=1)
-        self.assertEqual(
-            Krstenje.objects.filter(godina_registracije=2020).count(), 2
-        )
+        self.assertEqual(Krstenje.objects.filter(godina_registracije=2020).count(), 2)
 
     def test_knjiga_strana_broj_repetition_allowed(self):
         # Физичка локација сме да се понови (нпр. иста страна/број, друг редни).

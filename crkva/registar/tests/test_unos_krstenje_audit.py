@@ -327,8 +327,7 @@ class BooleanInfoRowsTests(_BaseUnosKrstenjeAuditTest):
         html = self._get_html()
         # Pin the editable-row container around the zivorodjeno input.
         m = re.search(
-            r'<li[^>]*class="[^"]*info-row--editable[^"]*"[^>]*>'
-            r".*?zivorodjeno",
+            r'<li[^>]*class="[^"]*info-row--editable[^"]*"[^>]*>' r".*?zivorodjeno",
             html,
             re.DOTALL,
         )

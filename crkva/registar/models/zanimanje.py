@@ -4,7 +4,6 @@ import uuid
 
 from django.db import models
 from django.db.models.functions import Lower
-
 from registar.text_utils import normalize_naziv
 
 
@@ -29,9 +28,7 @@ class Zanimanje(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                Lower("naziv"), name="zanimanje_naziv_ci_uniq"
-            ),
+            models.UniqueConstraint(Lower("naziv"), name="zanimanje_naziv_ci_uniq"),
         ]
         db_table = "zanimanja"
         verbose_name = "Занимање"

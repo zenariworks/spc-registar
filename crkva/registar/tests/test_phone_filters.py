@@ -9,11 +9,7 @@
 
 from django.test import SimpleTestCase
 from phonenumber_field.phonenumber import PhoneNumber
-from registar.templatetags.phone_filters import (
-    format_phone,
-    phone_icon,
-    tel_link,
-)
+from registar.templatetags.phone_filters import format_phone, phone_icon, tel_link
 
 
 class FormatPhoneTests(SimpleTestCase):

@@ -8,7 +8,6 @@ DBF поље ``K_REGKADA`` ('D', 8) је NULL у свих 3579 редова, а 
 # pylint: disable=missing-function-docstring
 
 from django.test import SimpleTestCase
-
 from registar.management.commands.migracija_krstenja import SOURCE_COLUMNS, parse_row
 
 
@@ -17,9 +16,7 @@ class RegKadaRemovedTests(SimpleTestCase):
         self.assertNotIn("K_REGKADA", SOURCE_COLUMNS)
 
     def test_registration_block_is_mesto_broj_strana(self):
-        self.assertEqual(
-            SOURCE_COLUMNS[-3:], ("K_REGMESTO", "K_REGBROJ", "K_REGSTR")
-        )
+        self.assertEqual(SOURCE_COLUMNS[-3:], ("K_REGMESTO", "K_REGBROJ", "K_REGSTR"))
 
     def test_parse_row_reads_reindexed_registration_columns(self):
         row = [""] * len(SOURCE_COLUMNS)

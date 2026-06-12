@@ -4,6 +4,7 @@ Tests the Konvertor class used in data migration from legacy DBF files.
 """
 
 from datetime import date
+
 from django.test import SimpleTestCase
 from registar.utils.migration_converters import Konvertor
 
@@ -129,15 +130,11 @@ class TestKonvertor(SimpleTestCase):
 
     def test_split_name_with_space(self):
         """'Петар Петровић' splits to ('Петар', 'Петровић')."""
-        self.assertEqual(
-            Konvertor.split_name("Петар Петровић"), ("Петар", "Петровић")
-        )
+        self.assertEqual(Konvertor.split_name("Петар Петровић"), ("Петар", "Петровић"))
 
     def test_split_name_camelcase_cyrillic(self):
         """'СлавицаЋуковић' (no space, camelCase) splits to ('Славица', 'Ћуковић')."""
-        self.assertEqual(
-            Konvertor.split_name("СлавицаЋуковић"), ("Славица", "Ћуковић")
-        )
+        self.assertEqual(Konvertor.split_name("СлавицаЋуковић"), ("Славица", "Ћуковић"))
 
     def test_split_name_empty_string(self):
         """Empty string returns (None, None)."""

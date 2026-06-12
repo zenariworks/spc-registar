@@ -9,14 +9,12 @@ inside a test that already set a tenant see their tenant preserved.
 
 from __future__ import annotations
 
-from typing import Callable
-
 import logging
+from typing import Callable
 
 from django.db import connection
 from django.http import HttpRequest, HttpResponse
 from django_tenants.utils import schema_exists
-
 from tenants.permissions import prime_tenant_permissions
 
 SESSION_TENANT_KEY = "active_tenant_id"
@@ -118,13 +116,15 @@ class SessionTenantMiddleware:
             else:
                 logger.warning(
                     "tenant schema missing for %s (id=%s); falling back to public",
-                    tenant.schema_name, getattr(tenant, "pk", None),
+                    tenant.schema_name,
+                    getattr(tenant, "pk", None),
                 )
                 connection.set_schema_to_public()
         except Exception:  # pylint: disable=broad-except
             logger.exception(
                 "tenant activation failed for %s (id=%s); falling back to public",
-                tenant.schema_name, getattr(tenant, "pk", None),
+                tenant.schema_name,
+                getattr(tenant, "pk", None),
             )
             connection.set_schema_to_public()
 

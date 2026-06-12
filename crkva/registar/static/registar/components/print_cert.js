@@ -13,13 +13,13 @@
                                 (lazy-loaded once; cached by URL)
 */
 (function () {
-    var loadedCss = {};
+    const loadedCss = {};
 
     function loadCSS(href) {
         if (!href) return Promise.resolve();
         if (loadedCss[href]) return loadedCss[href];
         loadedCss[href] = new Promise(function (resolve, reject) {
-            var link = document.createElement("link");
+            const link = document.createElement("link");
             link.rel = "stylesheet";
             link.href = href;
             link.setAttribute("data-print-css", href);
@@ -37,19 +37,19 @@
                 return r.text();
             }),
         ]).then(function (results) {
-            var html = results[1];
-            var doc = new DOMParser().parseFromString(html, "text/html");
-            var node = doc.querySelector(selector);
+            const html = results[1];
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            const node = doc.querySelector(selector);
             if (!node) {
                 window.alert("Сертификат није пронађен. Покушај поново.");
                 return;
             }
-            var wrap = document.createElement("div");
+            const wrap = document.createElement("div");
             wrap.id = "print-cert-wrap";
             wrap.appendChild(node);
             document.body.appendChild(wrap);
             document.body.classList.add("printing-cert");
-            var cleanup = function () {
+            const cleanup = function () {
                 wrap.remove();
                 document.body.classList.remove("printing-cert");
                 window.removeEventListener("afterprint", cleanup);
@@ -62,12 +62,12 @@
     }
 
     document.addEventListener("click", function (ev) {
-        var btn = ev.target.closest("[data-print-cert]");
+        const btn = ev.target.closest("[data-print-cert]");
         if (!btn) return;
         ev.preventDefault();
-        var url = btn.getAttribute("data-print-cert");
-        var sel = btn.getAttribute("data-print-cert-selector") || ".krstenica";
-        var css = btn.getAttribute("data-print-css") || null;
+        const url = btn.getAttribute("data-print-cert");
+        const sel = btn.getAttribute("data-print-cert-selector") || ".krstenica";
+        const css = btn.getAttribute("data-print-css") || null;
         printRemote(url, sel, css);
     });
 })();

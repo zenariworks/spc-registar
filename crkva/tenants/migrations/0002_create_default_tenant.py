@@ -40,9 +40,7 @@ def create_default_tenant(apps, schema_editor):
     # does not have that override, so we issue the CREATE explicitly. The
     # ongoing migrate_schemas pass then applies TENANT_APPS migrations into
     # the new schema, so we do not migrate it inline here.
-    schema_editor.execute(
-        "CREATE SCHEMA IF NOT EXISTS crkva_sv_petke_cukarica"
-    )
+    schema_editor.execute("CREATE SCHEMA IF NOT EXISTS crkva_sv_petke_cukarica")
 
     for user in User.objects.filter(is_active=True, is_staff=True):
         UserMembership.objects.get_or_create(
@@ -55,9 +53,7 @@ def create_default_tenant(apps, schema_editor):
 def remove_default_tenant(apps, schema_editor):
     Tenant = apps.get_model("tenants", "Tenant")
     Tenant.objects.filter(schema_name="crkva_sv_petke_cukarica").delete()
-    schema_editor.execute(
-        "DROP SCHEMA IF EXISTS crkva_sv_petke_cukarica CASCADE"
-    )
+    schema_editor.execute("DROP SCHEMA IF EXISTS crkva_sv_petke_cukarica CASCADE")
 
 
 class Migration(migrations.Migration):
