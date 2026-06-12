@@ -61,15 +61,15 @@
     --krst-field14-left: 97.0mm;
 
     /* Footer fields */
-    --krst-footer_br-top: 256.0mm;
+    --krst-footer_br-top: 257.0mm;
     --krst-footer_br-left: 20.0mm;
-    --krst-footer_godina-top: 263.0mm;
+    --krst-footer_godina-top: 264.0mm;
     --krst-footer_godina-left: 42.0mm;
-    --krst-footer_u-top: 269.0mm;
+    --krst-footer_u-top: 270.0mm;
     --krst-footer_u-left: 20.0mm;
-    --krst-footer_paroh-top: 269.0mm;
+    --krst-footer_paroh-top: 270.0mm;
     --krst-footer_paroh-left: 124.0mm;
-    --krst-footer_parohija-top: 263.0mm;
+    --krst-footer_parohija-top: 264.0mm;
     --krst-footer_parohija-left: 142.0mm;
     /* box sizes (calibratable) */
     --krst-knjiga-width: 15.0mm;
