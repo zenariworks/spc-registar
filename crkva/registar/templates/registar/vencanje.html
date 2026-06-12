@@ -149,7 +149,7 @@
           <div class="venc-table-field venc-field-brak_neveste">{{ vencanje.nevesta_rb_brak }}</div>
           <div class="venc-table-field venc-field-ispit">{{ vencanje.datum_ispita|julian_date }}</div>
           <div class="venc-table-field venc-field-datum_vencanja">{{ vencanje.datum|julian_date }}</div>
-          <div class="venc-table-field venc-field-mesto_hram">{% if vencanje.adresa_zenika %}{{ vencanje.adresa_zenika.mesto }}{% endif %}, {{ vencanje.hram }}</div>
+          <div class="venc-table-field venc-field-mesto_hram">{% if vencanje.adresa_zenika and vencanje.adresa_zenika.mesto %}{{ vencanje.adresa_zenika.mesto }}, {% endif %}{{ vencanje.hram }}</div>
           <div class="venc-table-field venc-field-svestenik">{{ vencanje.svestenik|default_if_none:"" }}</div>
           <div class="venc-table-field venc-field-svedoci"><span>{{ vencanje.kum|default_if_none:"" }}</span><span>{{ vencanje.stari_svat|default_if_none:"" }}</span></div>
           <div class="venc-table-field venc-field-razresenje">{% if vencanje.razresenje %}Да{% else %}Не{% endif %}</div>
