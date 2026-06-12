@@ -96,7 +96,9 @@ SOURCE_COLUMNS = (
     "K_KUMZANIM",
     "K_KUMMEST",
     "K_REGMESTO",
-    "K_REGKADA",
+    # K_REGKADA (датум регистрације) изостављен: DBF 'D' поље је празно
+    # у целом извору (0/3579), па је селект био мртав уз тврдо
+    # registracija_datum=None. Нема шта да се учита (#254).
     "K_REGBROJ",
     "K_REGSTR",
 )
@@ -162,7 +164,6 @@ class KrstenjeRecord:  # pylint: disable=too-many-instance-attributes
     kum_mesto: str
 
     registracija_mesto: str
-    registracija_datum: Optional[date]
     registracija_broj: Optional[str]
     registracija_strana: Optional[str]
 
@@ -226,9 +227,10 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         kum_zanimanje=cyr(row[43]),
         kum_mesto=cyr(row[44]),
         registracija_mesto=cyr(row[45]),
-        registracija_datum=None,
-        registracija_broj=cyr(row[47]) or None,
-        registracija_strana=cyr(row[48]) or None,
+        # K_REGKADA уклоњен из SOURCE_COLUMNS (#254) → K_REGBROJ/K_REGSTR
+        # су се померили на индексе 46/47.
+        registracija_broj=cyr(row[46]) or None,
+        registracija_strana=cyr(row[47]) or None,
     )
 
 
@@ -429,7 +431,6 @@ class Command(MigrationCommand):
             "ime_blizanca": r.blizanac_ime,
             "telesna_mana": r.dete_sa_manom.strip() == "1",
             "mesto_registracije": r.registracija_mesto,
-            "datum_registracije": r.registracija_datum,
             "maticni_broj": r.registracija_broj,
             "strana_registracije": r.registracija_strana,
             "primedba": "",
