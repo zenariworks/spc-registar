@@ -3,6 +3,9 @@
 import uuid
 
 from django.db import models
+from django.db.models.functions import Lower
+
+from registar.text_utils import normalize_naziv
 
 
 class Veroispovest(models.Model):
@@ -15,7 +18,19 @@ class Veroispovest(models.Model):
     def __str__(self):
         return f"{self.naziv}"
 
+    def save(self, *args, **kwargs):
+        # Нормализуј назив да case-insensitive ограничење не пропусти
+        # дупликате са вишком размака (#252).
+        if self.naziv:
+            self.naziv = normalize_naziv(self.naziv)
+        super().save(*args, **kwargs)
+
     class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                Lower("naziv"), name="veroispovest_naziv_ci_uniq"
+            ),
+        ]
         db_table = "veroispovesti"
         verbose_name = "Вероисповест"
         verbose_name_plural = "Вероисповести"

@@ -2,13 +2,17 @@
 
 from django import forms
 from registar.forms.distinct_lookup import DistinctValuesCharField
-from registar.forms.lookup import TaggableLookupField, TaggableLookupWidget
+from registar.forms.lookup import (
+    TaggableCreateMixin,
+    TaggableLookupField,
+    TaggableLookupWidget,
+)
 from registar.forms.phone import TenantPhoneField
 from registar.forms.select2 import AdresaSelect2Widget, ScriptAwareModelSelect2Widget
 from registar.models import Adresa, Narodnost, Osoba, Veroispovest, Zanimanje
 
 
-class ParohijanForm(forms.ModelForm):
+class ParohijanForm(TaggableCreateMixin, forms.ModelForm):
     """Формулар за унос и измену парохијана."""
 
     zanimanje = TaggableLookupField(
