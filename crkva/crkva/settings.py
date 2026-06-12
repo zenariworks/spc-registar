@@ -36,8 +36,17 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 
-ALLOWED_HOSTS: List[str] = ["*"]
-ALLOWED_HOSTS.extend(filter(None, os.environ.get("ALLOWED_HOSTS", "").split(",")))
+# Тест-рунери (manage.py test / pytest) форсирају DEBUG=False, па би
+# продукцијско учвршћивање испод иначе укључило SSL redirect и празан
+# ALLOWED_HOSTS усред тестова. Откривамо тест-рун да то избегнемо (#223).
+_RUNNING_TESTS = "test" in sys.argv or sys.argv[0].endswith(("pytest", "py.test"))
+
+# Продукција прихвата само хостове из ALLOWED_HOSTS env; dev/тест дозвољавају све.
+ALLOWED_HOSTS: List[str] = list(
+    filter(None, os.environ.get("ALLOWED_HOSTS", "").split(","))
+)
+if DEBUG or _RUNNING_TESTS:
+    ALLOWED_HOSTS = ALLOWED_HOSTS or ["*"]
 
 # Behind Caddy, which terminates TLS and reverse-proxies plain HTTP to
 # gunicorn. Trust its X-Forwarded-Proto header so request.is_secure(),
@@ -46,6 +55,18 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_TRUSTED_ORIGINS = list(
     filter(None, os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(","))
 )
+
+# Продукцијско безбедносно учвршћивање (#223) — активно када је DEBUG искључен
+# (и ван тестова). TLS терминира Caddy, па се ово ослања на горњи
+# SECURE_PROXY_SSL_HEADER (Caddy шаље X-Forwarded-Proto=https).
+if not DEBUG and not _RUNNING_TESTS:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 година
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
 
 # Application definition
 
