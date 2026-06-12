@@ -5,7 +5,7 @@
 import datetime
 
 from django.contrib.auth.models import User
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from registar.models import Domacinstvo, Hram, Krstenje, Osoba, Ukucanin
 
@@ -149,6 +149,13 @@ class PrikazKrstenjaViewTestCase(TestCase):
         response = self.client.get(reverse("krstenje_detail", kwargs={"uid": fake_uid}))
         self.assertEqual(response.status_code, 404)
 
+    def test_roditelji_adresa_nema_vodeci_zarez(self):
+        """Адресни ред крштенице нема водећи зарез када је место храма празно (#17)."""
+        response = self.client.get(
+            reverse("krstenje_detail", kwargs={"uid": self.krstenje.uid})
+        )
+        self.assertNotContains(response, "<br>, ")
+
 
 class SpisakParohijanaViewTestCase(TestCase):
     """Тестови за списак парохијана."""
@@ -245,6 +252,7 @@ class KalendarViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
+@override_settings(DEBUG=True)
 class CalibrateViewsTestCase(TestCase):
     """Тестови за калибрационе странице."""
 
@@ -267,6 +275,34 @@ class CalibrateViewsTestCase(TestCase):
         """Калибрација венчанице враћа статус 200."""
         response = self.client.get(reverse("calibrate_vencanje"))
         self.assertEqual(response.status_code, 200)
+
+    def test_calibrate_krstenje_links_live_css(self):
+        """Калибрација учитава продукциони krstenica.css да приказује
+        живе вредности (--krst-*), а не застареле подразумеване (#17)."""
+        response = self.client.get(reverse("calibrate_krstenje"))
+        self.assertContains(response, "print/krstenica.css")
+
+
+@override_settings(DEBUG=False)
+class CalibrateShutdownTestCase(TestCase):
+    """Калибрационе странице су искључене у продукцији (#17)."""
+
+    def setUp(self):
+        self.client = Client()
+        self.user = User.objects.create_superuser(
+            username="auto-test-shut", email="s@a.test", password="x"
+        )
+        self.client.force_login(self.user)
+
+    def test_calibrate_krstenje_404_in_production(self):
+        """Калибрација крштенице враћа 404 када је DEBUG искључен."""
+        response = self.client.get(reverse("calibrate_krstenje"))
+        self.assertEqual(response.status_code, 404)
+
+    def test_calibrate_vencanje_404_in_production(self):
+        """Калибрација венчанице враћа 404 када је DEBUG искључен."""
+        response = self.client.get(reverse("calibrate_vencanje"))
+        self.assertEqual(response.status_code, 404)
 
 
 class UnosKrstenjaViewTestCase(TestCase):

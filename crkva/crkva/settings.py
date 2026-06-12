@@ -305,3 +305,12 @@ AXES_RESET_ON_SUCCESS = True
 # requires one (raises AxesBackendRequestParameterRequired otherwise).
 if "test" in sys.argv:
     AXES_ENABLED = False
+    # Тестови намерно изазивају 403/404 (провере дозвола и непостојећих
+    # записа). Django их бележи са traceback-ом (ERROR) односно упозорењем
+    # (WARNING) преко django.request. Утишај тај логер у тестовима да CI
+    # лог остане читљив — стварне грешке се и даље виде као неуспели тестови.
+    LOGGING["loggers"]["django.request"] = {
+        "handlers": ["console"],
+        "level": "CRITICAL",
+        "propagate": False,
+    }

@@ -10,6 +10,7 @@ class TenantAdmin(admin.ModelAdmin):
     list_display = (
         "naziv",
         "parohija_naziv",
+        "mesto",
         "schema_name",
         "default_phone_region",
         "is_active",

@@ -174,14 +174,14 @@
           <div class="krst-field-broj">{{ krstenje.broj }}</div>
           <div class="krst-field-eparhija">БЕОГРАДСКО - КАРЛОВАЧКЕ</div>
           <div class="krst-field-hram">{{ krstenje.hram }}</div>
-          <div class="krst-field-mesto">{{ krstenje.hram.mesto }}у</div>
+          <div class="krst-field-mesto">{% if tenant.mesto %}{{ tenant.mesto }}{% endif %}</div>
           <div class="krst-field-godina">{{ krstenje.datum|date:"y" }}</div>
           <div class="krst-table-field krst-field-rodjenje_datum">{{ krstenje.datum_rodjenja|julian_date }}{% if krstenje.vreme_rodjenja %}, {{ krstenje.vreme_rodjenja|time:"H:i" }} часова{% endif %}</div>
           <div class="krst-table-field krst-field-rodjenje_mesto">{{ krstenje.mesto_rodjenja }}</div>
           <div class="krst-table-field krst-field-krstenje_datum">{{ krstenje.datum|julian_date }}</div>
-          <div class="krst-table-field krst-field-krstenje_mesto">{{ krstenje.hram.mesto }}, {{ krstenje.hram }}</div>
+          <div class="krst-table-field krst-field-krstenje_mesto">{% if krstenje.hram.mesto %}{{ krstenje.hram.mesto }}, {% endif %}{{ krstenje.hram }}</div>
           <div class="krst-table-field krst-field-ime_pol">{{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}</div>
-          <div class="krst-table-field krst-field-roditelji">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{{ krstenje.hram.mesto }}, {{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}</div>
+          <div class="krst-table-field krst-field-roditelji">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{% if krstenje.hram.mesto %}{{ krstenje.hram.mesto }}, {% endif %}{{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}</div>
           <div class="krst-table-field krst-field-dete_po_redu">{{ krstenje.po_redu|redni_rec }}</div>
           <div class="krst-table-field krst-field-bracno">{{ krstenje.vanbracno|yesno:"није,јесте" }}</div>
           <div class="krst-table-field krst-field-blizanac">{{ krstenje.blizanac|yesno:"јесте,није" }}</div>
