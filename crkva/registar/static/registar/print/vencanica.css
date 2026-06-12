@@ -37,14 +37,14 @@
     --venc-godina-left: 131.0mm;
     --venc-godina-width: 10.0mm;
     --venc-godina-height: 6.0mm;
-    --venc-ime_zenika-top: 71.0mm;
-    --venc-ime_zenika-left: 88.0mm;
-    --venc-ime_zenika-width: 105.0mm;
-    --venc-ime_zenika-height: 10.0mm;
-    --venc-ime_neveste-top: 81.0mm;
-    --venc-ime_neveste-left: 88.0mm;
-    --venc-ime_neveste-width: 105.0mm;
-    --venc-ime_neveste-height: 10.0mm;
+    --venc-zenik-top: 71.0mm;
+    --venc-zenik-left: 88.0mm;
+    --venc-zenik-width: 105.0mm;
+    --venc-zenik-height: 10.0mm;
+    --venc-nevesta-top: 81.0mm;
+    --venc-nevesta-left: 88.0mm;
+    --venc-nevesta-width: 105.0mm;
+    --venc-nevesta-height: 10.0mm;
     --venc-roditelji_zenika-top: 91.0mm;
     --venc-roditelji_zenika-left: 88.0mm;
     --venc-roditelji_zenika-width: 105.0mm;
@@ -249,12 +249,12 @@
 }
 
 /* Individual row positions */
-.venc-field-ime_zenika {
+.venc-field-zenik {
     position: absolute;
-    top: var(--venc-ime_zenika-top);
-    left: var(--venc-ime_zenika-left);
-    width: var(--venc-ime_zenika-width);
-    height: var(--venc-ime_zenika-height);
+    top: var(--venc-zenik-top);
+    left: var(--venc-zenik-left);
+    width: var(--venc-zenik-width);
+    height: var(--venc-zenik-height);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -264,12 +264,12 @@
     line-height: 1.4;
 }
 
-.venc-field-ime_neveste {
+.venc-field-nevesta {
     position: absolute;
-    top: var(--venc-ime_neveste-top);
-    left: var(--venc-ime_neveste-left);
-    width: var(--venc-ime_neveste-width);
-    height: var(--venc-ime_neveste-height);
+    top: var(--venc-nevesta-top);
+    left: var(--venc-nevesta-left);
+    width: var(--venc-nevesta-width);
+    height: var(--venc-nevesta-height);
     display: flex;
     flex-direction: column;
     align-items: flex-start;

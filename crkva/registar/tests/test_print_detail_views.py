@@ -316,3 +316,20 @@ class VencanjeDetailRenderTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, 'venc-field-mesto_hram">, ')
+
+    def test_opis_zenika_spaja_bez_praznih_delova(self):
+        # зеник има само име/презиме → нема празних делова ни зареза на крају
+        self.assertEqual(self.vencanje.opis_zenika, "Урош Урошевић")
+
+    def test_prazni_roditelji_ne_prave_prazne_redove(self):
+        # родитељи нису постављени → празни описи и без празних <span> редова
+        self.assertEqual(self.vencanje.opis_svekra, "")
+        self.assertEqual(self.vencanje.opis_svekrve, "")
+        response = self.client.get(
+            reverse("vencanje_detail", kwargs={"uid": self.vencanje.uid})
+        )
+        # оба родитеља празна → ред је празан, без иједног <span> (нема празних редова)
+        self.assertContains(
+            response,
+            '<div class="venc-table-field venc-field-roditelji_zenika"></div>',
+        )

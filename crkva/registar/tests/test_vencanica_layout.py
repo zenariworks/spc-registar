@@ -19,7 +19,7 @@ CSS_PATH = os.path.join(
 
 FIELD_IDS = [
     "knjiga", "strana", "tekuci", "hram", "eparhija", "mesto", "godina",
-    "ime_zenika", "ime_neveste", "roditelji_zenika", "roditelji_neveste",
+    "zenik", "nevesta", "roditelji_zenika", "roditelji_neveste",
     "rodjenje_zenika", "rodjenje_neveste", "brak_zenika", "brak_neveste",
     "ispit", "datum_vencanja", "mesto_hram", "svestenik", "svedoci",
     "razresenje", "primedba", "footer_eparhija", "footer_hram",
