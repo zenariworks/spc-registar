@@ -12,6 +12,12 @@ name: Auto-tag on merge
 #
 # Baseline is the latest semver tag reachable from main; legacy/divergent tags
 # are ignored. To bump the major, tag manually once and this picks up from there.
+#
+# SECURITY: every PR-derived value (branch ref, title, number) is passed to the
+# shell via `env:`, never interpolated as ${{ ... }} inside a `run:` body. A PR
+# title such as `fix: foo "bar"` or `$(rm -rf /)` is then just an env-var value
+# — it cannot terminate a quoted string or inject commands. (A literal-" title
+# broke the tag step once before this hardening.)
 
 on:
   pull_request:
@@ -33,8 +39,10 @@ jobs:
 
       - name: Determine bump type
         id: bump
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          BRANCH="${{ github.event.pull_request.head.ref }}"
+          BRANCH="$HEAD_REF"
           echo "head branch: $BRANCH"
           PREFIX="${BRANCH%%/*}"
           case "$PREFIX" in
@@ -49,6 +57,8 @@ jobs:
 
       - name: Compute next version
         id: ver
+        env:
+          BUMP: ${{ steps.bump.outputs.type }}
         run: |
           git fetch --tags --quiet
           # Only consider semver tags that are ancestors of the current main HEAD.
@@ -58,7 +68,7 @@ jobs:
           [ -z "$LATEST" ] && LATEST="0.0.0"
 
           IFS='.' read -r MAJOR MINOR PATCH <<<"$LATEST"
-          case "${{ steps.bump.outputs.type }}" in
+          case "$BUMP" in
             minor) MINOR=$((MINOR+1)); PATCH=0 ;;
             patch) PATCH=$((PATCH+1)) ;;
           esac
@@ -66,17 +76,16 @@ jobs:
 
           echo "from=$LATEST" >> "$GITHUB_OUTPUT"
           echo "new=$NEW"   >> "$GITHUB_OUTPUT"
-          echo "::notice::Tagging $LATEST → $NEW (${{ steps.bump.outputs.type }} bump)"
+          echo "::notice::Tagging $LATEST → $NEW ($BUMP bump)"
 
       - name: Create + push tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NEW: ${{ steps.ver.outputs.new }}
+          TITLE: ${{ github.event.pull_request.title }}
+          NUM: ${{ github.event.pull_request.number }}
+          SHA: ${{ github.event.pull_request.merge_commit_sha }}
         run: |
-          NEW="${{ steps.ver.outputs.new }}"
-          TITLE="${{ github.event.pull_request.title }}"
-          NUM="${{ github.event.pull_request.number }}"
-          SHA="${{ github.event.pull_request.merge_commit_sha }}"
-
           if git rev-parse "$NEW" >/dev/null 2>&1; then
             echo "::error::Tag $NEW already exists — racing PR or misconfiguration"
             exit 1
