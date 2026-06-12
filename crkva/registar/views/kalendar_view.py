@@ -12,7 +12,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from kalendar.models import Slava
 from registar.utils import MESECI
-from registar.utils_fasting import get_fasting_type
+from registar.utils_fasting import tip_posta
 
 
 # crkvenikalendar.rs uses Cyrillic-month-name spelled in Latin script in the URL.
@@ -91,7 +91,7 @@ def kalendar(
     for _ in range(first_weekday):
         cells.append({"is_placeholder": True})
     for d in days:
-        fasting_info = get_fasting_type(d)
+        fasting_info = tip_posta(d)
         day_slavas = by_day.get(d.day, [])
 
         # Separate fixed and moveable feasts

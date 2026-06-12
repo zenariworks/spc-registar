@@ -6,7 +6,7 @@ from typing import Any
 from django.utils import timezone
 
 from .models import Slava
-from .utils_fasting import is_fasting_day
+from .utils_fasting import je_post
 
 
 def processor_narednih_slava(request) -> dict[str, Any]:
@@ -21,11 +21,11 @@ def processor_narednih_slava(request) -> dict[str, Any]:
     # Јуче
     juce = danas - timedelta(days=1)
     juce_slave = list(Slava.objects.filter(dan=juce.day, mesec=juce.month))
-    juce_post = is_fasting_day(juce.date())
+    juce_post = je_post(juce.date())
 
     # Данас
     danas_slave = list(Slava.objects.filter(dan=danas.day, mesec=danas.month))
-    danas_post = is_fasting_day(danas.date())
+    danas_post = je_post(danas.date())
 
     # Наредних 7 дана (без данас)
     narednih_dani = [danas + timedelta(days=i) for i in range(1, 8)]
@@ -37,7 +37,7 @@ def processor_narednih_slava(request) -> dict[str, Any]:
                 {
                     "datum": datum,
                     "slave": slave_na_datum,
-                    "post": is_fasting_day(datum.date()),
+                    "post": je_post(datum.date()),
                 }
             )
 
