@@ -259,9 +259,8 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 0.5mm;
     font-size: 11pt;
-    line-height: 1.4;
+    line-height: 1.2;
 }
 
 .venc-field-nevesta {
@@ -274,9 +273,8 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 0.5mm;
     font-size: 11pt;
-    line-height: 1.4;
+    line-height: 1.2;
 }
 
 .venc-field-roditelji_zenika {
@@ -289,9 +287,8 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 0.5mm;
     font-size: 11pt;
-    line-height: 1.4;
+    line-height: 1.2;
 }
 
 .venc-field-roditelji_neveste {
@@ -304,9 +301,8 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 0.5mm;
     font-size: 11pt;
-    line-height: 1.4;
+    line-height: 1.2;
 }
 
 .venc-field-rodjenje_zenika {
@@ -319,9 +315,8 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 0.5mm;
     font-size: 11pt;
-    line-height: 1.4;
+    line-height: 1.2;
 }
 
 .venc-field-rodjenje_neveste {
@@ -334,9 +329,8 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 0.5mm;
     font-size: 11pt;
-    line-height: 1.4;
+    line-height: 1.2;
 }
 
 .venc-field-brak_zenika {
@@ -421,9 +415,8 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    gap: 0.5mm;
     font-size: 11pt;
-    line-height: 1.4;
+    line-height: 1.2;
 }
 
 .venc-field-razresenje {
