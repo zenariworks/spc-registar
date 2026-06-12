@@ -8,10 +8,16 @@ Issue #222 — филтер уведен у #243 имао је само 53% по
 # pylint: disable=missing-function-docstring
 
 from django.test import SimpleTestCase
-from registar.templatetags.ordinal_filters import NIJE_UPISANO, redni_rec
+from registar.templatetags.ordinal_filters import (
+    NIJE_UPISANO,
+    redni_rec,
+    redni_rec_m,
+)
 
 
 class RedniRecTests(SimpleTestCase):
+    """Тестови за redni_rec (средњи род, „дете по реду")."""
+
     def test_none_is_nije_upisano(self):
         self.assertEqual(redni_rec(None), NIJE_UPISANO)
 
@@ -41,3 +47,22 @@ class RedniRecTests(SimpleTestCase):
 
     def test_non_numeric_returned_unchanged(self):
         self.assertEqual(redni_rec("abc"), "abc")
+
+
+class RedniRecMTests(SimpleTestCase):
+    """Тестови за redni_rec_m (мушки род, „који брак")."""
+
+    def test_none_is_nije_upisano(self):
+        self.assertEqual(redni_rec_m(None), NIJE_UPISANO)
+
+    def test_first_masculine(self):
+        self.assertEqual(redni_rec_m(1), "први")
+
+    def test_second_masculine(self):
+        self.assertEqual(redni_rec_m(2), "други")
+
+    def test_twentieth(self):
+        self.assertEqual(redni_rec_m(20), "двадесети")
+
+    def test_above_twenty_numeric_form(self):
+        self.assertEqual(redni_rec_m(21), "21.")

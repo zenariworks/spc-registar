@@ -2,6 +2,7 @@
 {% load static %}
 {% load info_components %}
 {% load julian_dates %}
+{% load ordinal_filters %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'registar/print/vencanica.css' %}">
@@ -145,8 +146,8 @@
           <div class="venc-table-field venc-field-roditelji_neveste">{% if vencanje.opis_tasta %}<span>{{ vencanje.opis_tasta }}</span>{% endif %}{% if vencanje.opis_taste %}<span>{{ vencanje.opis_taste }}</span>{% endif %}</div>
           <div class="venc-table-field venc-field-rodjenje_zenika"><span>{{ vencanje.datum_rodjenja_zenika|julian_date }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_zenika }}</span></div>
           <div class="venc-table-field venc-field-rodjenje_neveste"><span>{{ vencanje.datum_rodjenja_neveste|julian_date }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_neveste }}</span></div>
-          <div class="venc-table-field venc-field-brak_zenika">{{ vencanje.zenik_rb_brak }}</div>
-          <div class="venc-table-field venc-field-brak_neveste">{{ vencanje.nevesta_rb_brak }}</div>
+          <div class="venc-table-field venc-field-brak_zenika">{{ vencanje.zenik_rb_brak|redni_rec_m }}</div>
+          <div class="venc-table-field venc-field-brak_neveste">{{ vencanje.nevesta_rb_brak|redni_rec_m }}</div>
           <div class="venc-table-field venc-field-ispit">{{ vencanje.datum_ispita|julian_date }}</div>
           <div class="venc-table-field venc-field-datum_vencanja">{{ vencanje.datum|julian_date }}</div>
           <div class="venc-table-field venc-field-mesto_hram">{% if vencanje.adresa_zenika and vencanje.adresa_zenika.mesto %}{{ vencanje.adresa_zenika.mesto }}, {% endif %}{{ vencanje.hram }}</div>
