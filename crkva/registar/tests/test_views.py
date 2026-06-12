@@ -252,7 +252,7 @@ class KalendarViewTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
 
 
-@override_settings(DEBUG=True)
+@override_settings(CALIBRATION_ENABLED=True)
 class CalibrateViewsTestCase(TestCase):
     """Тестови за калибрационе странице."""
 
@@ -282,8 +282,18 @@ class CalibrateViewsTestCase(TestCase):
         response = self.client.get(reverse("calibrate_krstenje"))
         self.assertContains(response, "print/krstenica.css")
 
+    def test_calibrate_vencanje_links_live_css(self):
+        """Калибрација венчанице учитава продукциони vencanica.css (#16)."""
+        response = self.client.get(reverse("calibrate_vencanje"))
+        self.assertContains(response, "print/vencanica.css")
 
-@override_settings(DEBUG=False)
+    def test_calibrate_vencanje_has_footer_parohija(self):
+        """Венчаница калибрише и подножно поље парохије (#16)."""
+        response = self.client.get(reverse("calibrate_vencanje"))
+        self.assertContains(response, "footer_parohija")
+
+
+@override_settings(CALIBRATION_ENABLED=False)
 class CalibrateShutdownTestCase(TestCase):
     """Калибрационе странице су искључене у продукцији (#17)."""
 
@@ -295,12 +305,12 @@ class CalibrateShutdownTestCase(TestCase):
         self.client.force_login(self.user)
 
     def test_calibrate_krstenje_404_in_production(self):
-        """Калибрација крштенице враћа 404 када је DEBUG искључен."""
+        """Калибрација крштенице враћа 404 када је калибрација искључена."""
         response = self.client.get(reverse("calibrate_krstenje"))
         self.assertEqual(response.status_code, 404)
 
     def test_calibrate_vencanje_404_in_production(self):
-        """Калибрација венчанице враћа 404 када је DEBUG искључен."""
+        """Калибрација венчанице враћа 404 када је калибрација искључена."""
         response = self.client.get(reverse("calibrate_vencanje"))
         self.assertEqual(response.status_code, 404)
 
