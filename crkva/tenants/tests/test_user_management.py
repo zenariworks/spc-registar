@@ -108,18 +108,83 @@ class UserManagementViewTests(TestCase):
         )
         self.assertEqual(r.status_code, 403)
 
-    def test_duplicate_username_rejected(self):
+    def test_existing_member_of_this_parish_rejected(self):
+        # „kanc“ је већ члан ове парохије → грешка, без дупог чланства (#228).
         self.client.force_login(self.admin)
         r = self.client.post(
             reverse("parohija:user_add"),
-            {
-                "username": "kanc",  # already exists
-                "password": "veryStrong!Pass1",
-                "role": Role.PREGLED,
-            },
+            {"username": "kanc", "role": Role.PREGLED},
         )
         self.assertEqual(r.status_code, 200)
         self.assertTrue(r.context["form"].errors)
+        self.assertEqual(
+            UserMembership.objects.filter(user=self.clerk, tenant=self.tenant).count(),
+            1,
+        )
+
+    def test_existing_user_added_to_current_parish(self):
+        # Постојећи корисник из друге парохије се веже за ову — без новог налога.
+        self.client.force_login(self.admin)
+        before = User.objects.count()
+        r = self.client.post(
+            reverse("parohija:user_add"),
+            {"username": "other_kanc", "role": Role.PREGLED},
+        )
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(User.objects.count(), before)
+        self.assertTrue(
+            UserMembership.objects.filter(
+                user=self.foreign_clerk, tenant=self.tenant, role=Role.PREGLED
+            ).exists()
+        )
+        self.assertTrue(
+            UserMembership.objects.filter(
+                user=self.foreign_clerk, tenant=self.other_tenant
+            ).exists()
+        )
+
+    def test_existing_user_password_not_reset(self):
+        # Admin једне парохије не сме да ресетује глобалну лозинку (#228).
+        self.client.force_login(self.admin)
+        old_hash = User.objects.get(username="other_kanc").password
+        self.client.post(
+            reverse("parohija:user_add"),
+            {
+                "username": "other_kanc",
+                "password": "attackerNewPass!9",
+                "role": Role.PREGLED,
+            },
+        )
+        self.assertEqual(User.objects.get(username="other_kanc").password, old_hash)
+
+    def test_new_user_requires_password(self):
+        self.client.force_login(self.admin)
+        r = self.client.post(
+            reverse("parohija:user_add"),
+            {"username": "brandnew", "role": Role.PREGLED},
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertIn("password", r.context["form"].errors)
+        self.assertFalse(User.objects.filter(username="brandnew").exists())
+
+    def test_setting_default_clears_previous_default(self):
+        m_other = UserMembership.objects.get(
+            user=self.foreign_clerk, tenant=self.other_tenant
+        )
+        m_other.is_default = True
+        m_other.save()
+        self.client.force_login(self.admin)
+        self.client.post(
+            reverse("parohija:user_add"),
+            {"username": "other_kanc", "role": Role.PREGLED, "is_default": "on"},
+        )
+        m_other.refresh_from_db()
+        self.assertFalse(m_other.is_default)
+        self.assertTrue(
+            UserMembership.objects.get(
+                user=self.foreign_clerk, tenant=self.tenant
+            ).is_default
+        )
 
     # ----- edit role -----
 

@@ -95,21 +95,43 @@ def user_add(request: HttpRequest) -> HttpResponse:
     form = AddUserForm(request.POST or None)
     if request.method == "POST" and form.is_valid():
         data = form.cleaned_data
-        user = User.objects.create_user(
-            username=data["username"],
-            password=data["password"],
-            first_name=data["first_name"],
-            last_name=data["last_name"],
-            email=data["email"],
-        )
-        UserMembership.objects.create(
-            user=user,
-            tenant=request.tenant,
-            role=data["role"],
-            is_default=data["is_default"],
-        )
-        messages.success(request, f"Корисник {user.username} креиран.")
-        return redirect("parohija:user_list")
+        # Постојеће корисничко име → вежи постојећег корисника за ову парохију;
+        # ново → направи налог. Постојећем НЕ дирамо лозинку/профил (admin једне
+        # парохије не сме да ресетује глобални налог). (#228)
+        user = User.objects.filter(username=data["username"]).first()
+        is_new = user is None
+        if is_new:
+            user = User.objects.create_user(
+                username=data["username"],
+                password=data["password"],
+                first_name=data["first_name"],
+                last_name=data["last_name"],
+                email=data["email"],
+            )
+        if UserMembership.objects.filter(user=user, tenant=request.tenant).exists():
+            form.add_error(
+                None, f"Корисник {user.username} је већ члан ове парохије."
+            )
+        else:
+            if data["is_default"]:
+                # Тачно једна подразумевана парохија по кориснику.
+                UserMembership.objects.filter(user=user, is_default=True).update(
+                    is_default=False
+                )
+            UserMembership.objects.create(
+                user=user,
+                tenant=request.tenant,
+                role=data["role"],
+                is_default=data["is_default"],
+            )
+            if is_new:
+                messages.success(request, f"Корисник {user.username} креиран.")
+            else:
+                messages.success(
+                    request,
+                    f"Постојећи корисник {user.username} додат у ову парохију.",
+                )
+            return redirect("parohija:user_list")
     return render(request, "registar/unos_korisnika.html", {"form": form})
 
 

@@ -36,7 +36,11 @@ class AddUserForm(forms.Form):
     last_name = forms.CharField(max_length=150, required=False, label="Презиме")
     email = forms.EmailField(required=False, label="Е-маил")
     password = forms.CharField(
-        label="Лозинка", widget=forms.PasswordInput, min_length=8
+        label="Лозинка",
+        widget=forms.PasswordInput,
+        required=False,
+        min_length=8,
+        help_text="Обавезна само за новог корисника; за постојећег се игнорише.",
     )
     role = forms.ChoiceField(choices=Role.choices, label="Улога")
     is_default = forms.BooleanField(
@@ -44,17 +48,31 @@ class AddUserForm(forms.Form):
     )
 
     def clean_username(self):
+        # Постојеће корисничко име више није грешка: постојећи корисник се може
+        # везати за још једну парохију (ново чланство). Дупло чланство у ИСТОЈ
+        # парохији проверава view (има request.tenant). (#228)
         username = self.cleaned_data["username"].strip()
         if not username:
             raise ValidationError("Корисничко име је обавезно.")
-        if User.objects.filter(username=username).exists():
-            raise ValidationError("Корисник са овим именом већ постоји.")
         return username
 
     def clean_password(self):
-        password = self.cleaned_data["password"]
-        validate_password(password)
+        password = self.cleaned_data.get("password", "")
+        if password:
+            validate_password(password)
         return password
+
+    def clean(self):
+        cleaned = super().clean()
+        username = cleaned.get("username")
+        # Лозинка је обавезна само када се прави НОВИ корисник.
+        if (
+            username
+            and not cleaned.get("password")
+            and not User.objects.filter(username=username).exists()
+        ):
+            self.add_error("password", "Лозинка је обавезна за новог корисника.")
+        return cleaned
 
 
 class EditRoleForm(forms.Form):

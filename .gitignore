@@ -131,3 +131,6 @@ notebooks/
 
 # Node tooling (biome)
 node_modules/
+
+# env backups (никад у git — садрже DB_PASS/SECRET_KEY)
+.env.*
