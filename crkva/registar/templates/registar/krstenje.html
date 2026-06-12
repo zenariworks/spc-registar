@@ -3,6 +3,7 @@
 {% load info_components %}
 {% load julian_dates %}
 {% load ordinal_filters %}
+{% load print_filters %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'registar/print/krstenica.css' %}">
@@ -169,32 +170,32 @@
     <section class="tab-group__panel" data-show-mode="view">
       <div class="krstenica">
         <div class="krstenica-frame">
-          <div class="krst-field-knjiga">{{ krstenje.knjiga }}</div>
-          <div class="krst-field-strana">{{ krstenje.strana }}</div>
-          <div class="krst-field-broj">{{ krstenje.broj }}</div>
+          <div class="krst-field-knjiga">{{ krstenje.knjiga|crtica }}</div>
+          <div class="krst-field-strana">{{ krstenje.strana|crtica }}</div>
+          <div class="krst-field-broj">{{ krstenje.broj|crtica }}</div>
           <div class="krst-field-eparhija">БЕОГРАДСКО - КАРЛОВАЧКЕ</div>
-          <div class="krst-field-hram">{{ krstenje.hram }}</div>
-          <div class="krst-field-mesto">{% if tenant.mesto %}{{ tenant.mesto }}{% endif %}</div>
-          <div class="krst-field-godina">{{ krstenje.datum|date:"y" }}</div>
-          <div class="krst-table-field krst-field-rodjenje_datum">{{ krstenje.datum_rodjenja|julian_date }}{% if krstenje.vreme_rodjenja %}, {{ krstenje.vreme_rodjenja|time:"H:i" }} часова{% endif %}</div>
-          <div class="krst-table-field krst-field-rodjenje_mesto">{{ krstenje.mesto_rodjenja }}</div>
-          <div class="krst-table-field krst-field-krstenje_datum">{{ krstenje.datum|julian_date }}</div>
-          <div class="krst-table-field krst-field-krstenje_mesto">{% if krstenje.hram.mesto %}{{ krstenje.hram.mesto }}, {% endif %}{{ krstenje.hram }}</div>
-          <div class="krst-table-field krst-field-ime_pol">{{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}</div>
-          <div class="krst-table-field krst-field-roditelji">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{% if krstenje.hram.mesto %}{{ krstenje.hram.mesto }}, {% endif %}{{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}</div>
+          <div class="krst-field-hram">{{ krstenje.hram|crtica }}</div>
+          <div class="krst-field-mesto">{{ tenant.mesto|crtica }}</div>
+          <div class="krst-field-godina">{{ krstenje.datum|date:"y"|crtica }}</div>
+          <div class="krst-table-field krst-field-rodjenje_datum">{{ krstenje.datum_rodjenja|julian_date|crtica }}{% if krstenje.vreme_rodjenja %}, {{ krstenje.vreme_rodjenja|time:"H:i" }} часова{% endif %}</div>
+          <div class="krst-table-field krst-field-rodjenje_mesto">{{ krstenje.mesto_rodjenja|crtica }}</div>
+          <div class="krst-table-field krst-field-krstenje_datum">{{ krstenje.datum|julian_date|crtica }}</div>
+          <div class="krst-table-field krst-field-krstenje_mesto">{% if krstenje.hram.mesto %}{{ krstenje.hram.mesto }}, {% endif %}{{ krstenje.hram|crtica }}</div>
+          <div class="krst-table-field krst-field-ime_pol">{% if krstenje.ime_deteta or krstenje.gradjansko_ime_deteta or krstenje.get_pol_deteta_display %}{{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}{% else %}-{% endif %}</div>
+          <div class="krst-table-field krst-field-roditelji">{% if krstenje.ime_oca or krstenje.prezime_oca or krstenje.ime_majke or krstenje.prezime_majke or krstenje.adresa_deteta or krstenje.veroispovest_oca %}{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{% if krstenje.hram.mesto %}{{ krstenje.hram.mesto }}, {% endif %}{{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}{% else %}-{% endif %}</div>
           <div class="krst-table-field krst-field-dete_po_redu">{{ krstenje.po_redu|redni_rec }}</div>
           <div class="krst-table-field krst-field-bracno">{{ krstenje.vanbracno|yesno:"није,јесте" }}</div>
           <div class="krst-table-field krst-field-blizanac">{{ krstenje.blizanac|yesno:"јесте,није" }}</div>
           <div class="krst-table-field krst-field-telesna_mana">{{ krstenje.telesna_mana|yesno:"јесте,није,непознато" }}</div>
-          <div class="krst-table-field krst-field-svestenik">{{ krstenje.svestenik|default_if_none:"" }}</div>
-          <div class="krst-table-field krst-field-kum">{{ krstenje.ime_kuma }}, {{ krstenje.zanimanje_kuma }}<br>{{ krstenje.adresa_kuma_mesto }}</div>
+          <div class="krst-table-field krst-field-svestenik">{{ krstenje.svestenik|crtica }}</div>
+          <div class="krst-table-field krst-field-kum">{% if krstenje.ime_kuma or krstenje.zanimanje_kuma or krstenje.adresa_kuma_mesto %}{{ krstenje.ime_kuma }}, {{ krstenje.zanimanje_kuma }}<br>{{ krstenje.adresa_kuma_mesto }}{% else %}-{% endif %}</div>
           <div class="krst-table-field krst-field-domovnik"></div>
-          <div class="krst-table-field krst-field-primedba">{{ krstenje.primedba|default_if_none:"" }}</div>
+          <div class="krst-table-field krst-field-primedba">{{ krstenje.primedba|crtica }}</div>
           <div class="krst-field-footer_br">{% now "d.m" %}</div>
           <div class="krst-field-footer_godina">{% now "y" %}</div>
           <div class="krst-field-footer_u">Београду</div>
-          <div class="krst-field-footer_parohija">{% if krstenje.svestenik %}{{ krstenje.svestenik.parohija }}{% endif %}</div>
-          <div class="krst-field-footer_paroh">{% if krstenje.svestenik %}{{ krstenje.svestenik }}{% endif %}</div>
+          <div class="krst-field-footer_parohija">{{ krstenje.svestenik.parohija|crtica }}</div>
+          <div class="krst-field-footer_paroh">{{ krstenje.svestenik|crtica }}</div>
         </div>
       </div>
     </section>
