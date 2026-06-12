@@ -253,12 +253,34 @@ const MM_TO_PX = 3.7795275591;
 function mmToPx(mm) { return mm * MM_TO_PX; }
 function pxToMm(px) { return px / MM_TO_PX; }
 
+function appendMultiline(parent, text) {
+    String(text).split('\n').forEach((line, i) => {
+        if (i) parent.appendChild(document.createElement('br'));
+        parent.appendChild(document.createTextNode(line));
+    });
+}
+
+function renderPosition(label, top, left, width, height) {
+    positionDisplay.replaceChildren();
+    const strong = document.createElement('strong');
+    strong.textContent = label;
+    positionDisplay.appendChild(strong);
+    positionDisplay.appendChild(document.createElement('br'));
+    positionDisplay.appendChild(document.createTextNode(`top: ${top}mm | left: ${left}mm`));
+    positionDisplay.appendChild(document.createElement('br'));
+    positionDisplay.appendChild(document.createTextNode(`width: ${width}mm | height: ${height}mm`));
+}
+
 function createFields() {
     fields.forEach(field => {
         const el = document.createElement('div');
         el.className = 'draggable-field';
         el.id = `field-${field.id}`;
-        el.innerHTML = `<span class="field-label">${field.label}</span>${field.value.replace(/\n/g, '<br>')}`;
+        const labelEl = document.createElement('span');
+        labelEl.className = 'field-label';
+        labelEl.textContent = field.label;
+        el.appendChild(labelEl);
+        appendMultiline(el, field.value);
         el.style.top = mmToPx(field.top) + 'px';
         el.style.left = mmToPx(field.left) + 'px';
         if (field.width) el.style.width = mmToPx(field.width) + 'px';
@@ -317,7 +339,7 @@ function updatePositionDisplay() {
         const left = pxToMm(parseFloat(el.style.left)).toFixed(1);
         const width = pxToMm(parseFloat(el.style.width) || el.offsetWidth).toFixed(1);
         const height = pxToMm(parseFloat(el.style.height) || el.offsetHeight).toFixed(1);
-        positionDisplay.innerHTML = `<strong>${field.label}</strong><br>top: ${top}mm | left: ${left}mm<br>width: ${width}mm | height: ${height}mm`;
+        renderPosition(field.label, top, left, width, height);
         // Fill inputs, but don't clobber the one being typed in.
         const vals = { top, left, width, height };
         ids.forEach(k => { const i = document.getElementById('in-'+k); if (i && document.activeElement !== i) i.value = vals[k]; });
@@ -336,7 +358,11 @@ function applyManualInput() {
     if (!isNaN(w)) el.style.width = mmToPx(w) + 'px';
     if (!isNaN(h)) el.style.height = mmToPx(h) + 'px';
     const field = fields.find(f => f.id === selectedField);
-    if (field) positionDisplay.innerHTML = `<strong>${field.label}</strong><br>top: ${isNaN(t)?'-':t.toFixed(1)}mm | left: ${isNaN(l)?'-':l.toFixed(1)}mm<br>width: ${isNaN(w)?'-':w.toFixed(1)}mm | height: ${isNaN(h)?'-':h.toFixed(1)}mm`;
+    if (field) {
+        renderPosition(field.label,
+            isNaN(t) ? '-' : t.toFixed(1), isNaN(l) ? '-' : l.toFixed(1),
+            isNaN(w) ? '-' : w.toFixed(1), isNaN(h) ? '-' : h.toFixed(1));
+    }
 }
 ['top','left','width','height'].forEach(k => {
     const i = document.getElementById('in-'+k);
