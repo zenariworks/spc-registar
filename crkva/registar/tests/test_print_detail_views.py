@@ -321,6 +321,12 @@ class VencanjeDetailRenderTests(TestCase):
         # зеник има само име/презиме → нема празних делова ни зареза на крају
         self.assertEqual(self.vencanje.opis_zenika, "Урош Урошевић")
 
+    def test_vera_i_narodnost_mala_slova(self):
+        # вера/народност су заједничке именице → мала слова (Православна→православна)
+        self.assertEqual(Vencanje._mala("Православна"), "православна")
+        self.assertEqual(Vencanje._mala("Српска"), "српска")
+        self.assertEqual(Vencanje._mala(None), "")
+
     def test_prazni_roditelji_ne_prave_prazne_redove(self):
         # родитељи нису постављени → празни описи и без празних <span> редова
         self.assertEqual(self.vencanje.opis_svekra, "")

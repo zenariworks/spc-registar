@@ -244,6 +244,11 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
         )
 
     @staticmethod
+    def _mala(vrednost):
+        """Мала слова за заједничке именице (вера, народност)."""
+        return str(vrednost).lower() if vrednost else ""
+
+    @staticmethod
     def _opis_osobe(osoba):
         """Родитељ (особа) у реду: име презиме, занимање, место становања."""
         if not osoba:
@@ -260,7 +265,7 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
         mesto = self.adresa_zenika.mesto if self.adresa_zenika else ""
         return self._spoji(
             ime, self.zanimanje_zenika, mesto,
-            self.veroispovest_zenika, self.narodnost_zenika,
+            self._mala(self.veroispovest_zenika), self._mala(self.narodnost_zenika),
         )
 
     @property
@@ -270,7 +275,7 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
         mesto = self.adresa_neveste.mesto if self.adresa_neveste else ""
         return self._spoji(
             ime, self.zanimanje_neveste, mesto,
-            self.veroispovest_neveste, self.narodnost_neveste,
+            self._mala(self.veroispovest_neveste), self._mala(self.narodnost_neveste),
         )
 
     @property
