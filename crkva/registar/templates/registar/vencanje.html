@@ -3,6 +3,7 @@
 {% load info_components %}
 {% load julian_dates %}
 {% load ordinal_filters %}
+{% load print_filters %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{% static 'registar/print/vencanica.css' %}">
@@ -133,35 +134,35 @@
     <section class="tab-group__panel" data-show-mode="view">
       <div class="vencanica">
         <div class="vencanica-frame">
-          <div class="venc-field-knjiga">{{ vencanje.knjiga }}</div>
-          <div class="venc-field-strana">{{ vencanje.strana }}</div>
-          <div class="venc-field-tekuci">{{ vencanje.broj }}</div>
-          <div class="venc-field-hram">{{ vencanje.hram }}</div>
+          <div class="venc-field-knjiga">{{ vencanje.knjiga|crtica }}</div>
+          <div class="venc-field-strana">{{ vencanje.strana|crtica }}</div>
+          <div class="venc-field-tekuci">{{ vencanje.broj|crtica }}</div>
+          <div class="venc-field-hram">{{ vencanje.hram|crtica }}</div>
           <div class="venc-field-eparhija">Београдско-Карловачке</div>
-          <div class="venc-field-mesto">{% if vencanje.adresa_zenika %}{{ vencanje.adresa_zenika.mesto }}{% endif %}</div>
-          <div class="venc-field-godina">{{ vencanje.datum|date:"y" }}</div>
-          <div class="venc-table-field venc-field-zenik"><span>{{ vencanje.opis_zenika }}</span></div>
-          <div class="venc-table-field venc-field-nevesta"><span>{{ vencanje.opis_neveste }}</span></div>
-          <div class="venc-table-field venc-field-roditelji_zenika">{% if vencanje.opis_svekra %}<span>{{ vencanje.opis_svekra }}</span>{% endif %}{% if vencanje.opis_svekrve %}<span>{{ vencanje.opis_svekrve }}</span>{% endif %}</div>
-          <div class="venc-table-field venc-field-roditelji_neveste">{% if vencanje.opis_tasta %}<span>{{ vencanje.opis_tasta }}</span>{% endif %}{% if vencanje.opis_taste %}<span>{{ vencanje.opis_taste }}</span>{% endif %}</div>
-          <div class="venc-table-field venc-field-rodjenje_zenika"><span>{{ vencanje.datum_rodjenja_zenika|julian_date }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_zenika }}</span></div>
-          <div class="venc-table-field venc-field-rodjenje_neveste"><span>{{ vencanje.datum_rodjenja_neveste|julian_date }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_neveste }}</span></div>
+          <div class="venc-field-mesto">{{ vencanje.adresa_zenika.mesto|crtica }}</div>
+          <div class="venc-field-godina">{{ vencanje.datum|date:"y"|crtica }}</div>
+          <div class="venc-table-field venc-field-zenik"><span>{{ vencanje.opis_zenika|crtica }}</span></div>
+          <div class="venc-table-field venc-field-nevesta"><span>{{ vencanje.opis_neveste|crtica }}</span></div>
+          <div class="venc-table-field venc-field-roditelji_zenika">{% if vencanje.opis_svekra or vencanje.opis_svekrve %}{% if vencanje.opis_svekra %}<span>{{ vencanje.opis_svekra }}</span>{% endif %}{% if vencanje.opis_svekrve %}<span>{{ vencanje.opis_svekrve }}</span>{% endif %}{% else %}<span>-</span>{% endif %}</div>
+          <div class="venc-table-field venc-field-roditelji_neveste">{% if vencanje.opis_tasta or vencanje.opis_taste %}{% if vencanje.opis_tasta %}<span>{{ vencanje.opis_tasta }}</span>{% endif %}{% if vencanje.opis_taste %}<span>{{ vencanje.opis_taste }}</span>{% endif %}{% else %}<span>-</span>{% endif %}</div>
+          <div class="venc-table-field venc-field-rodjenje_zenika">{% if vencanje.datum_rodjenja_zenika or vencanje.mesto_rodjenja_zenika %}<span>{{ vencanje.datum_rodjenja_zenika|julian_date }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_zenika|default_if_none:"" }}</span>{% else %}<span>-</span>{% endif %}</div>
+          <div class="venc-table-field venc-field-rodjenje_neveste">{% if vencanje.datum_rodjenja_neveste or vencanje.mesto_rodjenja_neveste %}<span>{{ vencanje.datum_rodjenja_neveste|julian_date }}</span><span class="venc-text-sm">{{ vencanje.mesto_rodjenja_neveste|default_if_none:"" }}</span>{% else %}<span>-</span>{% endif %}</div>
           <div class="venc-table-field venc-field-brak_zenika">{{ vencanje.zenik_rb_brak|redni_rec_m }}</div>
           <div class="venc-table-field venc-field-brak_neveste">{{ vencanje.nevesta_rb_brak|redni_rec_m }}</div>
-          <div class="venc-table-field venc-field-ispit">{{ vencanje.datum_ispita|julian_date }}</div>
-          <div class="venc-table-field venc-field-datum_vencanja">{{ vencanje.datum|julian_date }}</div>
-          <div class="venc-table-field venc-field-mesto_hram">{% if vencanje.adresa_zenika and vencanje.adresa_zenika.mesto %}{{ vencanje.adresa_zenika.mesto }}, {% endif %}{{ vencanje.hram }}</div>
-          <div class="venc-table-field venc-field-svestenik">{{ vencanje.svestenik|default_if_none:"" }}</div>
-          <div class="venc-table-field venc-field-svedoci"><span>{{ vencanje.kum|default_if_none:"" }}</span><span>{{ vencanje.stari_svat|default_if_none:"" }}</span></div>
+          <div class="venc-table-field venc-field-ispit">{{ vencanje.datum_ispita|julian_date|crtica }}</div>
+          <div class="venc-table-field venc-field-datum_vencanja">{{ vencanje.datum|julian_date|crtica }}</div>
+          <div class="venc-table-field venc-field-mesto_hram">{% if vencanje.adresa_zenika and vencanje.adresa_zenika.mesto %}{{ vencanje.adresa_zenika.mesto }}, {% endif %}{{ vencanje.hram|crtica }}</div>
+          <div class="venc-table-field venc-field-svestenik">{{ vencanje.svestenik|crtica }}</div>
+          <div class="venc-table-field venc-field-svedoci">{% if vencanje.kum or vencanje.stari_svat %}<span>{{ vencanje.kum|default_if_none:"" }}</span><span>{{ vencanje.stari_svat|default_if_none:"" }}</span>{% else %}<span>-</span>{% endif %}</div>
           <div class="venc-table-field venc-field-razresenje">{% if vencanje.razresenje %}Да{% else %}Не{% endif %}</div>
-          <div class="venc-table-field venc-field-primedba">{{ vencanje.primedba|default_if_none:"" }}</div>
-          <div class="venc-field-footer_hram">{{ vencanje.hram }}</div>
+          <div class="venc-table-field venc-field-primedba">{{ vencanje.primedba|crtica }}</div>
+          <div class="venc-field-footer_hram">{{ vencanje.hram|crtica }}</div>
           <div class="venc-field-footer_eparhija">Београдске</div>
           <div class="venc-field-footer_mesto">Београду</div>
           <div class="venc-field-footer_datum">{% now "j. F" %}</div>
           <div class="venc-field-footer_godina">{% now "y" %}</div>
-          <div class="venc-field-footer_paroh">{% if vencanje.svestenik %}{{ vencanje.svestenik }}{% endif %}</div>
-          <div class="venc-field-footer_parohija">{% if vencanje.svestenik %}{{ vencanje.svestenik.parohija }}{% endif %}</div>
+          <div class="venc-field-footer_paroh">{{ vencanje.svestenik|crtica }}</div>
+          <div class="venc-field-footer_parohija">{{ vencanje.svestenik.parohija|crtica }}</div>
         </div>
       </div>
     </section>

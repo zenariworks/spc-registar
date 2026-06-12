@@ -334,8 +334,24 @@ class VencanjeDetailRenderTests(TestCase):
         response = self.client.get(
             reverse("vencanje_detail", kwargs={"uid": self.vencanje.uid})
         )
-        # оба родитеља празна → ред је празан, без иједног <span> (нема празних редова)
+        # оба родитеља празна → ћелија приказује цртицу „-" (празна ћелија)
         self.assertContains(
             response,
-            '<div class="venc-table-field venc-field-roditelji_zenika"></div>',
+            '<div class="venc-table-field venc-field-roditelji_zenika">'
+            "<span>-</span></div>",
+        )
+
+    def test_prazne_celije_prikazuju_crticu(self):
+        # без датума/места рођења и без сведока → ћелије приказују „-", не „None"
+        response = self.client.get(
+            reverse("vencanje_detail", kwargs={"uid": self.vencanje.uid})
+        )
+        self.assertContains(
+            response,
+            '<div class="venc-table-field venc-field-rodjenje_zenika">'
+            "<span>-</span></div>",
+        )
+        self.assertContains(
+            response,
+            '<div class="venc-table-field venc-field-svedoci"><span>-</span></div>',
         )
