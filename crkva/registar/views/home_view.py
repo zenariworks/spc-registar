@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
 from registar.models import Krstenje, Osoba, Slava, Svestenik, Vencanje
-from registar.utils_fasting import get_fasting_type
+from registar.utils_fasting import tip_posta
 
 
 @login_required
@@ -65,7 +65,7 @@ def index(request) -> HttpResponse:
 
     cells = []
     for d in days:
-        fasting_info = get_fasting_type(d)
+        fasting_info = tip_posta(d)
         day_slavas = by_day.get((d.month, d.day), [])
 
         # Separate fixed and moveable feasts

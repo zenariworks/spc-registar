@@ -10,63 +10,72 @@
 from __future__ import annotations
 
 import datetime as dt
+from functools import lru_cache
+
+from django_tenants.utils import schema_context
 
 
-def _date_range(start: dt.date, end: dt.date) -> set[dt.date]:
-    """Скуп датума у затвореном интервалу [start, end]."""
+def _opseg_datuma(pocetak: dt.date, kraj: dt.date) -> set[dt.date]:
+    """Скуп датума у затвореном интервалу [pocetak, kraj]."""
     days = set()
-    cur = start
-    while cur <= end:
+    cur = pocetak
+    while cur <= kraj:
         days.add(cur)
         cur = cur + dt.timedelta(days=1)
     return days
 
 
-def get_fasting_days_from_db(year: int) -> set[dt.date]:
-    """Врати скуп постних дана за дату годину из базе података."""
+@lru_cache(maxsize=128)
+def postni_dani_iz_baze(godina: int) -> frozenset[dt.date]:
+    """Врати скуп постних дана за дату годину из базе података.
+
+    Резултат зависи само од године (Slava подаци су статични) па се кешира
+    по години — рендер месеца тако издаје 1 уместо ~30 истоветних упита
+    (#257). Slava живи у public шеми (дељени модел), па се чита у
+    schema_context("public") да буде исти за све закупце и безбедан за кеш.
+    """
     from registar.models import Slava
 
-    fasting = set()
+    postni_dani = set()
+    with schema_context("public"):
+        for post in Slava.objects.filter(post=True):
+            period = post.get_post(godina)
+            if period and period[0] and period[1]:
+                pocetak, kraj = period
+                postni_dani.update(_opseg_datuma(pocetak, kraj))
 
-    # Узми све постове из базе
-    postovi = Slava.objects.filter(post=True)
-
-    for post in postovi:
-        period = post.get_post(year)
-        if period and period[0] and period[1]:
-            start, end = period
-            fasting.update(_date_range(start, end))
-
-    return fasting
+    return frozenset(postni_dani)
 
 
-def get_fixed_fasting_periods(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def fiksni_postovi(godina: int) -> frozenset[dt.date]:
     """Врати фиксне постне периоде (који се не рачунају из базе)."""
-    fasting = set()
+    postni_dani = set()
 
     # Божићни пост: 28. новембар – 6. јануар
     # Део у текућој години (28.11 - 31.12)
-    fasting.update(_date_range(dt.date(year, 11, 28), dt.date(year, 12, 31)))
+    postni_dani.update(_opseg_datuma(dt.date(godina, 11, 28), dt.date(godina, 12, 31)))
     # Део у следећој години (1.1 - 6.1)
-    fasting.update(_date_range(dt.date(year, 1, 1), dt.date(year, 1, 6)))
+    postni_dani.update(_opseg_datuma(dt.date(godina, 1, 1), dt.date(godina, 1, 6)))
 
     # Успенски пост (Dormition fast): 1-14. август
-    fasting.update(_date_range(dt.date(year, 8, 1), dt.date(year, 8, 14)))
+    postni_dani.update(_opseg_datuma(dt.date(godina, 8, 1), dt.date(godina, 8, 14)))
 
     # Крстовдан: 18. јануар (појединачни дан)
-    fasting.add(dt.date(year, 1, 18))
+    postni_dani.add(dt.date(godina, 1, 18))
 
-    return fasting
+    return frozenset(postni_dani)
 
 
-def get_apostles_fast(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def apostolski_post(godina: int) -> frozenset[dt.date]:
     """Врати Апостолски (Петровдан) пост за дату годину.
 
     Почиње понедељак после Духова (Педесетнице) и траје до 11. јула (Петровдан eve).
     """
     from registar.models import Slava
 
-    vaskrs = Slava.calc_vaskrs(year)
+    vaskrs = Slava.calc_vaskrs(godina)
 
     # Духови (Педесетница) су 49 дана после Васкрса (50. дан рачунајући Васкрс
     # као први дан), и увек падају у недељу.
@@ -74,35 +83,37 @@ def get_apostles_fast(year: int) -> set[dt.date]:
 
     # Пост почиње следећег понедељка после Духова
     # Духови су увек недеља, тако да је следећи дан понедељак
-    start = duhovi + dt.timedelta(days=1)
+    pocetak = duhovi + dt.timedelta(days=1)
 
     # Пост траје до 11. јула (укључујући)
-    end = dt.date(year, 7, 11)
+    kraj = dt.date(godina, 7, 11)
 
     # Ако је почетак после краја (кратак пост), врати празан скуп
-    if start > end:
-        return set()
+    if pocetak > kraj:
+        return frozenset()
 
-    return _date_range(start, end)
+    return frozenset(_opseg_datuma(pocetak, kraj))
 
 
-def get_cheesefare_week(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def beli_mrs(godina: int) -> frozenset[dt.date]:
     """Врати Бели мрс (недеља пре Великог поста - делимични пост без меса)."""
     from registar.models import Slava
 
-    vaskrs = Slava.calc_vaskrs(year)
+    vaskrs = Slava.calc_vaskrs(godina)
 
     # Чисти понедељак је 48 дана пре Васкрса
     cisti_ponedeljak = vaskrs - dt.timedelta(days=48)
 
     # Бели мрс је недеља пре Чистог понедељка
-    start = cisti_ponedeljak - dt.timedelta(days=7)
-    end = cisti_ponedeljak - dt.timedelta(days=1)
+    pocetak = cisti_ponedeljak - dt.timedelta(days=7)
+    kraj = cisti_ponedeljak - dt.timedelta(days=1)
 
-    return _date_range(start, end)
+    return frozenset(_opseg_datuma(pocetak, kraj))
 
 
-def get_great_lent(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def veliki_post(godina: int) -> frozenset[dt.date]:
     """Врати Велики пост за дату годину.
 
     Почиње Чистим понедељком (48 дана пре Васкрса) и
@@ -110,88 +121,106 @@ def get_great_lent(year: int) -> set[dt.date]:
     """
     from registar.models import Slava
 
-    vaskrs = Slava.calc_vaskrs(year)
+    vaskrs = Slava.calc_vaskrs(godina)
 
     # Чисти понедељак (Clean Monday) - 48 дана пре Васкрса
-    start = vaskrs - dt.timedelta(days=48)
+    pocetak = vaskrs - dt.timedelta(days=48)
 
     # Велика субота (Great Saturday) - 1 дан пре Васкрса
-    end = vaskrs - dt.timedelta(days=1)
+    kraj = vaskrs - dt.timedelta(days=1)
 
-    return _date_range(start, end)
+    return frozenset(_opseg_datuma(pocetak, kraj))
 
 
-def get_trapave_weeks(year: int) -> set[dt.date]:
+@lru_cache(maxsize=128)
+def trapave_sedmice(godina: int) -> frozenset[dt.date]:
     """Врати трапаве седмице (седмице без поста) за дату годину."""
     from registar.models import Slava
 
-    vaskrs = Slava.calc_vaskrs(year)
+    vaskrs = Slava.calc_vaskrs(godina)
     trapave = set()
 
     # Светла седмица (недеља после Васкрса)
     trapave.update(
-        _date_range(vaskrs + dt.timedelta(days=1), vaskrs + dt.timedelta(days=7))
+        _opseg_datuma(vaskrs + dt.timedelta(days=1), vaskrs + dt.timedelta(days=7))
     )
 
     # Седмица после Духова (49 дана после Васкрса; недеља после је трапава)
     duhovi = vaskrs + dt.timedelta(days=49)
     trapave.update(
-        _date_range(duhovi + dt.timedelta(days=1), duhovi + dt.timedelta(days=7))
+        _opseg_datuma(duhovi + dt.timedelta(days=1), duhovi + dt.timedelta(days=7))
     )
 
     # Митар и Фарисеј (3 недеље пре Чистог понедељка)
     cisti_ponedeljak = vaskrs - dt.timedelta(days=48)
     mitar_i_farisej_start = cisti_ponedeljak - dt.timedelta(days=21)
     trapave.update(
-        _date_range(mitar_i_farisej_start, mitar_i_farisej_start + dt.timedelta(days=6))
+        _opseg_datuma(mitar_i_farisej_start, mitar_i_farisej_start + dt.timedelta(days=6))
     )
 
     # После Божића до Крстовдана (7-17. јануар)
-    trapave.update(_date_range(dt.date(year, 1, 7), dt.date(year, 1, 17)))
+    trapave.update(_opseg_datuma(dt.date(godina, 1, 7), dt.date(godina, 1, 17)))
 
-    return trapave
+    return frozenset(trapave)
 
 
-def is_fasting_day(date: dt.date) -> bool:
+def obrisi_kes_posta() -> None:
+    """Очисти годишње кешеве поста.
+
+    Позвати после измене Slava `post` података (нпр. reseed) или у тестовима
+    који мењају DB постове, да се не послужи устајали резултат.
+    """
+    for fn in (
+        postni_dani_iz_baze,
+        fiksni_postovi,
+        apostolski_post,
+        beli_mrs,
+        veliki_post,
+        trapave_sedmice,
+    ):
+        fn.cache_clear()
+
+
+def je_post(datum: dt.date) -> bool:
     """Да ли је дати датум пост."""
-    year = date.year
+    godina = datum.year
 
     # Узми све постове из базе (додатни покретни постови)
-    fasting_from_db = get_fasting_days_from_db(year)
+    fasting_from_db = postni_dani_iz_baze(godina)
 
     # Узми фиксне постове (Божићни, Успенски, Крстовдан)
-    fixed_fasting = get_fixed_fasting_periods(year)
+    fixed_fasting = fiksni_postovi(godina)
 
     # Узми Велики пост (покретан, базиран на Васкрсу)
-    great_lent = get_great_lent(year)
+    great_lent = veliki_post(godina)
 
     # Узми Апостолски пост (покретан, базиран на Духовима)
-    apostles_fast = get_apostles_fast(year)
+    apostles_fast = apostolski_post(godina)
 
     # Узми Бели мрс (недеља пре Великог поста - делимични пост)
-    cheesefare = get_cheesefare_week(year)
+    cheesefare = beli_mrs(godina)
 
     # Ако је дан у било ком посту
     if (
-        date in fasting_from_db
-        or date in fixed_fasting
-        or date in great_lent
-        or date in apostles_fast
-        or date in cheesefare
+        datum in fasting_from_db
+        or datum in fixed_fasting
+        or datum in great_lent
+        or datum in apostles_fast
+        or datum in cheesefare
     ):
         return True
 
     # Провери да ли је среда или петак (општи пост)
-    if date.weekday() in (2, 4):  # 0=пон, 2=сре, 4=пет
+    if datum.weekday() in (2, 4):  # 0=пон, 2=сре, 4=пет
         # Провери да ли је у трапавој седмици
-        trapave = get_trapave_weeks(year)
-        if date not in trapave:
+        trapave = trapave_sedmice(godina)
+        if datum not in trapave:
             return True
 
     return False
 
 
-def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
+def tip_posta(datum: dt.date) -> dict[str, str | bool]:
     """Врати тип поста и дозвољена јела за дати датум.
 
     Враћа речник са следећим кључевима:
@@ -202,21 +231,21 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
     """
     from registar.models import Slava
 
-    year = date.year
-    weekday = date.weekday()  # 0=пон, 1=уто, 2=сре, 3=чет, 4=пет, 5=суб, 6=нед
+    godina = datum.year
+    dan_u_nedelji = datum.weekday()  # 0=пон, 1=уто, 2=сре, 3=чет, 4=пет, 5=суб, 6=нед
 
     # Провери да ли је у трапавој седмици (без поста)
-    trapave = get_trapave_weeks(year)
-    if date in trapave:
+    trapave = trapave_sedmice(godina)
+    if datum in trapave:
         return {"is_fasting": False, "type": None, "display": None, "description": None}
 
     # Велики пост (Great Lent)
-    great_lent = get_great_lent(year)
-    if date in great_lent:
-        vaskrs = Slava.calc_vaskrs(year)
+    great_lent = veliki_post(godina)
+    if datum in great_lent:
+        vaskrs = Slava.calc_vaskrs(godina)
 
         # Проверa за Благовести (25. март) у Великом посту
-        if date.month == 3 and date.day == 25:
+        if datum.month == 3 and datum.day == 25:
             return {
                 "is_fasting": True,
                 "type": "риба",
@@ -226,7 +255,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
 
         # Лазарева субота (дан пре Цвети)
         lazareva_subota = vaskrs - dt.timedelta(days=8)
-        if date == lazareva_subota:
+        if datum == lazareva_subota:
             return {
                 "is_fasting": True,
                 "type": "риба",
@@ -236,7 +265,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
 
         # Цвети (Вrbica, недеља пре Васкрса)
         cveti = vaskrs - dt.timedelta(days=7)
-        if date == cveti:
+        if datum == cveti:
             return {
                 "is_fasting": True,
                 "type": "риба",
@@ -245,7 +274,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
             }
 
         # Субота и недеља у Великом посту - уље и вино
-        if weekday in (5, 6):  # субота или недеља
+        if dan_u_nedelji in (5, 6):  # субота или недеља
             return {
                 "is_fasting": True,
                 "type": "уље",
@@ -262,8 +291,8 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
         }
 
     # Бели мрс (Cheesefare week - недеља пре Великог поста)
-    cheesefare = get_cheesefare_week(year)
-    if date in cheesefare:
+    cheesefare = beli_mrs(godina)
+    if datum in cheesefare:
         return {
             "is_fasting": True,
             "type": "бели_мрс",
@@ -273,12 +302,12 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
 
     # Божићни пост (Christmas Fast) - 28. новембар до 6. јануар
     if (
-        (date.month == 11 and date.day >= 28)
-        or (date.month == 12)
-        or (date.month == 1 and date.day <= 6)
+        (datum.month == 11 and datum.day >= 28)
+        or (datum.month == 12)
+        or (datum.month == 1 and datum.day <= 6)
     ):
         # Провери изузетке (Божић 25.12 по Јулијанском = 7.1 по Грегоријанском)
-        if date.month == 1 and date.day == 7:
+        if datum.month == 1 and datum.day == 7:
             return {
                 "is_fasting": False,
                 "type": None,
@@ -287,7 +316,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
             }
 
         # Сочи дан (6. јануар) - строг пост
-        if date.month == 1 and date.day == 6:
+        if datum.month == 1 and datum.day == 6:
             return {
                 "is_fasting": True,
                 "type": "вода",
@@ -296,7 +325,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
             }
 
         # Субота и недеља - риба
-        if weekday in (5, 6):
+        if dan_u_nedelji in (5, 6):
             return {
                 "is_fasting": True,
                 "type": "риба",
@@ -305,7 +334,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
             }
 
         # Уторак и четвртак - уље
-        if weekday in (1, 3):
+        if dan_u_nedelji in (1, 3):
             return {
                 "is_fasting": True,
                 "type": "уље",
@@ -322,9 +351,9 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
         }
 
     # Успенски пост (Dormition Fast) - 1-14. август
-    if date.month == 8 and 1 <= date.day <= 14:
+    if datum.month == 8 and 1 <= datum.day <= 14:
         # Преображење (6. август) - риба
-        if date.day == 6:
+        if datum.day == 6:
             return {
                 "is_fasting": True,
                 "type": "риба",
@@ -333,7 +362,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
             }
 
         # Субота и недеља - риба
-        if weekday in (5, 6):
+        if dan_u_nedelji in (5, 6):
             return {
                 "is_fasting": True,
                 "type": "риба",
@@ -342,7 +371,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
             }
 
         # Среда и петак - вода
-        if weekday in (2, 4):
+        if dan_u_nedelji in (2, 4):
             return {
                 "is_fasting": True,
                 "type": "вода",
@@ -359,10 +388,10 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
         }
 
     # Апостолски пост (Apostles' Fast)
-    apostles_fast = get_apostles_fast(year)
-    if date in apostles_fast:
+    apostles_fast = apostolski_post(godina)
+    if datum in apostles_fast:
         # Субота и недеља - риба
-        if weekday in (5, 6):
+        if dan_u_nedelji in (5, 6):
             return {
                 "is_fasting": True,
                 "type": "риба",
@@ -371,7 +400,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
             }
 
         # Уторак и четвртак - риба
-        if weekday in (1, 3):
+        if dan_u_nedelji in (1, 3):
             return {
                 "is_fasting": True,
                 "type": "риба",
@@ -380,7 +409,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
             }
 
         # Понедељак - уље
-        if weekday == 0:
+        if dan_u_nedelji == 0:
             return {
                 "is_fasting": True,
                 "type": "уље",
@@ -397,7 +426,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
         }
 
     # Крстовдан (18. јануар) - вода
-    if date.month == 1 and date.day == 18:
+    if datum.month == 1 and datum.day == 18:
         return {
             "is_fasting": True,
             "type": "вода",
@@ -406,7 +435,7 @@ def get_fasting_type(date: dt.date) -> dict[str, str | bool]:
         }
 
     # Општи пост (среда и петак)
-    if weekday in (2, 4):
+    if dan_u_nedelji in (2, 4):
         return {
             "is_fasting": True,
             "type": "вода",
