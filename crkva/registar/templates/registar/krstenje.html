@@ -181,7 +181,7 @@
           <div class="krst-table-field krst-field-krstenje_datum">{{ krstenje.datum|julian_date }}</div>
           <div class="krst-table-field krst-field-krstenje_mesto">{% if krstenje.hram.mesto %}{{ krstenje.hram.mesto }}, {% endif %}{{ krstenje.hram }}</div>
           <div class="krst-table-field krst-field-ime_pol">{{ krstenje.ime_deteta }}{{ krstenje.gradjansko_ime_deteta }}, {{ krstenje.get_pol_deteta_display }}</div>
-          <div class="krst-table-field krst-field-roditelji">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{{ krstenje.hram.mesto }}, {{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}</div>
+          <div class="krst-table-field krst-field-roditelji">{{ krstenje.ime_oca }} {{ krstenje.prezime_oca }}, {{ krstenje.zanimanje_oca|lower }} и<br>{{ krstenje.ime_majke }} {{ krstenje.prezime_majke }}, {{ krstenje.zanimanje_majke|lower }}<br>{% if krstenje.hram.mesto %}{{ krstenje.hram.mesto }}, {% endif %}{{ krstenje.adresa_deteta }}<br>{{ krstenje.veroispovest_oca }}</div>
           <div class="krst-table-field krst-field-dete_po_redu">{{ krstenje.po_redu|redni_rec }}</div>
           <div class="krst-table-field krst-field-bracno">{{ krstenje.vanbracno|yesno:"није,јесте" }}</div>
           <div class="krst-table-field krst-field-blizanac">{{ krstenje.blizanac|yesno:"јесте,није" }}</div>
