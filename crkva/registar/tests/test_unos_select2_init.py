@@ -21,12 +21,13 @@ This module pins the fix in three layers:
 """
 
 import datetime
-import pathlib
 
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Krstenje, Vencanje
+
+from registar.tests.paths import repo_path
 
 
 def _idx(html: str, needle: str) -> int:
@@ -321,7 +322,7 @@ class Select2SkinTargetsClosedStatePillTests(TestCase):
     the default ugly grey border (the user's reported symptom).
     """
 
-    SKIN = pathlib.Path("crkva/registar/static/registar/components/select2_skin.css")
+    SKIN = repo_path("crkva/registar/static/registar/components/select2_skin.css")
 
     def setUp(self):
         self.text = self.SKIN.read_text(encoding="utf-8")
@@ -357,7 +358,7 @@ class Select2SkinTargetsClosedStatePillTests(TestCase):
 
     def test_skin_referenced_by_base_template(self):
         """The base template must keep the skin in the compressed bundle."""
-        base = pathlib.Path("crkva/registar/templates/base.html").read_text(
+        base = repo_path("crkva/registar/templates/base.html").read_text(
             encoding="utf-8"
         )
         self.assertIn("components/select2_skin.css", base)

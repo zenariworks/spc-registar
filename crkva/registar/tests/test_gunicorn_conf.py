@@ -1,15 +1,15 @@
 """scripts/gunicorn.conf.py must stay portable — no hardcoded install dir."""
 
-import pathlib
-
 from django.test import SimpleTestCase
+
+from registar.tests.paths import repo_path
 
 
 class GunicornConfPortableTest(SimpleTestCase):
     """The committed gunicorn.conf.py must not pin the install directory."""
 
     def test_no_hardcoded_install_path(self):
-        text = pathlib.Path("scripts/gunicorn.conf.py").read_text(encoding="utf-8")
+        text = repo_path("scripts/gunicorn.conf.py").read_text(encoding="utf-8")
         self.assertNotIn(
             "chdir =",
             text,
@@ -19,5 +19,5 @@ class GunicornConfPortableTest(SimpleTestCase):
         self.assertNotIn("/root/projects/spc-registar-main", text)
 
     def test_bind_to_all_interfaces(self):
-        text = pathlib.Path("scripts/gunicorn.conf.py").read_text(encoding="utf-8")
+        text = repo_path("scripts/gunicorn.conf.py").read_text(encoding="utf-8")
         self.assertIn('bind = "0.0.0.0:9000"', text)
