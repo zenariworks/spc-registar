@@ -10,6 +10,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![Code style: Ruff](https://img.shields.io/badge/code%20style-ruff-261230?logo=ruff)](https://github.com/astral-sh/ruff)
 [![Lint: Biome](https://img.shields.io/badge/CSS%2FJS-biome-60A5FA?logo=biome&logoColor=white)](https://biomejs.dev/)
+[![Документација](https://img.shields.io/badge/docs-mkdocs--material-526CFE?logo=materialformkdocs&logoColor=white)](https://zenariworks.github.io/spc-registar/)
 
 ---
 

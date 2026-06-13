@@ -160,7 +160,7 @@ docker compose run --rm app python manage.py unos_vencanja
 
 ### Креирање нове парохије (тенанта)
 
-Свака парохија је засебна Postgres шема. Креирање нове иде преко Django admin-а или скрипте — детаље види [architecture.md](architecture.md#тенанти).
+Свака парохија је засебна Postgres шема. Креирање нове иде преко Django admin-а или скрипте — детаље види [architecture.md](architecture.md).
 
 ---
 

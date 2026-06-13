@@ -210,4 +210,4 @@ make prod-down          # заустави
 
 ### Креирање нове парохије (тенанта)
 
-После првог пуштања, нову парохију направите кроз Django admin (`/admin/`) — модел `Tenant` (apps: tenants). Шема ће се аутоматски креирати по принципу django-tenants. Више о моделу: [architecture.md](architecture.md#тенанти).
+После првог пуштања, нову парохију направите кроз Django admin (`/admin/`) — модел `Tenant` (apps: tenants). Шема ће се аутоматски креирати по принципу django-tenants. Више о моделу: [architecture.md](architecture.md).
