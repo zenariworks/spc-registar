@@ -81,6 +81,7 @@
         <th>Име</th>
         <th>Е-маил</th>
         <th>Улога</th>
+        <th>Свештеник</th>
         <th>Активан</th>
         <th class="data-table__actions">Акције</th>
       </tr>
@@ -103,6 +104,18 @@
             </form>
           </td>
           <td>
+            <form method="post" action="{% url 'parohija:user_bind_svestenik' m.user.pk %}" class="data-table__role-form">
+              {% csrf_token %}
+              <select name="svestenik" onchange="this.form.submit()" class="list-toolbar__select">
+                <option value="">— није везан —</option>
+                {% for s in svestenici %}
+                  <option value="{{ s.uid }}"{% if s.user_id == m.user.pk %} selected{% endif %}{% if s.user_id and s.user_id != m.user.pk %} disabled{% endif %}>{{ s }}{% if s.user_id and s.user_id != m.user.pk %} (везан){% endif %}</option>
+                {% endfor %}
+              </select>
+            </form>
+            {% if not m.svestenik %}<span class="user-status user-status--inactive" data-tooltip="Подножје преписа неће имати потпис овог корисника"><i class="fa-solid fa-triangle-exclamation"></i> није везан</span>{% endif %}
+          </td>
+          <td>
             {% if m.is_active %}
               <span class="user-status user-status--active"><i class="fa-solid fa-circle-check"></i> Да</span>
             {% else %}
@@ -121,7 +134,7 @@
           </td>
         </tr>
       {% empty %}
-        <tr><td colspan="6" class="data-table__empty">Нема корисника</td></tr>
+        <tr><td colspan="7" class="data-table__empty">Нема корисника</td></tr>
       {% endfor %}
     </tbody>
   </table>

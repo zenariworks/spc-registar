@@ -76,16 +76,24 @@ def profile(request: HttpRequest) -> HttpResponse:
 
 @tenant_admin_required
 def user_list(request: HttpRequest) -> HttpResponse:
-    """List memberships for the active tenant."""
-    memberships = (
+    """List memberships for the active tenant, with priest links (#278)."""
+    from registar.models import Svestenik
+
+    memberships = list(
         UserMembership.objects.filter(tenant=request.tenant)
         .select_related("user")
         .order_by("user__username")
     )
+    svestenici = list(
+        Svestenik.objects.select_related("parohija").order_by("prezime", "ime")
+    )
+    sv_by_user = {s.user_id: s for s in svestenici if s.user_id}
+    for membership in memberships:
+        membership.svestenik = sv_by_user.get(membership.user_id)
     return render(
         request,
         "registar/spisak_korisnika.html",
-        {"memberships": memberships},
+        {"memberships": memberships, "svestenici": svestenici},
     )
 
 
@@ -145,6 +153,45 @@ def user_edit_role(request: HttpRequest, user_id: int) -> HttpResponse:
         membership.role = form.cleaned_data["role"]
         membership.save(update_fields=["role"])
         messages.success(request, f"Улога ажурирана за {membership.user.username}.")
+    return redirect("parohija:user_list")
+
+
+@tenant_admin_required
+@require_POST
+def user_bind_svestenik(request: HttpRequest, user_id: int) -> HttpResponse:
+    """Bind (or clear) the Svestenik profile linked to a user's login (#278).
+
+    The footer signature on certificates uses the logged-in user's linked
+    Svestenik; this is where an admin sets that link. ``Svestenik.user`` is
+    one-to-one per schema, so any prior link for this user is cleared first.
+    """
+    from registar.models import Svestenik
+
+    membership = get_object_or_404(
+        UserMembership, user_id=user_id, tenant=request.tenant
+    )
+    user = membership.user
+    sv_id = (request.POST.get("svestenik") or "").strip()
+
+    chosen = None
+    if sv_id:
+        chosen = get_object_or_404(Svestenik, pk=sv_id)
+        if chosen.user_id and chosen.user_id != user.pk:
+            messages.error(
+                request,
+                f"Свештеник {chosen} је већ везан за корисника "
+                f"{chosen.user.username}.",
+            )
+            return redirect("parohija:user_list")
+
+    # OneToOne per schema: a user maps to one priest — clear any prior link.
+    Svestenik.objects.filter(user=user).update(user=None)
+    if chosen is not None:
+        chosen.user = user
+        chosen.save(update_fields=["user"])
+        messages.success(request, f"{user.username} → {chosen}.")
+    else:
+        messages.success(request, f"Веза са свештеником уклоњена за {user.username}.")
     return redirect("parohija:user_list")
 
 

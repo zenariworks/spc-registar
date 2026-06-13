@@ -161,8 +161,8 @@
           <div class="venc-field-footer_mesto">Београду</div>
           <div class="venc-field-footer_datum">{% now "j. F" %}</div>
           <div class="venc-field-footer_godina">{% now "y" %}</div>
-          <div class="venc-field-footer_paroh">{{ vencanje.svestenik|crtica }}</div>
-          <div class="venc-field-footer_parohija">{{ vencanje.svestenik.parohija|crtica }}</div>
+          <div class="venc-field-footer_paroh">{{ izdavalac.potpis|crtica }}</div>
+          <div class="venc-field-footer_parohija">{{ izdavalac.parohija|crtica }}</div>
         </div>
       </div>
     </section>

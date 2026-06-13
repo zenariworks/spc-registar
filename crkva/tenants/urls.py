@@ -12,6 +12,11 @@ urlpatterns = [
     path("users/add/", views.user_add, name="user_add"),
     path("users/<int:user_id>/role/", views.user_edit_role, name="user_edit_role"),
     path(
+        "users/<int:user_id>/svestenik/",
+        views.user_bind_svestenik,
+        name="user_bind_svestenik",
+    ),
+    path(
         "users/<int:user_id>/deactivate/",
         views.user_deactivate,
         name="user_deactivate",

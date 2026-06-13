@@ -1,5 +1,6 @@
 """Модул модела свештеника у бази података."""
 
+from django.conf import settings
 from django.db import models
 from model_utils.models import TimeStampedModel
 from simple_history.models import HistoricalRecords
@@ -52,6 +53,20 @@ class Svestenik(TimeStampedModel):
         # street->priest FK added in #26 (this reverse was unused).
         related_name="+",
         verbose_name="адреса",
+    )
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="svestenik",
+        verbose_name="кориснички налог",
+        help_text=(
+            "Налог којим се свештеник пријављује; потпис у подножју "
+            "преписа (издавалац) узима свештеника везаног за "
+            "пријављеног корисника."
+        ),
     )
 
     history = HistoricalRecords()
