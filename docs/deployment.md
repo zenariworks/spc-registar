@@ -1,6 +1,6 @@
 # Производна поставка
 
-Апликација подржава два пута за продукцију. Тренутна жива поставка користи bare-metal (систем gunicorn + systemd + nginx); Docker је алтернатива.
+Апликација подржава два пута за продукцију. Тренутна жива поставка користи bare-metal (gunicorn + systemd + Caddy); Docker је алтернатива.
 
 - [Bare-metal (gunicorn + systemd + nginx)](#bare-metal)
 - [Docker (production compose)](#docker)
@@ -99,33 +99,25 @@ sudo systemctl enable --now spc-registar
 sudo systemctl status spc-registar
 ```
 
-### 7. Nginx прокси
+### 7. Caddy (reverse proxy + аутоматски HTTPS)
 
-```nginx
-# /etc/nginx/sites-available/spc-registar
-server {
-    listen 80;
-    server_name registar.parohija.example;
+Едж је **Caddy** — терминира TLS и аутоматски прибавља/обнавља Let's Encrypt
+сертификат. Статику служи whitenoise из саме апликације, па Caddy само
+прослеђује све ка gunicorn-у. Пример `/etc/caddy/Caddyfile`:
 
-    location /static/  { alias /vol/web/static/; }
-    location /media/   { alias /vol/web/media/;  }
-
-    location / {
-        proxy_pass         http://127.0.0.1:9000;
-        proxy_set_header   Host              $host;
-        proxy_set_header   X-Real-IP         $remote_addr;
-        proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto $scheme;
-    }
+```
+registar.parohija.example {
+    reverse_proxy 127.0.0.1:9000
 }
 ```
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/spc-registar /etc/nginx/sites-enabled/
-sudo nginx -t && sudo systemctl reload nginx
+sudo systemctl reload caddy
 ```
 
-Постављање HTTPS-а кроз Certbot: `sudo certbot --nginx -d registar.parohija.example`.
+Подешавање `SECURE_PROXY_SSL_HEADER` у settings прихвата `X-Forwarded-Proto`
+који Caddy шаље, па `request.is_secure()`, CSRF и secure колачићи раде преко
+HTTPS хоста.
 
 ### 8. Деплој (стандардни ток после `git push origin main`)
 
