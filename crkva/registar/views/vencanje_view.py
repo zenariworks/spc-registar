@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import DetailView, ListView
 from registar.forms import VencanjeForm
 from registar.models.vencanje import Vencanje
+from registar.services.izdavalac import get_izdavalac
 from registar.views.calibrate_view import render_calibrate
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from tenants.permissions import tenant_role_required
@@ -140,6 +141,7 @@ class PrikazVencanja(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["form"] = VencanjeForm(instance=self.object)
         context["is_edit"] = False
+        context["izdavalac"] = get_izdavalac(self.request)
         return context
 
 
