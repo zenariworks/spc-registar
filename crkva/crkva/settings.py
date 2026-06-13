@@ -61,10 +61,13 @@ CSRF_TRUSTED_ORIGINS = list(
     filter(None, os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(","))
 )
 
-# Продукцијско безбедносно учвршћивање (#223) — активно када је DEBUG искључен
-# (и ван тестова). TLS терминира Caddy, па се ово ослања на горњи
-# SECURE_PROXY_SSL_HEADER (Caddy шаље X-Forwarded-Proto=https).
-if not DEBUG and not _RUNNING_TESTS:
+# Продукцијско безбедносно учвршћивање (#223). HTTPS-учвршћивање контролише
+# флег SECURE_SSL (раздвојено од DEBUG — #7): подразумевано укључено ван
+# DEBUG-а, искључено у DEBUG-у. Самосталне инсталације преко plain HTTP на
+# localhost-у постављају SECURE_SSL=0. TLS терминира Caddy, па се ово ослања
+# на горњи SECURE_PROXY_SSL_HEADER (Caddy шаље X-Forwarded-Proto=https).
+SECURE_SSL = (os.environ.get("SECURE_SSL") or ("0" if DEBUG else "1")) == "1"
+if SECURE_SSL and not _RUNNING_TESTS:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

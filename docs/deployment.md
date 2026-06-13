@@ -180,8 +180,6 @@ make prod-migrate       # покрени миграције
 make prod-down          # заустави
 ```
 
-> Напомена: у `docker-compose.prod.yml` команда `gunicorn app.wsgi:application` се односи на стари назив пакета (`app` уместо `crkva`). Поправите у `crkva.wsgi:application` пре прве производње у Docker-у.
-
 ---
 
 ## Након поставке (обавезно)
