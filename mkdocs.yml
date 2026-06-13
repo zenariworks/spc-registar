@@ -1,0 +1,69 @@
+site_name: СПЦ Регистар — документација
+site_description: Дигитална евиденција за парохије СПЦ (django-tenants)
+repo_url: https://github.com/zenariworks/spc-registar
+repo_name: zenariworks/spc-registar
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  language: sr
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Тамна тема
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: Светла тема
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.details
+  - toc:
+      permalink: true
+      slugify: !!python/name:pymdownx.slugs.uslugify
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      languages:
+        - locale: sr
+          default: true
+          name: Српски
+          build: true
+        - locale: en
+          name: English
+          build: true
+
+exclude_docs: |
+  design/
+
+nav:
+  - Почетна: index.md
+  - Подешавање развоја: setup.md
+  - Покретање:
+      - Самостални Docker: standalone.md
+      - Производња: deployment.md
+  - Архитектура: architecture.md
+  - Тестови: testing.md
+  - Миграција података: MIGRACIJA.md
