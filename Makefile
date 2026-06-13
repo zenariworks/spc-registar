@@ -27,7 +27,7 @@ dev-shell:
 	docker-compose exec app python manage.py shell
 
 dev-migrate:
-	docker-compose exec app python manage.py migrate
+	docker-compose exec app python manage.py migrate_schemas --noinput
 
 dev-makemigrations:
 	docker-compose exec app python manage.py makemigrations
@@ -43,7 +43,7 @@ prod-logs:
 	docker-compose -f docker-compose.yml -f docker-compose.prod.yml logs -f
 
 prod-migrate:
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml exec app python manage.py migrate
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml exec app python manage.py migrate_schemas --noinput
 
 # Common commands
 build:
