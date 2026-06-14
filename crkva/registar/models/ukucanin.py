@@ -2,6 +2,7 @@
 
 from django.db import models
 from model_utils.models import TimeStampedModel
+from simple_history.models import HistoricalRecords
 
 from .domacinstvo import Domacinstvo
 from .parohijan import Osoba
@@ -36,6 +37,8 @@ class Ukucanin(TimeStampedModel):
     )
 
     preminuo = models.BooleanField(default=False, verbose_name="преминуо")
+
+    history = HistoricalRecords()
 
     def __str__(self):
         status = " (+)" if self.preminuo else ""
