@@ -7,11 +7,11 @@
 - **Б) Слика + спољна база** — само контејнер апликације, ка постојећем Postgres-у.
 
 > Вишекорисничко (django-tenants) и WeasyPrint (PDF) траже Linux окружење и
-> Postgres — зато се испоручује Linux контејнер (исти на Windows/mac/Linux).
+> Postgres — зато се испоручује Linux контејнер (исти на Windows/macOS/Linux).
 
 ## Услови
 
-- **Docker Desktop** (Windows/mac, са WSL2) или **Docker Engine + Compose v2** (Linux).
+- **Docker Desktop** (Windows/macOS, са WSL2) или **Docker Engine + Compose v2** (Linux).
 - Команде користе `docker compose` (v2).
 
 ## А) Све-у-једном (bundled)
@@ -21,7 +21,7 @@
 ### Windows
 Покрените **`start.bat`** (двоклик или из терминала). Подиже стек и исписује адресу.
 
-### Linux / mac
+### Linux / macOS
 Покрените **`./start.sh`** (или директно команду):
 ```bash
 ./start.sh        # = docker compose --profile standalone up -d --build
