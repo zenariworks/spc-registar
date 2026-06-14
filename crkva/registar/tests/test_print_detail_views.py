@@ -67,7 +67,7 @@ class _PdfBase(TestCase):
 class KrstenjePDFTests(_PdfBase):
     """KrstenjePDF: контекст + историјски снимци dete/otac/majka (kum=None)."""
 
-    TARGET = "registar.views.krstenje_view.HTML"
+    TARGET = "registar.views.pdf.HTML"
 
     @classmethod
     def setUpTestData(cls):
@@ -123,7 +123,7 @@ class KrstenjePDFTests(_PdfBase):
 class VencanjePDFTests(_PdfBase):
     """VencanjePDF: контекст + историјски снимци ženik/nevesta."""
 
-    TARGET = "registar.views.vencanje_view.HTML"
+    TARGET = "registar.views.pdf.HTML"
 
     @classmethod
     def setUpTestData(cls):
@@ -175,7 +175,7 @@ class SvestenikPDFTests(_PdfBase):
 
     def test_pdf_renders(self):
         self._get_pdf(
-            "registar.views.svestenik_view.HTML",
+            "registar.views.pdf.HTML",
             reverse("svestenik_pdf", kwargs={"uid": self.svestenik.uid}),
             "svestenik",
         )

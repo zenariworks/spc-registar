@@ -3,15 +3,14 @@
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import SvestenikForm
 from registar.models.svestenik import Svestenik
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
 from tenants.permissions import tenant_role_required
-from weasyprint import HTML
 
 
 @tenant_role_required("svestenik")
@@ -55,31 +54,12 @@ class SpisakSvestenika(
         )
 
 
-class SvestenikPDF(LoginRequiredMixin, DetailView):
+class SvestenikPDF(HistorySnapshotMixin, PdfDetailView):
     """Генерише PDF документ за одређеног свештеника."""
 
     model = Svestenik
     template_name = "registar/pdf_svestenik.html"
-
-    def get_object(self):
-        """Враћа објекат свештеника на основу UID-а."""
-        uid = self.kwargs.get("uid")
-        return get_object_or_404(Svestenik, uid=uid)
-
-    def render_to_response(self, context, **response_kwargs):
-        """Претвара HTML садржај у PDF и враћа HTTP одговор са PDF документом."""
-        html = render(self.request, self.template_name, context).content.decode()
-        pdf = HTML(string=html, base_url=self.request.build_absolute_uri()).write_pdf()
-        uid = self.kwargs.get("uid")
-        response = HttpResponse(pdf, content_type="application/pdf")
-        response["Content-Disposition"] = f"inline; filename=svestenik-{uid}.pdf"
-        return response
-
-    def get(self, request, *args, **kwargs):
-        """Обрађује GET захтеве за генерисање PDF-а."""
-        self.object = self.get_object()  # pylint: disable=attribute-defined-outside-init
-        context = self.get_context_data(object=self.object)
-        return self.render_to_response(context)
+    filename_prefix = "svestenik"
 
 
 class PrikazSvestenika(LoginRequiredMixin, DetailView):

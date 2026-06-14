@@ -3,7 +3,6 @@
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
@@ -11,8 +10,8 @@ from registar.forms import ParohijanForm
 from registar.models import Krstenje
 from registar.models.parohijan import Osoba
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
 from tenants.permissions import tenant_role_required
-from weasyprint import HTML
 
 
 @tenant_role_required("osoba")
@@ -79,33 +78,12 @@ class SpisakParohijana(
         )
 
 
-class ParohijanPDF(LoginRequiredMixin, DetailView):
+class ParohijanPDF(HistorySnapshotMixin, PdfDetailView):
     """Генерише PDF документ за одређеног парохијана."""
 
     model = Osoba
     template_name = "registar/pdf_parohijan.html"
-
-    def get_object(self, queryset=None):
-        """Преузима парохијана на основу UID-а."""
-        uid = self.kwargs.get("uid")
-        return get_object_or_404(Osoba, uid=uid)
-
-    def render_to_response(self, context, **response_kwargs):
-        """Претвара HTML садржај у PDF и враћа HTTP одговор са PDF документом."""
-        html_string = render(self.request, self.template_name, context).content.decode()
-        pdf = HTML(
-            string=html_string, base_url=self.request.build_absolute_uri()
-        ).write_pdf()
-        uid = self.kwargs.get("uid")
-        response = HttpResponse(content=pdf, content_type="application/pdf")
-        response["Content-Disposition"] = f"inline; filename=parohijan-{uid}.pdf"
-        return response
-
-    def get(self, request, *args, **kwargs):
-        """Обрађује GET захтев за генерисање PDF документа за парохијана."""
-        self.object = self.get_object()  # pylint: disable=attribute-defined-outside-init
-        context = self.get_context_data(object=self.object)
-        return self.render_to_response(context)
+    filename_prefix = "parohijan"
 
 
 class PrikazParohijana(LoginRequiredMixin, DetailView):
