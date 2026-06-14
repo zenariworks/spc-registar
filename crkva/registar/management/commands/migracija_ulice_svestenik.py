@@ -18,7 +18,7 @@ import zipfile
 from django.core.management.base import BaseCommand
 from django_tenants.utils import schema_context
 from registar.models import Adresa, Svestenik
-from registar.utils.migration_converters import Konvertor
+from registar.utils.konvertori import Konvertor
 
 
 def _read_dbf(raw: bytes):

@@ -5,7 +5,7 @@ from __future__ import annotations
 import re
 from datetime import date, time
 
-from registar.utils.migration_converters import Konvertor
+from registar.utils.konvertori import Konvertor
 
 # --- Презиме (surname) ---
 
