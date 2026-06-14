@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import List
 
 import environ
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -30,9 +31,6 @@ environ.Env.read_env(os.path.join(BASE_DIR.parent, ".env"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 
@@ -40,6 +38,26 @@ DEBUG = bool(int(os.environ.get("DEBUG", 0)))
 # продукцијско учвршћивање испод иначе укључило SSL redirect и празан
 # ALLOWED_HOSTS усред тестова. Откривамо тест-рун да то избегнемо (#223).
 _RUNNING_TESTS = "test" in sys.argv or sys.argv[0].endswith(("pytest", "py.test"))
+
+
+def _require_env(name):
+    """Враћа обавезну променљиву окружења или одмах пуца са јасном поруком (#292)."""
+    value = os.environ.get(name)
+    if not value:
+        raise ImproperlyConfigured(
+            f"Недостаје обавезна променљива окружења: {name}. "
+            "Подеси је у .env или у окружењу пре покретања."
+        )
+    return value
+
+
+# SECURITY WARNING: keep the secret key used in production secret!
+# У продукцији је SECRET_KEY обавезан (пуца одмах ако недостаје); у DEBUG-у и
+# при тестовима користи се небезбедан развојни кључ ради лакшег покретања (#292).
+if DEBUG or _RUNNING_TESTS:
+    SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-only-key")
+else:
+    SECRET_KEY = _require_env("SECRET_KEY")
 
 # Калибрационе странице (крштеница/венчаница) су подразумевано искључене у
 # продукцији; могу се привремено укључити поставком CALIBRATION_ENABLED=1 у
@@ -158,11 +176,11 @@ DATABASES = {
         "OPTIONS": {
             "client_encoding": "UTF8",
         },
-        "HOST": os.environ.get("DB_HOST"),
-        "PORT": os.environ.get("DB_PORT"),
-        "NAME": os.environ.get("DB_NAME"),
-        "USER": os.environ.get("DB_USER"),
-        "PASSWORD": os.environ.get("DB_PASS"),
+        "HOST": _require_env("DB_HOST"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
+        "NAME": _require_env("DB_NAME"),
+        "USER": _require_env("DB_USER"),
+        "PASSWORD": _require_env("DB_PASS"),
     },
 }
 

@@ -8,8 +8,10 @@ client тестови добијали 301 / 400). Овај тест чува т
 # pylint: disable=missing-function-docstring
 
 import os
+from unittest import mock
 
 from django.conf import settings
+from django.core.exceptions import ImproperlyConfigured
 from django.test import SimpleTestCase
 
 
@@ -38,3 +40,27 @@ class SecurityHardeningGatingTests(SimpleTestCase):
         self.assertEqual(
             settings.SECURE_PROXY_SSL_HEADER, ("HTTP_X_FORWARDED_PROTO", "https")
         )
+
+
+class RequireEnvTests(SimpleTestCase):
+    """#292: обавезне променљиве окружења морају одмах да пукну ако недостају."""
+
+    def test_returns_value_when_present(self):
+        from crkva.settings import _require_env
+
+        with mock.patch.dict(os.environ, {"X_REQ_ENV_TEST": "vrednost"}):
+            self.assertEqual(_require_env("X_REQ_ENV_TEST"), "vrednost")
+
+    def test_raises_when_missing(self):
+        from crkva.settings import _require_env
+
+        os.environ.pop("X_REQ_ENV_MISSING", None)
+        with self.assertRaises(ImproperlyConfigured):
+            _require_env("X_REQ_ENV_MISSING")
+
+    def test_raises_when_empty(self):
+        from crkva.settings import _require_env
+
+        with mock.patch.dict(os.environ, {"X_REQ_ENV_EMPTY": ""}):
+            with self.assertRaises(ImproperlyConfigured):
+                _require_env("X_REQ_ENV_EMPTY")
