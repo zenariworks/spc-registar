@@ -120,7 +120,6 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
 
     datum_ispita = models.DateField(
         verbose_name="датум испита",
-        validators=[MinValueValidator(1900)],
         null=True,
         blank=True,
     )

@@ -322,6 +322,23 @@ class VencanjeModelTestCase(TestCase):
         self.assertTrue(vencanje.razresenje)
         self.assertEqual(vencanje.primedba, "Напомена за венчање")
 
+    def test_full_clean_with_datum_ispita_does_not_crash(self):
+        """#291: datum_ispita је DateField — валидатор не сме да пуца (TypeError)."""
+        vencanje = Vencanje(
+            zenik=self.zenik,
+            nevesta=self.nevesta,
+            godina_registracije=2024,
+            redni_broj=777,
+            knjiga=1,
+            strana=1,
+            broj=777,
+            datum=datetime.date(2024, 6, 15),
+            datum_ispita=datetime.date(2024, 6, 1),
+            hram=self.hram,
+            svestenik=self.svestenik,
+        )
+        vencanje.full_clean()  # пре исправке: TypeError (date < int 1900)
+
     def test_vencanje_default_values(self):
         """Тест подразумеваних вредности."""
         vencanje = Vencanje.objects.create(
