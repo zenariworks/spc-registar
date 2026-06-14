@@ -1,9 +1,7 @@
 """Заједнички миксини за приказе."""
 
-from django.db import models
-from django.db.models.functions import Cast
 from registar.forms import SearchForm
-from registar.utils import get_query_variants
+from registar.search import search_queryset
 
 PAGE_SIZE_CHOICES = [10, 25, 50, 100]
 PAGE_SIZE_DEFAULT = 10
@@ -73,31 +71,13 @@ class SearchMixin:
     def get_search_queryset(self, queryset):
         """Филтрира queryset на основу претраге."""
         query = self.request.GET.get("search", "").strip()
-        if not query:
-            ordering = getattr(self, "get_ordering", lambda: None)()
-            if ordering:
-                queryset = queryset.order_by(*ordering)
-            return queryset
-
-        terms = query.split()
-
-        if self.search_date_field:
-            queryset = queryset.annotate(
-                datum_str=Cast(self.search_date_field, models.CharField())
+        if query:
+            queryset = search_queryset(
+                queryset,
+                query,
+                self.search_fields,
+                date_field=self.search_date_field,
             )
-
-        combined = models.Q()
-        for term in terms:
-            variants = get_query_variants(term)
-            term_q = models.Q()
-            for v in variants:
-                for field in self.search_fields:
-                    term_q |= models.Q(**{f"{field}__icontains": v})
-                if self.search_date_field:
-                    term_q |= models.Q(datum_str__icontains=v)
-            combined &= term_q
-
-        queryset = queryset.filter(combined).distinct()
         ordering = getattr(self, "get_ordering", lambda: None)()
         if ordering:
             queryset = queryset.order_by(*ordering)

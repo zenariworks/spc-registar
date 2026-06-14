@@ -1,10 +1,10 @@
-"""Тестови за KrstenjeFilter и VencanjeFilter (FilterSet претрага).
+"""Тестови за обједињену претрагу (``registar.search``).
 
-Ови FilterSet-ови су били неупотребљени и поломљени (референцирали су
-@property имена и сирова FK поља уместо релационих путања), па су падали
-са FieldError при сваком термину. Овде се потврђује исправљена претрага:
-по имену (ћир/лат), по датуму, и AND семантика више термина.
-Issue #222 — filters/*_filter.py били на 55% (filter_search неизвршен).
+Раније је иста логика постојала на четири места (``SearchMixin``,
+``search_view`` двапут и непотребни ``filters/*_filter.py``). Сада је један
+извор истине у :mod:`registar.search`; овде се потврђује: претрага по имену
+(ћир/лат), по датуму, AND семантика више термина и сужавање резултата.
+Issue #295 (раније #222).
 """
 
 # pylint: disable=missing-function-docstring
@@ -12,11 +12,34 @@ Issue #222 — filters/*_filter.py били на 55% (filter_search неизвр
 import datetime
 
 from django.test import TestCase
-from registar.filters import KrstenjeFilter, VencanjeFilter
 from registar.models import Hram, Krstenje, Osoba, Vencanje
+from registar.search import search_queryset
+
+KRSTENJE_FIELDS = [
+    "dete__ime",
+    "dete__gradjansko_ime",
+    "otac__ime",
+    "otac__prezime",
+    "majka__ime",
+    "majka__prezime",
+    "kum__ime",
+    "kum__prezime",
+]
+
+VENCANJE_FIELDS = [
+    "zenik__ime",
+    "zenik__prezime",
+    "nevesta__ime",
+    "nevesta__prezime",
+    "kum__ime",
+    "kum__prezime",
+    "stari_svat__ime",
+    "stari_svat__prezime",
+    "hram__naziv",
+]
 
 
-class KrstenjeFilterTests(TestCase):
+class KrstenjeSearchTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.dete = Osoba.objects.create(ime="Марко", prezime="Марковић", pol="М")
@@ -40,7 +63,7 @@ class KrstenjeFilterTests(TestCase):
             telesna_mana=False,
             hram=cls.hram,
         )
-        # Несродан запис да се потврди да филтер заиста сужава.
+        # Несродан запис да се потврди да претрага заиста сужава.
         other = Osoba.objects.create(ime="Никола", prezime="Илић", pol="М")
         Krstenje.objects.create(
             dete=other,
@@ -58,14 +81,15 @@ class KrstenjeFilterTests(TestCase):
 
     def _search(self, term):
         return list(
-            KrstenjeFilter(data={"search": term}, queryset=Krstenje.objects.all()).qs
+            search_queryset(
+                Krstenje.objects.all(), term, KRSTENJE_FIELDS, date_field="datum"
+            )
         )
 
     def test_search_by_child_name(self):
         self.assertEqual(self._search("Марко"), [self.krstenje])
 
     def test_search_by_father_surname(self):
-        # И отац и дете и мајка деле презиме Марковић → тачно овај запис.
         self.assertEqual(self._search("Марковић"), [self.krstenje])
 
     def test_search_by_kum(self):
@@ -83,8 +107,12 @@ class KrstenjeFilterTests(TestCase):
     def test_no_match_returns_empty(self):
         self.assertEqual(self._search("Непостојеће"), [])
 
+    def test_empty_query_returns_all(self):
+        self.assertEqual(Krstenje.objects.count(), 2)
+        self.assertEqual(len(self._search("")), 2)
 
-class VencanjeFilterTests(TestCase):
+
+class VencanjeSearchTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.zenik = Osoba.objects.create(ime="Душан", prezime="Зекић", pol="М")
@@ -104,7 +132,6 @@ class VencanjeFilterTests(TestCase):
         )
         z2 = Osoba.objects.create(ime="Иван", prezime="Иванић", pol="М")
         n2 = Osoba.objects.create(ime="Маја", prezime="Мајић", pol="Ж")
-        # Различит (godina, redni_broj) — иначе крши vencanje_god_redni_uniq (#251).
         Vencanje.objects.create(
             zenik=z2,
             nevesta=n2,
@@ -115,7 +142,9 @@ class VencanjeFilterTests(TestCase):
 
     def _search(self, term):
         return list(
-            VencanjeFilter(data={"search": term}, queryset=Vencanje.objects.all()).qs
+            search_queryset(
+                Vencanje.objects.all(), term, VENCANJE_FIELDS, date_field="datum"
+            )
         )
 
     def test_search_by_groom(self):
