@@ -1,11 +1,14 @@
 # Production environment overrides
 # Run: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 # Or use: make prod-up
+#
+# Спољашња база (нема локалног db сервиса). Статику служи whitenoise из
+# апликације. За HTTPS/едж стави Caddy испред (исти образац као bare-metal,
+# види docs/deployment.md). nginx+uWSGI proxy уклоњен (#314, фаза 1).
 
 services:
   app:
     restart: always
-    # Production uses external database, no local db service
     command: >
       sh -c "python manage.py wait_for_db &&
             python manage.py migrate_schemas --noinput &&
@@ -13,13 +16,5 @@ services:
             gunicorn --bind 0.0.0.0:8000 --workers 4 crkva.wsgi:application"
     environment:
       - DEBUG=0
-
-  proxy:
-    build: ./proxy
-    restart: always
-    depends_on:
-      - app
     ports:
-      - 80:8000
-    volumes:
-      - static_data:/vol/static
+      - "8000:8000"

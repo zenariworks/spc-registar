@@ -2,7 +2,7 @@
 
 Апликација подржава два пута за продукцију. Тренутна жива поставка користи bare-metal (gunicorn + systemd + Caddy); Docker је алтернатива.
 
-- [Bare-metal (gunicorn + systemd + nginx)](#bare-metal)
+- [Bare-metal (gunicorn + systemd + Caddy)](#bare-metal)
 - [Docker (production compose)](#docker)
 - [Након поставке](#након-поставке-обавезно)
 
@@ -10,14 +10,14 @@
 
 ## Bare-metal
 
-Тренутна продукциона топологија: Python 3.13 преко pyenv, gunicorn као WSGI сервер иза nginx прокси-ја, systemd unit за управљање процесом.
+Тренутна продукциона топологија: Python 3.13 преко pyenv, gunicorn као WSGI сервер иза Caddy прокси-ја, systemd unit за управљање процесом.
 
 ### 1. Подешавање сервера
 
 Линукс сервер (Ubuntu 22.04+) са:
 
 ```bash
-sudo apt install -y postgresql-16 nginx git build-essential \
+sudo apt install -y postgresql-16 git build-essential \
     libpq-dev libffi-dev libcairo2 libpango-1.0-0 libgdk-pixbuf-2.0-0 \
     libjpeg-dev zlib1g-dev nodejs npm
 
@@ -101,8 +101,8 @@ sudo systemctl status spc-registar
 
 ### 7. Caddy (reverse proxy + аутоматски HTTPS)
 
-Едж је **Caddy** — терминира TLS и аутоматски прибавља/обнавља Let's Encrypt
-сертификат. Статику служи whitenoise из саме апликације, па Caddy само
+Едж је **Caddy** (инсталација: https://caddyserver.com/docs/install) — терминира
+TLS и аутоматски прибавља/обнавља Let's Encrypt сертификат. Статику служи whitenoise из саме апликације, па Caddy само
 прослеђује све ка gunicorn-у. Пример `/etc/caddy/Caddyfile`:
 
 ```
@@ -155,7 +155,7 @@ docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
 make prod-up
 ```
 
-Унутрашњи gunicorn слуша на 8000, изложен је порт 80 кроз proxy сервис (види `docker-compose.prod.yml`).
+Апликација излаже gunicorn на порту 8000 (статику служи whitenoise). За HTTPS стави Caddy испред (исти образац као bare-metal, види горе).
 
 ### 3. Иницијалне команде
 
@@ -191,10 +191,10 @@ make prod-down          # заустави
 - [ ] `SECRET_KEY` је јединствен и није `dev-secret-key-...`
 - [ ] `ALLOWED_HOSTS` је уско ограничен (не `*`)
 - [ ] `DB_PASS` је јак и није `postgres` / `changeme`
-- [ ] HTTPS је постављен (Certbot)
+- [ ] HTTPS је постављен (Caddy / Let's Encrypt)
 - [ ] Backup стратегија за Postgres (cron + `pg_dump`)
 - [ ] systemd unit има `Restart=always`
-- [ ] nginx access/error логови ротирају
+- [ ] Caddy access/error логови ротирају
 
 ### Backup-и
 
