@@ -3,10 +3,10 @@
 from django.contrib.auth.decorators import login_required
 from django.core.cache import cache
 from django.db import connection
-from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from registar.models import Domacinstvo, Krstenje, Osoba, Svestenik, Vencanje
+from registar.search import build_search_q
 from registar.utils import get_query_variants
 
 SEARCH_PREVIEW_LIMIT = 5
@@ -38,17 +38,11 @@ def _get_registry_stats() -> dict:
 def search_view(request) -> HttpResponse:
     """Глобална претрага по свим ентитетима."""
     query = request.GET.get("query", "").strip()
-    variants = get_query_variants(query) if query else []
 
     def build_q(fields):
-        """Прави Q објекат за дата поља и варијанте претраге."""
-        q = Q()
-        for v in variants:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": v})
-        return q
+        return build_search_q(query, fields, split_terms=False)
 
-    if variants:
+    if query:
         parohijani_qs = (
             Osoba.objects.filter(build_q(["ime", "prezime"]))
             .select_related("adresa")
@@ -136,11 +130,7 @@ def search_autocomplete(request):
     variants = get_query_variants(query)
 
     def build_q(fields):
-        q = Q()
-        for v in variants:
-            for field in fields:
-                q |= Q(**{f"{field}__icontains": v})
-        return q
+        return build_search_q(query, fields, split_terms=False)
 
     def rank_item(text):
         """Start-of-name matches rank 0, contains matches rank 1."""

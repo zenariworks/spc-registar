@@ -95,7 +95,6 @@ SHARED_APPS = [
     "import_export",
     "django_select2",
     "admin_searchable_dropdown",
-    "django_filters",
     "phonenumber_field",
     "axes",  # rate-limit/lockout on failed logins; admin UI under /admin/axes/
 ]
