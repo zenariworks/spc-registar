@@ -24,12 +24,17 @@
 - **Docker Desktop** (Windows/macOS, са WSL2) или **Docker Engine + Compose v2** (Linux).
 
 ### Покретање
-- **Windows:** покрените **`start.bat`** (двоклик или из терминала).
-- **Linux / macOS:** покрените **`./start.sh`**.
-- Или директно:
-  ```bash
-  docker compose --profile standalone up -d --build
-  ```
+
+=== "Windows"
+    Покрените **`start.bat`** (двоклик или из терминала).
+
+=== "Linux / macOS"
+    Покрените **`./start.sh`**.
+
+=== "Директно (compose)"
+    ```bash
+    docker compose --profile standalone up -d --build
+    ```
 
 Апликација: **http://localhost:8000** · прва пријава **admin / admin**.
 

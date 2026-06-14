@@ -24,12 +24,17 @@ single server. Data is stored in the named volume `postgres_data`.
 - **Docker Desktop** (Windows/macOS, with WSL2) or **Docker Engine + Compose v2** (Linux).
 
 ### Run
-- **Windows:** run **`start.bat`** (double-click or from a terminal).
-- **Linux / macOS:** run **`./start.sh`**.
-- Or directly:
-  ```bash
-  docker compose --profile standalone up -d --build
-  ```
+
+=== "Windows"
+    Run **`start.bat`** (double-click or from a terminal).
+
+=== "Linux / macOS"
+    Run **`./start.sh`**.
+
+=== "Directly (compose)"
+    ```bash
+    docker compose --profile standalone up -d --build
+    ```
 
 App: **http://localhost:8000** · first sign-in **admin / admin**.
 
