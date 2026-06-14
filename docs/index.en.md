@@ -3,7 +3,7 @@
 A digital registry for parishes of the Serbian Orthodox Church — parishioners, households, baptisms, weddings, priests, and a feast-day (slava) calendar. A single installation serves **multiple parishes**, with fully isolated data per parish.
 
 !!! tip "New here?"
-    Go straight to [Development setup](setup.md) if you're building locally, or [Standalone Docker](standalone.md) if you just want to run the app.
+    Go straight to [Setup & running](setup.md) — standalone Docker for a quick start, or the development setup if you're building locally.
 
 ## How it works (in brief)
 
@@ -16,8 +16,8 @@ A digital registry for parishes of the Serbian Orthodox Church — parishioners,
 
 ## Quick start
 
-- **Develop on your machine** → [Development setup](setup.md)
-- **Run everything in Docker (local / Windows / server)** → [Standalone Docker](standalone.md)
+- **Develop on your machine** → [Setup & running](setup.md)
+- **Run everything in Docker (local / Windows / server)** → [Setup & running](setup.md)
 - **Production on a server** → [Deployment](deployment.md)
 
 After it starts, the app is at `http://localhost:8000/`, with sign-in at `/prijava/`.
@@ -26,8 +26,7 @@ After it starts, the app is at `http://localhost:8000/`, with sign-in at `/prija
 
 | Document | About |
 |---|---|
-| [Development setup](setup.md) | bare-metal (pyenv) and Docker Compose environments |
-| [Standalone Docker](standalone.md) | all-in-one bundle + image with an external database |
+| [Setup & running](setup.md) | standalone Docker, development (pyenv/Docker) and a production overview |
 | [Deployment](deployment.md) | gunicorn + systemd + Caddy, and Docker prod |
 | [Architecture](architecture.md) | django-tenants schemas, authorization, models, URL map |
 | [Testing](testing.md) | tests, coverage, pre-commit hooks |

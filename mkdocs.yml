@@ -64,10 +64,8 @@ exclude_docs: |
 
 nav:
   - Почетна: index.md
-  - Подешавање развоја: setup.md
-  - Покретање:
-      - Самостални Docker: standalone.md
-      - Производња: deployment.md
+  - Постављање и покретање: setup.md
+  - Производња: deployment.md
+  - Миграција података: MIGRACIJA.md
   - Архитектура: architecture.md
   - Тестови: testing.md
-  - Миграција података: MIGRACIJA.md
