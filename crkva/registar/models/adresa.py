@@ -4,6 +4,7 @@ import uuid
 
 from django.db import models
 from django.db.models.functions import Lower
+from simple_history.models import HistoricalRecords
 
 
 class Adresa(models.Model):
@@ -41,6 +42,8 @@ class Adresa(models.Model):
         verbose_name="свештеник (улица)",
         help_text="Свештеник задужен за ову улицу (за васкршњу водицу).",
     )
+
+    history = HistoricalRecords()
 
     def __str__(self):
         parts = [self.ulica, self.broj]
