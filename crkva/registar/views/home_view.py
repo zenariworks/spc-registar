@@ -6,8 +6,9 @@ from collections import defaultdict
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
-from registar.models import Krstenje, Osoba, Slava, Svestenik, Vencanje
-from registar.utils_fasting import tip_posta
+from registar.kalendar import WEEKDAY_LABELS, build_day_cell
+from registar.models import Slava
+from registar.views.search_view import _get_registry_stats
 
 
 @login_required
@@ -48,87 +49,21 @@ def index(request) -> HttpResponse:
         if datum:
             by_day[(datum.month, datum.day)].append(s)
 
-    # Build cells for template
-    weekday_labels = ["пон", "уто", "сре", "чет", "пет", "суб", "нед"]
-
-    # Major feast days
-    major_feasts = {
-        (1, 7): "Божић",
-        (1, 19): "Богојављење",
-        (8, 28): "Велика Госпојина",
-        (9, 21): "Мала Госпојина",
-        (11, 21): "Ваведење",
-        (1, 27): "Свети Сава",
-        (12, 19): "Свети Никола",
-        (5, 19): "Ђурђевдан",
-    }
-
+    # Изградња ћелија (заједничка логика у registar.kalendar)
     cells = []
     for d in days:
-        fasting_info = tip_posta(d)
-        day_slavas = by_day.get((d.month, d.day), [])
-
-        # Separate fixed and moveable feasts
-        fixed_slavas = [s for s in day_slavas if not s.pokretni]
-        moveable_slavas = [s for s in day_slavas if s.pokretni]
-
-        # Check if this day has a "crveno slovo" (red letter day) observance
-        is_crveno_slovo = any(s.crveno_slovo for s in day_slavas)
-
-        # Check if major feast
-        is_important = (d.month, d.day) in major_feasts
-        if day_slavas and not is_important:
-            for slava in day_slavas:
-                slava_lower = slava.naziv.lower()
-                if any(
-                    keyword in slava_lower
-                    for keyword in [
-                        "васкрс",
-                        "спасовдан",
-                        "тројице",
-                        "духови",
-                        "вазнесењ",
-                    ]
-                ):
-                    is_important = True
-                    break
-
-        # Determine day label
+        cell = build_day_cell(d, by_day.get((d.month, d.day), []), today)
         if d == today:
-            day_label = "данас"
+            cell["day_label"] = "данас"
         elif d == today - dt.timedelta(days=1):
-            day_label = "јуче"
+            cell["day_label"] = "јуче"
         elif d == today + dt.timedelta(days=1):
-            day_label = "сутра"
+            cell["day_label"] = "сутра"
         else:
-            day_label = weekday_labels[d.weekday()]
-
-        cells.append(
-            {
-                "date": d,
-                "weekday_label": weekday_labels[d.weekday()],
-                "day_label": day_label,
-                "is_fasting": fasting_info["is_fasting"],
-                "fasting_type": fasting_info["type"],
-                "fasting_class": {
-                    "вода": "water",
-                    "уље": "oil",
-                    "риба": "fish",
-                    "бели_мрс": "dairy",
-                }.get(fasting_info["type"])
-                or "",
-                "fasting_display": fasting_info["display"],
-                "fasting_description": fasting_info["description"],
-                "slave": day_slavas,
-                "fixed_slavas": fixed_slavas,
-                "moveable_slavas": moveable_slavas,
-                "is_important": is_important,
-                "is_crveno_slovo": is_crveno_slovo,
-                "is_today": d == today,
-                "is_yesterday": d == today - dt.timedelta(days=1),
-                "is_upcoming": d > today,
-            }
-        )
+            cell["day_label"] = WEEKDAY_LABELS[d.weekday()]
+        cell["is_yesterday"] = d == today - dt.timedelta(days=1)
+        cell["is_upcoming"] = d > today
+        cells.append(cell)
 
     # Split cells for the home page: today gets the hero, the next 5 days
     # form the upcoming-list. (calendar_cells stays full for backwards compat.)
@@ -136,12 +71,7 @@ def index(request) -> HttpResponse:
     upcoming_cells = [c for c in cells if c["date"] > today]
 
     context = {
-        "stats": {
-            "parohijani": Osoba.objects.count(),
-            "krstenja": Krstenje.objects.count(),
-            "vencanja": Vencanje.objects.count(),
-            "svestenici": Svestenik.objects.count(),
-        },
+        "stats": _get_registry_stats(),
         "calendar_cells": cells,
         "today_cell": today_cell,
         "upcoming_cells": upcoming_cells,

@@ -11,8 +11,8 @@ from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from kalendar.models import Slava
+from registar.kalendar import WEEKDAY_LABELS, build_day_cell
 from registar.utils import MESECI
-from registar.utils_fasting import tip_posta
 
 # crkvenikalendar.rs uses Cyrillic-month-name spelled in Latin script in the URL.
 # Map our 1..12 to the slug they use:
@@ -78,72 +78,15 @@ def kalendar(
         if datum and datum.month == month:
             by_day[datum.day].append(s)
 
-    # Обогаћени подаци за темплат
-    # Weekday labels (Mon..Sun) in Serbian abbreviations
-    weekday_labels = ["пон", "уто", "сре", "чет", "пет", "суб", "нед"]
-
-    # Major feast days (important observances)
-    major_feasts = {
-        (1, 7): "Божић",  # Christmas
-        (1, 19): "Богојављење",  # Epiphany
-        (8, 28): "Велика Госпојина",  # Dormition
-        (9, 21): "Мала Госпојина",  # Nativity of Theotokos
-        (11, 21): "Ваведење",  # Presentation of Mary
-        (1, 27): "Свети Сава",  # Saint Sava
-        (12, 19): "Свети Никола",  # Saint Nicholas
-        (5, 19): "Ђурђевдан",  # Saint George
-    }
-
-    # Build cells with leading placeholders to align under weekday headers
+    # Ћелије са водећим празним местима за поравнање испод заглавља дана
+    # (заједничка логика у registar.kalendar)
     cells = []
     for _ in range(first_weekday):
         cells.append({"is_placeholder": True})
     for d in days:
-        fasting_info = tip_posta(d)
-        day_slavas = by_day.get(d.day, [])
-
-        # Separate fixed and moveable feasts
-        fixed_slavas = [s for s in day_slavas if not s.pokretni]
-        moveable_slavas = [s for s in day_slavas if s.pokretni]
-
-        # Check if this day has a "crveno slovo" (red letter day) observance
-        is_crveno_slovo = any(s.crveno_slovo for s in day_slavas)
-
-        # Check if this is a major feast day
-        is_important = (d.month, d.day) in major_feasts
-        # Also check if any slava name contains major keywords
-        if day_slavas and not is_important:
-            for slava in day_slavas:
-                slava_lower = slava.naziv.lower()
-                keywords = ["васкрс", "спасовдан", "тројице", "духови", "вазнесењ"]
-                if any(keyword in slava_lower for keyword in keywords):
-                    is_important = True
-                    break
-
-        cells.append(
-            {
-                "is_placeholder": False,
-                "date": d,
-                "weekday_label": weekday_labels[d.weekday()],
-                "is_fasting": fasting_info["is_fasting"],
-                "fasting_type": fasting_info["type"],
-                "fasting_class": {
-                    "вода": "water",
-                    "уље": "oil",
-                    "риба": "fish",
-                    "бели_мрс": "dairy",
-                }.get(fasting_info["type"])
-                or "",
-                "fasting_display": fasting_info["display"],
-                "fasting_description": fasting_info["description"],
-                "slave": day_slavas,
-                "fixed_slavas": fixed_slavas,
-                "moveable_slavas": moveable_slavas,
-                "is_important": is_important,
-                "is_crveno_slovo": is_crveno_slovo,
-                "is_today": d == today,
-            }
-        )
+        cell = build_day_cell(d, by_day.get(d.day, []), today)
+        cell["is_placeholder"] = False
+        cells.append(cell)
 
     # Навигација за претходни/наредни месец
     prev_month = month - 1 if month > 1 else 12
@@ -157,7 +100,7 @@ def kalendar(
         "month_name": MESECI.get(month, str(month)),
         "month_label": f"{MESECI.get(month, str(month))} {year}",
         "source_url": crkvenikalendar_url(year, month),
-        "weekday_labels": weekday_labels,
+        "weekday_labels": WEEKDAY_LABELS,
         "cells": cells,
         "prev_year": prev_year,
         "prev_month": prev_month,
