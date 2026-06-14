@@ -30,8 +30,6 @@ psycopg2-binary==2.9.11
 pydyf==0.11.0
 python-dateutil==2.8.2
 rcssmin==1.1.2
-# WSGI Server (kept for compatibility — prod uses gunicorn)
-uWSGI==2.0.31
 # PDF Generation
 WeasyPrint==62.3
 # Static file serving

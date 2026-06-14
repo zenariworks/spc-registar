@@ -68,7 +68,7 @@ flowchart TD
 - **База** — PostgreSQL 16
 - **PDF** — [WeasyPrint](https://weasyprint.org/) за крштенице и венчанице
 - **Frontend** — Django templates + ванилла CSS/JS (без SPA framework-а), [django-compressor](https://django-compressor.readthedocs.io/) + WhiteNoise
-- **Сервер** — gunicorn иза nginx-а (production); systemd unit `spc-registar` (на bare-metal)
+- **Сервер** — gunicorn иза Caddy-ја (production); systemd unit `spc-registar` (на bare-metal)
 - **Линтери** — [ruff](https://docs.astral.sh/ruff/) (Python), [biome](https://biomejs.dev/) (CSS/JS), [djlint](https://www.djlint.com/) (templates), pylint
 - **Тестови** — Django `manage.py test` (572+ теста)
 
