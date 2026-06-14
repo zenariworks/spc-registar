@@ -7,11 +7,11 @@ Run SPC Registar in Docker, without a bare-metal setup. Two paths:
 - **B) Image + external database** — the app container only, pointed at an existing Postgres.
 
 > Multi-tenancy (django-tenants) and WeasyPrint (PDF) need a Linux environment and
-> Postgres — so a Linux container is shipped (the same one on Windows/mac/Linux).
+> Postgres — so a Linux container is shipped (the same one on Windows/macOS/Linux).
 
 ## Requirements
 
-- **Docker Desktop** (Windows/mac, with WSL2) or **Docker Engine + Compose v2** (Linux).
+- **Docker Desktop** (Windows/macOS, with WSL2) or **Docker Engine + Compose v2** (Linux).
 - Commands use `docker compose` (v2).
 
 ## A) All-in-one (bundled)
@@ -21,9 +21,10 @@ Ships Postgres too; stores data in named volumes.
 ### Windows
 Run **`start.bat`** (double-click or from a terminal). It brings the stack up and prints the address.
 
-### Linux / mac
+### Linux / macOS
+Run **`./start.sh`** (or the command directly):
 ```bash
-docker compose --profile standalone up -d --build
+./start.sh        # = docker compose --profile standalone up -d --build
 ```
 
 App: **http://localhost:8000** · first sign-in **admin / admin**.
