@@ -1,60 +1,60 @@
-.PHONY: help dev-up dev-down dev-logs prod-up prod-down prod-logs build clean coverage
+.PHONY: help dev-up dev-down dev-logs dev-shell dev-migrate dev-makemigrations \
+        standalone-up standalone-down standalone-logs \
+        prod-up prod-down prod-logs prod-migrate build clean coverage
 
 help:
 	@echo "Available commands:"
-	@echo "  make dev-up       - Start development environment"
-	@echo "  make dev-down     - Stop development environment"
-	@echo "  make dev-logs     - View development logs"
-	@echo "  make dev-shell    - Access Django shell in dev container"
-	@echo "  make prod-up      - Start production environment"
-	@echo "  make prod-down    - Stop production environment"
-	@echo "  make prod-logs    - View production logs"
-	@echo "  make build        - Build Docker images"
-	@echo "  make clean        - Remove all containers, volumes, and images"
-	@echo "  make coverage     - Run test suite under coverage and print report"
+	@echo "  make dev-up           - Start dev (runserver + бундлед Postgres)"
+	@echo "  make dev-down         - Stop dev"
+	@echo "  make dev-logs         - Tail dev logs"
+	@echo "  make dev-shell        - Django shell у dev контејнеру"
+	@echo "  make standalone-up    - Start standalone (gunicorn + бундлед Postgres)"
+	@echo "  make standalone-down  - Stop standalone"
+	@echo "  make prod-up          - Start prod (gunicorn, спољашња база)"
+	@echo "  make prod-down        - Stop prod"
+	@echo "  make build            - Build app image"
+	@echo "  make clean            - Remove containers, volumes, images"
+	@echo "  make coverage         - Run tests under coverage (bare-metal venv)"
 
-# Development commands
+# Development (профил dev → сервис app-dev)
 dev-up:
-	docker-compose up -d
-
+	docker compose --profile dev up -d
 dev-down:
-	docker-compose down
-
+	docker compose --profile dev down
 dev-logs:
-	docker-compose logs -f
-
+	docker compose --profile dev logs -f
 dev-shell:
-	docker-compose exec app python manage.py shell
-
+	docker compose --profile dev exec app-dev python manage.py shell
 dev-migrate:
-	docker-compose exec app python manage.py migrate_schemas --noinput
-
+	docker compose --profile dev exec app-dev python manage.py migrate_schemas --noinput
 dev-makemigrations:
-	docker-compose exec app python manage.py makemigrations
+	docker compose --profile dev exec app-dev python manage.py makemigrations
 
-# Production commands
+# Standalone (профил standalone → сервис app, све-у-једном)
+standalone-up:
+	docker compose --profile standalone up -d --build
+standalone-down:
+	docker compose --profile standalone down
+standalone-logs:
+	docker compose --profile standalone logs -f
+
+# Production (профил prod → сервис app-prod, спољашња база)
 prod-up:
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-
+	docker compose --profile prod up -d
 prod-down:
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
-
+	docker compose --profile prod down
 prod-logs:
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml logs -f
-
+	docker compose --profile prod logs -f
 prod-migrate:
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml exec app python manage.py migrate_schemas --noinput
+	docker compose --profile prod exec app-prod python manage.py migrate_schemas --noinput
 
-# Common commands
+# Common
 build:
-	docker-compose build
-
+	docker compose --profile standalone build
 clean:
-	docker-compose down -v --rmi all
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml down -v --rmi all
+	docker compose --profile dev --profile standalone --profile prod down -v --rmi all
 
 # Test coverage (bare-metal venv). Set SECRET_KEY + DB_* env vars first.
-# Runs from crkva/ so manage.py test discovers the app test packages.
 coverage:
 	cd crkva && coverage run --rcfile=../.coveragerc manage.py test --keepdb --parallel 1
 	cd crkva && coverage report --rcfile=../.coveragerc

@@ -23,7 +23,7 @@ Run **`start.bat`** (double-click or from a terminal). It brings the stack up an
 
 ### Linux / mac
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d --build
+docker compose --profile standalone up -d --build
 ```
 
 App: **http://localhost:8000** · first sign-in **admin / admin**.
@@ -32,24 +32,24 @@ App: **http://localhost:8000** · first sign-in **admin / admin**.
 The default parish is created automatically. Reference tables (ethnicities,
 confessions, occupations, eparchies) and the slava calendar are seeded once:
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml \
+docker compose --profile standalone \
   run --rm app python manage.py seed_lookups --tenant crkva_sv_petke_cukarica
 ```
 
 ### Management
 ```bash
 # stop
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml down
+docker compose --profile standalone down
 # logs
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml logs -f app
+docker compose --profile standalone logs -f app
 # update (after git pull)
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d --build
+docker compose --profile standalone up -d --build
 ```
 
 ### Data and backup
 The database lives in the `postgres_data` volume, static files in `static_data`. Database backup:
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml \
+docker compose --profile standalone \
   exec db pg_dump -U crkva crkva > backup.sql
 ```
 
@@ -58,9 +58,9 @@ docker compose -f docker-compose.yml -f docker-compose.standalone.yml \
 For a server with an existing/managed Postgres.
 ```bash
 cp .env.prod.example .env   # set SECRET_KEY, DB_*, ALLOWED_HOSTS
-docker compose up -d --build
+docker compose --profile prod up -d --build
 ```
-The base `docker-compose.yml` ships no database; connect to an external one via `.env`.
+The `prod` profile starts no database; connect to an external Postgres via `.env`.
 Behind a reverse proxy (e.g. Caddy) keep `SECURE_SSL=1` (the default outside DEBUG) and
 forward `X-Forwarded-Proto`.
 
