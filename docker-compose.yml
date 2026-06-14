@@ -82,10 +82,11 @@ services:
     <<: *app
     profiles: ["prod"]
     restart: always
-    ports:
-      - "8000:8000"
+    expose:
+      - "8000"
     environment:
       - DEBUG=0
+      - SECURE_SSL=${SECURE_SSL:-1}
       - SECRET_KEY=${SECRET_KEY}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT:-5432}
@@ -95,5 +96,24 @@ services:
       - DB_PASS=${DB_PASS}
       - ALLOWED_HOSTS=${ALLOWED_HOSTS}
 
+  # Caddy реверсни прокси за prod: TLS терминација + reverse_proxy ка app-prod.
+  caddy:
+    image: caddy:2-alpine
+    profiles: ["prod"]
+    restart: always
+    depends_on:
+      - app-prod
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - SITE_ADDRESS=${SITE_ADDRESS:-:80}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
 volumes:
   postgres_data:
+  caddy_data:
+  caddy_config:
