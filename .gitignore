@@ -135,3 +135,6 @@ node_modules/
 # env backups (никад у git — садрже DB_PASS/SECRET_KEY)
 .env.*
 site/
+
+# file-based cache (DJANGO_CACHE_DIR)
+.django_cache/

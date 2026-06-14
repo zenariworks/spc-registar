@@ -25,7 +25,7 @@ class Command(MigrationCommand):
         parsed_data = self._parse_data()
         created_count = 0
 
-        print(f"Number of parsed_data: {len(parsed_data)}")
+        self.stdout.write(f"Number of parsed_data: {len(parsed_data)}")
         for svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja in parsed_data:
             # Skip blank priests (uid=0 or empty name)
             if svestenik_id == 0 or not ime_prezime.strip():

@@ -12,9 +12,11 @@ class Zanimanje(models.Model):
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
-    sifra = models.CharField(verbose_name="шифра")
+    sifra = models.CharField(verbose_name="шифра", max_length=50)
     naziv = models.CharField(verbose_name="назив", max_length=255)
-    zenski_naziv = models.CharField(verbose_name="женски назив", null=True)
+    zenski_naziv = models.CharField(
+        verbose_name="женски назив", max_length=255, null=True
+    )
 
     def __str__(self):
         return f"{self.naziv}"

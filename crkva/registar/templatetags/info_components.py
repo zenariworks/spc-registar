@@ -29,6 +29,7 @@ composed text) stay as raw HTML — converting them does not pay for itself.
 """
 
 from django import template
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
 register = template.Library()
@@ -150,11 +151,16 @@ def info_section(content, title, icon=None, inline=False, show_mode=None):
         view-only / edit-only sections.
     """
     ul_cls = "info-rows info-rows--inline" if inline else "info-rows"
-    section_attrs = f' data-show-mode="{show_mode}"' if show_mode else ""
-    icon_html = f'<i class="fa-solid {icon}"></i> ' if icon else ""
-    return mark_safe(
-        f'<div class="info-section"{section_attrs}>'
-        f'<h2 class="info-section__title">{icon_html}{title}</h2>'
-        f'<ul class="{ul_cls}">{content}</ul>'
-        f"</div>"
+    section_attrs = format_html(' data-show-mode="{}"', show_mode) if show_mode else ""
+    icon_html = format_html('<i class="fa-solid {}"></i> ', icon) if icon else ""
+    return format_html(
+        '<div class="info-section"{}>'
+        '<h2 class="info-section__title">{}{}</h2>'
+        '<ul class="{}">{}</ul>'
+        "</div>",
+        section_attrs,
+        icon_html,
+        title,
+        ul_cls,
+        mark_safe(content),
     )

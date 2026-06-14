@@ -307,7 +307,7 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
         "LOCATION": os.environ.get(
-            "DJANGO_CACHE_DIR", "/tmp/django_cache_spc_registar"
+            "DJANGO_CACHE_DIR", str(BASE_DIR.parent / ".django_cache")
         ),
         "TIMEOUT": 60 * 60 * 8,  # 8h — matches a typical workday session
         "OPTIONS": {"MAX_ENTRIES": 5000},
