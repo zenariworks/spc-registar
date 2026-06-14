@@ -22,8 +22,9 @@
 Покрените **`start.bat`** (двоклик или из терминала). Подиже стек и исписује адресу.
 
 ### Linux / mac
+Покрените **`./start.sh`** (или директно команду):
 ```bash
-docker compose --profile standalone up -d --build
+./start.sh        # = docker compose --profile standalone up -d --build
 ```
 
 Апликација: **http://localhost:8000** · прва пријава **admin / admin**.

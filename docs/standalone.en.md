@@ -22,8 +22,9 @@ Ships Postgres too; stores data in named volumes.
 Run **`start.bat`** (double-click or from a terminal). It brings the stack up and prints the address.
 
 ### Linux / mac
+Run **`./start.sh`** (or the command directly):
 ```bash
-docker compose --profile standalone up -d --build
+./start.sh        # = docker compose --profile standalone up -d --build
 ```
 
 App: **http://localhost:8000** · first sign-in **admin / admin**.
