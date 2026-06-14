@@ -103,7 +103,7 @@ cp .env.dev.example .env
 ### 3. Build
 
 ```bash
-docker compose build
+docker compose --profile dev build
 # or
 make build
 ```
@@ -111,7 +111,7 @@ make build
 ### 4. Run
 
 ```bash
-docker compose up -d            # dev environment (with live reload)
+docker compose --profile dev up -d   # dev environment (with live reload)
 # or
 make dev-up
 ```
@@ -121,8 +121,8 @@ The server listens on [http://localhost:8000/](http://localhost:8000/). Postgres
 ### 5. Migrations + superuser
 
 ```bash
-docker compose run --rm app python manage.py migrate_schemas
-docker compose run --rm app python manage.py createsuperuser
+docker compose --profile dev run --rm app-dev python manage.py migrate_schemas
+docker compose --profile dev run --rm app-dev python manage.py createsuperuser
 ```
 
 ### 6. Everyday commands
@@ -150,8 +150,8 @@ python manage.py unos_krstenja
 python manage.py unos_vencanja
 
 # Docker:
-docker compose run --rm app python manage.py unos_krstenja
-docker compose run --rm app python manage.py unos_vencanja
+docker compose --profile dev run --rm app-dev python manage.py unos_krstenja
+docker compose --profile dev run --rm app-dev python manage.py unos_vencanja
 ```
 
 ### Load real data from HramSP

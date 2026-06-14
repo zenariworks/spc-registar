@@ -10,7 +10,7 @@ cd crkva
 python manage.py test registar tenants --keepdb --parallel auto
 
 # Docker:
-docker compose run --rm app python manage.py test registar tenants --keepdb
+docker compose --profile dev run --rm app-dev python manage.py test registar tenants --keepdb
 ```
 
 Заставице:

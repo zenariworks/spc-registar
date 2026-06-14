@@ -137,7 +137,7 @@ curl -I http://localhost:9000/healthz   # должно бити 200
 
 ## Docker
 
-Алтернативни пут — продукција у Docker контејнерима преко `docker-compose.yml + docker-compose.prod.yml`.
+Алтернативни пут — продукција у Docker контејнерима преко профила `prod` у `docker-compose.yml`.
 
 ### 1. Подесите `.env.prod`
 
@@ -149,8 +149,8 @@ cp .env.prod.example .env.prod
 ### 2. Изградња + покретање
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml build
-docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+docker compose --profile prod build
+docker compose --profile prod up -d
 # или
 make prod-up
 ```
@@ -160,7 +160,7 @@ make prod-up
 ### 3. Иницијалне команде
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.prod.yml run --rm app \
+docker compose --profile prod run --rm app-prod \
     python manage.py createsuperuser
 ```
 

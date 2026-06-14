@@ -1,20 +1,99 @@
+# Јединствени Docker стек са профилима (#314, фаза 2).
+#
+# Профили:
+#   dev        — runserver + live-reload, уграђени Postgres   (сервис app-dev)
+#   standalone — gunicorn + уграђени Postgres, plain HTTP      (сервис app)
+#   prod       — gunicorn, спољашња база; Caddy испред за TLS  (сервис app-prod)
+#
+# Покретање:
+#   docker compose --profile dev up
+#   docker compose --profile standalone up -d --build      # или: start.bat / start.sh
+#   docker compose --profile prod up -d                    # учитава .env
+#
+# Статику служи whitenoise из апликације — нема reverse-proxy сервиса овде;
+# за prod стави Caddy испред (види docs/deployment.md).
+
+x-app: &app
+  build: .
+  image: zenfiric/app:latest
+
 services:
-  app:
-    build: .
-    image: zenfiric/app:latest
-    volumes:
-      - static_data:/vol/web
+  db:
+    image: postgres:16-alpine
+    profiles: ["dev", "standalone"]
+    restart: unless-stopped
     environment:
+      - POSTGRES_DB=${DB_NAME:-crkva}
+      - POSTGRES_USER=${DB_USER:-crkva}
+      - POSTGRES_PASSWORD=${DB_PASS:-crkva}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app-dev:
+    <<: *app
+    profiles: ["dev"]
+    command: >
+      sh -c "python manage.py wait_for_db &&
+             python manage.py migrate_schemas --noinput &&
+             python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./crkva:/app
+    environment:
+      - DEBUG=1
+      - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-me}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-crkva}
+      - DB_SCHEMA=public
+      - DB_USER=${DB_USER:-crkva}
+      - DB_PASS=${DB_PASS:-crkva}
+      - ALLOWED_HOSTS=*
+    depends_on:
+      - db
+
+  app:
+    <<: *app
+    profiles: ["standalone"]
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=0
+      - SECURE_SSL=0
+      - SECRET_KEY=${SECRET_KEY:-insecure-standalone-key-change-me}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=${DB_NAME:-crkva}
+      - DB_SCHEMA=public
+      - DB_USER=${DB_USER:-crkva}
+      - DB_PASS=${DB_PASS:-crkva}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS:-http://localhost:8000,http://127.0.0.1:8000}
+      - GUNICORN_PORT=8000
+      - DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME:-admin}
+      - DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD:-admin}
+      - DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL:-admin@example.com}
+    depends_on:
+      - db
+
+  app-prod:
+    <<: *app
+    profiles: ["prod"]
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=0
       - SECRET_KEY=${SECRET_KEY}
-      - DEBUG=${DEBUG:-0}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT:-5432}
       - DB_NAME=${DB_NAME}
       - DB_SCHEMA=${DB_SCHEMA:-public}
       - DB_USER=${DB_USER}
       - DB_PASS=${DB_PASS}
-      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
 
 volumes:
-  static_data:
   postgres_data:

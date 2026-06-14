@@ -23,7 +23,7 @@
 
 ### Linux / mac
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d --build
+docker compose --profile standalone up -d --build
 ```
 
 Апликација: **http://localhost:8000** · прва пријава **admin / admin**.
@@ -32,24 +32,24 @@ docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d --bu
 Подразумевана парохија се креира аутоматски. Референтне табеле (народности,
 вероисповести, занимања, епархије) и календар слава пуне се једном:
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml \
+docker compose --profile standalone \
   run --rm app python manage.py seed_lookups --tenant crkva_sv_petke_cukarica
 ```
 
 ### Управљање
 ```bash
 # заустави
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml down
+docker compose --profile standalone down
 # логови
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml logs -f app
+docker compose --profile standalone logs -f app
 # ажурирање (после git pull)
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml up -d --build
+docker compose --profile standalone up -d --build
 ```
 
 ### Подаци и бекап
 База је у волумену `postgres_data`, статика у `static_data`. Бекап базе:
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.standalone.yml \
+docker compose --profile standalone \
   exec db pg_dump -U crkva crkva > backup.sql
 ```
 
@@ -58,9 +58,9 @@ docker compose -f docker-compose.yml -f docker-compose.standalone.yml \
 За сервер са постојећим/управљаним Postgres-ом.
 ```bash
 cp .env.prod.example .env   # подесите SECRET_KEY, DB_*, ALLOWED_HOSTS
-docker compose up -d --build
+docker compose --profile prod up -d --build
 ```
-Базни `docker-compose.yml` не доноси базу; повезујете се на спољну преко `.env`.
+Профил `prod` не покреће базу; повезујете се на спољну Postgres преко `.env`.
 Иза реверсног проксија (нпр. Caddy) оставите `SECURE_SSL=1` (подразумевано ван
 DEBUG-а) и проследите `X-Forwarded-Proto`.
 

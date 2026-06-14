@@ -103,7 +103,7 @@ cp .env.dev.example .env
 ### 3. Изградња
 
 ```bash
-docker compose build
+docker compose --profile dev build
 # или
 make build
 ```
@@ -111,7 +111,7 @@ make build
 ### 4. Покретање
 
 ```bash
-docker compose up -d            # развојно окружење (са live reload-ом)
+docker compose --profile dev up -d   # развојно окружење (са live reload-ом)
 # или
 make dev-up
 ```
@@ -121,8 +121,8 @@ make dev-up
 ### 5. Миграције + суперкорисник
 
 ```bash
-docker compose run --rm app python manage.py migrate_schemas
-docker compose run --rm app python manage.py createsuperuser
+docker compose --profile dev run --rm app-dev python manage.py migrate_schemas
+docker compose --profile dev run --rm app-dev python manage.py createsuperuser
 ```
 
 ### 6. Дневне команде
@@ -150,8 +150,8 @@ python manage.py unos_krstenja
 python manage.py unos_vencanja
 
 # Docker:
-docker compose run --rm app python manage.py unos_krstenja
-docker compose run --rm app python manage.py unos_vencanja
+docker compose --profile dev run --rm app-dev python manage.py unos_krstenja
+docker compose --profile dev run --rm app-dev python manage.py unos_vencanja
 ```
 
 ### Учитавање стварних података из HramSP-а

@@ -47,7 +47,7 @@ spc-registar/
 ├── biome.json                  # CSS/JS линт правила
 ├── .pre-commit-config.yaml     # ruff, ruff-format, isort, autoflake, pylint, biome, djlint
 ├── pyproject.toml
-└── docker-compose*.yml         # 3 фајла: base + override (dev) + prod
+└── docker-compose.yml          # јединствени стек (профили: dev/standalone/prod)
 ```
 
 ## Django-tenants: изолација по парохији
