@@ -1,0 +1,8 @@
+# Caddy реверсни прокси за `prod` профил (#314, фаза 3).
+#
+# SITE_ADDRESS се поставља у .env:
+#   - домен (нпр. registar.example.com) → аутоматски HTTPS (Let's Encrypt)
+#   - :80                               → plain HTTP (тада и SECURE_SSL=0)
+{$SITE_ADDRESS} {
+	reverse_proxy app-prod:8000
+}

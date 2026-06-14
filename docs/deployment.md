@@ -155,7 +155,7 @@ docker compose --profile prod up -d
 make prod-up
 ```
 
-Апликација излаже gunicorn на порту 8000 (статику служи whitenoise). За HTTPS стави Caddy испред (исти образац као bare-metal, види горе).
+Профил `prod` подиже и **Caddy** сервис (портови 80/443) који реверсно проксира ка gunicorn-у (`app-prod:8000`); статику служи whitenoise. Постави `SITE_ADDRESS` у `.env` на домен (аутоматски HTTPS преко Let's Encrypt) или на `:80` за plain HTTP (тада и `SECURE_SSL=0`).
 
 ### 3. Иницијалне команде
 
