@@ -123,6 +123,8 @@ t.save()  # auto_create_schema=True → шема се креира и мигра
 
 Кључни модели (`Krstenje`, `Vencanje`, `Osoba`, `Svestenik`, `Domacinstvo`, `Adresa`, `Ukucanin`) користе [`simple_history`](https://django-simple-history.readthedocs.io/) за audit лог промена.
 
+> За детаљан ER приказ шеме (нпр. увоз у [dbdiagram.io](https://dbdiagram.io/)) покрени `./scripts/schema_dump.sh` — генерише `schema.sql` за изабрану тенант шему (подразумевано `crkva_sv_petke_cukarica`; промени преко `TENANT_SCHEMA=…`).
+
 ### Forms
 
 - **`TenantPhoneField`** (`registar/forms/phone.py`) — телефонско поље које регион чита из `connection.tenant.default_phone_region` (RS, NL, DE, ...) тако да парохија ван Србије може да користи свој позивни број.
