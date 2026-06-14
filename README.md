@@ -49,7 +49,16 @@
 
 ## Структура пројекта
 
-![Структура пројекта](docs/structure.png)
+```mermaid
+flowchart TD
+    user(["Корисник"]) -->|HTTPS| caddy["Caddy — TLS терминација"]
+    caddy -->|"HTTP :9000"| gunicorn["gunicorn — Django апликација (crkva)"]
+    gunicorn --> mw["SessionTenantMiddleware<br/>бира парохију из сесије / чланства / подразумеване"]
+    mw --> db[("PostgreSQL — crkva_db")]
+    db --- public[("public шема<br/>auth_user, tenants_*")]
+    db --- cukarica[("crkva_sv_petke_cukarica<br/>osobe, krstenja, vencanja, …")]
+    db --- amsterdam[("crkva_sv_nikole_zaandam<br/>osobe, krstenja, vencanja, …")]
+```
 
 Детаљна архитектура и објашњење компоненти: [docs/architecture.md](docs/architecture.md).
 

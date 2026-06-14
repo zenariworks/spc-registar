@@ -2,9 +2,18 @@
 
 ## Кратак преглед
 
-Django 6.0 апликација иза gunicorn-а и nginx-а, PostgreSQL као једина база, [django-tenants](https://django-tenants.readthedocs.io/) за изолацију података по парохији. Frontend је server-rendered (Django templates + ванилла CSS/JS), без SPA framework-а. PDF сертификати се генеришу WeasyPrint-ом.
+Django 6.0 апликација иза gunicorn-а и Caddy-ја, PostgreSQL као једина база, [django-tenants](https://django-tenants.readthedocs.io/) за изолацију података по парохији. Frontend је server-rendered (Django templates + ванилла CSS/JS), без SPA framework-а. PDF сертификати се генеришу WeasyPrint-ом.
 
-![Структура пројекта](structure.png)
+```mermaid
+flowchart TD
+    user(["Корисник"]) -->|HTTPS| caddy["Caddy — TLS терминација"]
+    caddy -->|"HTTP :9000"| gunicorn["gunicorn — Django апликација (crkva)"]
+    gunicorn --> mw["SessionTenantMiddleware<br/>бира парохију из сесије / чланства / подразумеване"]
+    mw --> db[("PostgreSQL — crkva_db")]
+    db --- public[("public шема<br/>auth_user, tenants_*")]
+    db --- cukarica[("crkva_sv_petke_cukarica<br/>osobe, krstenja, vencanja, …")]
+    db --- amsterdam[("crkva_sv_nikole_zaandam<br/>osobe, krstenja, vencanja, …")]
+```
 
 ## Структура репозиторијума
 
@@ -55,27 +64,30 @@ postgres-db: crkva
 └── test_tenant                     ← коришћен за тестове
 ```
 
-- **Дељене (SHARED_APPS)** — `django.contrib.*`, `tenants`, `django_select2` → у public шеми
-- **Тенант-специфичне (TENANT_APPS)** — `registar`, `kalendar`, `simple_history` → копија у свакој шеми
+- **Дељене (SHARED_APPS)** — `django.contrib.*`, `tenants`, `kalendar`, `django_select2`, `simple_history` → у public шеми
+- **Тенант-специфичне (TENANT_APPS)** — само `registar` → копија у свакој шеми (укључујући `registar_historical*` ревизионе табеле)
 
 ### Како се рутира тенант
 
-Захтев долази на хост типа `cukarica.localhost` или `registar.parohija.example`. `django-tenants` middleware проверава Domain табелу у public шеми, налази тенанта, и постави `connection.tenant` + `connection.schema_name`. Сви upit-и у том request-у иду само у ту шему.
+`tenants.middleware.SessionTenantMiddleware` за сваки захтев резолвира тренутног тенанта (из сесије, па чланства корисника, па подразумеване парохије), поставља `connection.schema_name` на `tenant_schema, public`, и враћа на `public` по завршетку захтева. Сви upit-и у том request-у иду у изабрану шему. Рутирање **није** по домену/субдомену.
 
 ### Креирање нове парохије
 
 ```bash
-python manage.py shell
->>> from tenants.models import Tenant, Domain
->>> t = Tenant.objects.create(
-...     schema_name="crkva_sv_jovana_nis",
-...     name="Свети Јован Богослов, Ниш",
-...     default_phone_region="RS",
-... )
->>> Domain.objects.create(domain="nis.parohija.example", tenant=t, is_primary=True)
+python manage.py shell -c "
+from tenants.models import Tenant
+t = Tenant(
+    schema_name='crkva_sv_jovana_nis',   # само ASCII слова, цифре, доње црте
+    naziv='Парохија Ниш',
+    parohija_naziv='Парохија Ниш',
+    default_phone_region='RS',
+    is_active=True,
+)
+t.save()  # auto_create_schema=True → шема се креира и миграције се покрећу одмах
+"
 ```
 
-`migrate_schemas` ће следећи пут аутоматски креирати све табеле у новој шеми.
+Затим напуните податке истим током као у [`MIGRACIJA.md`](MIGRACIJA.md) (`tenant_command ... --schema=crkva_sv_jovana_nis`).
 
 ## Ауторизација
 
@@ -109,7 +121,7 @@ python manage.py shell
 - **`Svestenik`** — свештеници, посебан скуп људи (не унакрсно са Osoba).
 - **`Slava`** (`kalendar.models`) — фиксне и покретне славе; помоћи метод `get_datum(year)` за покретне.
 
-Сви модели користе [`simple_history`](https://django-simple-history.readthedocs.io/) за audit лог промена.
+Кључни модели (`Krstenje`, `Vencanje`, `Osoba`, `Svestenik`, `Domacinstvo`, `Adresa`, `Ukucanin`) користе [`simple_history`](https://django-simple-history.readthedocs.io/) за audit лог промена.
 
 ### Forms
 

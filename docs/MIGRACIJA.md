@@ -54,11 +54,11 @@ print('svestenici  ', Svestenik.objects.count())
 
 | Табела      | Бројeво |
 | ---         | --- |
-| osobe       | ~19,000 |
-| parohijani  | ~1,885 |
-| krstenja    | ~3,550 |
-| vencanja    | ~233 |
-| domacinstva | ~1,884 |
+| osobe       | 18.787 |
+| parohijani  | 1.850 |
+| krstenja    | 3.536 |
+| vencanja    | 233 |
+| domacinstva | 1.849 |
 | svestenici  | 21 |
 
 ## Тенант архитектура
