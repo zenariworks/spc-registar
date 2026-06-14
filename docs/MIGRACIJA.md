@@ -61,6 +61,27 @@ print('svestenici  ', Svestenik.objects.count())
 | domacinstva | 1.849 |
 | svestenici  | 21 |
 
+## Увоз у Docker (стандалон) окружењу
+
+Исти ток као горе, али команде иду кроз контејнер, а `crkva.zip` се прво копира
+унутра (контејнер не види фајлове са хоста):
+
+```bash
+# 1) копирај архиву у контејнер апликације
+docker compose --profile standalone cp crkva.zip app:/tmp/crkva.zip
+
+# 2) staging + lookup табеле + миграција (подразумевана шема)
+S=crkva_sv_petke_cukarica
+docker compose --profile standalone exec app \
+  python manage.py tenant_command load_dbf --schema=$S --src_zip /tmp/crkva.zip
+for c in unos_narodnosti unos_veroispovesti unos_zanimanja unos_eparhija; do
+  docker compose --profile standalone exec app \
+    python manage.py tenant_command $c --schema=$S
+done
+docker compose --profile standalone exec app \
+  python manage.py tenant_command importuj_dbf --schema=$S
+```
+
 ## Тенант архитектура
 
 **SHARED** шема (`public`) садржи:

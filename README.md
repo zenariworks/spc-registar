@@ -29,10 +29,10 @@
 | Пут | За кога | Документ |
 |---|---|---|
 | **Локални развој (bare-metal, pyenv + Postgres)** | Програмери који желе нативни Python тoolchain | [docs/setup.md](docs/setup.md) |
-| **Локални развој (Docker Compose)** | Програмери који желе изоловано окружење | [docs/setup.md#docker](docs/setup.md#docker) |
+| **Локални развој (Docker Compose)** | Програмери који желе изоловано окружење | [docs/setup.md](docs/setup.md) |
 | **Производња на серверу (gunicorn + systemd + Caddy)** | Тренутна продукциона поставка | [docs/deployment.md#bare-metal](docs/deployment.md#bare-metal) |
 | **Производња у Docker-у** | Алтернативна продукциона поставка | [docs/deployment.md#docker](docs/deployment.md#docker) |
-| **Самостални (standalone) Docker** | Локални PC / Windows / један сервер — све у једном | [docs/standalone.md](docs/standalone.md) |
+| **Самостални (standalone) Docker** | Локални PC / Windows / један сервер — све у једном | [docs/setup.md](docs/setup.md) |
 
 После постављања, апликација слуша на [http://localhost:8000/](http://localhost:8000/) (или порту 9000 на серверу), а пријава је на `/prijava/`.
 
@@ -40,9 +40,8 @@
 
 | Документ | О чему |
 |---|---|
-| [docs/setup.md](docs/setup.md) | Подешавање развојног окружења (bare-metal и Docker) |
+| [docs/setup.md](docs/setup.md) | Постављање и покретање (стандалон, развој, преглед производње) |
 | [docs/deployment.md](docs/deployment.md) | Производна поставка (gunicorn+systemd и Docker) |
-| [docs/standalone.md](docs/standalone.md) | Самостални Docker (bundled све-у-једном + слика са спољном базом) |
 | [docs/architecture.md](docs/architecture.md) | Архитектура: django-tenants, ауторизација, кључне компоненте |
 | [docs/testing.md](docs/testing.md) | Тестови, pre-commit (ruff + biome + pylint + djlint) |
 | [docs/MIGRACIJA.md](docs/MIGRACIJA.md) | Миграција података из старе HramSP апликације (DBF → Postgres) |

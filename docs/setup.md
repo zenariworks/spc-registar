@@ -1,166 +1,127 @@
-# Подешавање развојног окружења
+# Постављање и покретање
 
-Имате два начина да покренете апликацију локално. Изаберите онај који вам одговара.
+Изаберите пут према томе шта вам треба. Сви Docker путеви користе један
+`docker-compose.yml` са профилима (`dev` / `standalone` / `prod`).
 
-- [Bare-metal (pyenv + локални Postgres)](#bare-metal)
-- [Docker Compose](#docker)
-- [Шта да радите после](#први-кораци-после-инсталације)
+| Пут | За кога | Команда |
+|---|---|---|
+| **Стандалон (Docker)** | локални PC, Windows лаптоп, један сервер | `start.bat` / `./start.sh` → _ниже_ |
+| **Развојно окружење** | допринос коду | `make dev-up` или pyenv venv → _ниже_ |
+| **Производња** | сервер са доменом/HTTPS | [Производња](deployment.md) |
+
+> django-tenants (вишекорисничко) и WeasyPrint (PDF) траже Linux + Postgres —
+> зато се испоручује Linux контејнер (исти на Windows/macOS/Linux); SQLite није
+> подржан.
 
 ---
 
-## Bare-metal
+## Стандалон (Docker, све-у-једном)
 
-За локални развој на Linux/macOS-у директно са pyenv-ом и локалним Postgres-ом.
+Апликација + сопствени Postgres у контејнерима — најлакши пут за локални рачунар
+или један сервер. Подаци се чувају у именованом волумену `postgres_data`.
 
-### 1. Захтеви
+### Услови
+- **Docker Desktop** (Windows/macOS, са WSL2) или **Docker Engine + Compose v2** (Linux).
 
-| Алат | Верзија |
-|---|---|
-| Python | 3.13.x |
-| PostgreSQL | 16.x |
-| Node.js | 20.x+ (за biome линтер) |
-| pyenv | најновија (опционо али препоручено) |
+### Покретање
+- **Windows:** покрените **`start.bat`** (двоклик или из терминала).
+- **Linux / macOS:** покрените **`./start.sh`**.
+- Или директно:
+  ```bash
+  docker compose --profile standalone up -d --build
+  ```
 
-### 2. Клонирајте репозиторијум
+Апликација: **http://localhost:8000** · прва пријава **admin / admin**.
+
+### Управљање
+```bash
+docker compose --profile standalone down          # заустави
+docker compose --profile standalone logs -f app   # логови
+docker compose --profile standalone up -d --build # ажурирање (после git pull)
+```
+
+### Иницијално пуњење
+Подразумевана парохија (`crkva_sv_petke_cukarica`) се креира аутоматски.
+Референтне табеле и календар слава пуне се једном:
+```bash
+docker compose --profile standalone \
+  run --rm app python manage.py seed_lookups --tenant crkva_sv_petke_cukarica
+```
+За увоз стварних података из старе HramSP апликације (`crkva.zip`) види
+[Миграцију података](MIGRACIJA.md).
+
+### Подаци и бекап
+```bash
+docker compose --profile standalone exec db pg_dump -U crkva crkva > backup.sql
+```
+
+### Напомене
+- **Plain HTTP / localhost** (`SECURE_SSL=0`) — за локалну/LAN употребу, без сертификата.
+- **Промените лозинку и кључ** за било шта изложено: `DJANGO_SUPERUSER_PASSWORD` и `SECRET_KEY`.
+- **LAN приступ:** додајте IP/име хоста у `ALLOWED_HOSTS` (нпр. `localhost,192.168.1.50`).
+
+---
+
+## Развојно окружење
+
+За рад на самом коду — две опције: bare-metal (pyenv) или Docker `dev` профил.
+
+### Опција А — bare-metal (pyenv + локални Postgres)
+
+Захтеви: Python 3.13.x, PostgreSQL 16.x, Node.js 20.x+ (biome линтер), pyenv (препоручено).
 
 ```bash
 git clone git@github.com:zenariworks/spc-registar.git
 cd spc-registar
-```
 
-### 3. Креирајте Python окружење
-
-```bash
-pyenv install 3.13.8         # ако није већ инсталиран
+pyenv install 3.13.8            # ако није већ инсталиран
 pyenv virtualenv 3.13.8 crkva
-pyenv local crkva            # везује директоријум за окружење
+pyenv local crkva
 pip install --upgrade pip
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
-```
+pip install -r requirements.txt -r requirements-dev.txt
 
-### 4. Инсталирајте Node алате (biome линтер)
+npm install                    # biome линтер у node_modules/
+cp .env.dev.example .env       # уредите по потреби (види architecture.md)
 
-```bash
-npm install     # инсталира @biomejs/biome у node_modules/
-```
-
-### 5. Подесите окружење
-
-```bash
-cp .env.dev.example .env
-# Уредите .env ако треба (DEBUG, ALLOWED_HOSTS, итд.) — детаље види [docs/architecture.md](architecture.md)
-```
-
-### 6. Покрените Postgres и креирајте базу
-
-```bash
+# Postgres + база
 sudo systemctl start postgresql
-sudo -u postgres createuser devuser --pwprompt          # лозинку упишите у .env
+sudo -u postgres createuser devuser --pwprompt   # лозинку упишите у .env
 sudo -u postgres createdb devdb -O devuser
-```
 
-### 7. Миграције + тенант
-
-```bash
 cd crkva
-python manage.py migrate_schemas       # креира public шему + тенантe
+python manage.py migrate_schemas               # public шема + тенанти
 python manage.py createsuperuser
+cd .. && pre-commit install
+cd crkva && python manage.py runserver         # http://localhost:8000/
 ```
 
-### 8. Pre-commit куке
+### Опција Б — Docker (`dev` профил)
 
 ```bash
-pre-commit install
-```
-
-### 9. Покрените сервер
-
-```bash
-python manage.py runserver
-# Отворите http://localhost:8000/, пријавите се на /prijava/
-```
-
----
-
-## Docker
-
-За изоловано развојно окружење преко Docker Compose-а.
-
-### 1. Захтеви
-
-- [Docker](https://www.docker.com/products/docker-desktop) 24+
-- [Docker Compose](https://docs.docker.com/compose/) v2
-
-### 2. Клонирајте и подесите
-
-```bash
-git clone git@github.com:zenariworks/spc-registar.git
-cd spc-registar
 cp .env.dev.example .env
-```
-
-### 3. Изградња
-
-```bash
-docker compose --profile dev build
-# или
-make build
-```
-
-### 4. Покретање
-
-```bash
-docker compose --profile dev up -d   # развојно окружење (са live reload-ом)
-# или
-make dev-up
-```
-
-Сервер слуша на [http://localhost:8000/](http://localhost:8000/). Постгрес је изложен на порту 8001 (мапа из контејнера 5432).
-
-### 5. Миграције + суперкорисник
-
-```bash
-docker compose --profile dev run --rm app-dev python manage.py migrate_schemas
+docker compose --profile dev up -d --build     # runserver + live reload, уграђени Postgres
 docker compose --profile dev run --rm app-dev python manage.py createsuperuser
 ```
 
-### 6. Дневне команде
+Дневне команде (Makefile): `make dev-up` · `make dev-down` · `make dev-logs` ·
+`make dev-shell` · `make dev-migrate` · `make dev-makemigrations`.
 
-| Команда | Шта ради |
-|---|---|
-| `make dev-up` | Покреће контејнере |
-| `make dev-down` | Зауставља контејнере |
-| `make dev-logs` | Прати логове |
-| `make dev-shell` | Django shell унутар контејнера |
-| `make dev-migrate` | Покреће миграције |
-| `make dev-makemigrations` | Креира нове миграције |
-
----
-
-## Први кораци после инсталације
-
-### Учитавање демо података (опционо)
-
-Ако желите тест парохијане/крштења/венчања пре него што започнете рад:
-
+### Демо подаци (опционо)
 ```bash
 # bare-metal:
 python manage.py unos_krstenja
 python manage.py unos_vencanja
-
 # Docker:
 docker compose --profile dev run --rm app-dev python manage.py unos_krstenja
-docker compose --profile dev run --rm app-dev python manage.py unos_vencanja
 ```
 
-### Учитавање стварних података из HramSP-а
+---
 
-Ако мигрирате из старе HramSP апликације: види [MIGRACIJA.md](MIGRACIJA.md).
+## Производња
 
-### Креирање нове парохије (тенанта)
-
-Свака парохија је засебна Postgres шема. Креирање нове иде преко Django admin-а или скрипте — детаље види [architecture.md](architecture.md).
+Продукција иде или **bare-metal** (gunicorn + systemd + Caddy — тренутна жива
+поставка) или **Docker** (`--profile prod`: gunicorn + Caddy, спољашња база). Пун
+поступак: [Производња](deployment.md).
 
 ---
 
@@ -168,8 +129,8 @@ docker compose --profile dev run --rm app-dev python manage.py unos_vencanja
 
 **`relation "..." does not exist`** — нисте покренули `migrate_schemas` за тенант. Покрените још једном.
 
-**Pre-commit куке падају на `django-tests`** — постоји познат проблем са парalel runner-ом; заобиђите са `SKIP=django-tests git commit ...` за тренутни commit.
+**Pre-commit куке падају на `django-tests`** — заобиђите за тренутни commit: `SKIP=django-tests git commit ...`.
 
 **`Permission denied` на Docker сокету** — додајте корисника у `docker` групу: `sudo usermod -aG docker $USER`, па се одјавите и пријавите.
 
-**Biome не може да се покрене** — нисте покренули `npm install`. Pre-commit куки `biome` јој је потребан.
+**Biome не може да се покрене** — нисте покренули `npm install`.

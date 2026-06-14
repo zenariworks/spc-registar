@@ -1,175 +1,136 @@
-# Development setup
+# Setup & running
 
-There are two ways to run the app locally. Pick whichever suits you.
+Pick a path based on what you need. All Docker paths use a single
+`docker-compose.yml` with profiles (`dev` / `standalone` / `prod`).
 
-- [Bare-metal (pyenv + local Postgres)](#bare-metal)
-- [Docker Compose](#docker)
-- [What to do next](#first-steps-after-install)
+| Path | For whom | Command |
+|---|---|---|
+| **Standalone (Docker)** | local PC, Windows laptop, single server | `start.bat` / `./start.sh` → _below_ |
+| **Development** | contributing to the code | `make dev-up` or a pyenv venv → _below_ |
+| **Production** | server with a domain/HTTPS | [Deployment](deployment.md) |
+
+> django-tenants (multi-tenant) and WeasyPrint (PDF) require Linux + Postgres —
+> so a Linux container is shipped (the same on Windows/macOS/Linux); SQLite is
+> not supported.
 
 ---
 
-## Bare-metal
+## Standalone (Docker, all-in-one)
 
-For local development on Linux/macOS directly with pyenv and a local Postgres.
+App + its own Postgres in containers — the easiest path for a local machine or a
+single server. Data is stored in the named volume `postgres_data`.
 
-### 1. Requirements
+### Requirements
+- **Docker Desktop** (Windows/macOS, with WSL2) or **Docker Engine + Compose v2** (Linux).
 
-| Tool | Version |
-|---|---|
-| Python | 3.13.x |
-| PostgreSQL | 16.x |
-| Node.js | 20.x+ (for the biome linter) |
-| pyenv | latest (optional but recommended) |
+### Run
+- **Windows:** run **`start.bat`** (double-click or from a terminal).
+- **Linux / macOS:** run **`./start.sh`**.
+- Or directly:
+  ```bash
+  docker compose --profile standalone up -d --build
+  ```
 
-### 2. Clone the repository
+App: **http://localhost:8000** · first sign-in **admin / admin**.
+
+### Manage
+```bash
+docker compose --profile standalone down          # stop
+docker compose --profile standalone logs -f app   # logs
+docker compose --profile standalone up -d --build # update (after git pull)
+```
+
+### Initial data
+The default parish (`crkva_sv_petke_cukarica`) is created automatically.
+Reference tables and the feast calendar are seeded once:
+```bash
+docker compose --profile standalone \
+  run --rm app python manage.py seed_lookups --tenant crkva_sv_petke_cukarica
+```
+To import real data from the legacy HramSP app (`crkva.zip`) see
+[Data migration](MIGRACIJA.md).
+
+### Data & backup
+```bash
+docker compose --profile standalone exec db pg_dump -U crkva crkva > backup.sql
+```
+
+### Notes
+- **Plain HTTP / localhost** (`SECURE_SSL=0`) — for local/LAN use, no certificates.
+- **Change the password and key** for anything exposed: `DJANGO_SUPERUSER_PASSWORD` and `SECRET_KEY`.
+- **LAN access:** add the host IP/name to `ALLOWED_HOSTS` (e.g. `localhost,192.168.1.50`).
+
+---
+
+## Development
+
+For working on the code itself — two options: bare-metal (pyenv) or the Docker `dev` profile.
+
+### Option A — bare-metal (pyenv + local Postgres)
+
+Requirements: Python 3.13.x, PostgreSQL 16.x, Node.js 20.x+ (biome linter), pyenv (recommended).
 
 ```bash
 git clone git@github.com:zenariworks/spc-registar.git
 cd spc-registar
-```
 
-### 3. Create the Python environment
-
-```bash
-pyenv install 3.13.8         # if not already installed
+pyenv install 3.13.8            # if not already installed
 pyenv virtualenv 3.13.8 crkva
-pyenv local crkva            # binds the directory to the environment
+pyenv local crkva
 pip install --upgrade pip
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
-```
+pip install -r requirements.txt -r requirements-dev.txt
 
-### 4. Install Node tooling (biome linter)
+npm install                    # biome linter into node_modules/
+cp .env.dev.example .env       # edit as needed (see architecture.md)
 
-```bash
-npm install     # installs @biomejs/biome into node_modules/
-```
-
-### 5. Configure the environment
-
-```bash
-cp .env.dev.example .env
-# Edit .env if needed (DEBUG, ALLOWED_HOSTS, ...) — see architecture.md for details
-```
-
-### 6. Start Postgres and create the database
-
-```bash
+# Postgres + database
 sudo systemctl start postgresql
-sudo -u postgres createuser devuser --pwprompt          # put the password in .env
+sudo -u postgres createuser devuser --pwprompt   # put the password in .env
 sudo -u postgres createdb devdb -O devuser
-```
 
-### 7. Migrations + tenant
-
-```bash
 cd crkva
-python manage.py migrate_schemas       # creates the public schema + tenants
+python manage.py migrate_schemas               # public schema + tenants
 python manage.py createsuperuser
+cd .. && pre-commit install
+cd crkva && python manage.py runserver         # http://localhost:8000/
 ```
 
-### 8. Pre-commit hooks
+### Option B — Docker (`dev` profile)
 
 ```bash
-pre-commit install
-```
-
-### 9. Run the server
-
-```bash
-python manage.py runserver
-# Open http://localhost:8000/ and sign in at /prijava/
-```
-
----
-
-## Docker
-
-For an isolated development environment via Docker Compose.
-
-### 1. Requirements
-
-- [Docker](https://www.docker.com/products/docker-desktop) 24+
-- [Docker Compose](https://docs.docker.com/compose/) v2
-
-### 2. Clone and configure
-
-```bash
-git clone git@github.com:zenariworks/spc-registar.git
-cd spc-registar
 cp .env.dev.example .env
-```
-
-### 3. Build
-
-```bash
-docker compose --profile dev build
-# or
-make build
-```
-
-### 4. Run
-
-```bash
-docker compose --profile dev up -d   # dev environment (with live reload)
-# or
-make dev-up
-```
-
-The server listens on [http://localhost:8000/](http://localhost:8000/). Postgres is exposed on port 8001 (mapped from 5432 in the container).
-
-### 5. Migrations + superuser
-
-```bash
-docker compose --profile dev run --rm app-dev python manage.py migrate_schemas
+docker compose --profile dev up -d --build     # runserver + live reload, bundled Postgres
 docker compose --profile dev run --rm app-dev python manage.py createsuperuser
 ```
 
-### 6. Everyday commands
+Daily commands (Makefile): `make dev-up` · `make dev-down` · `make dev-logs` ·
+`make dev-shell` · `make dev-migrate` · `make dev-makemigrations`.
 
-| Command | What it does |
-|---|---|
-| `make dev-up` | Starts the containers |
-| `make dev-down` | Stops the containers |
-| `make dev-logs` | Tails the logs |
-| `make dev-shell` | Django shell inside the container |
-| `make dev-migrate` | Runs migrations |
-| `make dev-makemigrations` | Creates new migrations |
-
----
-
-## First steps after install
-
-### Load demo data (optional)
-
-If you want test parishioners/baptisms/weddings before you start:
-
+### Demo data (optional)
 ```bash
 # bare-metal:
 python manage.py unos_krstenja
 python manage.py unos_vencanja
-
 # Docker:
 docker compose --profile dev run --rm app-dev python manage.py unos_krstenja
-docker compose --profile dev run --rm app-dev python manage.py unos_vencanja
 ```
 
-### Load real data from HramSP
+---
 
-If migrating from the legacy HramSP app: see [MIGRACIJA.md](MIGRACIJA.md).
+## Production
 
-### Create a new parish (tenant)
-
-Each parish is a separate Postgres schema. Creating one is done via the Django admin or a script — see [architecture.md](architecture.md).
+Production runs either **bare-metal** (gunicorn + systemd + Caddy — the current live
+setup) or **Docker** (`--profile prod`: gunicorn + Caddy, external database). Full
+procedure: [Deployment](deployment.md).
 
 ---
 
 ## Troubleshooting
 
-**`relation "..." does not exist`** — you didn't run `migrate_schemas` for the tenant. Run it again.
+**`relation "..." does not exist`** — you haven't run `migrate_schemas` for the tenant. Run it again.
 
-**Pre-commit hooks fail on `django-tests`** — a known issue with the parallel runner; bypass for the current commit with `SKIP=django-tests git commit ...`.
+**Pre-commit hooks fail on `django-tests`** — skip for the current commit: `SKIP=django-tests git commit ...`.
 
 **`Permission denied` on the Docker socket** — add your user to the `docker` group: `sudo usermod -aG docker $USER`, then log out and back in.
 
-**Biome won't run** — you didn't run `npm install`. The `biome` pre-commit hook needs it.
+**Biome won't start** — you haven't run `npm install`.
