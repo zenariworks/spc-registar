@@ -26,11 +26,11 @@ class Svestenik(TimeStampedModel):
         verbose_name="свестеник ид", primary_key=True, unique=True, editable=False
     )
 
-    ime = models.CharField(verbose_name="име")
-    prezime = models.CharField(verbose_name="презиме")
+    ime = models.CharField(verbose_name="име", max_length=100)
+    prezime = models.CharField(verbose_name="презиме", max_length=100)
 
     mesto_rodjenja = models.CharField(
-        verbose_name="место рођења", blank=True, null=True
+        verbose_name="место рођења", max_length=100, blank=True, null=True
     )
     datum_rodjenja = models.DateField(
         blank=True, null=True, verbose_name="датум рођења", default=None

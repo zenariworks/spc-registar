@@ -42,6 +42,7 @@ services:
       - ./crkva:/app
     environment:
       - DEBUG=1
+      - DJANGO_CACHE_DIR=/vol/web/cache
       - SECRET_KEY=${SECRET_KEY:-dev-secret-key-change-me}
       - DB_HOST=db
       - DB_PORT=5432
@@ -62,6 +63,7 @@ services:
     environment:
       - DEBUG=0
       - SECURE_SSL=0
+      - DJANGO_CACHE_DIR=/vol/web/cache
       - SECRET_KEY=${SECRET_KEY:-insecure-standalone-key-change-me}
       - DB_HOST=db
       - DB_PORT=5432
@@ -87,6 +89,7 @@ services:
     environment:
       - DEBUG=0
       - SECURE_SSL=${SECURE_SSL:-1}
+      - DJANGO_CACHE_DIR=/vol/web/cache
       - SECRET_KEY=${SECRET_KEY}
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT:-5432}

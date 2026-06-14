@@ -36,8 +36,8 @@ class Slava(TimeStampedModel):
 
     uid = models.AutoField(primary_key=True, unique=True, editable=False)
 
-    naziv = models.CharField(verbose_name="назив")
-    opsti_naziv = models.CharField(verbose_name="општи назив")
+    naziv = models.CharField(verbose_name="назив", max_length=200)
+    opsti_naziv = models.CharField(verbose_name="општи назив", max_length=200)
 
     # Фиксни датуми
     dan = models.IntegerField(
