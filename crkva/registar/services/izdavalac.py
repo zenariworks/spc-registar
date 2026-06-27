@@ -27,7 +27,7 @@ def get_izdavalac(request) -> dict[str, Any]:
         return {"potpis": svestenik, "parohija": svestenik.parohija}
 
     tenant = getattr(request, "tenant", None)
-    parohija = getattr(tenant, "parohija_naziv", "") or getattr(tenant, "naziv", "")
+    parohija = getattr(tenant, "naziv", "")
     if user is not None and getattr(user, "is_authenticated", False):
         potpis = user.get_full_name() or user.get_username()
     else:

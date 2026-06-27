@@ -21,13 +21,11 @@ class SwitchTenantViewTests(TestCase):
                 Tenant(
                     schema_name="test_tenant_b",
                     naziv="Test B",
-                    parohija_naziv="Test B",
                     is_active=True,
                 ),
                 Tenant(
                     schema_name="test_tenant_off",
                     naziv="Test Off",
-                    parohija_naziv="Test Off",
                     is_active=False,
                 ),
             ]

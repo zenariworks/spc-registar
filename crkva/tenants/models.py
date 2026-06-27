@@ -3,7 +3,8 @@
 Phase 2b: registar moves to TENANT_APPS, so its tables (including Parohija)
 live in per-tenant schemas. A FK from `public.tenants_tenant` to
 `crkva_sv_petke_cukarica.parohije` is impossible to model cleanly in Postgres,
-so `Tenant.parohija` was replaced with a plain `parohija_naziv` CharField.
+so `Tenant.parohija` was dropped; the parish name lives in `Tenant.naziv`
+and the per-schema `Parohija` rows.
 
 `auto_create_schema = True` so creating a Tenant row automatically
 creates the corresponding Postgres schema and runs TENANT_APPS migrations
@@ -33,14 +34,6 @@ class Tenant(TenantMixin):
         max_length=200,
         verbose_name="назив парохије",
         help_text="Кориснички видљив назив (нпр. „Парохија Чукарица“).",
-    )
-    parohija_naziv = models.CharField(
-        max_length=200,
-        blank=True,
-        default="",
-        verbose_name="парохија (име)",
-        help_text="Име парохије за приказ. У свакој парохијској шеми "
-        "постоји сопствена Parohija инстанца; ово је само display label.",
     )
     mesto = models.CharField(
         max_length=200,
