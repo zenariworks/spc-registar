@@ -48,7 +48,6 @@ class TenantTestRunner(DiscoverRunner):
             tenant = Tenant(
                 schema_name=cls.TEST_TENANT_SCHEMA,
                 naziv=cls.TEST_TENANT_NAZIV,
-                parohija_naziv=cls.TEST_TENANT_NAZIV,
                 is_active=True,
                 is_default=True,
             )

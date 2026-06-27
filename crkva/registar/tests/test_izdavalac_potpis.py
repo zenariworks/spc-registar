@@ -52,16 +52,11 @@ class GetIzdavalacTests(TestCase):
         self.assertEqual(str(data["potpis"]), str(self.svestenik))
         self.assertEqual(data["parohija"], self.parohija)
 
-    def test_unlinked_user_falls_back_to_tenant_and_full_name(self):
-        tenant = SimpleNamespace(parohija_naziv="Парохија Земун", naziv="Земун")
+    def test_unlinked_user_falls_back_to_tenant_naziv_and_full_name(self):
+        tenant = SimpleNamespace(naziv="Парохија Земун")
         data = get_izdavalac(self._req(self.plain_user, tenant))
         self.assertEqual(data["parohija"], "Парохија Земун")
         self.assertEqual(data["potpis"], "Лаза Лазић")
-
-    def test_unlinked_tenant_naziv_when_no_parohija_naziv(self):
-        tenant = SimpleNamespace(parohija_naziv="", naziv="Земун")
-        data = get_izdavalac(self._req(self.plain_user, tenant))
-        self.assertEqual(data["parohija"], "Земун")
 
     def test_unlinked_user_without_name_falls_back_to_username(self):
         u = User.objects.create_user(username="bezimena", password="x")

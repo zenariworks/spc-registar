@@ -22,7 +22,6 @@ class UserManagementViewTests(TestCase):
                 Tenant(
                     schema_name="test_tenant_other",
                     naziv="Other",
-                    parohija_naziv="Other",
                     is_active=True,
                 )
             ]

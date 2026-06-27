@@ -4,7 +4,7 @@
 
 {% block content %}
   {% url 'parohija:user_add' as add_user_url %}
-  {% include "registar/_page_header.html" with title="Корисници" subtitle=parohija.parohija_naziv|default:parohija.naziv count=memberships|length action_url=add_user_url action_icon="fa-solid fa-circle-plus" action_label="Додај корисника" %}
+  {% include "registar/_page_header.html" with title="Корисници" subtitle=parohija.naziv count=memberships|length action_url=add_user_url action_icon="fa-solid fa-circle-plus" action_label="Додај корисника" %}
 
   {% if messages %}
     <div class="form-messages">

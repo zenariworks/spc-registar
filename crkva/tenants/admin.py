@@ -9,7 +9,6 @@ from .models import Domain, Tenant, UserMembership
 class TenantAdmin(admin.ModelAdmin):
     list_display = (
         "naziv",
-        "parohija_naziv",
         "mesto",
         "schema_name",
         "default_phone_region",
@@ -18,7 +17,7 @@ class TenantAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("is_active", "is_default", "default_phone_region")
-    search_fields = ("naziv", "schema_name", "parohija_naziv")
+    search_fields = ("naziv", "schema_name")
     readonly_fields = ("created_at",)
 
 

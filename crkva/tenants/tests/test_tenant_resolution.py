@@ -22,7 +22,6 @@ class ResolveTenantTests(TestCase):
                 Tenant(
                     schema_name="test_tenant_res2",
                     naziv="Res2",
-                    parohija_naziv="Res2",
                     is_active=True,
                 )
             ]
