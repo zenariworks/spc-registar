@@ -8,6 +8,8 @@
 
 from __future__ import annotations
 
+from urllib.parse import urlencode
+
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect
@@ -23,5 +25,9 @@ def vaskrsnja_vodica(request: HttpRequest) -> HttpResponse:
         # Васкрс није дефинисан у календару — нема циљ за преусмерење.
         return redirect("kalendar")
     url = reverse("slava_detail", kwargs={"uid": vaskrs.uid})
-    query = request.GET.urlencode()
+
+    # Очувај само очекивани параметар, уместо целог корисничког query string-а.
+    svestenik = request.GET.get("svestenik")
+    query = urlencode({"svestenik": svestenik}) if svestenik else ""
+
     return redirect(f"{url}?{query}" if query else url)
