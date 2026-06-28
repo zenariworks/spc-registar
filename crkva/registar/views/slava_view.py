@@ -16,6 +16,10 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
     Опциони филтер `?svestenik=<uid>` сужава приказ на парохију изабраног
     свештеника (славска водица по свештенику, #27) — корисно да свештеник
     испланира обилазак свечара дате славе по улицама своје парохије.
+
+    Изузетак је Васкрс (покретни празник Васкрсења): нико га не слави као
+    крсну славу, па уместо празног списка по слави приказујемо домаћинства
+    васкршње водице (`vaskrsnja_vodica=True`) — иста страница за #26 и #27.
     """
     slava = get_object_or_404(Slava, uid=uid)
 
@@ -32,11 +36,19 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
 
     # Households celebrating this slava, optionally narrowed to the selected
     # priest's parish (territory resolved by parish, not by priest — #26).
+    # За Васкрс списак крсне славе је увек празан; приказујемо домаћинства
+    # означена за васкршњу водицу (једна страница уместо две — #325).
+    je_vaskrs = slava.je_vaskrs
+    base_qs = (
+        Domacinstvo.objects.filter(vaskrsnja_vodica=True)
+        if je_vaskrs
+        else Domacinstvo.objects.filter(slava=slava)
+    )
     domacinstva = list(
         by_parish_filter(
-            Domacinstvo.objects.filter(slava=slava)
-            .select_related("domacin", "adresa")
-            .prefetch_related("ukucani", "ukucani__osoba"),
+            base_qs.select_related("domacin", "adresa").prefetch_related(
+                "ukucani", "ukucani__osoba"
+            ),
             svestenik,
         ).order_by(
             "adresa__ulica",
@@ -75,6 +87,7 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
         "svestenik": svestenik,
         "selected_id": selected_id,
         "nema_parohije": nema_parohije,
+        "je_vaskrs": je_vaskrs,
     }
 
     return render(request, "registar/slava_domacinstva.html", context)

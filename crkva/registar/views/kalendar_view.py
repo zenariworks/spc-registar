@@ -12,6 +12,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 from kalendar.models import Slava
 from registar.kalendar import WEEKDAY_LABELS, build_day_cell
+from registar.models import Domacinstvo
 from registar.utils import MESECI
 
 # crkvenikalendar.rs uses Cyrillic-month-name spelled in Latin script in the URL.
@@ -76,6 +77,11 @@ def kalendar(
     for s in pokretne_slave:
         datum = s.get_datum(year)
         if datum and datum.month == month:
+            # Васкрс нико не слави као крсну славу (dom_count=0); за
+            # календарску значку прикажи број домаћинстава васкршње
+            # водице, што води на обједињену страницу (#325).
+            if s.je_vaskrs:
+                s.dom_count = Domacinstvo.objects.filter(vaskrsnja_vodica=True).count()
             by_day[datum.day].append(s)
 
     # Ћелије са водећим празним местима за поравнање испод заглавља дана

@@ -1,61 +1,33 @@
-"""Извештај — преглед домаћинстава за васкршњу водицу по улицама (#26).
+"""Васкршња водица — обједињена са славском страницом Васкрса (#325).
 
-За изабраног свештеника (улице су му додељене преко `Adresa.svestenik`)
-издваја домаћинства са `vaskrsnja_vodica=True`, групише их по улици и
-приказује број домаћинстава по улици — згодно за планирање обиласка.
+Раније је постојао засебан извештај по улицама, али је дуплирао приказ славе
+Васкрса (домаћинства са `vaskrsnja_vodica=True`). Сада је то једна страница:
+ова рута само преусмерава на `slava_detail` за Васкрс, чувајући избор свештеника
+(`?svestenik=`), тако да и сајдбар и календар воде на исти приказ.
 """
 
 from __future__ import annotations
 
+from urllib.parse import urlencode
+
 from django.contrib.auth.decorators import login_required
-from django.db.models import Count
 from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
-from registar.models import Domacinstvo, Svestenik
+from django.shortcuts import redirect
+from django.urls import reverse
+from kalendar.models import Slava
 
 
 @login_required
 def vaskrsnja_vodica(request: HttpRequest) -> HttpResponse:
-    """Приказ улица и броја домаћинстава за васкршњу водицу по свештенику."""
-    svestenici = list(Svestenik.objects.order_by("prezime", "ime"))
+    """Преусмерава на обједињену страницу васкршње водице (слава Васкрса)."""
+    vaskrs = Slava.get_vaskrs()
+    if vaskrs is None:
+        # Васкрс није дефинисан у календару — нема циљ за преусмерење.
+        return redirect("kalendar")
+    url = reverse("slava_detail", kwargs={"uid": vaskrs.uid})
 
-    selected = (request.GET.get("svestenik") or "").strip()
-    svestenik = None
-    if selected:
-        try:
-            svestenik = next(s for s in svestenici if str(s.pk) == selected)
-        except StopIteration:
-            svestenik = None
+    # Очувај само очекивани параметар, уместо целог корисничког query string-а.
+    svestenik = request.GET.get("svestenik")
+    query = urlencode({"svestenik": svestenik}) if svestenik else ""
 
-    redovi = []
-    ukupno = 0
-    # Улице су додељене свештеницима, али свештеници ротирају — стабилна
-    # јединица територије је ПАРОХИЈА. Зато извештај за изабраног свештеника
-    # обухвата све улице његове парохије (било ком свештенику те парохије да
-    # су историјски додељене).
-    nema_parohije = svestenik is not None and not svestenik.parohija_id
-    if svestenik is not None and svestenik.parohija_id:
-        qs = (
-            Domacinstvo.objects.filter(
-                vaskrsnja_vodica=True,
-                adresa__svestenik__parohija=svestenik.parohija_id,
-            )
-            .values("adresa__ulica")
-            .annotate(broj=Count("uid"))
-            .order_by("adresa__ulica")
-        )
-        for row in qs:
-            ulica = (row["adresa__ulica"] or "").strip() or "Без улице"
-            redovi.append({"ulica": ulica, "broj": row["broj"]})
-        ukupno = sum(r["broj"] for r in redovi)
-
-    context = {
-        "svestenici": svestenici,
-        "selected_id": selected,
-        "svestenik": svestenik,
-        "nema_parohije": nema_parohije,
-        "redovi": redovi,
-        "ukupno": ukupno,
-        "broj_ulica": len(redovi),
-    }
-    return render(request, "registar/vaskrsnja_vodica.html", context)
+    return redirect(f"{url}?{query}" if query else url)

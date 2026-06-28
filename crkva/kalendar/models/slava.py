@@ -170,6 +170,24 @@ class Slava(TimeStampedModel):
 
         return (start, end)
 
+    @property
+    def je_vaskrs(self):
+        """Тачно само за покретни празник Васкрсења (нулти помак од Васкрса).
+
+        Васкрс је анкер свих покретних слава, па га препознајемо по томе што
+        нема помак (а не по називу/uid-у, што није стабилно између база).
+        """
+        return (
+            self.pokretni
+            and not (self.offset_dani or 0)
+            and not (self.offset_nedelje or 0)
+        )
+
+    @classmethod
+    def get_vaskrs(cls):
+        """Покретни празник Васкрсења (анкер покретних слава), или None."""
+        return next((s for s in cls.objects.filter(pokretni=True) if s.je_vaskrs), None)
+
     def get_mesec_naziv(self):
         """Враћа назив месеца."""
         return MESECI.get(self.mesec, "") if self.mesec else ""
