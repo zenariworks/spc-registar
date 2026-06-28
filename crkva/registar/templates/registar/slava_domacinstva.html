@@ -11,7 +11,7 @@
     <i class="fa-solid fa-arrow-left"></i>
   </a>
   <h1 class="u-page-title">
-    Слава<span class="u-page-title__subtitle">{{ slava.naziv }}</span>
+    {% if je_vaskrs %}Васкршња водица{% else %}Слава{% endif %}<span class="u-page-title__subtitle">{{ slava.naziv }}</span>
     {% if count %}<span class="u-page-title__count">· {{ count }}</span>{% endif %}
   </h1>
   <div class="slava-meta" data-theme-text-secondary>
@@ -93,12 +93,14 @@
     </div>
   {% elif svestenik %}
     <div class="spisak__empty">
-      Нема домаћинстава која славе {{ slava.naziv }} на територији парохије {{ svestenik.parohija }}.
+      {% if je_vaskrs %}Нема домаћинстава за васкршњу водицу на територији парохије {{ svestenik.parohija }}.
+      {% else %}Нема домаћинстава која славе {{ slava.naziv }} на територији парохије {{ svestenik.parohija }}.{% endif %}
       <br><small>Улице се додељују парохији преко адресе (поље „свештеник (улица)“).</small>
     </div>
   {% else %}
     <div class="spisak__empty">
-      Нема домаћинстава која славе {{ slava.naziv }}.
+      {% if je_vaskrs %}Нема домаћинстава означених за васкршњу водицу.
+      {% else %}Нема домаћинстава која славе {{ slava.naziv }}.{% endif %}
     </div>
   {% endif %}
 {% endif %}
