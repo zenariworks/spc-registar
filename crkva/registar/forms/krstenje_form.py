@@ -9,6 +9,7 @@ from registar.forms.select2 import (
     OsobaSelect2Widget,
     SvestenikSelect2Widget,
 )
+from registar.forms.validators import default_parohijan_off, validate_distinct_roles
 from registar.models import Krstenje
 
 
@@ -83,31 +84,15 @@ class KrstenjeForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         # A kum is frequently from another parish — default the quick-add
         # “парохијан” toggle to off so they are not added to this roster.
-        self.fields["kum"].widget.attrs["data-osoba-parohijan-default"] = "0"
+        default_parohijan_off(self, ("kum",))
         # po_redu is 1-based ("по реду мајци"): floor the HTML input at 1
         # (server-side >=1 enforced by the model's MinValueValidator(1)).
         self.fields["po_redu"].widget.attrs["min"] = "1"
 
     def clean(self):
         cleaned = super().clean()
-        dete = cleaned.get("dete")
-        otac = cleaned.get("otac")
-        majka = cleaned.get("majka")
-        kum = cleaned.get("kum")
-
         # Same Osoba cannot fill two roles.
-        for role_a, name_a, role_b, name_b in (
-            (dete, "dete", otac, "otac"),
-            (dete, "dete", majka, "majka"),
-            (dete, "dete", kum, "kum"),
-            (otac, "otac", majka, "majka"),
-            (otac, "otac", kum, "kum"),
-            (majka, "majka", kum, "kum"),
-        ):
-            if role_a and role_b and role_a == role_b:
-                self.add_error(
-                    name_b, f"Иста особа не може бити и {name_a} и {name_b}."
-                )
+        validate_distinct_roles(self, ("dete", "otac", "majka", "kum"))
 
         # If blizanac is checked, the second twin's name is required.
         if cleaned.get("blizanac") and not (cleaned.get("ime_blizanca") or "").strip():

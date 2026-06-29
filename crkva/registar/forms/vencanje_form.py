@@ -8,6 +8,7 @@ from registar.forms.select2 import (
     OsobaSelect2Widget,
     SvestenikSelect2Widget,
 )
+from registar.forms.validators import default_parohijan_off, validate_distinct_roles
 from registar.models import Vencanje
 
 
@@ -70,28 +71,24 @@ class VencanjeForm(forms.ModelForm):
         # Witnesses and in-laws are frequently not parishioners of this parish;
         # default their quick-add “парохијан” toggle to off. The couple
         # (женик/невеста) keep the on default.
-        for _f in ("kum", "svekar", "svekrva", "tast", "tasta", "stari_svat"):
-            self.fields[_f].widget.attrs["data-osoba-parohijan-default"] = "0"
+        default_parohijan_off(
+            self, ("kum", "svekar", "svekrva", "tast", "tasta", "stari_svat")
+        )
 
     def clean(self):
         cleaned = super().clean()
-        roles = [
-            ("zenik", cleaned.get("zenik")),
-            ("nevesta", cleaned.get("nevesta")),
-            ("kum", cleaned.get("kum")),
-            ("svekar", cleaned.get("svekar")),
-            ("svekrva", cleaned.get("svekrva")),
-            ("tast", cleaned.get("tast")),
-            ("tasta", cleaned.get("tasta")),
-            ("stari_svat", cleaned.get("stari_svat")),
-        ]
         # Pairwise: same Osoba cannot fill two roles in the same vencanje.
-        for i, (name_a, val_a) in enumerate(roles):
-            if not val_a:
-                continue
-            for name_b, val_b in roles[i + 1 :]:
-                if val_b and val_a == val_b:
-                    self.add_error(
-                        name_b, f"Иста особа не може бити и {name_a} и {name_b}."
-                    )
+        validate_distinct_roles(
+            self,
+            (
+                "zenik",
+                "nevesta",
+                "kum",
+                "svekar",
+                "svekrva",
+                "tast",
+                "tasta",
+                "stari_svat",
+            ),
+        )
         return cleaned
