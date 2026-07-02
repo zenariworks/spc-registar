@@ -46,6 +46,12 @@ class VaskrsnjaVodicaTests(TestCase):
         cls.sv_noparish = Svestenik.objects.create(
             ime="Без", prezime="Парохије", zvanje="јереј", parohija=None
         )
+        # Parish with NO Easter-water households → its priest must not appear
+        # in the selector (#325).
+        cls.p_empty = Parohija.objects.create(naziv="99")
+        cls.sv_empty = Svestenik.objects.create(
+            ime="Празан", prezime="Округ", zvanje="јереј", parohija=cls.p_empty
+        )
 
         # Streets assigned to the OLD priest of parish 3.
         a_glavna = Adresa.objects.create(ulica="Главна", broj="1", svestenik=cls.sv_old)
@@ -90,12 +96,16 @@ class VaskrsnjaVodicaTests(TestCase):
         return f"{u}?svestenik={sv}" if sv is not None else u
 
     def test_unified_page_lists_only_easter_water(self):
-        # No filter → every vaskrsnja_vodica=True household (Аца, Бора, Гога),
-        # never "Вера" (vodica=False) nor krsna-slava rows.
+        # No filter → full roster (same view as a slava listing) of every
+        # vaskrsnja_vodica=True household (Аца, Бора, Гога), never "Вера"
+        # (vodica=False) nor krsna-slava rows.
         r = self.client.get(self.url())
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.context["count"], 3)
         self.assertTrue(r.context["je_vaskrs"])
+        # Full household roster, grouped by street — not a count summary.
+        naslovi = {g["ulica"] for g in r.context["grupe"]}
+        self.assertEqual(naslovi, {"Главна", "Споредна", "Друга"})
 
     def test_unified_page_resolves_by_parish_not_priest(self):
         # New parish-3 priest (no streets of his own) still sees parish-3
@@ -111,6 +121,19 @@ class VaskrsnjaVodicaTests(TestCase):
         r = self.client.get(self.url(self.sv_noparish.pk))
         self.assertEqual(r.context["count"], 0)
         self.assertTrue(r.context["nema_parohije"])
+
+    # ---- summary view + selector filtering (#325) ----
+
+    def test_selector_lists_only_parishes_with_households(self):
+        # Only priests whose parish actually has Easter-water households appear
+        # in the selector — #325.
+        r = self.client.get(self.url())
+        pks = {s.pk for s in r.context["svestenici"]}
+        self.assertIn(self.sv_old.pk, pks)
+        self.assertIn(self.sv_new.pk, pks)
+        self.assertIn(self.sv_other.pk, pks)
+        self.assertNotIn(self.sv_empty.pk, pks)
+        self.assertNotIn(self.sv_noparish.pk, pks)
 
     # ---- household list filter (domacinstva view, parish-scoped) ----
 
