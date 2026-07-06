@@ -21,8 +21,13 @@ class Command(MigrationCommand):
     staging_table = "hsp_svestenici"
     target_model = Svestenik
 
-    def handle(self, *args, **kwargs):
+    def handle(self, *args, **opts):
+        dry_run = opts.get("dry_run", False)
+        limit = opts.get("limit", 0) or 0
+
         parsed_data = self._parse_data()
+        if limit:
+            parsed_data = parsed_data[:limit]
         created_count = 0
 
         self.stdout.write(f"Number of parsed_data: {len(parsed_data)}")
@@ -31,11 +36,22 @@ class Command(MigrationCommand):
             if svestenik_id == 0 or not ime_prezime.strip():
                 continue
 
+            if dry_run:
+                created_count += 1
+                continue
+
             try:
+                parohija_instance = None
                 broj_parohije = self._convert_roman_to_integer(parohija)
-                parohija_instance, _ = Parohija.objects.get_or_create(
-                    naziv=broj_parohije
-                )
+                if broj_parohije is not None:
+                    parohija_instance, _ = Parohija.objects.get_or_create(
+                        naziv=broj_parohije
+                    )
+                elif parohija.strip():
+                    self.log_warning(
+                        f"Непозната парохија '{parohija.strip()}' за свештеника "
+                        f"{ime_prezime.strip()} — уписујем без парохије."
+                    )
 
                 ime, prezime = (ime_prezime.strip().split(" ", 1) + [""])[:2]
                 svestenik = Svestenik(
@@ -55,6 +71,21 @@ class Command(MigrationCommand):
                 self.log_error(e)
 
         self.log_success(created_count, "свештеници")
+
+        if dry_run:
+            self.log_warning("DRY RUN — ништа није уписано у базу.")
+            return
+
+        # #333: свештеници се убацују са експлицитним uid (SV_RBR), па PK
+        # секвенца остаје иза MAX(uid); накнадни унос (брзи додатак, форма)
+        # би иначе пуцао на duplicate key. Поравнавамо секвенцу пре брисања
+        # staging табеле.
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT setval(pg_get_serial_sequence('svestenici', 'uid'), "
+                "(SELECT COALESCE(MAX(uid), 1) FROM svestenici))"
+            )
+        self.stdout.write("Ресетован аутоинкремент за свештенике.")
 
         # Drop staging table after successful migration
         self.drop_staging_table()
@@ -85,11 +116,12 @@ class Command(MigrationCommand):
         return norm  # fallback: store the cleaned-up but unrecognized string
 
     def _convert_roman_to_integer(self, parohija):
-        # Define a mapping from Roman numerals to integers
+        # Мапира римски број парохије (I/II/III) у "1"/"2"/"3".
+        # Враћа None за непознату вредност (нпр. "IV") да не бисмо
+        # креирали парохију назива "0" (#333).
         roman_to_int = {"I": "1", "II": "2", "III": "3", "1": "1", "2": "2", "3": "3"}
         parohija = parohija.rstrip() if parohija else ""
-        converted_value = roman_to_int.get(parohija, 0)
-        return converted_value
+        return roman_to_int.get(parohija)
 
     def _parse_data(self):
         """
