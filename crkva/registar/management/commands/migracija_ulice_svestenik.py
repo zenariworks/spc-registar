@@ -7,7 +7,7 @@
 поклапа — основа за извештај васкршње водице по улицама.
 
     python manage.py migracija_ulice_svestenik --schema crkva_sv_petke_cukarica
-    python manage.py migracija_ulice_svestenik --dry-run
+    python manage.py migracija_ulice_svestenik --schema crkva_sv_petke_cukarica --dry-run
 """
 
 from __future__ import annotations
@@ -19,6 +19,13 @@ from django.core.management.base import BaseCommand
 from django_tenants.utils import schema_context
 from registar.models import Adresa, Svestenik
 from registar.utils.konvertori import Konvertor
+
+# Исто кодирање као `load_dbf` (dbfread encoding="cp1250"), да називи улица
+# овде декодирају идентично онима сачуваним у `Adresa.ulica` (#336). Стари
+# подаци су 7-битни YUSCII (ASCII опсег), па је за постојећу базу резултат
+# исти као латиница-1; поравнање уклања латентни расцеп за евентуалне 8-битне
+# бајтове.
+DBF_ENCODING = "cp1250"
 
 
 def _read_dbf(raw: bytes):
@@ -33,7 +40,7 @@ def _read_dbf(raw: bytes):
     fields = []
     pos = 32
     while raw[pos] != 0x0D:
-        name = raw[pos : pos + 11].split(b"\x00")[0].decode("latin1")
+        name = raw[pos : pos + 11].split(b"\x00")[0].decode(DBF_ENCODING)
         ftype = chr(raw[pos + 11])
         flen = raw[pos + 16]
         fields.append((name, ftype, flen))
@@ -51,9 +58,9 @@ def _read_dbf(raw: bytes):
             if ftype == "I" and flen == 4:
                 row[name] = struct.unpack("<i", chunk)[0]
             elif ftype == "C":
-                row[name] = chunk.decode("latin1").rstrip("\x00").strip()
+                row[name] = chunk.decode(DBF_ENCODING).rstrip("\x00").strip()
             else:
-                row[name] = chunk.decode("latin1").strip()
+                row[name] = chunk.decode(DBF_ENCODING).strip()
         rows.append(row)
     return rows
 
@@ -70,8 +77,9 @@ class Command(BaseCommand):
         parser.add_argument("--zip", default="crkva.zip", help="Путања до crkva.zip")
         parser.add_argument(
             "--schema",
-            default="crkva_sv_petke_cukarica",
-            help="Парохијска шема (tenant) у којој се додела врши.",
+            required=True,
+            help="Парохијска шема (tenant) у којој се додела врши "
+            "(обавезно — нема подразумеване продукцијске шеме, #336).",
         )
         parser.add_argument(
             "--dry-run",
