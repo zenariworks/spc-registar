@@ -71,7 +71,7 @@ repos:
     hooks:
       - id: django-tests
         name: django tests
-        entry: python crkva/manage.py test registar.tests tenants.tests --keepdb --parallel 1 --verbosity=1
+        entry: python crkva/manage.py test registar.tests tenants.tests kalendar.tests --keepdb --parallel 1 --verbosity=1
         language: system
         pass_filenames: false
         files: '\.py$'

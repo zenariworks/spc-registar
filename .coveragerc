@@ -14,6 +14,9 @@ omit =
 [report]
 show_missing = false
 skip_covered = false
+# #303: спроведи минималну покривеност да не би тихо опадала. Тренутно ~66%;
+# праг постављен испод тога као под — може се подизати временом.
+fail_under = 60
 exclude_also =
     if TYPE_CHECKING:
     raise NotImplementedError

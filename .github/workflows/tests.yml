@@ -49,7 +49,11 @@ jobs:
         run: mkdir -p "$STATIC_ROOT" "$MEDIA_ROOT"
       - name: Django system checks
         run: python crkva/manage.py check
-      - name: Run test suite
-        run: python crkva/manage.py test registar.tests tenants.tests kalendar.tests --noinput --parallel 1
+      - name: Run test suite (with coverage)
+        working-directory: crkva
+        run: |
+          coverage run --rcfile=../.coveragerc manage.py test registar.tests tenants.tests kalendar.tests --noinput --parallel 1
+          # fail_under у .coveragerc обара CI ако покривеност падне испод прага (#303).
+          coverage report --rcfile=../.coveragerc
       - name: Deploy checks (informational)
         run: python crkva/manage.py check --deploy || true
