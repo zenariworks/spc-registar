@@ -29,7 +29,6 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
         "adresa__ulica",
         "veroispovest__naziv",
     ]
-    # list_filter = [ZanimanjeFilter]
 
     def get_full_name(self, obj):
         """Врати пуно име особе."""
@@ -37,11 +36,6 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
         return f"{obj.ime} {obj.prezime}{devojacko}"
 
     get_full_name.short_description = "Име и Презиме"
-
-    # def get_zanimanje_naziv(self, obj):
-    #     return obj.zanimanje.naziv if obj.zanimanje else ""
-
-    # get_zanimanje_naziv.short_description = "Занимање"
 
     fieldsets = (
         (

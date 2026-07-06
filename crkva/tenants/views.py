@@ -26,8 +26,11 @@ def switch_tenant(request: HttpRequest, tenant_id: int) -> HttpResponse:
     tenant = get_object_or_404(Tenant, pk=tenant_id, is_active=True)
 
     if not request.user.is_superuser:
+        # Мора да се поклапа са провером у middleware-у (_membership тражи
+        # is_active=True); иначе деактивиран члан „пребаци" парохију коју
+        # middleware потом одбије (#340).
         allowed = UserMembership.objects.filter(
-            user=request.user, tenant=tenant
+            user=request.user, tenant=tenant, is_active=True
         ).exists()
         if not allowed:
             return HttpResponse(status=403)

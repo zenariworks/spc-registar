@@ -25,7 +25,9 @@ def _get_registry_stats() -> dict:
     stats = cache.get(key)
     if stats is None:
         stats = {
-            "parohijani": Osoba.objects.count(),
+            # Картица „Парохијани" води на листу филтрирану parohijan=True,
+            # па и број мора да броји само парохијане, не све особе (#340).
+            "parohijani": Osoba.objects.filter(parohijan=True).count(),
             "krstenja": Krstenje.objects.count(),
             "vencanja": Vencanje.objects.count(),
             "svestenici": Svestenik.objects.count(),

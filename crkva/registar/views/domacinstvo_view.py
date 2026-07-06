@@ -2,8 +2,6 @@
 Модул за приказ домаћинстава и њихових чланова.
 """
 
-from itertools import groupby
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse
@@ -14,6 +12,7 @@ from registar.forms import DomacinstvoForm
 from registar.forms.domacinstvo_form import UkucaninFormSet
 from registar.models import Domacinstvo, Svestenik
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from registar.views.roster import group_by_street, partition_zivi_preminuli
 from registar.views.territory import by_parish_filter, resolve_svestenik
 from tenants.permissions import tenant_role_required
 
@@ -68,9 +67,9 @@ class SpisakDomacinsta(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         for d in context["domacinstva"]:
-            members = list(d.ukucani.all())
-            d.zivi_clanovi = [u for u in members if not u.preminuo]
-            d.preminuli_clanovi = [u for u in members if u.preminuo]
+            d.zivi_clanovi, d.preminuli_clanovi = partition_zivi_preminuli(
+                d.ukucani.all()
+            )
         # Priest filter controls (issue #26).
         svestenik = resolve_svestenik(self.request)
         context["svestenik_filter_options"] = Svestenik.objects.order_by(
@@ -109,10 +108,9 @@ class PrikazDomacinstva(LoginRequiredMixin, DetailView):
         context["is_edit"] = False
         context["form"] = DomacinstvoForm(instance=self.object)
         context["ukucanin_formset"] = UkucaninFormSet(instance=self.object)
-        domacinstvo = self.object
-        ukucani = domacinstvo.ukucani.all()
-        context["ukucani_zivi"] = [u for u in ukucani if not u.preminuo]
-        context["ukucani_preminuli"] = [u for u in ukucani if u.preminuo]
+        context["ukucani_zivi"], context["ukucani_preminuli"] = (
+            partition_zivi_preminuli(self.object.ukucani.all())
+        )
         return context
 
 
@@ -174,15 +172,7 @@ def domacinstva_print(request: HttpRequest) -> HttpResponse:
             )
         )
 
-    def _street(d):
-        if d.adresa and (d.adresa.ulica or "").strip():
-            return d.adresa.ulica.strip()
-        return ""
-
-    grupe = [
-        {"ulica": ulica or "Без улице", "domacinstva": list(items)}
-        for ulica, items in groupby(domacinstva, key=_street)
-    ]
+    grupe = group_by_street(domacinstva)
     return render(
         request,
         "registar/domacinstva_print.html",

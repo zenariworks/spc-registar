@@ -4,6 +4,7 @@ Middleware за обраду грешака у регистру.
 
 import re
 
+from django.conf import settings
 from django.db import ProgrammingError
 from django.http import HttpResponse
 from django.template import loader
@@ -57,6 +58,8 @@ class HandleMissingTablesMiddleware:
         template = loader.get_template("registar/missing_table.html")
         context = {
             "table_name": table_name,
-            "error_detail": str(exception),
+            # Не откривај сирову DB грешку (имена релација/SQL) корисницима у
+            # продукцији; прикажи детаљ само у DEBUG режиму (#340).
+            "error_detail": str(exception) if settings.DEBUG else "",
         }
         return HttpResponse(template.render(context, request), status=503)
