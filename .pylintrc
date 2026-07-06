@@ -1,9 +1,14 @@
-[PYLINT]
-fail-under=9
-output-format = colorized
-
 [MASTER]
 load-plugins=pylint_django
+# #303: fail-under и ignore-paths су раније били у нестандардним секцијама
+# ([PYLINT] / [TOOL:pylint]) па их pylint није уважавао. Пребачени у [MASTER].
+fail-under=9
+ignore-paths=
+    ^.*/migrations/.*$
+    ^scripts/gunicorn\.conf\.py$
+
+[REPORTS]
+output-format=colorized
 
 [DESIGN]
 max-parents=9
@@ -20,8 +25,3 @@ disable =
 
 [DJANGO]
 django-settings-module = crkva.settings
-
-[TOOL:pylint]
-ignore-paths=
-    ^.*/migrations/.*$
-    ^scripts/gunicorn\.conf\.py$
