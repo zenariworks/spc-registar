@@ -12,7 +12,7 @@ from registar.forms import DomacinstvoForm
 from registar.forms.domacinstvo_form import UkucaninFormSet
 from registar.models import Domacinstvo, Svestenik
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
-from registar.views.roster import group_by_street, partition_zivi_preminuli
+from registar.views.spiskovi import grupisi_po_ulici, razdvoji_zive_i_preminule
 from registar.views.territory import by_parish_filter, resolve_svestenik
 from tenants.permissions import tenant_role_required
 
@@ -67,7 +67,7 @@ class SpisakDomacinsta(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         for d in context["domacinstva"]:
-            d.zivi_clanovi, d.preminuli_clanovi = partition_zivi_preminuli(
+            d.zivi_clanovi, d.preminuli_clanovi = razdvoji_zive_i_preminule(
                 d.ukucani.all()
             )
         # Priest filter controls (issue #26).
@@ -109,7 +109,7 @@ class PrikazDomacinstva(LoginRequiredMixin, DetailView):
         context["form"] = DomacinstvoForm(instance=self.object)
         context["ukucanin_formset"] = UkucaninFormSet(instance=self.object)
         context["ukucani_zivi"], context["ukucani_preminuli"] = (
-            partition_zivi_preminuli(self.object.ukucani.all())
+            razdvoji_zive_i_preminule(self.object.ukucani.all())
         )
         return context
 
@@ -172,7 +172,7 @@ def domacinstva_print(request: HttpRequest) -> HttpResponse:
             )
         )
 
-    grupe = group_by_street(domacinstva)
+    grupe = grupisi_po_ulici(domacinstva)
     return render(
         request,
         "registar/domacinstva_print.html",

@@ -10,27 +10,27 @@ from __future__ import annotations
 from itertools import groupby
 
 
-def partition_zivi_preminuli(ukucani):
+def razdvoji_zive_i_preminule(ukucani):
     """Раздваја укућане на (живи, преминули), чувајући редослед."""
-    members = list(ukucani)
-    zivi = [u for u in members if not u.preminuo]
-    preminuli = [u for u in members if u.preminuo]
+    clanovi = list(ukucani)
+    zivi = [u for u in clanovi if not u.preminuo]
+    preminuli = [u for u in clanovi if u.preminuo]
     return zivi, preminuli
 
 
-def group_by_street(domacinstva):
+def grupisi_po_ulici(domacinstva):
     """Групише домаћинства по називу улице за штампане извештаје.
 
     Улаз мора већ бити сортиран по `adresa__ulica` (`groupby` групише само
     узастопне елементе); домаћинства без адресе иду у групу „Без улице".
     """
 
-    def _street(d):
+    def _ulica(d):
         if d.adresa and (d.adresa.ulica or "").strip():
             return d.adresa.ulica.strip()
         return ""
 
     return [
         {"ulica": ulica or "Без улице", "domacinstva": list(items)}
-        for ulica, items in groupby(domacinstva, key=_street)
+        for ulica, items in groupby(domacinstva, key=_ulica)
     ]
