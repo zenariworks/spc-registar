@@ -8,6 +8,7 @@ from registar.models import Vencanje
 class VencanjeAdmin(admin.ModelAdmin):
     """Класа админ интерфејса модела Венчање."""
 
+    list_select_related = ("zenik", "nevesta", "svestenik", "hram")
     list_display = (
         "knjiga_strana_broj",
         "zenik",

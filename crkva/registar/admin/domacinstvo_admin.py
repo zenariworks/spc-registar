@@ -9,6 +9,7 @@ from registar.models import Domacinstvo
 class DomacinstvоAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Домаћинство."""
 
+    list_select_related = ("domacin", "adresa", "slava")
     list_display = (
         "domacin",
         "adresa",

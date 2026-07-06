@@ -157,7 +157,6 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "registar.context_processors.processor_narednih_slava",
                 "tenants.context_processors.current_tenant",
             ],
         },

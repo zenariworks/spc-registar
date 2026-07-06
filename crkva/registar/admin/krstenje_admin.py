@@ -39,5 +39,9 @@ class KrstenjeAdmin(ImportExportMixin, admin.ModelAdmin):
         "strana_registracije",
         "primedba",
     )
-    fieldsets = ((None, {"fields": ("knjiga", "broj", "strana")}),)
+    # Ранија рестрикција fieldsets-а на само (knjiga, broj, strana) је
+    # изостављала обавезна поља без default-а (godina_registracije,
+    # redni_broj), па је чување новог уноса пуцало на NOT NULL. Користимо
+    # подразумевану форму (сва поља) да админ унос ради (#334).
+    list_select_related = ("hram", "dete", "otac", "majka", "kum", "svestenik")
     readonly_fields = ("uid",)

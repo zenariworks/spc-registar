@@ -9,6 +9,7 @@ from registar.models import Svestenik
 class SvestenikAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Свештеник."""
 
+    list_select_related = ("parohija", "user")
     list_display = ("get_full_name", "zvanje", "get_parohija", "user")
     ordering = ("prezime", "ime")
     raw_id_fields = ("user",)
