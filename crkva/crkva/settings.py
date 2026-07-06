@@ -58,6 +58,19 @@ if DEBUG or _RUNNING_TESTS:
     SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-dev-only-key")
 else:
     SECRET_KEY = _require_env("SECRET_KEY")
+    # #337: одбиј познате небезбедне подразумеване кључеве у продукцији.
+    # (Compose профили су раније убацивали фиксни кључ, чиме је _require_env
+    # био задовољен познатом вредношћу.)
+    _INSECURE_SECRET_KEYS = {
+        "insecure-standalone-key-change-me",
+        "dev-secret-key-change-me",
+        "django-insecure-dev-only-key",
+    }
+    if SECRET_KEY in _INSECURE_SECRET_KEYS or SECRET_KEY.startswith("django-insecure"):
+        raise ImproperlyConfigured(
+            "SECRET_KEY је постављен на познату небезбедну вредност; "
+            "постави јединствен тајни кључ у окружењу пре продукције."
+        )
 
 # Калибрационе странице (крштеница/венчаница) су подразумевано искључене у
 # продукцији; могу се привремено укључити поставком CALIBRATION_ENABLED=1 у
