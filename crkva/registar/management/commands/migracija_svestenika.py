@@ -31,7 +31,13 @@ class Command(MigrationCommand):
         created_count = 0
 
         self.stdout.write(f"Number of parsed_data: {len(parsed_data)}")
-        for svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja in parsed_data:
+        for (
+            svestenik_id,
+            ime_prezime,
+            zvanje,
+            parohija_oznaka,
+            datum_rodjenja,
+        ) in parsed_data:
             # Skip blank priests (uid=0 or empty name)
             if svestenik_id == 0 or not ime_prezime.strip():
                 continue
@@ -41,15 +47,13 @@ class Command(MigrationCommand):
                 continue
 
             try:
-                parohija_instance = None
-                broj_parohije = self._convert_roman_to_integer(parohija)
+                parohija = None
+                broj_parohije = self._convert_roman_to_integer(parohija_oznaka)
                 if broj_parohije is not None:
-                    parohija_instance, _ = Parohija.objects.get_or_create(
-                        naziv=broj_parohije
-                    )
-                elif parohija.strip():
+                    parohija, _ = Parohija.objects.get_or_create(naziv=broj_parohije)
+                elif parohija_oznaka.strip():
                     self.log_warning(
-                        f"Непозната парохија '{parohija.strip()}' за свештеника "
+                        f"Непозната парохија '{parohija_oznaka.strip()}' за свештеника "
                         f"{ime_prezime.strip()} — уписујем без парохије."
                     )
 
@@ -61,7 +65,7 @@ class Command(MigrationCommand):
                     mesto_rodjenja="",
                     datum_rodjenja=datum_rodjenja if datum_rodjenja else None,
                     zvanje=self._normalize_zvanje(Konvertor.string(zvanje)),
-                    parohija=parohija_instance,
+                    parohija=parohija,
                 )
                 svestenik.save()
 
@@ -115,13 +119,13 @@ class Command(MigrationCommand):
                 return key
         return norm  # fallback: store the cleaned-up but unrecognized string
 
-    def _convert_roman_to_integer(self, parohija):
+    def _convert_roman_to_integer(self, parohija_oznaka):
         # Мапира римски број парохије (I/II/III) у "1"/"2"/"3".
         # Враћа None за непознату вредност (нпр. "IV") да не бисмо
         # креирали парохију назива "0" (#333).
-        roman_to_int = {"I": "1", "II": "2", "III": "3", "1": "1", "2": "2", "3": "3"}
-        parohija = parohija.rstrip() if parohija else ""
-        return roman_to_int.get(parohija)
+        rimski_u_broj = {"I": "1", "II": "2", "III": "3", "1": "1", "2": "2", "3": "3"}
+        oznaka = parohija_oznaka.rstrip() if parohija_oznaka else ""
+        return rimski_u_broj.get(oznaka)
 
     def _parse_data(self):
         """
