@@ -11,6 +11,7 @@ from registar.models import Ukucanin
 class UkucaninAdmin(ImportExportMixin, admin.ModelAdmin):
     """Класа админ интерфејса модела Укућанин."""
 
+    list_select_related = ("domacinstvo", "domacinstvo__domacin", "osoba")
     list_display = ("domacinstvo", "osoba", "ime_ukucana", "uloga", "preminuo")
     list_filter = ("uloga", "preminuo")
     ordering = ["domacinstvo"]

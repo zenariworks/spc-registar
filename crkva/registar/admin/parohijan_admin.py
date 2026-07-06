@@ -20,12 +20,13 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
     )
     ordering = ("datum_rodjenja",)
     autocomplete_fields = ["adresa"]
+    list_select_related = ("adresa",)
     search_fields = [
         "ime",
         "prezime",
         "zanimanje__naziv",
         "narodnost__naziv",
-        "adresa__naziv",
+        "adresa__ulica",
         "veroispovest__naziv",
     ]
     # list_filter = [ZanimanjeFilter]
@@ -67,7 +68,7 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
             "Додатне информације",
             {
                 "fields": (
-                    "zanimanje__naziv",
+                    "zanimanje",
                     "veroispovest",
                     "narodnost",
                 )
