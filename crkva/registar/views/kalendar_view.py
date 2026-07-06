@@ -8,7 +8,7 @@ from collections import defaultdict
 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
-from django.http import HttpRequest, HttpResponse
+from django.http import Http404, HttpRequest, HttpResponse
 from django.shortcuts import render
 from kalendar.models import Slava
 from registar.kalendar import WEEKDAY_LABELS, build_day_cell
@@ -52,6 +52,11 @@ def kalendar(
     today = dt.date.today()
     year = year or today.year
     month = month or today.month
+
+    # Валидација URL параметара: невалидан месец/година иначе руше
+    # calendar.monthrange / dt.date са 500 (#340).
+    if not 1 <= month <= 12 or not dt.MINYEAR <= year <= dt.MAXYEAR:
+        raise Http404("Неисправан месец или година у календару.")
 
     # Припрема календара дана у месецу
     first_weekday, days_in_month = calendar.monthrange(year, month)  # Mon=0 .. Sun=6

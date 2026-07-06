@@ -118,20 +118,32 @@ class MigrationCommand(BaseCommand):
         batch: list = []
         created_count = 0
 
+        def _upisi(redovi: list) -> None:
+            nonlocal created_count
+            if not redovi:
+                return
+            if dry_run:
+                created_count += len(redovi)  # процена (ништа се не уписује)
+                return
+            # ignore_conflicts=True: прескочени (конфликтни) редови на Postgres
+            # немају PK; бројимо само стварно уметнуте да „created" не буде
+            # прецењен (#340).
+            upisani = self.target_model.objects.bulk_create(
+                redovi, ignore_conflicts=True
+            )
+            created_count += sum(1 for o in upisani if o.pk is not None)
+
         for idx, data in enumerate(records, start=1):
             if data is None:
                 continue
             batch.append(self.target_model(**data))
-            created_count += 1
 
             if len(batch) >= batch_size:
-                if not dry_run:
-                    self.target_model.objects.bulk_create(batch, ignore_conflicts=True)
-                batch.clear()
+                _upisi(batch)
+                batch = []
                 self.stdout.write(f"Обрађено {idx} записа...")
 
-        if batch and not dry_run:
-            self.target_model.objects.bulk_create(batch, ignore_conflicts=True)
+        _upisi(batch)
         return created_count
 
     # --- Iteration helper for refactored migrations ---

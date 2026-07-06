@@ -14,5 +14,6 @@ class UkucaninAdmin(ImportExportMixin, admin.ModelAdmin):
     list_select_related = ("domacinstvo", "domacinstvo__domacin", "osoba")
     list_display = ("domacinstvo", "osoba", "ime_ukucana", "uloga", "preminuo")
     list_filter = ("uloga", "preminuo")
-    ordering = ["domacinstvo"]
+    # Сортирај по имену домаћина + укућанина, не по сировом FK id-у (#340).
+    ordering = ["domacinstvo__domacin__prezime", "ime_ukucana"]
     search_fields = ("osoba__ime", "osoba__prezime", "ime_ukucana")

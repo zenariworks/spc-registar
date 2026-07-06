@@ -20,7 +20,8 @@ class DomacinstvоAdmin(ImportExportMixin, admin.ModelAdmin):
         "vaskrsnja_vodica",
         "napomena",
     )
-    ordering = ("domacin",)
+    # Сортирај по имену домаћина, не по сировом FK id-у (#340).
+    ordering = ("domacin__prezime", "domacin__ime")
 
     fieldsets = (
         ("Основне информације", {"fields": ("domacin", "adresa")}),
