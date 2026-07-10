@@ -3,15 +3,16 @@
 Покреће целу секвенцу migracija_* + popravi_* + fix_* + mark_* по реду.
 Претпоставка: load_dbf је већ напунио staging табеле (hsp_*).
 
-Употреба:
-    python manage.py importuj_dbf
-    python manage.py importuj_dbf --dry-run
+Употреба (обавезно преко tenant_command — бира парохијску шему):
+    python manage.py tenant_command importuj_dbf --schema=<парохија>
+    python manage.py tenant_command importuj_dbf --schema=<парохија> --dry-run
 """
 
 from __future__ import annotations
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
+from django.db import connection
 
 # Run order matters: lookups → core entities → cleanups → calendar fixes.
 PIPELINE: list[tuple[str, str]] = [
@@ -51,6 +52,14 @@ class Command(BaseCommand):
     def handle(self, *args, **opts):
         dry = opts["dry_run"]
         from_step = opts["from_step"]
+
+        if connection.schema_name == "public":
+            raise CommandError(
+                "Одбијено: importuj_dbf се не сме покретати над public шемом — "
+                "уписивао би у ПОГРЕШНОГ (или у СВЕ) закупце. Покрени преко "
+                "tenant_command: python manage.py tenant_command importuj_dbf "
+                "--schema=<парохијска_шема>."
+            )
 
         steps = PIPELINE
         if from_step:

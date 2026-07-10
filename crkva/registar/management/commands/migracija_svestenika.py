@@ -22,6 +22,7 @@ class Command(MigrationCommand):
     target_model = Svestenik
 
     def handle(self, *args, **opts):
+        self.zabrani_nad_public()
         dry_run = opts.get("dry_run", False)
         limit = opts.get("limit", 0) or 0
 

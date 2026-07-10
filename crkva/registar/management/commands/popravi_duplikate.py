@@ -24,6 +24,7 @@ from collections import defaultdict
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from registar.management.commands._schema_target import razresi_ciljne_sheme
 from registar.models import Adresa, Domacinstvo, Osoba, Ukucanin
 from registar.models.krstenje import Krstenje
 from registar.models.vencanje import Vencanje
@@ -91,6 +92,14 @@ class Command(BaseCommand):
             help="Фаза за извршавање",
         )
         parser.add_argument("--schema", help="Само за дати tenant schema")
+        parser.add_argument(
+            "--all-tenants",
+            action="store_true",
+            help=(
+                "Покрени над СВИМ закупцима (осим public). Опасно — "
+                "подразумевано се ради само над активном шемом (#330)."
+            ),
+        )
 
     # ------------------------------------------------------------------ #
     def handle(self, *args, **opts):
@@ -99,17 +108,15 @@ class Command(BaseCommand):
         tenant_model = get_tenant_model()
         dry = opts["dry_run"]
         phase = opts["phase"]
-        only_schema = opts.get("schema")
 
-        for t in tenant_model.objects.exclude(schema_name="public"):
-            if only_schema and t.schema_name != only_schema:
-                continue
+        for ime_sheme in razresi_ciljne_sheme(opts):
+            zakupac = tenant_model.objects.get(schema_name=ime_sheme)
             self.stdout.write(
                 self.style.MIGRATE_HEADING(
-                    f"\n=== {t.schema_name} (dry-run={dry}, phase={phase}) ==="
+                    f"\n=== {ime_sheme} (dry-run={dry}, phase={phase}) ==="
                 )
             )
-            with tenant_context(t):
+            with tenant_context(zakupac):
                 if phase in ("1", "all"):
                     self._phase_adresa(dry_run=dry)
                 if phase in ("2", "all"):

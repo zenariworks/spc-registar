@@ -241,6 +241,7 @@ class Command(MigrationCommand):
     target_model = Krstenje
 
     def handle(self, *args, **opts):
+        self.zabrani_nad_public()
         self._verbose = opts.get("verbose_errors", False)
         self._dry_run = opts.get("dry_run", False)
         limit: int = opts.get("limit", 0) or 0

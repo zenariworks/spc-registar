@@ -218,14 +218,19 @@ class PopraviDevojackaCommandCLITests(TestCase):
         )
 
     def test_call_command_schema_filter(self):
+        # An unknown --schema now fails fast instead of silently touching
+        # nothing (#330).
+        from django.core.management.base import CommandError
+
         out = StringIO()
-        call_command(
-            "popravi_devojacka",
-            "--dry-run",
-            "--schema",
-            "nonexistent_schema",
-            stdout=out,
-        )
+        with self.assertRaises(CommandError):
+            call_command(
+                "popravi_devojacka",
+                "--dry-run",
+                "--schema",
+                "nonexistent_schema",
+                stdout=out,
+            )
 
 
 class ImporterIntegrationTests(TestCase):
