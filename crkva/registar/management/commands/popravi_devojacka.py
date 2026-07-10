@@ -26,6 +26,7 @@ from __future__ import annotations
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from registar.management.commands._schema_target import razresi_ciljne_sheme
 from registar.migracija.helpers import extract_maiden
 from registar.models import Domacinstvo, Osoba, Ukucanin
 
@@ -47,6 +48,14 @@ class Command(BaseCommand):
             help="Само за дати tenant schema (нпр. crkva_sv_petke_cukarica)",
         )
         parser.add_argument(
+            "--all-tenants",
+            action="store_true",
+            help=(
+                "Покрени над СВИМ закупцима (осим public). Опасно — "
+                "подразумевано се ради само над активном шемом (#330)."
+            ),
+        )
+        parser.add_argument(
             "--keep-married-from-domacinstvo",
             action="store_true",
             help=(
@@ -61,19 +70,17 @@ class Command(BaseCommand):
 
         tenant_model = get_tenant_model()
         dry: bool = opts["dry_run"]
-        only_schema: str | None = opts.get("schema")
         keep_from_dom: bool = opts["keep_married_from_domacinstvo"]
 
-        for t in tenant_model.objects.exclude(schema_name="public"):
-            if only_schema and t.schema_name != only_schema:
-                continue
+        for ime_sheme in razresi_ciljne_sheme(opts):
+            zakupac = tenant_model.objects.get(schema_name=ime_sheme)
             self.stdout.write(
                 self.style.MIGRATE_HEADING(
-                    f"\n=== {t.schema_name} (dry-run={dry}, "
+                    f"\n=== {ime_sheme} (dry-run={dry}, "
                     f"keep-married-from-domacinstvo={keep_from_dom}) ==="
                 )
             )
-            with tenant_context(t):
+            with tenant_context(zakupac):
                 self._popravi(dry_run=dry, keep_from_dom=keep_from_dom)
 
     # ------------------------------------------------------------------ #

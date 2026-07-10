@@ -34,6 +34,7 @@ class Command(MigrationCommand):
     target_model = Ukucanin
 
     def handle(self, *args, **opts) -> None:
+        self.zabrani_nad_public()
         self._dry_run = opts.get("dry_run", False)
         limit: int = opts.get("limit", 0) or 0
 

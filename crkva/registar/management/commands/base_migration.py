@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from typing import Iterable
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.db.transaction import atomic
 from registar.migracija.errors import RecordContext, RecordSkipped
@@ -51,6 +51,22 @@ class MigrationCommand(BaseCommand):
             action="store_true",
             help="Прикажи cео контекст за сваку грешку или прескок.",
         )
+
+    # --- Safety guard ---
+
+    def zabrani_nad_public(self) -> None:
+        """Одбиј рад над public шемом (#330).
+
+        migracija_* пишу у per-tenant табеле; над public-ом или нема
+        табела или се пише у погрешну шему. Покретати преко
+        ``tenant_command <cmd> --schema=<парохија>``.
+        """
+        if connection.schema_name == "public":
+            raise CommandError(
+                f"Одбијено: {self.__class__.__module__.rsplit('.', 1)[-1]} "
+                "над public шемом. Покрени преко tenant_command "
+                "(--schema бира парохију)."
+            )
 
     # --- Staging / target setup ---
 
