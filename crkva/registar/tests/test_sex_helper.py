@@ -7,8 +7,8 @@ from registar.migracija.sex import (
     FEMALE,
     MALE,
     infer_sex,
-    infer_sex_from_name,
     infer_sex_from_role,
+    pol_prema_imenu,
 )
 
 
@@ -30,19 +30,19 @@ class SexDictionariesAreDisjoint(SimpleTestCase):
 class InferSexFromName(SimpleTestCase):
     def test_unambiguous_male_names(self):
         for n in ["Марко", "Иван", "Лука", "Матија", "Немања", "marko"]:
-            self.assertEqual(infer_sex_from_name(n), MALE, msg=n)
+            self.assertEqual(pol_prema_imenu(n), MALE, msg=n)
 
     def test_unambiguous_female_names(self):
         for n in ["Ана", "Јелена", "Сања", "Цана", "Марија", "ana"]:
-            self.assertEqual(infer_sex_from_name(n), FEMALE, msg=n)
+            self.assertEqual(pol_prema_imenu(n), FEMALE, msg=n)
 
     def test_empty_or_unknown_returns_none(self):
         for n in [None, "", "   ", "Xyzzy"]:
-            self.assertIsNone(infer_sex_from_name(n))
+            self.assertIsNone(pol_prema_imenu(n))
 
     def test_composite_name_uses_first_token(self):
-        self.assertEqual(infer_sex_from_name("Марко Петар"), MALE)
-        self.assertEqual(infer_sex_from_name("Ана Марија"), FEMALE)
+        self.assertEqual(pol_prema_imenu("Марко Петар"), MALE)
+        self.assertEqual(pol_prema_imenu("Ана Марија"), FEMALE)
 
 
 class InferSexFromRole(SimpleTestCase):

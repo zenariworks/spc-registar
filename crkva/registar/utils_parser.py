@@ -91,7 +91,7 @@ def _parse_segment(text: str) -> dict[str, str | None]:
     return {"veroispovest": vera, "narodnost": narod}
 
 
-def parse_vera_narodnost(
+def pars_vera_narodnost(
     text: str | None,
 ) -> tuple[dict[str, str | None], dict[str, str | None] | None]:
     """
