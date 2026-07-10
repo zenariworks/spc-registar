@@ -257,9 +257,6 @@ class Command(MigrationCommand):
         self._vera.warm()
         self._narod.warm()
 
-        if not self._dry_run:
-            self.clear_target_table()
-
         records = list(self.take(self._fetch_records(), limit))
         self.stdout.write(
             f"Учитано {len(records)} записа из staging табеле"
@@ -286,6 +283,10 @@ class Command(MigrationCommand):
 
     @atomic
     def _build_and_save(self, records: list[KrstenjeRecord]) -> int:
+        # Clear inside the same transaction as the writes: if the import
+        # aborts, the delete rolls back too and existing data survives (#329).
+        if not self._dry_run:
+            self.clear_target_table()
         created = 0
         dedup_skipped = 0
         # Source DBF (HSPKRST) contains true duplicates where the same baptism
@@ -296,7 +297,10 @@ class Command(MigrationCommand):
         seen: set[tuple] = set()
         for r in records:
             try:
-                data = self._build_krstenje(r)
+                # Savepoint: a failed row rolls back alone instead of marking
+                # the outer transaction rollback-only.
+                with atomic():
+                    data = self._build_krstenje(r)
             except RecordSkipped as skip:
                 self.log_skip(skip.ctx, skip.reason)
                 continue
@@ -326,7 +330,8 @@ class Command(MigrationCommand):
                 created += 1
                 continue
             try:
-                Krstenje.objects.create(**data)
+                with atomic():
+                    Krstenje.objects.create(**data)
                 created += 1
             except IntegrityError as e:
                 self.log_error(r.context, f"IntegrityError: {e}")

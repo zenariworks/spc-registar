@@ -239,9 +239,6 @@ class Command(MigrationCommand):
         self._narod.warm()
         self._svestenici = {s.uid: s for s in Svestenik.objects.all()}
 
-        if not self._dry_run:
-            self.clear_target_table()
-
         records = list(self.take(self._fetch_records(), limit))
         self.stdout.write(
             f"Учитано {len(records)} записа из staging табеле"
@@ -268,12 +265,19 @@ class Command(MigrationCommand):
 
     @atomic
     def _build_and_save(self, records: list[VencanjeRecord]) -> int:
+        # Clear inside the same transaction as the writes: if the import
+        # aborts, the delete rolls back too and existing data survives (#329).
+        if not self._dry_run:
+            self.clear_target_table()
         objects: list[Vencanje] = []
         created = 0
 
         for idx, r in enumerate(records, 1):
             try:
-                data = self._build_vencanje_data(r)
+                # Savepoint: a failed row rolls back alone instead of marking
+                # the outer transaction rollback-only.
+                with atomic():
+                    data = self._build_vencanje_data(r)
             except RecordSkipped as skip:
                 self.log_skip(skip.ctx, skip.reason)
                 continue
@@ -301,12 +305,14 @@ class Command(MigrationCommand):
         if self._dry_run:
             return
         try:
-            Vencanje.objects.bulk_create(objects, ignore_conflicts=False)
+            with atomic():
+                Vencanje.objects.bulk_create(objects, ignore_conflicts=False)
         except IntegrityError as e:
             self.log_error(f"bulk_create failed: {e}; retrying individually")
             for o in objects:
                 try:
-                    o.save()
+                    with atomic():
+                        o.save()
                 except (ValueError, IntegrityError, ValidationError) as ie:
                     self.log_error(f"individual save failed: {ie}")
 
