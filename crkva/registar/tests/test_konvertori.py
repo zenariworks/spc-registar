@@ -31,8 +31,24 @@ class TestKonvertor(SimpleTestCase):
         self.assertEqual(Konvertor.string("Šabac"), "Шабац")
 
     def test_string_special_serbian_chars_zabalj(self):
-        """Special Serbian Latin 'Žabalj' converts to 'Жабалј' (character-by-character)."""
-        self.assertEqual(Konvertor.string("Žabalj"), "Жабалј")
+        """Serbian Latin 'Žabalj' converts to 'Жабаљ' (lj is one digraph, #339)."""
+        self.assertEqual(Konvertor.string("Žabalj"), "Жабаљ")
+
+    def test_string_cirilica_cd_letters(self):
+        """Ć/ć and Đ/đ transliterate to Ћ/ћ and Ђ/ђ (#339)."""
+        self.assertEqual(Konvertor.string("Ćuković"), "Ћуковић")
+        self.assertEqual(Konvertor.string("Đorđe"), "Ђорђе")
+        self.assertEqual(Konvertor.string("ćup"), "ћуп")
+        self.assertEqual(Konvertor.string("među"), "међу")
+
+    def test_string_digraphs_lj_nj_dz(self):
+        """Latin digraphs Lj/Nj/Dž (any case) map to single љ/њ/џ (#339)."""
+        self.assertEqual(Konvertor.string("Ljubomir"), "Љубомир")
+        self.assertEqual(Konvertor.string("konj"), "коњ")
+        self.assertEqual(Konvertor.string("Njegoš"), "Његош")
+        self.assertEqual(Konvertor.string("džak"), "џак")
+        self.assertEqual(Konvertor.string("NJEGOŠ"), "ЊЕГОШ")
+        self.assertEqual(Konvertor.string("LJUBA"), "ЉУБА")
 
     def test_string_legacy_hramsp_encoding_q(self):
         """Legacy HramSP encoding 'q' converts to 'љ'."""
