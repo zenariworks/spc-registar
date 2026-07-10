@@ -50,6 +50,7 @@ class Konvertor:
 
         Handles:
         - Standard Serbian Latin characters (a-z, č, ć, š, ž, đ)
+        - Latin digraphs Lj/Nj/Dž (any case) → љ/њ/џ
         - Legacy HramSP special encoding (q→љ, w→њ, ]→Ћ, }→ћ, \\→Ђ, |→ђ, x→џ)
         - Already Cyrillic text (passes through unchanged)
 
@@ -76,6 +77,10 @@ class Konvertor:
             "c": "ц",
             "Č": "Ч",
             "č": "ч",
+            "Ć": "Ћ",
+            "ć": "ћ",
+            "Đ": "Ђ",
+            "đ": "ђ",
             "D": "Д",
             "d": "д",
             "E": "Е",
@@ -136,6 +141,19 @@ class Konvertor:
             "X": "Џ",
             "x": "џ",
         }
+
+        for latinica, cirilica in (
+            ("DŽ", "Џ"),
+            ("Dž", "Џ"),
+            ("dž", "џ"),
+            ("LJ", "Љ"),
+            ("Lj", "Љ"),
+            ("lj", "љ"),
+            ("NJ", "Њ"),
+            ("Nj", "Њ"),
+            ("nj", "њ"),
+        ):
+            text = text.replace(latinica, cirilica)
 
         # Convert each character using the mapping
         converted_text = "".join(latin_to_cyrillic_map.get(char, char) for char in text)

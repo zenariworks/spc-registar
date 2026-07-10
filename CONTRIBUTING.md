@@ -30,6 +30,8 @@ Conventional Commits (проверава `conventional-pre-commit`):
 
 Дозвољени типови: `feat fix refactor docs test chore ci perf style build revert`. Без `Co-authored-by:` трејлера (хук `no-coauthored-by` га одбија).
 
+**Без AI атрибуције** — ни у порукама комита ни у опису PR-а (нема „🤖 Generated with …", „Co-Authored-By: Claude" и сл.).
+
 ## pre-commit
 
 Инсталирај једном, па ради аутоматски:
@@ -49,8 +51,14 @@ python crkva/manage.py test registar.tests tenants.tests kalendar.tests --parall
 
 Покрећи из корена репозиторијума (неки тестови читају статичке фајлове релативно на радни директоријум). Више: [docs/testing.md](docs/testing.md).
 
+## Стил кода
+
+- **Без inline коментара** (`# ...` уз линију кода). Код нека буде самообјашњив кроз имена; ако објашњење треба, иде у docstring функције/модула.
+- Идентификатори (имена променљивих и функција) на **српском** где год има смисла, у складу са постојећим кодом.
+
 ## Pull Request
 
 1. Направи грану по конвенцији.
 2. `pre-commit run --files <измењени>` и тестови зелени.
 3. Отвори PR на `main`. При мерџу `auto-tag` подиже верзију.
+4. Веза са issue-ом иде **на енглеском**: `Closes #<id>` / `Fixes #<id>`. Српски текст (нпр. „Затвара #339") GitHub НЕ препознаје, па се issue не затвори аутоматски.
