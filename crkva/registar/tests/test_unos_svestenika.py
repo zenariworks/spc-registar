@@ -13,6 +13,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 from registar.models import Svestenik
+from registar.seed.unos_svestenika import Command as UnosSvestenika
 
 
 class UnosSvestenikaTests(TestCase):
@@ -20,7 +21,7 @@ class UnosSvestenikaTests(TestCase):
         args = ["--tenant", "test_tenant", "--seed", "1"]
         for key, value in kwargs.items():
             args += [f"--{key}", str(value)]
-        call_command("unos_svestenika", *args, stdout=StringIO())
+        call_command(UnosSvestenika(), *args, stdout=StringIO())
 
     def test_dummy_source_creates_rows(self):
         self._seed(**{"from": "dummy", "count": 3})
@@ -33,7 +34,7 @@ class UnosSvestenikaTests(TestCase):
     def test_unknown_source_rejected(self):
         with self.assertRaises((CommandError, SystemExit)):
             call_command(
-                "unos_svestenika",
+                UnosSvestenika(),
                 "--tenant",
                 "test_tenant",
                 "--from",
@@ -44,7 +45,7 @@ class UnosSvestenikaTests(TestCase):
     def test_reset_clears_before_seeding(self):
         self._seed(**{"from": "dummy", "count": 2})
         call_command(
-            "unos_svestenika",
+            UnosSvestenika(),
             "--tenant",
             "test_tenant",
             "--from",

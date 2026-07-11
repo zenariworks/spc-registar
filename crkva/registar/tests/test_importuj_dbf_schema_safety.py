@@ -15,6 +15,7 @@ from django.db import connection
 from django.test import TestCase
 from django_tenants.utils import schema_context
 from registar.management.commands._schema_target import razresi_ciljne_sheme
+from registar.uvoz.migracija_krstenja import Command as MigracijaKrstenja
 from tenants.models import Tenant
 
 
@@ -86,4 +87,4 @@ class MigracijaPublicGuardTests(TestCase):
     def test_migracija_krstenja_refuses_public(self):
         with schema_context("public"):
             with self.assertRaises(CommandError):
-                call_command("migracija_krstenja", "--dry-run")
+                call_command(MigracijaKrstenja(), "--dry-run")

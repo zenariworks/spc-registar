@@ -25,6 +25,7 @@ from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase
 from django_tenants.utils import schema_context
 from kalendar.models import Slava
+from registar.seed.unos_slava import Command as UnosSlava
 
 JSONL = os.path.join(settings.BASE_DIR, "fixtures", "slave.jsonl")
 RESTORED_DAYS = [
@@ -109,7 +110,7 @@ class UnosSlavaSeederTests(TestCase):
         _purge(self.moveable_names)
 
     def test_seeds_moveable_as_moveable_no_fixed_copy(self):
-        call_command("unos_slava", stdout=StringIO(), stderr=StringIO())
+        call_command(UnosSlava(), stdout=StringIO(), stderr=StringIO())
         with schema_context("public"):
             for name in self.moveable_names:
                 rows = Slava.objects.filter(naziv=name)
@@ -122,7 +123,7 @@ class UnosSlavaSeederTests(TestCase):
             )
 
     def test_restored_days_get_a_fixed_saint(self):
-        call_command("unos_slava", stdout=StringIO(), stderr=StringIO())
+        call_command(UnosSlava(), stdout=StringIO(), stderr=StringIO())
         with schema_context("public"):
             for m, d in RESTORED_DAYS:
                 self.assertTrue(
@@ -131,8 +132,8 @@ class UnosSlavaSeederTests(TestCase):
                 )
 
     def test_idempotent_no_duplicates(self):
-        call_command("unos_slava", stdout=StringIO(), stderr=StringIO())
-        call_command("unos_slava", stdout=StringIO(), stderr=StringIO())
+        call_command(UnosSlava(), stdout=StringIO(), stderr=StringIO())
+        call_command(UnosSlava(), stdout=StringIO(), stderr=StringIO())
         with schema_context("public"):
             for name in self.moveable_names:
                 self.assertEqual(Slava.objects.filter(naziv=name).count(), 1, name)

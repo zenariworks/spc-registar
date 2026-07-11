@@ -23,7 +23,6 @@ from typing import Iterator, Optional
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
-from registar.management.commands.base_migration import MigrationCommand
 from registar.migracija.address import set_adresa_if_empty, split_adresa
 from registar.migracija.cache import (
     LookupCache,
@@ -50,6 +49,7 @@ from registar.models import (
     Zanimanje,
 )
 from registar.utils_parser import pars_vera_narodnost
+from registar.uvoz.base_migration import MigrationCommand
 
 SOURCE_COLUMNS = (
     "V_SIFRA",

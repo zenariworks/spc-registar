@@ -239,11 +239,11 @@ class ImporterIntegrationTests(TestCase):
     expected (married, maiden) tuple shape callers depend on."""
 
     def test_helper_is_used_by_ukucana_module(self):
-        from registar.management.commands import migracija_ukucana_parohijana
+        from registar.uvoz import migracija_ukucana_parohijana
 
         self.assertTrue(hasattr(migracija_ukucana_parohijana, "extract_maiden"))
 
     def test_helper_is_used_by_krstenja_module(self):
-        from registar.management.commands import migracija_krstenja
+        from registar.uvoz import migracija_krstenja
 
         self.assertTrue(hasattr(migracija_krstenja, "extract_maiden"))

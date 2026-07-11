@@ -8,8 +8,8 @@ data-driven петљу (CSV за просте листе, JSONL за eparhije); 
 # pylint: disable=missing-function-docstring,missing-class-docstring,protected-access
 
 from django.test import TestCase
-from registar.management.commands.unos_sifarnika import SIFARNICI, Command
 from registar.models import Eparhija, Narodnost
+from registar.seed.unos_sifarnika import SIFARNICI, Command
 
 
 def _sifarnik(model):

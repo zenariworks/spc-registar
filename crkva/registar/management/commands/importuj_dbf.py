@@ -13,17 +13,31 @@ from __future__ import annotations
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
+from registar.management.commands.popravi_devojacka import Command as PopraviDevojacka
+from registar.management.commands.popravi_duplikate import Command as PopraviDuplikate
+from registar.seed.unos_slava import Command as UnosSlava
+from registar.uvoz.mark_major_feasts import Command as MarkMajorFeasts
+from registar.uvoz.migracija_krstenja import Command as MigracijaKrstenja
+from registar.uvoz.migracija_svestenika import Command as MigracijaSvestenika
+from registar.uvoz.migracija_ukucana_parohijana import (
+    Command as MigracijaUkucanaParohijana,
+)
+from registar.uvoz.migracija_vencanja import Command as MigracijaVencanja
 
 # Run order matters: lookups → core entities → cleanups → calendar fixes.
-PIPELINE: list[tuple[str, str]] = [
-    ("unos_slava", "Славе (из fixtures/slave.jsonl)"),
-    ("migracija_svestenika", "Свештеници"),
-    ("migracija_ukucana_parohijana", "Домаћинства + парохијани"),
-    ("migracija_krstenja", "Крштења"),
-    ("migracija_vencanja", "Венчања"),
-    ("popravi_devojacka", "Поправка девојачких презимена"),
-    ("popravi_duplikate", "Уклањање дупликата"),
-    ("mark_major_feasts", "Обележавање црвених слова"),
+PIPELINE = [
+    ("unos_slava", "Славе (из fixtures/slave.jsonl)", UnosSlava),
+    ("migracija_svestenika", "Свештеници", MigracijaSvestenika),
+    (
+        "migracija_ukucana_parohijana",
+        "Домаћинства + парохијани",
+        MigracijaUkucanaParohijana,
+    ),
+    ("migracija_krstenja", "Крштења", MigracijaKrstenja),
+    ("migracija_vencanja", "Венчања", MigracijaVencanja),
+    ("popravi_devojacka", "Поправка девојачких презимена", PopraviDevojacka),
+    ("popravi_duplikate", "Уклањање дупликата", PopraviDuplikate),
+    ("mark_major_feasts", "Обележавање црвених слова", MarkMajorFeasts),
 ]
 
 
@@ -76,20 +90,19 @@ class Command(BaseCommand):
                 )
             )
 
-        for i, (cmd, label) in enumerate(steps, start=1):
-            heading = f"[{i}/{len(steps)}] {label}  (manage.py {cmd})"
+        for i, (cmd_id, label, cls) in enumerate(steps, start=1):
+            heading = f"[{i}/{len(steps)}] {label}  ({cmd_id})"
             self.stdout.write(self.style.MIGRATE_HEADING(heading))
             if dry:
                 self.stdout.write("  (dry-run — прескачем)")
                 continue
             try:
-                call_command(cmd)
+                call_command(cls())
             except Exception as e:  # pylint: disable=broad-except
-                # Halt the pipeline on any error so the user sees where it broke.
                 raise CommandError(
-                    f"Корак {cmd!r} није успео: {e}\n"
+                    f"Корак {cmd_id!r} није успео: {e}\n"
                     f"Поправи проблем и покрени поново са "
-                    f"--from-step {cmd}"
+                    f"--from-step {cmd_id}"
                 ) from e
 
         if dry:
