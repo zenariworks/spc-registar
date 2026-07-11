@@ -13,7 +13,6 @@ from __future__ import annotations
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
-from registar.management.commands.popravi_devojacka import Command as PopraviDevojacka
 from registar.management.commands.popravi_duplikate import Command as PopraviDuplikate
 from registar.seed.unos_slava import Command as UnosSlava
 from registar.uvoz.mark_major_feasts import Command as MarkMajorFeasts
@@ -35,7 +34,6 @@ PIPELINE = [
     ),
     ("migracija_krstenja", "Крштења", MigracijaKrstenja),
     ("migracija_vencanja", "Венчања", MigracijaVencanja),
-    ("popravi_devojacka", "Поправка девојачких презимена", PopraviDevojacka),
     ("popravi_duplikate", "Уклањање дупликата", PopraviDuplikate),
     ("mark_major_feasts", "Обележавање црвених слова", MarkMajorFeasts),
 ]
