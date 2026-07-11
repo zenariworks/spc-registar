@@ -1,88 +1,57 @@
-"""Tests for the unos_svestenika view + form."""
+"""#340: unos_svestenika обједињује mock и dummy изворе.
 
-# pylint: disable=missing-function-docstring  # test names describe intent
+Некадашња ``unos_svestenika`` (dummy placeholder свештеници) спојена је у
+``unos_svestenika`` као ``--from dummy``; ``--from mock`` остаје реалистичан
+подразумевани извор. ``migracija_svestenika`` (DBF миграција) остаје засебно.
+"""
 
-from django.contrib.auth.models import User
-from django.test import Client, TestCase
-from django.urls import reverse
+# pylint: disable=missing-function-docstring,missing-class-docstring
+
+from io import StringIO
+
+from django.core.management import call_command
+from django.core.management.base import CommandError
+from django.test import TestCase
 from registar.models import Svestenik
-from tenants.models import Role, Tenant, UserMembership
 
 
-class UnosSvestenikaViewTests(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
-        cls.priest = User.objects.create_user(username="svest", password="x")
-        UserMembership.objects.create(
-            user=cls.priest, tenant=cls.tenant, role=Role.SVESTENSTVO
+class UnosSvestenikaTests(TestCase):
+    def _seed(self, **kwargs):
+        args = ["--tenant", "test_tenant", "--seed", "1"]
+        for key, value in kwargs.items():
+            args += [f"--{key}", str(value)]
+        call_command("unos_svestenika", *args, stdout=StringIO())
+
+    def test_dummy_source_creates_rows(self):
+        self._seed(**{"from": "dummy", "count": 3})
+        self.assertEqual(Svestenik.objects.count(), 3)
+
+    def test_mock_source_creates_rows(self):
+        self._seed(**{"from": "mock", "count": 3})
+        self.assertEqual(Svestenik.objects.count(), 3)
+
+    def test_unknown_source_rejected(self):
+        with self.assertRaises((CommandError, SystemExit)):
+            call_command(
+                "unos_svestenika",
+                "--tenant",
+                "test_tenant",
+                "--from",
+                "bogus",
+                stdout=StringIO(),
+            )
+
+    def test_reset_clears_before_seeding(self):
+        self._seed(**{"from": "dummy", "count": 2})
+        call_command(
+            "unos_svestenika",
+            "--tenant",
+            "test_tenant",
+            "--from",
+            "dummy",
+            "--count",
+            "2",
+            "--reset",
+            stdout=StringIO(),
         )
-        cls.clerk = User.objects.create_user(username="kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
-        )
-        cls.admin = User.objects.create_superuser(
-            username="root", password="x", email="r@x.test"
-        )
-
-    def setUp(self):
-        self.client = Client()
-
-    def test_anonymous_redirects_to_login(self):
-        r = self.client.get(reverse("unos_svestenika"))
-        self.assertEqual(r.status_code, 302)
-        self.assertIn("/prijava/", r["Location"])
-
-    def test_priest_can_open_form(self):
-        self.client.force_login(self.priest)
-        r = self.client.get(reverse("unos_svestenika"))
-        self.assertEqual(r.status_code, 200)
-        self.assertTemplateUsed(r, "registar/svestenik.html")
-        self.assertIn("form", r.context)
-
-    def test_clerk_cannot_open_form(self):
-        self.client.force_login(self.clerk)
-        r = self.client.get(reverse("unos_svestenika"))
-        self.assertEqual(r.status_code, 403)
-
-    def test_priest_can_post_and_create_svestenik(self):
-        self.client.force_login(self.priest)
-        before = Svestenik.objects.count()
-        r = self.client.post(
-            reverse("unos_svestenika"),
-            {
-                "ime": "Никола",
-                "prezime": "Тестић",
-                "zvanje": "јереј",
-            },
-        )
-        self.assertEqual(r.status_code, 302)
-        self.assertEqual(Svestenik.objects.count(), before + 1)
-        s = Svestenik.objects.get(ime="Никола", prezime="Тестић")
-        self.assertEqual(s.zvanje, "јереј")
-
-    def test_clerk_cannot_post(self):
-        self.client.force_login(self.clerk)
-        before = Svestenik.objects.count()
-        r = self.client.post(
-            reverse("unos_svestenika"),
-            {"ime": "Не", "prezime": "Може", "zvanje": "јереј"},
-        )
-        self.assertEqual(r.status_code, 403)
-        self.assertEqual(Svestenik.objects.count(), before)
-
-    def test_admin_can_post(self):
-        self.client.force_login(self.admin)
-        before = Svestenik.objects.count()
-        r = self.client.post(
-            reverse("unos_svestenika"),
-            {"ime": "Админ", "prezime": "Свештеник", "zvanje": "протојереј"},
-        )
-        self.assertEqual(r.status_code, 302)
-        self.assertEqual(Svestenik.objects.count(), before + 1)
-
-    def test_invalid_post_redisplays_form_with_errors(self):
-        self.client.force_login(self.priest)
-        r = self.client.post(reverse("unos_svestenika"), {"ime": "Само име"})
-        self.assertEqual(r.status_code, 200)
-        self.assertTrue(r.context["form"].errors)
+        self.assertEqual(Svestenik.objects.count(), 2)
