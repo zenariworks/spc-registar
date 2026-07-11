@@ -49,7 +49,7 @@ class ExtractMaidenTests(TestCase):
         self.assertEqual(extract_maiden("Бошковић"), ("Бошковић", ""))
 
     def test_does_not_eat_leading_R_when_no_marker(self):
-        # Regression for the clean_prezime bug: "Радановић" must not
+        # Regression for the ocisti_prezime bug: "Радановић" must not
         # become "адановић".
         self.assertEqual(extract_maiden("Радановић"), ("Радановић", ""))
         self.assertEqual(extract_maiden("Ристић"), ("Ристић", ""))
