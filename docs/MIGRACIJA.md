@@ -32,20 +32,29 @@ python manage.py load_data --from dbf-zip:/путања/до/crkva.zip \
 
 ### Ручни ток (нижи ниво)
 
-Појединачни сидери (`unos_*`) и миграциони кораци (`migracija_*`) су
-**интерни** — више нису засебне `manage.py` команде (позивају их `load_data`
-и `importuj_dbf`). За ручно покретање остају две команде:
+Сидери и миграциони кораци се позивају као **групне подкоманде** — интерна
+логика живи у `registar/seed/` и `registar/uvoz/`, а групе `seed` и
+`migracija` враћају груписан CLI приступ:
 
 ```bash
 S=crkva_sv_petke_cukarica
 python manage.py tenant_command load_dbf --schema=$S --src_zip /путања/до/crkva.zip
+
+# појединачни кораци (дебаговање):
+python manage.py seed sifarnika --tenant=$S          # шифрарници + славе
+python manage.py migracija svestenici --schema=$S    # + --dry-run / --limit
+python manage.py migracija krstenja --schema=$S
+python manage.py migracija praznici --schema=$S
+
+# или цео миграциони пајплајн одједном:
 python manage.py tenant_command importuj_dbf --schema=$S
 ```
 
+`manage.py seed --help` и `manage.py migracija --help` листају све подкоманде.
 `importuj_dbf` покреће славе + `migracija_*` + `popravi_*` + обележавање
-празника. Пуне шифрарнике сеје само `load_data` (преко `unos_sifarnika`); при
-голом `importuj_dbf` шифрарници се допуњавају успут из података. За комплетан
-увоз користи `load_data --from dbf-zip:… --tenant $S`.
+празника (без пуних шифрарника — њих сеје `seed sifarnika`, што `load_data`
+ради аутоматски). За комплетан увоз користи
+`load_data --from dbf-zip:… --tenant $S`.
 
 ### Провера бројева
 
