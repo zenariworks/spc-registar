@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random as random_module
+from pathlib import Path
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
@@ -15,6 +16,7 @@ from registar.management.commands import (
     unos_svestenika,
     unos_vencanja,
 )
+from registar.mock.tenant_ctx import with_tenant
 
 
 class Step:
@@ -31,9 +33,9 @@ class Step:
         default_count=None,
         divisor=1,
     ):
-        self.name = modul.__name__.rsplit(".", 1)[-1]
+        self.naziv = modul.__name__.rsplit(".", 1)[-1]
         self.modul = modul
-        self.label = label
+        self.oznaka = label
         self.takes_source = takes_source
         self.takes_count = takes_count
         self.takes_tenant = takes_tenant
@@ -46,7 +48,7 @@ class Step:
 PIPELINE: list[Step] = [
     Step(
         unos_sifarnika,
-        "Lookup табеле",
+        "Шифрарник",
         takes_source=False,
         takes_count=False,
         takes_seed=False,
@@ -100,23 +102,25 @@ class Command(BaseCommand):
 
     def handle(self, *args, **opts):
         source = opts["source"]
-        if source != "mock":
-            if source.startswith("dbf-") or source.startswith("fixture:"):
-                raise CommandError(
-                    f"Извор {source!r} још није имплементиран — за DBF "
-                    "користи `load_dbf` па `importuj_dbf`."
-                )
-            raise CommandError(f"Непознат извор: {source!r}")
-
         if opts["seed"] is not None:
             random_module.seed(opts["seed"])
 
+        if source == "mock":
+            self._zasej_mock(opts)
+        elif source.startswith("dbf-zip:") or source.startswith("dbf-dir:"):
+            self._migriraj_dbf(source, opts)
+        elif source.startswith("fixture:"):
+            raise CommandError(f"Извор {source!r} још није имплементиран.")
+        else:
+            raise CommandError(f"Непознат извор: {source!r}")
+
+    def _zasej_mock(self, opts) -> None:
         only = opts["only"].split(",") if opts["only"] else None
-        steps = [s for s in PIPELINE if not only or s.name in only]
+        steps = [s for s in PIPELINE if not only or s.naziv in only]
         if only and not steps:
             raise CommandError(
                 f"--only не одговара ниједном кораку. Доступни: "
-                f"{', '.join(s.name for s in PIPELINE)}"
+                f"{', '.join(s.naziv for s in PIPELINE)}"
             )
 
         if any(s.takes_tenant for s in steps) and not opts["tenant"]:
@@ -129,37 +133,76 @@ class Command(BaseCommand):
 
         self.stdout.write(
             self.style.MIGRATE_HEADING(
-                f"load_data --from {source}  ({len(steps)} корака, "
+                f"load_data --from mock  ({len(steps)} корака, "
                 f"tenant={opts['tenant'] or '—'}, reset={opts['reset']})"
             )
         )
 
-        for step in steps:
+        for korak in steps:
             self.stdout.write(
-                self.style.MIGRATE_HEADING(f"\n→ {step.label}  (manage.py {step.name})")
+                self.style.MIGRATE_HEADING(
+                    f"\n→ {korak.oznaka}  (manage.py {korak.naziv})"
+                )
             )
             if opts["dry_run"]:
                 self.stdout.write("  (dry-run — прескачем)")
                 continue
 
             kwargs = {}
-            if step.takes_source:
-                kwargs["source"] = source
-            if step.takes_tenant:
+            if korak.takes_source:
+                kwargs["source"] = "mock"
+            if korak.takes_tenant:
                 kwargs["tenant"] = opts["tenant"]
-            if step.takes_count:
+            if korak.takes_count:
                 if base_count is not None:
-                    kwargs["count"] = max(1, base_count // step.divisor)
+                    kwargs["count"] = max(1, base_count // korak.divisor)
                 else:
-                    kwargs["count"] = step.default_count
-            if step.takes_seed and opts["seed"] is not None:
+                    kwargs["count"] = korak.default_count
+            if korak.takes_seed and opts["seed"] is not None:
                 kwargs["seed"] = opts["seed"]
-            if step.takes_reset and opts["reset"]:
+            if korak.takes_reset and opts["reset"]:
                 kwargs["reset"] = True
 
-            call_command(step.name, **kwargs)
+            call_command(korak.naziv, **kwargs)
 
         if opts["dry_run"]:
             self.stdout.write(self.style.NOTICE("\nDry-run завршен."))
         else:
             self.stdout.write(self.style.SUCCESS("\nload_data завршен."))
+
+    def _migriraj_dbf(self, source: str, opts) -> None:
+        if not opts["tenant"]:
+            raise CommandError("--tenant је обавезан за DBF увоз.")
+
+        prefiks, _, putanja = source.partition(":")
+        putanja = putanja.strip()
+        if not putanja:
+            raise CommandError(f"Недостаје путања у извору {source!r}.")
+
+        izvor = Path(putanja)
+        if not izvor.exists():
+            raise CommandError(f"DBF извор не постоји: {izvor}")
+
+        load_kwargs = {"src_zip": izvor} if prefiks == "dbf-zip" else {"src_dir": izvor}
+
+        self.stdout.write(
+            self.style.MIGRATE_HEADING(
+                f"load_data --from {source}  (tenant={opts['tenant']})"
+            )
+        )
+        if opts["dry_run"]:
+            self.stdout.write(
+                f"  (dry-run) load_dbf({putanja}) → unos_sifarnika → importuj_dbf над "
+                f"{opts['tenant']!r}"
+            )
+            return
+
+        with with_tenant(opts["tenant"]):
+            self.stdout.write(self.style.MIGRATE_HEADING("\n→ load_dbf"))
+            call_command("load_dbf", **load_kwargs)
+            self.stdout.write(self.style.MIGRATE_HEADING("\n→ unos_sifarnika"))
+            call_command("unos_sifarnika", tenant=opts["tenant"])
+            self.stdout.write(self.style.MIGRATE_HEADING("\n→ importuj_dbf"))
+            call_command("importuj_dbf")
+
+        self.stdout.write(self.style.SUCCESS("\nload_data (DBF) завршен."))

@@ -26,7 +26,7 @@ class Command(MigrationCommand):
         dry_run = opts.get("dry_run", False)
         limit = opts.get("limit", 0) or 0
 
-        parsed_data = self._parse_data()
+        parsed_data = self._parsiraj()
         if limit:
             parsed_data = parsed_data[:limit]
         created_count = 0
@@ -49,7 +49,7 @@ class Command(MigrationCommand):
 
             try:
                 parohija = None
-                broj_parohije = self._convert_roman_to_integer(parohija_oznaka)
+                broj_parohije = self._konvertuj_rimski(parohija_oznaka)
                 if broj_parohije is not None:
                     parohija, _ = Parohija.objects.get_or_create(naziv=broj_parohije)
                 elif parohija_oznaka.strip():
@@ -120,29 +120,31 @@ class Command(MigrationCommand):
                 return key
         return norm  # fallback: store the cleaned-up but unrecognized string
 
-    def _convert_roman_to_integer(self, parohija_oznaka):
-        # Мапира римски број парохије (I/II/III) у "1"/"2"/"3".
-        # Враћа None за непознату вредност (нпр. "IV") да не бисмо
-        # креирали парохију назива "0" (#333).
-        rimski_u_broj = {"I": "1", "II": "2", "III": "3", "1": "1", "2": "2", "3": "3"}
-        oznaka = parohija_oznaka.rstrip() if parohija_oznaka else ""
-        return rimski_u_broj.get(oznaka)
+    def _konvertuj_rimski(self, oznaka):
+        """
+        Мапира римски број парохије (I/II/III) у "1"/"2"/"3".
+        Враћа None за непознату вредност (нпр. "IV") да не бисмо
+        креирали парохију назива "0" (#333).
+        """
+        cifra = {"I": "1", "II": "2", "III": "3", "1": "1", "2": "2", "3": "3"}
+        rimski_broj = oznaka.rstrip() if oznaka else ""
+        return cifra.get(rimski_broj)
 
-    def _parse_data(self):
+    def _parsiraj(self):
         """
         Čita podatke iz PostgreSQL staging tabele 'hsp_svestenici'.
         :return: Lista parsiranih podataka (svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja)
         """
-        parsed_data = []
+        parsirano = []
         with connection.cursor() as cursor:
             cursor.execute(
                 'SELECT "SV_RBR", "SV_IME", "SV_ZVANJE", "SV_PAROH", "SV_DATROD" FROM hsp_svestenici'
             )
-            rows = cursor.fetchall()
+            zapisi = cursor.fetchall()
 
-            for row in rows:
-                svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja = row
-                parsed_data.append(
+            for zapis in zapisi:
+                svestenik_id, ime_prezime, zvanje, parohija, datum_rodjenja = zapis
+                parsirano.append(
                     (
                         int(svestenik_id) if svestenik_id else 0,
                         ime_prezime or "",
@@ -152,4 +154,4 @@ class Command(MigrationCommand):
                     )
                 )
 
-        return parsed_data
+        return parsirano
