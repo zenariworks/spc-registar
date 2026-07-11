@@ -122,6 +122,7 @@ SHARED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_extensions",
+    "django_typer",
     "compressor",
     "import_export",
     "django_select2",
