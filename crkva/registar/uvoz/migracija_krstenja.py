@@ -363,7 +363,9 @@ class Command(MigrationCommand):
             raise RecordSkipped(r.context, "недостаје име детета или презиме оца")
 
         hram = self._hram.get(r.hram_naziv) or self._hram.get("Непознат храм")
-        svestenik, _ = Svestenik.objects.get_or_create(uid=r.svestenik_id)
+        svestenik = None
+        if r.svestenik_id:
+            svestenik, _ = Svestenik.objects.get_or_create(uid=r.svestenik_id)
 
         otac_vera, otac_narod, majka_vera, majka_narod = self._parse_vera_narod_parents(
             r
