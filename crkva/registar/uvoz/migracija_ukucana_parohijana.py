@@ -13,7 +13,6 @@ from typing import Dict, Iterable
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
-from registar.management.commands.base_migration import MigrationCommand
 from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
 from registar.migracija.helpers import cirilica, extract_maiden
 from registar.migracija.osoba_repo import (
@@ -25,6 +24,7 @@ from registar.migracija.osoba_repo import (
 from registar.migracija.sex import pol_prema_imenu
 from registar.migracija.slava_map import resolve_slava
 from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
+from registar.uvoz.base_migration import MigrationCommand
 
 
 class Command(MigrationCommand):

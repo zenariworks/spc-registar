@@ -20,6 +20,7 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from registar.mock.tenant_ctx import with_tenant
 from registar.models import Eparhija, Narodnost, Veroispovest, Zanimanje
+from registar.seed.unos_slava import Command as UnosSlava
 
 FIXTURES = settings.BASE_DIR / "fixtures"
 
@@ -56,7 +57,7 @@ class Command(BaseCommand):
                     )
                 )
             self.stdout.write(self.style.MIGRATE_HEADING("  → Slava"))
-            call_command("unos_slava")
+            call_command(UnosSlava())
             self.stdout.write(
                 self.style.SUCCESS(f"Lookup табеле напуњене у {tenant.schema_name!r}.")
             )

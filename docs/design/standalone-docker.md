@@ -70,8 +70,7 @@ Docker-а**. Иако постоје `docker-compose.yml` / `*.override.yml` / `
 wait_for_db
 migrate_schemas              # НЕ `migrate` (django-tenants)
 collectstatic --noinput
-seed_lookups                 # народности/вероисповести/...
-unos_slava                   # календар (славе) — само ако је празно
+load_data --from mock --tenant $TENANT --only unos_sifarnika  # шифрарници + славе (интерно)
 createsuperuser --noinput    # из DJANGO_SUPERUSER_* env, ако не постоји
 exec gunicorn crkva.wsgi:application -c scripts/gunicorn.conf.py
 ```

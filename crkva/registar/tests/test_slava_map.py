@@ -10,13 +10,14 @@ from django.core.management import call_command
 from django.test import TestCase
 from kalendar.models import Slava
 from registar.migracija.slava_map import POKRETNE_SLAVE_OFFSET_BY_SIFRA, resolve_slava
+from registar.seed.unos_slava import Command as UnosSlava
 
 
 class ResolveSlavaTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         # Засеј целу славу из slave.jsonl (377: 365 фиксних + 12 покретних).
-        call_command("unos_slava")
+        call_command(UnosSlava())
 
     def test_none_uid_returns_none(self):
         self.assertIsNone(resolve_slava(None, Slava))

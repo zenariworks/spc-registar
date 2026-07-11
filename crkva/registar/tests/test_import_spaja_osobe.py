@@ -13,9 +13,11 @@ from io import StringIO
 from django.core.management import call_command
 from django.db import connection
 from django.test import TestCase
-from registar.management.commands.migracija_krstenja import SOURCE_COLUMNS as K_COLS
-from registar.management.commands.migracija_vencanja import SOURCE_COLUMNS as V_COLS
 from registar.models import Krstenje, Osoba, Vencanje
+from registar.uvoz.migracija_krstenja import SOURCE_COLUMNS as K_COLS
+from registar.uvoz.migracija_krstenja import Command as MigracijaKrstenja
+from registar.uvoz.migracija_vencanja import SOURCE_COLUMNS as V_COLS
+from registar.uvoz.migracija_vencanja import Command as MigracijaVencanja
 
 
 def _clear_caches():
@@ -73,7 +75,7 @@ class KrstenjeDistinctChildrenTests(TestCase):
                 _krstenje_row(2, 2000, "Никола", "Петровић", 1995, strana=2),
             ],
         )
-        call_command("migracija_krstenja", stdout=StringIO())
+        call_command(MigracijaKrstenja(), stdout=StringIO())
 
         self.assertEqual(Krstenje.objects.count(), 2)
         deca = list(Krstenje.objects.order_by("redni_broj").select_related("dete"))
@@ -101,7 +103,7 @@ class VencanjeBrideNotMergedTests(TestCase):
             # surname becomes Петровић, colliding by name with the mother.
             [_vencanje_row(1, 2000, "Петар", "Петровић", "Мара", "Јовановић")],
         )
-        call_command("migracija_vencanja", stdout=StringIO())
+        call_command(MigracijaVencanja(), stdout=StringIO())
 
         self.assertEqual(Vencanje.objects.count(), 1)
         venc = Vencanje.objects.get()

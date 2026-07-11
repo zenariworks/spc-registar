@@ -123,7 +123,7 @@ class ImporterSafetyCheckedDedup(TestCase):
     def test_same_name_same_phone_merges_into_one_osoba(self):
         """Two DBF rows with identical name + tel_fiksni → one Osoba."""
         from django.db import connection
-        from registar.management.commands.migracija_ukucana_parohijana import Command
+        from registar.uvoz.migracija_ukucana_parohijana import Command
 
         self._create_staging_table()
         with connection.cursor() as cur:
@@ -147,7 +147,7 @@ class ImporterSafetyCheckedDedup(TestCase):
     def test_same_name_different_phones_keeps_both(self):
         """Two DBF rows with same name but different phones → two Osobe."""
         from django.db import connection
-        from registar.management.commands.migracija_ukucana_parohijana import Command
+        from registar.uvoz.migracija_ukucana_parohijana import Command
 
         self._create_staging_table()
         with connection.cursor() as cur:
@@ -172,7 +172,7 @@ class ImporterSafetyCheckedDedup(TestCase):
         held the first same-name Osoba and #3 was never compared against #2.
         """
         from django.db import connection
-        from registar.management.commands.migracija_ukucana_parohijana import Command
+        from registar.uvoz.migracija_ukucana_parohijana import Command
 
         self._create_staging_table()
         with connection.cursor() as cur:

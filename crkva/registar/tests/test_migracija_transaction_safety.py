@@ -15,8 +15,9 @@ from unittest import mock
 from django.core.management import call_command
 from django.db import connection
 from django.test import TestCase
-from registar.management.commands.migracija_krstenja import SOURCE_COLUMNS
 from registar.models import Krstenje
+from registar.uvoz.migracija_krstenja import SOURCE_COLUMNS
+from registar.uvoz.migracija_krstenja import Command as MigracijaKrstenja
 
 
 def _staging_row(sifra: int, aktgod: int, dete_ime: str, otac_prezime: str) -> list:
@@ -63,7 +64,7 @@ class MigracijaKrstenjaTransactionSafetyTests(TestCase):
                 _staging_row(2, 2000, "Јован", "Јовановић"),
             ]
         )
-        call_command("migracija_krstenja", stdout=StringIO())
+        call_command(MigracijaKrstenja(), stdout=StringIO())
         self.assertEqual(Krstenje.objects.count(), 2)
         self.assertEqual(
             set(Krstenje.objects.values_list("redni_broj", flat=True)), {1, 2}
@@ -74,11 +75,11 @@ class MigracijaKrstenjaTransactionSafetyTests(TestCase):
         Krstenje.objects.create(godina_registracije=1999, redni_broj=7, strana=1)
         self._create_staging([_staging_row(1, 2000, "Марко", "Марковић")])
         with mock.patch(
-            "registar.management.commands.migracija_krstenja.Command._build_krstenje",
+            "registar.uvoz.migracija_krstenja.Command._build_krstenje",
             side_effect=RuntimeError("boom"),
         ):
             with self.assertRaises(RuntimeError):
-                call_command("migracija_krstenja", stdout=StringIO())
+                call_command(MigracijaKrstenja(), stdout=StringIO())
         self.assertEqual(Krstenje.objects.count(), 1)
         self.assertTrue(
             Krstenje.objects.filter(godina_registracije=1999, redni_broj=7).exists()

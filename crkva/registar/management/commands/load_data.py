@@ -7,7 +7,8 @@ from pathlib import Path
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
-from registar.management.commands import (
+from registar.mock.tenant_ctx import with_tenant
+from registar.seed import (
     unos_adresa,
     unos_domacinstava,
     unos_krstenja,
@@ -16,7 +17,6 @@ from registar.management.commands import (
     unos_svestenika,
     unos_vencanja,
 )
-from registar.mock.tenant_ctx import with_tenant
 
 
 class Step:
@@ -163,7 +163,7 @@ class Command(BaseCommand):
             if korak.takes_reset and opts["reset"]:
                 kwargs["reset"] = True
 
-            call_command(korak.naziv, **kwargs)
+            call_command(korak.modul.Command(), **kwargs)
 
         if opts["dry_run"]:
             self.stdout.write(self.style.NOTICE("\nDry-run завршен."))
@@ -201,7 +201,7 @@ class Command(BaseCommand):
             self.stdout.write(self.style.MIGRATE_HEADING("\n→ load_dbf"))
             call_command("load_dbf", **load_kwargs)
             self.stdout.write(self.style.MIGRATE_HEADING("\n→ unos_sifarnika"))
-            call_command("unos_sifarnika", tenant=opts["tenant"])
+            call_command(unos_sifarnika.Command(), tenant=opts["tenant"])
             self.stdout.write(self.style.MIGRATE_HEADING("\n→ importuj_dbf"))
             call_command("importuj_dbf")
 

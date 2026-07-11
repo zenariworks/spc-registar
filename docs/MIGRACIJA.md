@@ -30,19 +30,22 @@ python manage.py load_data --from dbf-zip:/путања/до/crkva.zip \
 `--dry-run` приказује план без извршавања. Свака `migracija_*` команда брише
 своје staging табеле (`hsp_*`) одмах по успешном завршетку.
 
-### Ручни ток (по кораку)
+### Ручни ток (нижи ниво)
 
-За дебаговање појединачних корака (фасада ради исто, редом):
+Појединачни сидери (`unos_*`) и миграциони кораци (`migracija_*`) су
+**интерни** — више нису засебне `manage.py` команде (позивају их `load_data`
+и `importuj_dbf`). За ручно покретање остају две команде:
 
 ```bash
 S=crkva_sv_petke_cukarica
 python manage.py tenant_command load_dbf --schema=$S --src_zip /путања/до/crkva.zip
-python manage.py unos_sifarnika --tenant=$S
 python manage.py tenant_command importuj_dbf --schema=$S
 ```
 
-> `unos_sifarnika` бира шему преко свог `--tenant` флага (не `tenant_command`);
-> `load_dbf`/`importuj_dbf` иду преко `tenant_command --schema`.
+`importuj_dbf` покреће славе + `migracija_*` + `popravi_*` + обележавање
+празника. Пуне шифрарнике сеје само `load_data` (преко `unos_sifarnika`); при
+голом `importuj_dbf` шифрарници се допуњавају успут из података. За комплетан
+увоз користи `load_data --from dbf-zip:… --tenant $S`.
 
 ### Провера бројева
 
@@ -189,7 +192,7 @@ python manage.py load_data --from mock --tenant crkva_sv_petke_cukarica --count 
 ```
 
 Ово сеје шифрарнике + адресе + свештенике + парохијане + домаћинства +
-крштења + венчања (реалистичним mock генераторима). Појединачни сидери
-(`unos_svestenika --from dummy` и сл.) постоје за циљане сценарије. Ако вам
-је потребно празно стање, само креирајте нови тенант (видети горе) без
-покретања увоза.
+крштења + венчања (реалистичним mock генераторима). За само један тип
+користи `--only` (нпр. `load_data --from mock --only unos_svestenika
+--tenant <šema>`). Ако вам је потребно празно стање, само креирајте нови
+тенант (видети горе) без покретања увоза.

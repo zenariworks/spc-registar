@@ -8,7 +8,7 @@ DBF поље ``K_REGKADA`` ('D', 8) је NULL у свих 3579 редова, а 
 # pylint: disable=missing-function-docstring
 
 from django.test import SimpleTestCase
-from registar.management.commands.migracija_krstenja import SOURCE_COLUMNS, parse_row
+from registar.uvoz.migracija_krstenja import SOURCE_COLUMNS, parse_row
 
 
 class RegKadaRemovedTests(SimpleTestCase):
