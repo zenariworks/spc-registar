@@ -33,6 +33,7 @@ from registar.migracija.errors import RecordContext, RecordSkipped
 from registar.migracija.helpers import (
     cirilica,
     cirilica_int,
+    extract_maiden,
     ocisti_prezime,
     safe_date,
     split_full_name,
@@ -434,8 +435,12 @@ class Command(MigrationCommand):
             return None
         ime, prezime = split_full_name(full_str.split(",")[0].strip())
         if ime and prezime:
+            married, maiden = extract_maiden(prezime)
             return find_or_create_osoba(
-                ime=ime, prezime=prezime, pol=pol_prema_imenu(ime)
+                ime=ime,
+                prezime=married or maiden,
+                pol=pol_prema_imenu(ime),
+                devojacko_prezime=maiden or None,
             )
         if self._verbose:
             self.log_warning(f"Неуспело цепање имена ({label}): '{full_str}'")
@@ -448,5 +453,11 @@ class Command(MigrationCommand):
             return None
         ime, prezime = split_full_name(full_str.split(",")[0].strip())
         if ime and prezime:
-            return find_or_create_osoba(ime=ime, prezime=prezime, pol=pol)
+            married, maiden = extract_maiden(prezime)
+            return find_or_create_osoba(
+                ime=ime,
+                prezime=married or maiden,
+                pol=pol,
+                devojacko_prezime=maiden or None,
+            )
         return None

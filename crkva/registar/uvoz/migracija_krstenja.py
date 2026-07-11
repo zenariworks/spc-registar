@@ -482,11 +482,13 @@ class Command(MigrationCommand):
                 self.log_warning(f"Неуспело цепање имена кума: '{full}'")
             return None
 
+        kum_married, kum_maiden = extract_maiden(prez)
         return find_or_create_osoba(
             ime=ime,
-            prezime=prez,
+            prezime=kum_married or kum_maiden,
             pol=pol_prema_imenu(ime),
             zanimanje=self._zanimanje.get(r.kum_zanimanje),
+            devojacko_prezime=kum_maiden or None,
         )
 
     def _set_addresses(
