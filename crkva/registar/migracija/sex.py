@@ -686,7 +686,7 @@ _MALE_NAMES = {
 }
 
 
-def infer_sex_from_name(ime: str | None) -> str | None:
+def pol_prema_imenu(ime: str | None) -> str | None:
     n = _normalize(ime)
     if not n:
         return None
@@ -708,4 +708,4 @@ def infer_sex_from_name(ime: str | None) -> str | None:
 
 def infer_sex(ime: str | None = None, uloga: str | None = None) -> str | None:
     """Convenience: role first, then name."""
-    return infer_sex_from_role(uloga) or infer_sex_from_name(ime)
+    return infer_sex_from_role(uloga) or pol_prema_imenu(ime)

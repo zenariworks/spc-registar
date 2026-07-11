@@ -9,8 +9,6 @@
 Заједничка логика живи у пакету `registar.migracija`.
 """
 
-# pylint: disable=missing-function-docstring,missing-class-docstring,attribute-defined-outside-init,too-many-locals,broad-exception-caught,not-callable
-
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -36,8 +34,8 @@ from registar.migracija.helpers import (
     parse_time,
     split_full_name_last_word,
 )
-from registar.migracija.osoba_repo import find_or_create_osoba
-from registar.migracija.sex import infer_sex_from_name
+from registar.migracija.osoba_repo import dodaj_novu_osobu, find_or_create_osoba
+from registar.migracija.sex import pol_prema_imenu
 from registar.models import (
     Hram,
     Krstenje,
@@ -47,71 +45,72 @@ from registar.models import (
     Veroispovest,
     Zanimanje,
 )
-from registar.utils_parser import parse_vera_narodnost
+from registar.utils_parser import pars_vera_narodnost
 
 SOURCE_COLUMNS = (
-    "K_SIFRA",
-    "K_PROKNJ",
-    "K_PROTBR",
-    "K_PROTST",
-    "K_AKTGOD",
-    "K_IZ",
-    "K_ULICA",
-    "K_BROJ",
-    "K_RODJGOD",
+    "K_SIFRA",  # redni_broj
+    "K_PROKNJ",  # knjiga
+    "K_PROTBR",  # broj
+    "K_PROTST",  # strana
+    "K_AKTGOD",  # godina_registracije
+    "K_IZ",  # adresa_deteta_grad
+    "K_ULICA",  # adresa_deteta_ulica
+    "K_BROJ",  # adresa_deteta_broj
+    "K_RODJGOD",  # datum_rodjenja
     "K_RODJMESE",
     "K_RODJDAN",
-    "K_RODJVRE",
-    "K_RODJMEST",
-    "K_RODJOPST",
-    "K_KRSGOD",
+    "K_RODJVRE",  # rodjenje_vreme
+    "K_RODJMEST",  # rodjenje_mesto
+    "K_RODJOPST",  # rodjenje_opstina
+    "K_KRSGOD",  # datum_krstenja
     "K_KRSMESE",
     "K_KRSDAN",
-    "K_KRSVRE",
-    "K_KRSMEST",
-    "K_KRSHRAM",
-    "K_DETIME",
-    "K_DETIMEG",
-    "K_DETPOL",
-    "K_RODIME",
-    "K_RODPREZ",
-    "K_RODZANIM",
-    "K_RODMEST",
-    "K_RODVERA",
-    "K_RODNAROD",
-    "K_ROD2IME",
-    "K_ROD2PREZ",
-    "K_ROD2ZAN",
-    "K_ROD2MEST",
-    "K_ROD2VERA",
-    "K_DETZIVO",
-    "K_DETKOJE",
-    "K_DETBRAC",
-    "K_DETBLIZ",
-    "K_DETBLIZ2",
-    "K_DETMANA",
-    "K_RBRSVE",
-    "K_KUMIME",
-    "K_KUMPREZ",
-    "K_KUMZANIM",
-    "K_KUMMEST",
-    "K_REGMESTO",
-    # K_REGKADA (датум регистрације) изостављен: DBF 'D' поље је празно
-    # у целом извору (0/3579), па је селект био мртав уз тврдо
-    # registracija_datum=None. Нема шта да се учита (#254).
-    "K_REGBROJ",
-    "K_REGSTR",
+    "K_KRSVRE",  # krstenje_vreme
+    "K_KRSMEST",  # krstenje_mesto
+    "K_KRSHRAM",  # hram_naziv
+    "K_DETIME",  # dete_ime
+    "K_DETIMEG",  # dete_gradjansko_ime
+    "K_DETPOL",  # dete_pol
+    "K_RODIME",  # otac_ime
+    "K_RODPREZ",  # otac_prezime
+    "K_RODZANIM",  # otac_zanimanje
+    "K_RODMEST",  # otac_adresa
+    "K_RODVERA",  # otac_veroispovest
+    "K_RODNAROD",  # otac_narodnost
+    "K_ROD2IME",  # majka_ime
+    "K_ROD2PREZ",  # majka_prezime
+    "K_ROD2ZAN",  # majka_zanimanje
+    "K_ROD2MEST",  # majka_adresa
+    "K_ROD2VERA",  # majka_veroispovest
+    "K_DETZIVO",  # zivorodjeno
+    "K_DETKOJE",  # po_redu
+    "K_DETBRAC",  # vanbracno
+    "K_DETBLIZ",  # blizanac
+    "K_DETBLIZ2",  # blizanac_ime
+    "K_DETMANA",  # dete_sa_manom
+    "K_RBRSVE",  # svestenik_id
+    "K_KUMIME",  # kum_puno_ime
+    "K_KUMPREZ",  # kum_prezime
+    "K_KUMZANIM",  # kum_zanimanje
+    "K_KUMMEST",  # kum_mesto
+    "K_REGMESTO",  # registracija_mesto
+    "K_REGBROJ",  # registracija_broj
+    "K_REGSTR",  # registracija_strana
 )
 
 
 def _date_or_default(y: int, m: int, d: int) -> date:
-    """Pre-1900 / zero values are coerced to 1900-01-01 (matches legacy behaviour)."""
-    return date(1900 if y == 0 else y, 1 if m == 0 else m, 1 if d == 0 else d)
+    """Convert possibly invalid pre-1900 / zero dates to 1900-01-01 (legacy behavior)."""
+    return date(
+        1900 if y == 0 else y,
+        1 if m == 0 else m,
+        1 if d == 0 else d,
+    )
 
 
-@dataclass
-class KrstenjeRecord:  # pylint: disable=too-many-instance-attributes
-    """One parsed staging row, fully transliterated."""
+@dataclass(frozen=True, slots=True)
+class KrstenjeRecord:
+    """Parsed and cleaned row from the staging table."""
 
     redni_broj: int
     knjiga: str
@@ -151,7 +150,7 @@ class KrstenjeRecord:  # pylint: disable=too-many-instance-attributes
     majka_veroispovest: str
 
     zivorodjeno: str
-    po_redu: int | None
+    po_redu: Optional[int]
     vanbracno: str
     blizanac: str
     blizanac_ime: str
@@ -181,6 +180,7 @@ class KrstenjeRecord:  # pylint: disable=too-many-instance-attributes
 
 
 def parse_row(row: tuple) -> KrstenjeRecord:
+    """Parse raw DB row into a clean, typed record."""
     return KrstenjeRecord(
         redni_broj=cyr_int(row[0]),
         knjiga=cyr(row[1]),
@@ -228,8 +228,6 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         kum_zanimanje=cyr(row[43]),
         kum_mesto=cyr(row[44]),
         registracija_mesto=cyr(row[45]),
-        # K_REGKADA уклоњен из SOURCE_COLUMNS (#254) → K_REGBROJ/K_REGSTR
-        # су се померили на индексе 46/47.
         registracija_broj=cyr(row[46]) or None,
         registracija_strana=cyr(row[47]) or None,
     )
@@ -240,12 +238,31 @@ class Command(MigrationCommand):
     staging_table = "hsp_krstenja"
     target_model = Krstenje
 
-    def handle(self, *args, **opts):
+    def handle(self, *args, **options):
         self.zabrani_nad_public()
-        self._verbose = opts.get("verbose_errors", False)
-        self._dry_run = opts.get("dry_run", False)
-        limit: int = opts.get("limit", 0) or 0
 
+        self._verbose = options.get("verbose_errors", False)
+        self._dry_run = options.get("dry_run", False)
+        limit: int = options.get("limit", 0) or 0
+
+        self._init_lookups()
+        records = list(self.take(self._fetch_records(), limit))
+
+        self.stdout.write(
+            f"Учитано {len(records)} записа из staging табеле"
+            f"{f' (--limit {limit})' if limit else ''}."
+        )
+
+        created = self._build_and_save(records)
+        self.log_success(created, "крштења")
+
+        if self._dry_run:
+            self.log_warning("DRY RUN — ништа није уписано у базу.")
+        else:
+            self.drop_staging_table()
+
+    def _init_lookups(self) -> None:
+        """Initialize all lookup caches."""
         self._vera = LookupCache(Veroispovest, "naziv")
         self._narod = LookupCache(Narodnost, "naziv")
         self._zanimanje = LookupCache(
@@ -255,28 +272,15 @@ class Command(MigrationCommand):
             extra_defaults={"sifra": ""},
         )
         self._hram = LookupCache(Hram, "naziv", key_normaliser=normalise_hram_naziv)
+
         self._vera.warm()
         self._narod.warm()
 
-        records = list(self.take(self._fetch_records(), limit))
-        self.stdout.write(
-            f"Учитано {len(records)} записа из staging табеле"
-            + (f" (--limit {limit})" if limit else "")
-            + "."
-        )
-
-        created = self._build_and_save(records)
-        self.log_success(created, "крштења")
-        if self._dry_run:
-            self.log_warning("DRY RUN — ништа није уписано у базу.")
-        else:
-            self.drop_staging_table()
-
-    # ---------------- Pipeline ----------------
-
     def _fetch_records(self) -> Iterator[KrstenjeRecord]:
-        col_list = ", ".join(f'"{c}"' for c in SOURCE_COLUMNS)
-        query = f'SELECT {col_list} FROM {self.staging_table} ORDER BY "K_SIFRA"'
+        """Stream records from the staging table."""
+        columns = ", ".join(f'"{col}"' for col in SOURCE_COLUMNS)
+        query = f'SELECT {columns} FROM {self.staging_table} ORDER BY "K_SIFRA"'
+
         with connection.cursor() as cursor:
             cursor.execute(query)
             for row in cursor.fetchall():
@@ -284,71 +288,77 @@ class Command(MigrationCommand):
 
     @atomic
     def _build_and_save(self, records: list[KrstenjeRecord]) -> int:
-        # Clear inside the same transaction as the writes: if the import
-        # aborts, the delete rolls back too and existing data survives (#329).
         if not self._dry_run:
             self.clear_target_table()
+
         created = 0
         dedup_skipped = 0
-        # Source DBF (HSPKRST) contains true duplicates where the same baptism
-        # was entered twice (same child name + baptism date + citation). We
-        # dedupe on (god, knj, str, broj, dete_ime, dete_prezime, datum) so
-        # legitimate twins (same citation, different child) and registry typos
-        # (different prezime spelling) are preserved.
         seen: set[tuple] = set()
-        for r in records:
+
+        for record in records:
             try:
-                # Savepoint: a failed row rolls back alone instead of marking
-                # the outer transaction rollback-only.
                 with atomic():
-                    data = self._build_krstenje(r)
-            except RecordSkipped as skip:
-                self.log_skip(skip.ctx, skip.reason)
+                    data = self._build_krstenje(record)
+            except RecordSkipped as exc:
+                self.log_skip(exc.ctx, exc.reason)
                 continue
-            except (ValueError, IntegrityError, ValidationError) as e:
-                # Narrow except so OperationalError / ProgrammingError / KeyboardInterrupt
-                # propagate and abort the run instead of being silently logged.
-                self.log_error(r.context, str(e))
+            except (ValueError, IntegrityError, ValidationError) as exc:
+                self.log_error(record.context, str(exc))
                 continue
+
             if data is None:
                 continue
-            dete = data.get("dete")
-            key = (
-                data.get("godina_registracije"),
-                data.get("knjiga"),
-                data.get("strana"),
-                data.get("broj"),
-                (dete.ime.casefold() if dete and dete.ime else None),
-                (dete.prezime.casefold() if dete and dete.prezime else None),
-                data.get("datum"),
-            )
-            if key in seen:
+
+            if self._is_duplicate(seen, data, record):
                 dedup_skipped += 1
-                self.log_skip(r.context, "дупликат — иста citation + дете + датум")
+                self.log_skip(record.context, "дупликат — иста citation + дете + датум")
                 continue
-            seen.add(key)
+
             if self._dry_run:
                 created += 1
                 continue
+
             try:
                 with atomic():
                     Krstenje.objects.create(**data)
                 created += 1
-            except IntegrityError as e:
-                self.log_error(r.context, f"IntegrityError: {e}")
+            except IntegrityError as exc:
+                self.log_error(record.context, f"IntegrityError: {exc}")
+
         if dedup_skipped:
             self.stdout.write(
                 self.style.WARNING(
                     f"Прескочено као дупликати у извору: {dedup_skipped}"
                 )
             )
+
         return created
+
+    def _is_duplicate(
+        self, seen: set[tuple], data: dict, record: KrstenjeRecord
+    ) -> bool:
+        """Dedupe on (godina, knjiga, strana, broj, dete_ime, dete_prezime, datum)."""
+        dete = data.get("dete")
+        key = (
+            data.get("godina_registracije"),
+            data.get("knjiga"),
+            data.get("strana"),
+            data.get("broj"),
+            dete.ime.casefold() if dete and dete.ime else None,
+            dete.prezime.casefold() if dete and dete.prezime else None,
+            data.get("datum"),
+        )
+        if key in seen:
+            return True
+        seen.add(key)
+        return False
 
     # ---------------- Transform ----------------
 
     def _build_krstenje(self, r: KrstenjeRecord) -> Optional[dict]:
         dete_ime = r.dete_ime.strip()
         otac_prezime = clean_prezime(r.otac_prezime.strip())
+
         if not dete_ime or not otac_prezime:
             raise RecordSkipped(r.context, "недостаје име детета или презиме оца")
 
@@ -359,7 +369,7 @@ class Command(MigrationCommand):
             r
         )
 
-        dete = find_or_create_osoba(
+        dete = dodaj_novu_osobu(
             ime=dete_ime,
             prezime=otac_prezime,
             pol="М" if r.dete_pol.strip() == "1" else "Ж",
@@ -377,12 +387,10 @@ class Command(MigrationCommand):
             narodnost=otac_narod,
         )
 
-        # The mother's surname field in DBF often carries a "р.<X>" maiden
-        # marker. Split it: if a marker is present the married surname is
-        # blank in the source, so fall back to the father's surname
-        # (otac_prezime) as the most likely married name.
+        # Mother's maiden name handling
         majka_married, majka_maiden = extract_maiden(r.majka_prezime.strip())
         majka_prezime = majka_married or otac_prezime
+
         majka = find_or_create_osoba(
             ime=r.majka_ime.strip(),
             prezime=majka_prezime,
@@ -395,27 +403,13 @@ class Command(MigrationCommand):
 
         kum = self._parse_kum(r)
 
+        # Update citizen name if present
         if dete and r.dete_gradjansko_ime.strip() and not dete.gradjansko_ime:
             Osoba.objects.filter(pk=dete.pk).update(
                 gradjansko_ime=r.dete_gradjansko_ime.strip()
             )
 
-        # Adrese
-        if dete and (r.adresa_deteta_grad or r.adresa_deteta_ulica):
-            set_adresa_if_empty(
-                dete,
-                find_or_create_adresa(
-                    ulica=r.adresa_deteta_ulica or "",
-                    broj=r.adresa_deteta_broj or "",
-                    mesto=r.adresa_deteta_grad,
-                ),
-            )
-        if otac and r.otac_adresa:
-            set_adresa_if_empty(otac, find_or_create_adresa(mesto=r.otac_adresa))
-        if majka and r.majka_adresa:
-            set_adresa_if_empty(majka, find_or_create_adresa(mesto=r.majka_adresa))
-        if kum and r.kum_mesto:
-            set_adresa_if_empty(kum, find_or_create_adresa(mesto=r.kum_mesto))
+        self._set_addresses(dete, otac, majka, kum, r)
 
         return {
             "dete": dete,
@@ -444,18 +438,20 @@ class Command(MigrationCommand):
         }
 
     def _parse_vera_narod_parents(self, r: KrstenjeRecord):
-        """K_RODVERA may carry both parents; K_ROD2VERA may override for majka."""
-        otac_data, majka_from_otac = parse_vera_narodnost(r.otac_veroispovest)
+        """Parse confession/nationality for both parents."""
+        otac_data, majka_from_otac = pars_vera_narodnost(r.otac_veroispovest)
         otac_vera = self._vera.get(otac_data["veroispovest"])
         otac_narod = self._narod.get(otac_data["narodnost"])
 
+        # Override with dedicated narodnost column if present
         if r.otac_narodnost and r.otac_narodnost.strip():
-            narod_parsed, _ = parse_vera_narodnost(r.otac_narodnost)
+            narod_parsed, _ = pars_vera_narodnost(r.otac_narodnost)
             if narod_parsed["narodnost"]:
                 otac_narod = self._narod.get(narod_parsed["narodnost"])
 
+        # Mother
         if r.majka_veroispovest and r.majka_veroispovest.strip():
-            majka_data, _ = parse_vera_narodnost(r.majka_veroispovest)
+            majka_data, _ = pars_vera_narodnost(r.majka_veroispovest)
             majka_vera = self._vera.get(majka_data["veroispovest"])
             majka_narod = self._narod.get(majka_data["narodnost"])
         elif majka_from_otac:
@@ -468,21 +464,53 @@ class Command(MigrationCommand):
         return otac_vera, otac_narod, majka_vera, majka_narod
 
     def _parse_kum(self, r: KrstenjeRecord) -> Optional[Osoba]:
-        kum_full = r.kum_puno_ime.strip()
-        if not kum_full:
+        """Parse and create godparent (kum)."""
+        full = r.kum_puno_ime.strip()
+        if not full:
             return None
-        kum_prez = r.kum_prezime.strip()
-        if kum_prez:
-            kum_ime = kum_full
+
+        prez = r.kum_prezime.strip()
+        if prez:
+            ime = full
         else:
-            kum_ime, kum_prez = split_full_name_last_word(kum_full)
-        if not (kum_ime and kum_prez):
+            ime, prez = split_full_name_last_word(full)
+
+        if not (ime and prez):
             if self._verbose:
-                self.log_warning(f"Неуспело цепање имена кума: '{kum_full}'")
+                self.log_warning(f"Неуспело цепање имена кума: '{full}'")
             return None
+
         return find_or_create_osoba(
-            ime=kum_ime,
-            prezime=kum_prez,
-            pol=infer_sex_from_name(kum_ime),
+            ime=ime,
+            prezime=prez,
+            pol=pol_prema_imenu(ime),
             zanimanje=self._zanimanje.get(r.kum_zanimanje),
         )
+
+    def _set_addresses(
+        self,
+        dete: Osoba,
+        otac: Osoba,
+        majka: Osoba,
+        kum: Optional[Osoba],
+        r: KrstenjeRecord,
+    ) -> None:
+        """Set addresses where available."""
+        if dete and (r.adresa_deteta_grad or r.adresa_deteta_ulica):
+            set_adresa_if_empty(
+                dete,
+                find_or_create_adresa(
+                    ulica=r.adresa_deteta_ulica or "",
+                    broj=r.adresa_deteta_broj or "",
+                    mesto=r.adresa_deteta_grad,
+                ),
+            )
+
+        if otac and r.otac_adresa:
+            set_adresa_if_empty(otac, find_or_create_adresa(mesto=r.otac_adresa))
+
+        if majka and r.majka_adresa:
+            set_adresa_if_empty(majka, find_or_create_adresa(mesto=r.majka_adresa))
+
+        if kum and r.kum_mesto:
+            set_adresa_if_empty(kum, find_or_create_adresa(mesto=r.kum_mesto))

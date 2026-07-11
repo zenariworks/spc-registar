@@ -22,7 +22,7 @@ from registar.migracija.osoba_repo import (
     find_or_create_osoba,
     warm_osoba_cache,
 )
-from registar.migracija.sex import infer_sex_from_name
+from registar.migracija.sex import pol_prema_imenu
 from registar.migracija.slava_map import resolve_slava
 from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
 
@@ -194,7 +194,7 @@ class Command(MigrationCommand):
                     if not osoba.devojacko_prezime and devojacko_prezime:
                         updates["devojacko_prezime"] = devojacko_prezime
                     if not osoba.pol:
-                        inferred_pol = infer_sex_from_name(ime)
+                        inferred_pol = pol_prema_imenu(ime)
                         if inferred_pol:
                             updates["pol"] = inferred_pol
                     if updates:
@@ -211,7 +211,7 @@ class Command(MigrationCommand):
                             "adresa": adresa,
                             "tel_fiksni": tel_f,
                             "tel_mobilni": tel_m,
-                            "pol": infer_sex_from_name(ime),
+                            "pol": pol_prema_imenu(ime),
                         },
                     )
                     if p_created:
@@ -286,7 +286,7 @@ class Command(MigrationCommand):
                 ime = raw_ime[1:].strip() if preminuo else raw_ime
 
                 osoba = find_or_create_osoba(
-                    ime, prezime, parohijan=False, pol=infer_sex_from_name(ime)
+                    ime, prezime, parohijan=False, pol=pol_prema_imenu(ime)
                 )
                 if not osoba:
                     self.log_skip(f"Не могу креирати особу: {ime} {prezime}")

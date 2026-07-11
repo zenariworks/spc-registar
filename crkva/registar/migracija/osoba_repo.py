@@ -93,6 +93,26 @@ def cache_osoba(osoba: Osoba | None) -> None:
         bucket.append(osoba)
 
 
+def dodaj_novu_osobu(ime: str | None, prezime: str | None, **extra) -> Osoba | None:
+    """Увек креира НОВУ Osoba, без дедупликације по имену (#332).
+
+    За регистарске принципе — дете (крштење), женик и невеста (венчање) —
+    сваки упис је по природи нова особа, па дедуп по (ime, prezime) спаја
+    различите људе и трајно квари генеалогију. Намерно се НЕ уписује у name
+    cache да принцип не би касније био погрешно поново употребљен као
+    родитељ/сродник истог имена.
+    """
+    if not ime or not prezime:
+        return None
+    ime = ime.strip()
+    prezime = prezime.strip()
+    if not ime or not prezime:
+        return None
+    data = {"ime": ime, "prezime": prezime, "parohijan": False}
+    data.update({k: v for k, v in extra.items() if v is not None})
+    return Osoba.objects.create(**data)
+
+
 def find_or_create_osoba(ime: str | None, prezime: str | None, **extra) -> Osoba | None:
     """Find an Osoba by (ime, prezime) case-insensitively, or create one.
 

@@ -38,8 +38,8 @@ from registar.migracija.helpers import (
     safe_date,
     split_full_name,
 )
-from registar.migracija.osoba_repo import find_or_create_osoba
-from registar.migracija.sex import infer_sex_from_name
+from registar.migracija.osoba_repo import dodaj_novu_osobu, find_or_create_osoba
+from registar.migracija.sex import pol_prema_imenu
 from registar.models import (
     Hram,
     Narodnost,
@@ -49,7 +49,7 @@ from registar.models import (
     Veroispovest,
     Zanimanje,
 )
-from registar.utils_parser import parse_vera_narodnost
+from registar.utils_parser import pars_vera_narodnost
 
 SOURCE_COLUMNS = (
     "V_SIFRA",
@@ -338,7 +338,12 @@ class Command(MigrationCommand):
             r.nevesta_veroispovest, r.nevesta_narodnost
         )
 
-        zenik = find_or_create_osoba(
+        # Женик и невеста су регистарски принципи — увек нове особе (#332).
+        # Невеста се раније дедуплицирала под МЛАДОЖЕЊИНИМ презименом, па се
+        # спајала са његовом мајком (свекрвом) истог имена; сада се увек
+        # креира нова особа (удато презиме = зеник_презиме, девојачко =
+        # nevesta_prezime).
+        zenik = dodaj_novu_osobu(
             ime=zenik_ime,
             prezime=zenik_prezime,
             pol="М",
@@ -349,7 +354,7 @@ class Command(MigrationCommand):
             narodnost=zenik_narod,
         )
 
-        nevesta = find_or_create_osoba(
+        nevesta = dodaj_novu_osobu(
             ime=nevesta_ime,
             prezime=zenik_prezime,  # married surname
             pol="Ж",
@@ -410,12 +415,12 @@ class Command(MigrationCommand):
         vera_obj = None
         narod_obj = None
         if vera_text and vera_text.strip():
-            parsed, _ = parse_vera_narodnost(vera_text)
+            parsed, _ = pars_vera_narodnost(vera_text)
             vera_obj = self._vera.get(parsed["veroispovest"])
             if not (narod_text and narod_text.strip()):
                 narod_obj = self._narod.get(parsed["narodnost"])
         if narod_text and narod_text.strip():
-            narod_parsed, _ = parse_vera_narodnost(narod_text)
+            narod_parsed, _ = pars_vera_narodnost(narod_text)
             if narod_parsed["narodnost"]:
                 narod_obj = self._narod.get(narod_parsed["narodnost"])
         return vera_obj, narod_obj
@@ -426,7 +431,7 @@ class Command(MigrationCommand):
         ime, prezime = split_full_name(full_str.split(",")[0].strip())
         if ime and prezime:
             return find_or_create_osoba(
-                ime=ime, prezime=prezime, pol=infer_sex_from_name(ime)
+                ime=ime, prezime=prezime, pol=pol_prema_imenu(ime)
             )
         if self._verbose:
             self.log_warning(f"Неуспело цепање имена ({label}): '{full_str}'")
