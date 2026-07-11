@@ -28,7 +28,7 @@ class Command(BaseCommand):
         if opts["seed"] is not None:
             random_module.seed(opts["seed"])
         if opts["source"] != "mock":
-            raise CommandError("seed_krstenja подржава само --from mock.")
+            raise CommandError("unos_krstenja подржава само --from mock.")
 
         with with_tenant(opts["tenant"]) as tenant:
             if opts["reset"]:
@@ -53,7 +53,7 @@ class Command(BaseCommand):
             if not kids:
                 raise CommandError(
                     "Нема деце (Osoba млађи од 5) — повећај --count за "
-                    "seed_parohijani."
+                    "unos_parohijana."
                 )
             if not adult_males or not adult_females:
                 raise CommandError("Нема довољно одраслих оба пола за родитеље.")

@@ -25,7 +25,7 @@ class Command(BaseCommand):
         if opts["seed"] is not None:
             random_module.seed(opts["seed"])
         if opts["source"] != "mock":
-            raise CommandError("seed_vencanja подржава само --from mock.")
+            raise CommandError("unos_vencanja подржава само --from mock.")
 
         with with_tenant(opts["tenant"]) as tenant:
             if opts["reset"]:

@@ -9,7 +9,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         # Major feast days that should be marked as "crveno slovo"
-        major_feasts = [
+        veliki_praznici = [
             # Велики Господњи празници (Great Feasts of the Lord)
             "Божић",
             "Богојављење",
@@ -31,7 +31,7 @@ class Command(BaseCommand):
         ]
 
         updated_count = 0
-        for feast_name in major_feasts:
+        for feast_name in veliki_praznici:
             try:
                 # Try exact match first
                 slava = Slava.objects.filter(naziv__icontains=feast_name).first()

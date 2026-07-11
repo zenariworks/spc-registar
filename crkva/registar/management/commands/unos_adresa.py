@@ -34,7 +34,7 @@ class Command(BaseCommand):
             random_module.seed(opts["seed"])
 
         if opts["source"] != "mock":
-            raise CommandError("seed_adrese подржава само --from mock тренутно.")
+            raise CommandError("unos_adresa подржава само --from mock тренутно.")
 
         with with_tenant(opts["tenant"]) as tenant:
             if opts["reset"]:

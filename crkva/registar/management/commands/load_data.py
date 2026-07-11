@@ -6,13 +6,21 @@ import random as random_module
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
+from registar.management.commands import (
+    unos_adresa,
+    unos_domacinstava,
+    unos_krstenja,
+    unos_parohijana,
+    unos_sifarnika,
+    unos_svestenika,
+    unos_vencanja,
+)
 
 
-# Per-step config: which kwargs each accepts + default count.
 class Step:
     def __init__(
         self,
-        name,
+        modul,
         label,
         *,
         takes_source=True,
@@ -21,8 +29,10 @@ class Step:
         takes_seed=True,
         takes_reset=True,
         default_count=None,
+        divisor=1,
     ):
-        self.name = name
+        self.name = modul.__name__.rsplit(".", 1)[-1]
+        self.modul = modul
         self.label = label
         self.takes_source = takes_source
         self.takes_count = takes_count
@@ -30,36 +40,25 @@ class Step:
         self.takes_seed = takes_seed
         self.takes_reset = takes_reset
         self.default_count = default_count
+        self.divisor = divisor
 
 
 PIPELINE: list[Step] = [
     Step(
-        "seed_lookups",
+        unos_sifarnika,
         "Lookup табеле",
         takes_source=False,
         takes_count=False,
         takes_seed=False,
         takes_reset=False,
     ),
-    Step("seed_adrese", "Адресе", default_count=30),
-    Step("seed_svestenici", "Свештеници", default_count=5),
-    Step("seed_parohijani", "Парохијани", default_count=100),
-    Step("seed_domacinstva", "Домаћинства", default_count=33),
-    Step("seed_krstenja", "Крштења", default_count=25),
-    Step("seed_vencanja", "Венчања", default_count=10),
+    Step(unos_adresa, "Адресе", default_count=30, divisor=3),
+    Step(unos_svestenika, "Свештеници", default_count=5, divisor=20),
+    Step(unos_parohijana, "Парохијани", default_count=100, divisor=1),
+    Step(unos_domacinstava, "Домаћинства", default_count=33, divisor=3),
+    Step(unos_krstenja, "Крштења", default_count=25, divisor=4),
+    Step(unos_vencanja, "Венчања", default_count=10, divisor=10),
 ]
-
-
-# Scale rule: when user gives --count N, parohijani gets N,
-# others get N/divisor (rough realistic ratios).
-SCALE_DIVISORS = {
-    "seed_parohijani": 1,
-    "seed_svestenici": 20,
-    "seed_adrese": 3,
-    "seed_domacinstva": 3,
-    "seed_krstenja": 4,
-    "seed_vencanja": 10,
-}
 
 
 class Command(BaseCommand):
@@ -120,7 +119,6 @@ class Command(BaseCommand):
                 f"{', '.join(s.name for s in PIPELINE)}"
             )
 
-        # Tenant is required if any selected step needs it
         if any(s.takes_tenant for s in steps) and not opts["tenant"]:
             raise CommandError(
                 "--tenant је обавезан за per-tenant seedere. "
@@ -151,8 +149,7 @@ class Command(BaseCommand):
                 kwargs["tenant"] = opts["tenant"]
             if step.takes_count:
                 if base_count is not None:
-                    divisor = SCALE_DIVISORS.get(step.name, 1)
-                    kwargs["count"] = max(1, base_count // divisor)
+                    kwargs["count"] = max(1, base_count // step.divisor)
                 else:
                     kwargs["count"] = step.default_count
             if step.takes_seed and opts["seed"] is not None:

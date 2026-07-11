@@ -1,16 +1,18 @@
 """Seed reference lookup tables into a target tenant.
 
 Равни шифарници (narodnosti, veroispovesti, zanimanja, eparhije) сеју се
-data-driven из CSV фајлова у ``fixtures/``. Slava има засебну логику
-(покретни празници из ``slave.jsonl``) па се и даље покреће као ``unos_slava``.
+data-driven из fixtures фајлова: CSV за просте листе, JSONL за структуиране
+редове (eparhije). Slava има засебну логику (покретни празници из
+slave.jsonl) па се и даље покреће као unos_slava.
 
-registar је у TENANT_APPS па lookup подаци живе у шеми закупца — ``--tenant``
+registar је у TENANT_APPS па lookup подаци живе у шеми закупца — --tenant
 је обавезан.
 """
 
 from __future__ import annotations
 
 import csv
+import json
 from dataclasses import dataclass
 
 from django.conf import settings
@@ -34,7 +36,7 @@ SIFARNICI = [
     Sifarnik(Narodnost, "narodnosti.csv", ("naziv",)),
     Sifarnik(Veroispovest, "veroispovesti.csv", ("naziv",)),
     Sifarnik(Zanimanje, "zanimanja.csv", ("sifra", "naziv")),
-    Sifarnik(Eparhija, "eparhije.csv", ("naziv",), ("nivo", "sediste")),
+    Sifarnik(Eparhija, "eparhije.jsonl", ("naziv",), ("nivo", "sediste")),
 ]
 
 
@@ -60,18 +62,27 @@ class Command(BaseCommand):
             )
 
     def _zasej(self, sifarnik: Sifarnik) -> int:
-        polja = sifarnik.kljucevi + sifarnik.dopunska
         novih = 0
-        with open(FIXTURES / sifarnik.fajl, encoding="utf-8") as fajl:
-            for red in csv.reader(fajl, delimiter=";"):
-                vrednosti = [c.strip() for c in red]
-                if len(vrednosti) < len(polja) or not any(vrednosti):
-                    continue
-                podaci = dict(zip(polja, vrednosti))
-                kljuc = {k: podaci[k] for k in sifarnik.kljucevi}
-                dopunska = {k: podaci[k] for k in sifarnik.dopunska}
-                _, kreiran = sifarnik.model.objects.get_or_create(
-                    **kljuc, defaults=dopunska
-                )
-                novih += kreiran
+        for podaci in self._redovi(sifarnik):
+            kljuc = {k: podaci[k] for k in sifarnik.kljucevi}
+            dopunska = {k: podaci[k] for k in sifarnik.dopunska}
+            _, kreiran = sifarnik.model.objects.get_or_create(
+                **kljuc, defaults=dopunska
+            )
+            novih += kreiran
         return novih
+
+    def _redovi(self, sifarnik: Sifarnik):
+        polja = sifarnik.kljucevi + sifarnik.dopunska
+        with open(FIXTURES / sifarnik.fajl, encoding="utf-8") as fajl:
+            if sifarnik.fajl.endswith(".jsonl"):
+                for linija in fajl:
+                    linija = linija.strip()
+                    if linija:
+                        yield json.loads(linija)
+            else:
+                for red in csv.reader(fajl, delimiter=";"):
+                    vrednosti = [c.strip() for c in red]
+                    if len(vrednosti) < len(polja) or not any(vrednosti):
+                        continue
+                    yield dict(zip(polja, vrednosti))
