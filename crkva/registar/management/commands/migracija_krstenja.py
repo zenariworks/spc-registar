@@ -27,10 +27,10 @@ from registar.migracija.cache import (
 )
 from registar.migracija.errors import RecordContext, RecordSkipped
 from registar.migracija.helpers import (
-    clean_prezime,
-    cyr,
-    cyr_int,
+    cirilica,
+    cirilica_int,
     extract_maiden,
+    ocisti_prezime,
     parse_time,
     split_full_name_last_word,
 )
@@ -182,54 +182,54 @@ class KrstenjeRecord:
 def parse_row(row: tuple) -> KrstenjeRecord:
     """Parse raw DB row into a clean, typed record."""
     return KrstenjeRecord(
-        redni_broj=cyr_int(row[0]),
-        knjiga=cyr(row[1]),
-        broj=cyr(row[2]),
-        strana=cyr_int(row[3]),
-        godina_registracije=cyr_int(row[4]),
-        adresa_deteta_grad=cyr(row[5]),
-        adresa_deteta_ulica=cyr(row[6]),
-        adresa_deteta_broj=cyr(row[7]),
+        redni_broj=cirilica_int(row[0]),
+        knjiga=cirilica(row[1]),
+        broj=cirilica(row[2]),
+        strana=cirilica_int(row[3]),
+        godina_registracije=cirilica_int(row[4]),
+        adresa_deteta_grad=cirilica(row[5]),
+        adresa_deteta_ulica=cirilica(row[6]),
+        adresa_deteta_broj=cirilica(row[7]),
         datum_rodjenja=_date_or_default(
-            cyr_int(row[8]), cyr_int(row[9]), cyr_int(row[10])
+            cirilica_int(row[8]), cirilica_int(row[9]), cirilica_int(row[10])
         ),
-        rodjenje_vreme=cyr(row[11]),
-        rodjenje_mesto=cyr(row[12]),
-        rodjenje_opstina=cyr(row[13]),
+        rodjenje_vreme=cirilica(row[11]),
+        rodjenje_mesto=cirilica(row[12]),
+        rodjenje_opstina=cirilica(row[13]),
         datum_krstenja=_date_or_default(
-            cyr_int(row[14]), cyr_int(row[15]), cyr_int(row[16])
+            cirilica_int(row[14]), cirilica_int(row[15]), cirilica_int(row[16])
         ),
-        krstenje_vreme=cyr(row[17]),
-        krstenje_mesto=cyr(row[18]),
-        hram_naziv=cyr(row[19]),
-        dete_ime=cyr(row[20]),
-        dete_gradjansko_ime=cyr(row[21]),
-        dete_pol=cyr(row[22]),
-        otac_ime=cyr(row[23]),
-        otac_prezime=cyr(row[24]),
-        otac_zanimanje=cyr(row[25]),
-        otac_adresa=cyr(row[26]),
-        otac_veroispovest=cyr(row[27]),
-        otac_narodnost=cyr(row[28]),
-        majka_ime=cyr(row[29]),
-        majka_prezime=cyr(row[30]),
-        majka_zanimanje=cyr(row[31]),
-        majka_adresa=cyr(row[32]),
-        majka_veroispovest=cyr(row[33]),
-        zivorodjeno=cyr(row[34]),
-        po_redu=cyr_int(row[35]) or None,
-        vanbracno=cyr(row[36]),
-        blizanac=cyr(row[37]),
-        blizanac_ime=cyr(row[38]),
-        dete_sa_manom=cyr(row[39]),
-        svestenik_id=cyr_int(row[40]),
-        kum_puno_ime=cyr(row[41]),
-        kum_prezime=cyr(row[42]),
-        kum_zanimanje=cyr(row[43]),
-        kum_mesto=cyr(row[44]),
-        registracija_mesto=cyr(row[45]),
-        registracija_broj=cyr(row[46]) or None,
-        registracija_strana=cyr(row[47]) or None,
+        krstenje_vreme=cirilica(row[17]),
+        krstenje_mesto=cirilica(row[18]),
+        hram_naziv=cirilica(row[19]),
+        dete_ime=cirilica(row[20]),
+        dete_gradjansko_ime=cirilica(row[21]),
+        dete_pol=cirilica(row[22]),
+        otac_ime=cirilica(row[23]),
+        otac_prezime=cirilica(row[24]),
+        otac_zanimanje=cirilica(row[25]),
+        otac_adresa=cirilica(row[26]),
+        otac_veroispovest=cirilica(row[27]),
+        otac_narodnost=cirilica(row[28]),
+        majka_ime=cirilica(row[29]),
+        majka_prezime=cirilica(row[30]),
+        majka_zanimanje=cirilica(row[31]),
+        majka_adresa=cirilica(row[32]),
+        majka_veroispovest=cirilica(row[33]),
+        zivorodjeno=cirilica(row[34]),
+        po_redu=cirilica_int(row[35]) or None,
+        vanbracno=cirilica(row[36]),
+        blizanac=cirilica(row[37]),
+        blizanac_ime=cirilica(row[38]),
+        dete_sa_manom=cirilica(row[39]),
+        svestenik_id=cirilica_int(row[40]),
+        kum_puno_ime=cirilica(row[41]),
+        kum_prezime=cirilica(row[42]),
+        kum_zanimanje=cirilica(row[43]),
+        kum_mesto=cirilica(row[44]),
+        registracija_mesto=cirilica(row[45]),
+        registracija_broj=cirilica(row[46]) or None,
+        registracija_strana=cirilica(row[47]) or None,
     )
 
 
@@ -357,7 +357,7 @@ class Command(MigrationCommand):
 
     def _build_krstenje(self, r: KrstenjeRecord) -> Optional[dict]:
         dete_ime = r.dete_ime.strip()
-        otac_prezime = clean_prezime(r.otac_prezime.strip())
+        otac_prezime = ocisti_prezime(r.otac_prezime.strip())
 
         if not dete_ime or not otac_prezime:
             raise RecordSkipped(r.context, "недостаје име детета или презиме оца")
@@ -420,9 +420,9 @@ class Command(MigrationCommand):
             "svestenik": svestenik,
             "redni_broj": r.redni_broj,
             "godina_registracije": r.godina_registracije or r.datum_krstenja.year,
-            "knjiga": cyr_int(r.knjiga, 0),
-            "broj": cyr_int(r.broj, 0),
-            "strana": cyr_int(r.strana, 0),
+            "knjiga": cirilica_int(r.knjiga, 0),
+            "broj": cirilica_int(r.broj, 0),
+            "strana": cirilica_int(r.strana, 0),
             "datum": r.datum_krstenja,
             "vreme": parse_time(r.krstenje_vreme),
             "zivorodjeno": r.zivorodjeno.strip() == "1",

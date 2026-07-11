@@ -15,7 +15,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
 from registar.management.commands.base_migration import MigrationCommand
 from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
-from registar.migracija.helpers import cyr, extract_maiden
+from registar.migracija.helpers import cirilica, extract_maiden
 from registar.migracija.osoba_repo import (
     cache_osoba,
     find_matching_osoba,
@@ -82,7 +82,7 @@ class Command(MigrationCommand):
             cursor.execute('SELECT "UL_SIFRA", "UL_NAZIV" FROM hsp_ulice')
             for sifra_raw, naziv_raw in cursor.fetchall():
                 sifra = int(sifra_raw) if sifra_raw else 0
-                naziv = cyr(naziv_raw or "")
+                naziv = cirilica(naziv_raw or "")
                 if sifra and naziv:
                     cache[sifra] = naziv
         return cache
@@ -131,7 +131,7 @@ class Command(MigrationCommand):
                 ulica_uid = int(ulica_uid_raw) if ulica_uid_raw else None
                 slava_uid = int(slava_uid_raw) if slava_uid_raw else None
 
-                puno_ime = cyr(puno_ime)
+                puno_ime = cirilica(puno_ime)
                 if not puno_ime:
                     continue
 
@@ -156,11 +156,11 @@ class Command(MigrationCommand):
                 ulica_naziv = self.ulice_cache.get(ulica_uid, "") if ulica_uid else ""
                 adresa = find_or_create_adresa(
                     ulica=ulica_naziv,
-                    broj=cyr(str(broj_ulice or "")),
-                    broj_stana=cyr(str(broj_stana or "")),
+                    broj=cirilica(str(broj_ulice or "")),
+                    broj_stana=cirilica(str(broj_stana or "")),
                     mesto="Чукарица",
                     sprat="",
-                    primedba=cyr(napomena or ""),
+                    primedba=cirilica(napomena or ""),
                 )
 
                 # #255: покретне славе се преводе на засебни покретни
@@ -237,7 +237,7 @@ class Command(MigrationCommand):
                         and slavska_vodica.strip() == "D",
                         "vaskrsnja_vodica": uskrsnja_vodica
                         and uskrsnja_vodica.strip() == "D",
-                        "napomena": cyr(napomena or ""),
+                        "napomena": cirilica(napomena or ""),
                     },
                 )
                 if d_created:
@@ -273,7 +273,7 @@ class Command(MigrationCommand):
             )
             for uid_raw, ime_raw in cursor.fetchall():
                 uid = int(uid_raw) if uid_raw else 0
-                raw_ime = cyr(ime_raw or "")
+                raw_ime = cirilica(ime_raw or "")
 
                 if uid == 0 or uid not in domacinstva_cache or not raw_ime:
                     yield None

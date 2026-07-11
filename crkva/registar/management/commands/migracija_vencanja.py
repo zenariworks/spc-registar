@@ -7,7 +7,7 @@
   4. build_vencanje_data() — претвара VencanjeRecord у kwargs за Vencanje()
   5. Command         — оркестрација: fetch → transform → batch insert
 
-Заједничка логика (clean_prezime, find_or_create_osoba, get/cache за
+Заједничка логика (ocisti_prezime, find_or_create_osoba, get/cache за
 Veroispovest/Narodnost/Zanimanje/Hram, split_adresa) живи у пакету
 `registar.migracija`.
 """
@@ -32,9 +32,9 @@ from registar.migracija.cache import (
 )
 from registar.migracija.errors import RecordContext, RecordSkipped
 from registar.migracija.helpers import (
-    clean_prezime,
-    cyr,
-    cyr_int,
+    cirilica,
+    cirilica_int,
+    ocisti_prezime,
     safe_date,
     split_full_name,
 )
@@ -168,48 +168,52 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
 def parse_row(row: tuple) -> VencanjeRecord:
     """Tuple from cursor.fetchall() → VencanjeRecord. Pure, no DB access."""
     return VencanjeRecord(
-        redni_broj=cyr_int(row[0]),
-        godina=cyr_int(row[1], 1900),
-        knjiga=cyr(row[2]),
-        strana=cyr(row[3]),
-        broj=cyr(row[4]),
-        datum=safe_date(cyr_int(row[6]), cyr_int(row[7]), cyr_int(row[8])),
-        zenik_ime=cyr(row[9]),
-        zenik_prezime=cyr(row[10]),
-        zenik_zanimanje=cyr(row[11]),
-        zenik_mesto=cyr(row[12]),
-        zenik_adresa=cyr(row[13]),
-        zenik_veroispovest=cyr(row[14]),
-        zenik_narodnost=cyr(row[15]),
+        redni_broj=cirilica_int(row[0]),
+        godina=cirilica_int(row[1], 1900),
+        knjiga=cirilica(row[2]),
+        strana=cirilica(row[3]),
+        broj=cirilica(row[4]),
+        datum=safe_date(
+            cirilica_int(row[6]), cirilica_int(row[7]), cirilica_int(row[8])
+        ),
+        zenik_ime=cirilica(row[9]),
+        zenik_prezime=cirilica(row[10]),
+        zenik_zanimanje=cirilica(row[11]),
+        zenik_mesto=cirilica(row[12]),
+        zenik_adresa=cirilica(row[13]),
+        zenik_veroispovest=cirilica(row[14]),
+        zenik_narodnost=cirilica(row[15]),
         zenik_datum_rodj=safe_date(
-            cyr_int(row[16]), cyr_int(row[17]), cyr_int(row[18])
+            cirilica_int(row[16]), cirilica_int(row[17]), cirilica_int(row[18])
         ),
-        zenik_mesto_rodj=cyr(row[19]),
-        nevesta_ime=cyr(row[20]),
-        nevesta_prezime=cyr(row[21]),
-        nevesta_zanimanje=cyr(row[22]),
-        nevesta_mesto=cyr(row[23]),
-        nevesta_adresa=cyr(row[24]),
-        nevesta_veroispovest=cyr(row[25]),
-        nevesta_narodnost=cyr(row[26]),
+        zenik_mesto_rodj=cirilica(row[19]),
+        nevesta_ime=cirilica(row[20]),
+        nevesta_prezime=cirilica(row[21]),
+        nevesta_zanimanje=cirilica(row[22]),
+        nevesta_mesto=cirilica(row[23]),
+        nevesta_adresa=cirilica(row[24]),
+        nevesta_veroispovest=cirilica(row[25]),
+        nevesta_narodnost=cirilica(row[26]),
         nevesta_datum_rodj=safe_date(
-            cyr_int(row[27]), cyr_int(row[28]), cyr_int(row[29])
+            cirilica_int(row[27]), cirilica_int(row[28]), cirilica_int(row[29])
         ),
-        nevesta_mesto_rodj=cyr(row[30]),
-        svekar=cyr(row[31]),
-        svekrva=cyr(row[32]),
-        tast=cyr(row[33]),
-        tasta=cyr(row[34]),
-        zenik_rb_braka=max(cyr_int(row[35]), 1),
-        nevesta_rb_braka=max(cyr_int(row[36]), 1),
-        datum_ispita=safe_date(cyr_int(row[37]), cyr_int(row[38]), cyr_int(row[39])),
-        hram_naziv=cyr(row[40]),
-        hram_mesto=cyr(row[41]),
-        svestenik_id=cyr_int(row[42]),
-        kum_puno_ime=cyr(row[43]),
-        stari_svat_ime=cyr(row[44]),
-        razresenje=cyr(row[45]),
-        primedba=cyr(row[46]),
+        nevesta_mesto_rodj=cirilica(row[30]),
+        svekar=cirilica(row[31]),
+        svekrva=cirilica(row[32]),
+        tast=cirilica(row[33]),
+        tasta=cirilica(row[34]),
+        zenik_rb_braka=max(cirilica_int(row[35]), 1),
+        nevesta_rb_braka=max(cirilica_int(row[36]), 1),
+        datum_ispita=safe_date(
+            cirilica_int(row[37]), cirilica_int(row[38]), cirilica_int(row[39])
+        ),
+        hram_naziv=cirilica(row[40]),
+        hram_mesto=cirilica(row[41]),
+        svestenik_id=cirilica_int(row[42]),
+        kum_puno_ime=cirilica(row[43]),
+        stari_svat_ime=cirilica(row[44]),
+        razresenje=cirilica(row[45]),
+        primedba=cirilica(row[46]),
     )
 
 
@@ -321,9 +325,9 @@ class Command(MigrationCommand):
 
     def _build_vencanje_data(self, r: VencanjeRecord) -> Optional[dict]:
         zenik_ime = r.zenik_ime.strip()
-        zenik_prezime = clean_prezime(r.zenik_prezime.strip())
+        zenik_prezime = ocisti_prezime(r.zenik_prezime.strip())
         nevesta_ime = r.nevesta_ime.strip()
-        nevesta_prezime = clean_prezime(r.nevesta_prezime.strip())
+        nevesta_prezime = ocisti_prezime(r.nevesta_prezime.strip())
 
         if not (zenik_ime and zenik_prezime and nevesta_ime and nevesta_prezime):
             raise RecordSkipped(r.context, "непотпуна имена женика/невесте")
@@ -387,9 +391,9 @@ class Command(MigrationCommand):
         return {
             "godina_registracije": r.godina if r.godina >= 1900 else 2000,
             "redni_broj": r.redni_broj,
-            "knjiga": cyr_int(r.knjiga, 1),
-            "strana": cyr_int(r.strana, 1),
-            "broj": cyr_int(r.broj, 1),
+            "knjiga": cirilica_int(r.knjiga, 1),
+            "strana": cirilica_int(r.strana, 1),
+            "broj": cirilica_int(r.broj, 1),
             "datum": r.datum,
             "zenik": zenik,
             "nevesta": nevesta,

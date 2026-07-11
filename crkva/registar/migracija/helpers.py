@@ -20,26 +20,28 @@ _MARKER_RODJ_DOT = re.compile(r"^рођ\.\s*|^рођ\s+", flags=re.IGNORECASE)
 # names that legitimately start with Р (e.g. Радановић).
 _MARKER_R_CYR = re.compile(r"^р\.\s*|^р\s+", flags=re.IGNORECASE)
 _MARKER_R_LAT = re.compile(r"^r\.\s*|^r\s+", flags=re.IGNORECASE)
+_MARKERI_PREZIMENA = (
+    _MARKER_RODJENA,
+    _MARKER_RODJ_DOT,
+    _MARKER_R_CYR,
+    _MARKER_R_LAT,
+)
 
 
-def clean_prezime(prezime: str | None) -> str:
-    """Clean surname: remove maiden markers and fix lowercase first letter."""
+def ukloni_marker(tekst: str) -> str:
+    for marker in _MARKERI_PREZIMENA:
+        tekst = marker.sub("", tekst)
+    return tekst.strip()
+
+
+def veliko_prvo_slovo(tekst: str) -> str:
+    return tekst[:1].upper() + tekst[1:]
+
+
+def ocisti_prezime(prezime: str | None) -> str:
     if not prezime:
         return ""
-
-    p = prezime.strip()
-
-    # Longer markers first to avoid leftover fragments
-    for marker in (_MARKER_RODJENA, _MARKER_RODJ_DOT, _MARKER_R_CYR, _MARKER_R_LAT):
-        p = marker.sub("", p)
-
-    p = p.strip()
-
-    # Capitalize first letter if needed
-    if p and p[0].islower():
-        p = p[0].upper() + p[1:]
-
-    return p
+    return veliko_prvo_slovo(ukloni_marker(prezime.strip()))
 
 
 def extract_maiden(prezime: str | None) -> tuple[str, str]:
@@ -59,16 +61,11 @@ def extract_maiden(prezime: str | None) -> tuple[str, str]:
     if not raw:
         return "", ""
 
-    # Try markers in order of specificity
-    for marker in (_MARKER_RODJENA, _MARKER_RODJ_DOT, _MARKER_R_CYR, _MARKER_R_LAT):
+    for marker in _MARKERI_PREZIMENA:
         if marker.match(raw):
-            maiden = marker.sub("", raw).strip()
-            if maiden and maiden[0].islower():
-                maiden = maiden[0].upper() + maiden[1:]
-            return "", maiden
+            return "", veliko_prvo_slovo(marker.sub("", raw).strip())
 
-    # No marker found
-    return clean_prezime(raw), ""
+    return ocisti_prezime(raw), ""
 
 
 # =============================================================================
@@ -104,18 +101,18 @@ def split_full_name(full_name: str | None) -> tuple[str | None, str | None]:
     return None, None
 
 
-def split_full_name_last_word(full_name: str | None) -> tuple[str, str]:
+def split_full_name_last_word(puno_ime: str | None) -> tuple[str, str]:
     """Split on last whitespace token.
 
     Example: 'Петар Никола Петровић' → ('Петар Никола', 'Петровић')
     Used in baptism records where the last word is always the surname.
     """
-    if not full_name:
+    if not puno_ime:
         return "", ""
 
-    parts = full_name.strip().split()
+    parts = puno_ime.strip().split()
     if len(parts) < 2:
-        return full_name.strip(), ""
+        return puno_ime.strip(), ""
 
     return " ".join(parts[:-1]), parts[-1]
 
@@ -125,17 +122,17 @@ def split_full_name_last_word(full_name: str | None) -> tuple[str, str]:
 # =============================================================================
 
 
-def safe_date(y: int | None, m: int | None, d: int | None) -> date | None:
+def safe_date(yyyy: int | None, mm: int | None, dd: int | None) -> date | None:
     """Return valid date or None. Rejects years before 1900."""
-    y = y or 0
-    m = m or 0
-    d = d or 0
+    yyyy = yyyy or 0
+    mm = mm or 0
+    dd = dd or 0
 
-    if y < 1900:
+    if yyyy < 1900:
         return None
 
     try:
-        return date(y, m or 1, d or 1)
+        return date(yyyy, mm or 1, dd or 1)
     except ValueError:
         return None
 
@@ -160,16 +157,13 @@ def parse_time(text: str | None) -> time | None:
     else:
         hh_s, mm_s = s, "0"
 
-    hh = Konvertor.int(hh_s, 12)
-    mm = Konvertor.int(mm_s, 0)
+    sati = Konvertor.int(hh_s, 12)
+    minuti = Konvertor.int(mm_s, 0)
 
-    if hh == 24:
-        hh = 0
+    sati = 0 if sati == 24 else min(max(sati, 0), 23)
+    minuti = max(0, min(59, minuti))
 
-    hh = max(0, min(23, hh))
-    mm = max(0, min(59, mm))
-
-    return time(hh, mm)
+    return time(sati, minuti)
 
 
 # =============================================================================
@@ -177,13 +171,13 @@ def parse_time(text: str | None) -> time | None:
 # =============================================================================
 
 
-def cyr(text: str | None) -> str:
+def cirilica(tekst: str | None) -> str:
     """Convert from YUSCII/latin and strip whitespace."""
-    if text is None:
+    if tekst is None:
         return ""
-    return Konvertor.string(text).strip()
+    return Konvertor.string(tekst).strip()
 
 
-def cyr_int(value: Any, default: int = 0) -> int:
+def cirilica_int(vrednost: Any, podrazumevano: int = 0) -> int:
     """Safe integer conversion with fallback."""
-    return Konvertor.int(value, default)
+    return Konvertor.int(vrednost, podrazumevano)

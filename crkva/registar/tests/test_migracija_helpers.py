@@ -8,9 +8,9 @@ from django.test import TestCase
 from registar.migracija.cache import normalise_hram_naziv, normalise_zanimanje
 from registar.migracija.errors import RecordContext, RecordSkipped
 from registar.migracija.helpers import (
-    clean_prezime,
-    cyr,
-    cyr_int,
+    cirilica,
+    cirilica_int,
+    ocisti_prezime,
     parse_time,
     safe_date,
     split_full_name,
@@ -18,39 +18,39 @@ from registar.migracija.helpers import (
 )
 
 
-class CleanPrezimeTests(TestCase):
+class OcistiPrezimeTests(TestCase):
     def test_preserves_leading_R_when_no_marker(self):
         # Regression: the old regex was eating leading Р/R.
-        self.assertEqual(clean_prezime("Радановић"), "Радановић")
-        self.assertEqual(clean_prezime("Радивојевић"), "Радивојевић")
-        self.assertEqual(clean_prezime("Ристић"), "Ристић")
-        self.assertEqual(clean_prezime("Radanović"), "Radanović")
+        self.assertEqual(ocisti_prezime("Радановић"), "Радановић")
+        self.assertEqual(ocisti_prezime("Радивојевић"), "Радивојевић")
+        self.assertEqual(ocisti_prezime("Ристић"), "Ристић")
+        self.assertEqual(ocisti_prezime("Radanović"), "Radanović")
 
     def test_strips_cyrillic_marker_with_period(self):
-        self.assertEqual(clean_prezime("р.Јовановић"), "Јовановић")
-        self.assertEqual(clean_prezime("р. Јовановић"), "Јовановић")
-        self.assertEqual(clean_prezime("Р.Јовановић"), "Јовановић")
+        self.assertEqual(ocisti_prezime("р.Јовановић"), "Јовановић")
+        self.assertEqual(ocisti_prezime("р. Јовановић"), "Јовановић")
+        self.assertEqual(ocisti_prezime("Р.Јовановић"), "Јовановић")
 
     def test_strips_cyrillic_marker_with_space(self):
-        self.assertEqual(clean_prezime("р Марковић"), "Марковић")
-        self.assertEqual(clean_prezime("Р Марковић"), "Марковић")
+        self.assertEqual(ocisti_prezime("р Марковић"), "Марковић")
+        self.assertEqual(ocisti_prezime("Р Марковић"), "Марковић")
 
     def test_strips_latin_marker(self):
-        self.assertEqual(clean_prezime("r.Marković"), "Marković")
-        self.assertEqual(clean_prezime("R. Marković"), "Marković")
-        self.assertEqual(clean_prezime("r markovic"), "Markovic")
+        self.assertEqual(ocisti_prezime("r.Marković"), "Marković")
+        self.assertEqual(ocisti_prezime("R. Marković"), "Marković")
+        self.assertEqual(ocisti_prezime("r markovic"), "Markovic")
 
     def test_strips_rodjena(self):
-        self.assertEqual(clean_prezime("рођена Ђорђевић"), "Ђорђевић")
-        self.assertEqual(clean_prezime("Рођена Ђорђевић"), "Ђорђевић")
+        self.assertEqual(ocisti_prezime("рођена Ђорђевић"), "Ђорђевић")
+        self.assertEqual(ocisti_prezime("Рођена Ђорђевић"), "Ђорђевић")
 
     def test_capitalises_lowercase_first_letter(self):
-        self.assertEqual(clean_prezime("томић"), "Томић")
-        self.assertEqual(clean_prezime("филиповић"), "Филиповић")
+        self.assertEqual(ocisti_prezime("томић"), "Томић")
+        self.assertEqual(ocisti_prezime("филиповић"), "Филиповић")
 
     def test_handles_empty(self):
-        self.assertEqual(clean_prezime(""), "")
-        self.assertEqual(clean_prezime(None), "")
+        self.assertEqual(ocisti_prezime(""), "")
+        self.assertEqual(ocisti_prezime(None), "")
 
 
 class SplitFullNameTests(TestCase):
@@ -130,22 +130,22 @@ class ParseTimeTests(TestCase):
 class CyrTests(TestCase):
     def test_latin_to_cyrillic_via_yuscii(self):
         # } maps to ћ in the YUSCII source encoding
-        self.assertEqual(cyr("Radanovi}"), "Радановић")
-        self.assertEqual(cyr("Mihailovi}"), "Михаиловић")
+        self.assertEqual(cirilica("Radanovi}"), "Радановић")
+        self.assertEqual(cirilica("Mihailovi}"), "Михаиловић")
 
     def test_strips_whitespace(self):
-        self.assertEqual(cyr("  Marko  "), "Марко")
+        self.assertEqual(cirilica("  Marko  "), "Марко")
 
     def test_handles_none(self):
-        self.assertEqual(cyr(None), "")
+        self.assertEqual(cirilica(None), "")
 
 
 class CyrIntTests(TestCase):
     def test_valid_int(self):
-        self.assertEqual(cyr_int("42"), 42)
+        self.assertEqual(cirilica_int("42"), 42)
 
     def test_invalid_returns_default(self):
-        self.assertEqual(cyr_int("nope", default=7), 7)
+        self.assertEqual(cirilica_int("nope", podrazumevano=7), 7)
 
 
 class HramNormaliserTests(TestCase):
