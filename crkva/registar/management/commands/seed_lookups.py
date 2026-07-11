@@ -1,21 +1,40 @@
-"""Seed reference lookup tables (narodnosti, veroispovesti, ...).
+"""Seed reference lookup tables into a target tenant.
 
-Wraps the legacy unos_* commands. Lookup data lives in per-tenant schemas
-(registar is in TENANT_APPS), so --tenant is required.
+Равни шифарници (narodnosti, veroispovesti, zanimanja, eparhije) сеју се
+data-driven из CSV фајлова у ``fixtures/``. Slava има засебну логику
+(покретни празници из ``slave.jsonl``) па се и даље покреће као ``unos_slava``.
+
+registar је у TENANT_APPS па lookup подаци живе у шеми закупца — ``--tenant``
+је обавезан.
 """
 
 from __future__ import annotations
 
+import csv
+from dataclasses import dataclass
+
+from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import BaseCommand
 from registar.mock.tenant_ctx import with_tenant
+from registar.models import Eparhija, Narodnost, Veroispovest, Zanimanje
 
-LOOKUPS = [
-    "unos_narodnosti",
-    "unos_veroispovesti",
-    "unos_zanimanja",
-    "unos_slava",
-    "unos_eparhija",
+FIXTURES = settings.BASE_DIR / "fixtures"
+
+
+@dataclass(frozen=True)
+class Sifarnik:
+    model: type
+    fajl: str
+    kljucevi: tuple[str, ...]
+    dopunska: tuple[str, ...] = ()
+
+
+SIFARNICI = [
+    Sifarnik(Narodnost, "narodnosti.csv", ("naziv",)),
+    Sifarnik(Veroispovest, "veroispovesti.csv", ("naziv",)),
+    Sifarnik(Zanimanje, "zanimanja.csv", ("sifra", "naziv")),
+    Sifarnik(Eparhija, "eparhije.csv", ("naziv",), ("nivo", "sediste")),
 ]
 
 
@@ -27,9 +46,32 @@ class Command(BaseCommand):
 
     def handle(self, *args, **opts):
         with with_tenant(opts["tenant"]) as tenant:
-            for name in LOOKUPS:
-                self.stdout.write(self.style.MIGRATE_HEADING(f"  → {name}"))
-                call_command(name)
+            for sifarnik in SIFARNICI:
+                novih = self._zasej(sifarnik)
+                self.stdout.write(
+                    self.style.MIGRATE_HEADING(
+                        f"  → {sifarnik.model.__name__}: {novih} нових"
+                    )
+                )
+            self.stdout.write(self.style.MIGRATE_HEADING("  → Slava"))
+            call_command("unos_slava")
             self.stdout.write(
                 self.style.SUCCESS(f"Lookup табеле напуњене у {tenant.schema_name!r}.")
             )
+
+    def _zasej(self, sifarnik: Sifarnik) -> int:
+        polja = sifarnik.kljucevi + sifarnik.dopunska
+        novih = 0
+        with open(FIXTURES / sifarnik.fajl, encoding="utf-8") as fajl:
+            for red in csv.reader(fajl, delimiter=";"):
+                vrednosti = [c.strip() for c in red]
+                if len(vrednosti) < len(polja) or not any(vrednosti):
+                    continue
+                podaci = dict(zip(polja, vrednosti))
+                kljuc = {k: podaci[k] for k in sifarnik.kljucevi}
+                dopunska = {k: podaci[k] for k in sifarnik.dopunska}
+                _, kreiran = sifarnik.model.objects.get_or_create(
+                    **kljuc, defaults=dopunska
+                )
+                novih += kreiran
+        return novih
