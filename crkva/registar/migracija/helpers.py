@@ -44,7 +44,7 @@ def ocisti_prezime(prezime: str | None) -> str:
     return veliko_prvo_slovo(ukloni_marker(prezime.strip()))
 
 
-def extract_maiden(prezime: str | None) -> tuple[str, str]:
+def izdvoj_devojacko(prezime: str | None) -> tuple[str, str]:
     """Split surname field containing maiden name markers.
 
     Returns (married_surname, maiden_surname).
@@ -76,32 +76,32 @@ def extract_maiden(prezime: str | None) -> tuple[str, str]:
 _CAMEL_SPLIT = re.compile(r"^([А-ЯЂЈЉЊЋЏ][а-яђјљњћџ]*)([А-ЯЂЈЉЊЋЏ][а-яђјљњћџ]+)$")
 
 
-def split_full_name(full_name: str | None) -> tuple[str | None, str | None]:
+def rasclani_puno_ime(puno_ime: str | None) -> tuple[str | None, str | None]:
     """Split 'Марко Петровић' → ('Марко', 'Петровић').
 
     Also handles glued names like 'МаркоПетровић'.
     Returns (None, None) when splitting is not reliable.
     """
-    if not full_name:
+    if not puno_ime:
         return None, None
 
-    cleaned = full_name.strip()
-    if not cleaned:
+    ocisceno = puno_ime.strip()
+    if not ocisceno:
         return None, None
 
     # Normal case with space
-    if " " in cleaned:
-        parts = cleaned.split(maxsplit=1)
-        return parts[0] or None, parts[1] or None
+    if " " in ocisceno:
+        delovi = ocisceno.split(maxsplit=1)
+        return delovi[0] or None, delovi[1] or None
 
     # Try camel-case split
-    if match := _CAMEL_SPLIT.match(cleaned):
-        return match.group(1), match.group(2)
+    if poklapanje := _CAMEL_SPLIT.match(ocisceno):
+        return poklapanje.group(1), poklapanje.group(2)
 
     return None, None
 
 
-def split_full_name_last_word(puno_ime: str | None) -> tuple[str, str]:
+def podeli_zadnju_rec(puno_ime: str | None) -> tuple[str, str]:
     """Split on last whitespace token.
 
     Example: 'Петар Никола Петровић' → ('Петар Никола', 'Петровић')

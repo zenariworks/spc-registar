@@ -23,7 +23,7 @@ from typing import Iterator, Optional
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
-from registar.migracija.address import set_adresa_if_empty, split_adresa
+from registar.migracija.address import dodaj_adresu, rasclani_adresu
 from registar.migracija.cache import (
     LookupCache,
     normalise_hram_naziv,
@@ -33,10 +33,10 @@ from registar.migracija.errors import RecordContext, RecordSkipped
 from registar.migracija.helpers import (
     cirilica,
     cirilica_int,
-    extract_maiden,
+    izdvoj_devojacko,
     ocisti_prezime,
+    rasclani_puno_ime,
     safe_date,
-    split_full_name,
 )
 from registar.migracija.osoba_repo import dodaj_novu_osobu, find_or_create_osoba
 from registar.migracija.sex import pol_prema_imenu
@@ -371,23 +371,21 @@ class Command(MigrationCommand):
             narodnost=nevesta_narod,
         )
 
-        kum = self._parse_person(r.kum_puno_ime, label="кум")
-        svekar = self._parse_parent(r.svekar, pol="М")
-        svekrva = self._parse_parent(r.svekrva, pol="Ж")
-        tast = self._parse_parent(r.tast, pol="М")
-        tasta = self._parse_parent(r.tasta, pol="Ж")
-        stari_svat = self._parse_person(
+        kum = self._rasclani_osobu(r.kum_puno_ime, label="кум")
+        svekar = self._rasclani_roditelja(r.svekar, pol="М")
+        svekrva = self._rasclani_roditelja(r.svekrva, pol="Ж")
+        tast = self._rasclani_roditelja(r.tast, pol="М")
+        tasta = self._rasclani_roditelja(r.tasta, pol="Ж")
+        stari_svat = self._rasclani_osobu(
             r.stari_svat_ime.split(",")[0] if r.stari_svat_ime else "",
             label="стари сват",
         )
 
         # Addresses (only attach if Osoba doesn't already have one)
         if zenik and (r.zenik_adresa or r.zenik_mesto):
-            set_adresa_if_empty(zenik, split_adresa(r.zenik_adresa, r.zenik_mesto))
+            dodaj_adresu(zenik, rasclani_adresu(r.zenik_adresa, r.zenik_mesto))
         if nevesta and (r.nevesta_adresa or r.nevesta_mesto):
-            set_adresa_if_empty(
-                nevesta, split_adresa(r.nevesta_adresa, r.nevesta_mesto)
-            )
+            dodaj_adresu(nevesta, rasclani_adresu(r.nevesta_adresa, r.nevesta_mesto))
 
         return {
             "godina_registracije": r.godina if r.godina >= 1900 else 2000,
@@ -430,12 +428,12 @@ class Command(MigrationCommand):
                 narod_obj = self._narod.get(narod_parsed["narodnost"])
         return vera_obj, narod_obj
 
-    def _parse_person(self, full_str: str, *, label: str) -> Optional[Osoba]:
+    def _rasclani_osobu(self, full_str: str, *, label: str) -> Optional[Osoba]:
         if not full_str or not full_str.strip():
             return None
-        ime, prezime = split_full_name(full_str.split(",")[0].strip())
+        ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
-            married, maiden = extract_maiden(prezime)
+            married, maiden = izdvoj_devojacko(prezime)
             return find_or_create_osoba(
                 ime=ime,
                 prezime=married or maiden,
@@ -446,14 +444,14 @@ class Command(MigrationCommand):
             self.log_warning(f"Неуспело цепање имена ({label}): '{full_str}'")
         return None
 
-    def _parse_parent(
+    def _rasclani_roditelja(
         self, full_str: str, pol: Optional[str] = None
     ) -> Optional[Osoba]:
         if not full_str:
             return None
-        ime, prezime = split_full_name(full_str.split(",")[0].strip())
+        ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
-            married, maiden = extract_maiden(prezime)
+            married, maiden = izdvoj_devojacko(prezime)
             return find_or_create_osoba(
                 ime=ime,
                 prezime=married or maiden,

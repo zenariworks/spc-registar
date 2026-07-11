@@ -27,7 +27,7 @@ from __future__ import annotations
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from registar.management.commands._schema_target import razresi_ciljne_sheme
-from registar.migracija.helpers import extract_maiden
+from registar.migracija.helpers import izdvoj_devojacko
 from registar.models import Domacinstvo, Osoba, Ukucanin
 
 
@@ -87,7 +87,7 @@ class Command(BaseCommand):
     def _popravi(self, dry_run: bool, keep_from_dom: bool) -> None:
         # Match anything whose prezime starts with a recognised marker.
         # Done via Python (not SQL ILIKE) because the regex has several
-        # variants and we want extract_maiden to be the single source of
+        # variants and we want izdvoj_devojacko to be the single source of
         # truth.
         candidates = list(
             Osoba.objects.exclude(prezime__isnull=True)
@@ -99,7 +99,7 @@ class Command(BaseCommand):
         skipped_no_marker = 0
         married_from_dom = 0
         for o in candidates:
-            _, maiden = extract_maiden(o.prezime)
+            _, maiden = izdvoj_devojacko(o.prezime)
             if not maiden:
                 skipped_no_marker += 1
                 continue
@@ -159,7 +159,7 @@ class Command(BaseCommand):
             host_prez = (d.domacin.prezime or "").strip()
             if not host_prez:
                 continue
-            host_married, host_maiden = extract_maiden(host_prez)
+            host_married, host_maiden = izdvoj_devojacko(host_prez)
             if host_maiden:  # host itself still has a marker — skip
                 continue
             return host_married

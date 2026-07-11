@@ -113,7 +113,9 @@ def dodaj_novu_osobu(ime: str | None, prezime: str | None, **extra) -> Osoba | N
     return Osoba.objects.create(**data)
 
 
-def find_or_create_osoba(ime: str | None, prezime: str | None, **extra) -> Osoba | None:
+def find_or_create_osoba(
+    ime: str | None, prezime: str | None, **dodatno
+) -> Osoba | None:
     """Find an Osoba by (ime, prezime) case-insensitively, or create one.
 
     On match (first same-name Osoba), only fills in fields that are currently
@@ -136,15 +138,15 @@ def find_or_create_osoba(ime: str | None, prezime: str | None, **extra) -> Osoba
 
     if existing:
         updates = {
-            k: v for k, v in extra.items() if v and not getattr(existing, k, None)
+            k: v for k, v in dodatno.items() if v and not getattr(existing, k, None)
         }
         if updates:
             Osoba.objects.filter(pk=existing.pk).update(**updates)
             existing.refresh_from_db()
         return existing
 
-    data = {"ime": ime, "prezime": prezime, "parohijan": False}
-    data.update({k: v for k, v in extra.items() if v is not None})
-    created = Osoba.objects.create(**data)
-    cache_osoba(created)
-    return created
+    podaci = {"ime": ime, "prezime": prezime, "parohijan": False}
+    podaci.update({k: v for k, v in dodatno.items() if v is not None})
+    je_dodata = Osoba.objects.create(**podaci)
+    cache_osoba(je_dodata)
+    return je_dodata

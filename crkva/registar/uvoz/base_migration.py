@@ -22,7 +22,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.db.transaction import atomic
 from registar.migracija.errors import RecordContext, RecordSkipped
-from registar.migracija.helpers import split_full_name as _split_full_name
+from registar.migracija.helpers import rasclani_puno_ime as _rasclani_puno_ime
 from registar.migracija.osoba_repo import find_or_create_osoba as _find_osoba
 from registar.models import Osoba
 
@@ -116,11 +116,11 @@ class MigrationCommand(BaseCommand):
 
     # --- Helpers (delegating to the migracija package) ---
 
-    def split_full_name(self, full_name: str | None):
-        return _split_full_name(full_name)
+    def rasclani_puno_ime(self, puno_ime: str | None):
+        return _rasclani_puno_ime(puno_ime)
 
-    def get_or_create_osoba(self, ime, prezime, **extra) -> Osoba | None:
-        return _find_osoba(ime, prezime, **extra)
+    def get_or_create_osoba(self, ime, prezime, **dodatno) -> Osoba | None:
+        return _find_osoba(ime, prezime, **dodatno)
 
     # --- Bulk insert ---
 

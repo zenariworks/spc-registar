@@ -12,9 +12,9 @@ from registar.migracija.helpers import (
     cirilica_int,
     ocisti_prezime,
     parse_time,
+    podeli_zadnju_rec,
+    rasclani_puno_ime,
     safe_date,
-    split_full_name,
-    split_full_name_last_word,
 )
 
 
@@ -55,36 +55,34 @@ class OcistiPrezimeTests(TestCase):
 
 class SplitFullNameTests(TestCase):
     def test_simple_split(self):
-        self.assertEqual(split_full_name("Марко Петровић"), ("Марко", "Петровић"))
+        self.assertEqual(rasclani_puno_ime("Марко Петровић"), ("Марко", "Петровић"))
 
     def test_camelcase_split(self):
-        self.assertEqual(split_full_name("МаркоПетровић"), ("Марко", "Петровић"))
+        self.assertEqual(rasclani_puno_ime("МаркоПетровић"), ("Марко", "Петровић"))
 
     def test_no_split_possible(self):
-        self.assertEqual(split_full_name("Марко"), (None, None))
+        self.assertEqual(rasclani_puno_ime("Марко"), (None, None))
 
     def test_empty_input(self):
-        self.assertEqual(split_full_name(""), (None, None))
-        self.assertEqual(split_full_name(None), (None, None))
+        self.assertEqual(rasclani_puno_ime(""), (None, None))
+        self.assertEqual(rasclani_puno_ime(None), (None, None))
 
     def test_strips_whitespace(self):
-        self.assertEqual(split_full_name("  Марко Петровић  "), ("Марко", "Петровић"))
+        self.assertEqual(rasclani_puno_ime("  Марко Петровић  "), ("Марко", "Петровић"))
 
 
 class SplitFullNameLastWordTests(TestCase):
     def test_two_words(self):
-        self.assertEqual(
-            split_full_name_last_word("Марко Петровић"), ("Марко", "Петровић")
-        )
+        self.assertEqual(podeli_zadnju_rec("Марко Петровић"), ("Марко", "Петровић"))
 
     def test_three_words_keeps_last_as_prezime(self):
         self.assertEqual(
-            split_full_name_last_word("Петар Никола Петровић"),
+            podeli_zadnju_rec("Петар Никола Петровић"),
             ("Петар Никола", "Петровић"),
         )
 
     def test_single_word(self):
-        self.assertEqual(split_full_name_last_word("Марко"), ("Марко", ""))
+        self.assertEqual(podeli_zadnju_rec("Марко"), ("Марко", ""))
 
 
 class SafeDateTests(TestCase):

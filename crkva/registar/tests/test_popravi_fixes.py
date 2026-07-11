@@ -1,6 +1,6 @@
 """#354: popravi_devojacka уклоњен из importuj_dbf пајплајна.
 
-Увоз већ скида маркере девојачког презимена (extract_maiden/ocisti_prezime у
+Увоз већ скида маркере девојачког презимена (izdvoj_devojacko/ocisti_prezime у
 свакој migracija_* путањи), па је накнадна поправка no-op на исправном увозу.
 """
 
@@ -24,6 +24,6 @@ class VencanjaMaidenStripTests(TestCase):
 
         cmd = MigracijaVencanja()
         cmd._verbose = False
-        osoba = cmd._parse_person("Мара р.Алексић", label="свекрва")
+        osoba = cmd._rasclani_osobu("Мара р.Алексић", label="свекрва")
         self.assertEqual(osoba.prezime, "Алексић")
         self.assertEqual(osoba.devojacko_prezime, "Алексић")

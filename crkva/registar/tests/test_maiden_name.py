@@ -1,4 +1,4 @@
-"""Tests for the maiden-name marker split: extract_maiden helper +
+"""Tests for the maiden-name marker split: izdvoj_devojacko helper +
 ``popravi_devojacka`` management command.
 
 The DBF import imported many female Osoba with surnames like
@@ -12,82 +12,82 @@ from io import StringIO
 
 from django.core.management import call_command
 from django.test import TestCase
-from registar.migracija.helpers import extract_maiden
+from registar.migracija.helpers import izdvoj_devojacko
 from registar.models import Domacinstvo, Osoba, Ukucanin
 
 
 class ExtractMaidenTests(TestCase):
-    """Pure-function tests for helpers.extract_maiden — no DB."""
+    """Pure-function tests for helpers.izdvoj_devojacko — no DB."""
 
     def test_cyrillic_r_dot_no_space(self):
-        self.assertEqual(extract_maiden("р.Бошковић"), ("", "Бошковић"))
+        self.assertEqual(izdvoj_devojacko("р.Бошковић"), ("", "Бошковић"))
 
     def test_cyrillic_r_dot_with_space(self):
-        self.assertEqual(extract_maiden("р. Бошковић"), ("", "Бошковић"))
+        self.assertEqual(izdvoj_devojacko("р. Бошковић"), ("", "Бошковић"))
 
     def test_capital_cyrillic_r_dot(self):
-        self.assertEqual(extract_maiden("Р.Бошковић"), ("", "Бошковић"))
+        self.assertEqual(izdvoj_devojacko("Р.Бошковић"), ("", "Бошковић"))
 
     def test_cyrillic_r_space(self):
         # "р Марковић" — bare letter + whitespace
-        self.assertEqual(extract_maiden("р Марковић"), ("", "Марковић"))
+        self.assertEqual(izdvoj_devojacko("р Марковић"), ("", "Марковић"))
 
     def test_rodj_dot_marker(self):
-        self.assertEqual(extract_maiden("рођ. Видојевић"), ("", "Видојевић"))
-        self.assertEqual(extract_maiden("рођ.Видојевић"), ("", "Видојевић"))
+        self.assertEqual(izdvoj_devojacko("рођ. Видојевић"), ("", "Видојевић"))
+        self.assertEqual(izdvoj_devojacko("рођ.Видојевић"), ("", "Видојевић"))
 
     def test_rodjena_full_word_marker(self):
-        self.assertEqual(extract_maiden("рођена Ђорђевић"), ("", "Ђорђевић"))
-        self.assertEqual(extract_maiden("Рођена Ђорђевић"), ("", "Ђорђевић"))
+        self.assertEqual(izdvoj_devojacko("рођена Ђорђевић"), ("", "Ђорђевић"))
+        self.assertEqual(izdvoj_devojacko("Рођена Ђорђевић"), ("", "Ђорђевић"))
 
     def test_latin_r_dot(self):
-        self.assertEqual(extract_maiden("r.Marković"), ("", "Marković"))
-        self.assertEqual(extract_maiden("R. Marković"), ("", "Marković"))
+        self.assertEqual(izdvoj_devojacko("r.Marković"), ("", "Marković"))
+        self.assertEqual(izdvoj_devojacko("R. Marković"), ("", "Marković"))
 
     def test_no_marker_returns_input_as_married(self):
-        self.assertEqual(extract_maiden("Marko Marković"), ("Marko Marković", ""))
-        self.assertEqual(extract_maiden("Бошковић"), ("Бошковић", ""))
+        self.assertEqual(izdvoj_devojacko("Marko Marković"), ("Marko Marković", ""))
+        self.assertEqual(izdvoj_devojacko("Бошковић"), ("Бошковић", ""))
 
     def test_does_not_eat_leading_R_when_no_marker(self):
         # Regression for the ocisti_prezime bug: "Радановић" must not
         # become "адановић".
-        self.assertEqual(extract_maiden("Радановић"), ("Радановић", ""))
-        self.assertEqual(extract_maiden("Ристић"), ("Ристић", ""))
-        self.assertEqual(extract_maiden("Radanović"), ("Radanović", ""))
+        self.assertEqual(izdvoj_devojacko("Радановић"), ("Радановић", ""))
+        self.assertEqual(izdvoj_devojacko("Ристић"), ("Ристић", ""))
+        self.assertEqual(izdvoj_devojacko("Radanović"), ("Radanović", ""))
 
     def test_empty_and_none(self):
-        self.assertEqual(extract_maiden(""), ("", ""))
-        self.assertEqual(extract_maiden(None), ("", ""))
-        self.assertEqual(extract_maiden("   "), ("", ""))
+        self.assertEqual(izdvoj_devojacko(""), ("", ""))
+        self.assertEqual(izdvoj_devojacko(None), ("", ""))
+        self.assertEqual(izdvoj_devojacko("   "), ("", ""))
 
     def test_bare_marker_alone(self):
         # "р." with nothing after — both halves empty.
-        self.assertEqual(extract_maiden("р."), ("", ""))
-        self.assertEqual(extract_maiden("рођ."), ("", ""))
-        self.assertEqual(extract_maiden("r."), ("", ""))
+        self.assertEqual(izdvoj_devojacko("р."), ("", ""))
+        self.assertEqual(izdvoj_devojacko("рођ."), ("", ""))
+        self.assertEqual(izdvoj_devojacko("r."), ("", ""))
 
     def test_leading_and_trailing_whitespace(self):
-        self.assertEqual(extract_maiden("  р.Бошковић  "), ("", "Бошковић"))
-        self.assertEqual(extract_maiden("  Marković  "), ("Marković", ""))
+        self.assertEqual(izdvoj_devojacko("  р.Бошковић  "), ("", "Бошковић"))
+        self.assertEqual(izdvoj_devojacko("  Marković  "), ("Marković", ""))
 
     def test_capitalises_lowercase_maiden(self):
         # Sometimes the source is sloppy: "р.бошковић" → "Бошковић".
-        self.assertEqual(extract_maiden("р.бошковић"), ("", "Бошковић"))
-        self.assertEqual(extract_maiden("r.marković"), ("", "Marković"))
+        self.assertEqual(izdvoj_devojacko("р.бошковић"), ("", "Бошковић"))
+        self.assertEqual(izdvoj_devojacko("r.marković"), ("", "Marković"))
 
     def test_documented_examples_from_task(self):
         # Татјана р.Бошковић → ime="Татјана", prezime="" (married blank),
         # devojacko_prezime="Бошковић"
         ime = "Татјана"
-        married, maiden = extract_maiden("р.Бошковић")
+        vencano, devojacko = izdvoj_devojacko("р.Бошковић")
         self.assertEqual(ime, "Татјана")
-        self.assertEqual(married, "")
-        self.assertEqual(maiden, "Бошковић")
+        self.assertEqual(vencano, "")
+        self.assertEqual(devojacko, "Бошковић")
 
         # Верица рођ. Видојевић → ime="Верица", devojacko="Видојевић"
-        married, maiden = extract_maiden("рођ. Видојевић")
-        self.assertEqual(married, "")
-        self.assertEqual(maiden, "Видојевић")
+        vencano, devojacko = izdvoj_devojacko("рођ. Видојевић")
+        self.assertEqual(vencano, "")
+        self.assertEqual(devojacko, "Видојевић")
 
 
 class PopraviDevojackaCommandTests(TestCase):
@@ -192,7 +192,7 @@ class PopraviDevojackaCommandTests(TestCase):
         o = Osoba.objects.create(ime="Икс", prezime="р.")
         self.cmd._popravi(dry_run=False, keep_from_dom=False)
         o.refresh_from_db()
-        # extract_maiden("р.") returns ("", "") → maiden is empty so the
+        # izdvoj_devojacko("р.") returns ("", "") → maiden is empty so the
         # row is skipped.
         self.assertEqual(o.prezime, "р.")
         self.assertFalse(o.devojacko_prezime)
@@ -234,16 +234,16 @@ class PopraviDevojackaCommandCLITests(TestCase):
 
 
 class ImporterIntegrationTests(TestCase):
-    """The importers (migracija_*) call extract_maiden via the helpers
+    """The importers (migracija_*) call izdvoj_devojacko via the helpers
     module. Verify the integration point exists and produces the
     expected (married, maiden) tuple shape callers depend on."""
 
     def test_helper_is_used_by_ukucana_module(self):
         from registar.uvoz import migracija_ukucana_parohijana
 
-        self.assertTrue(hasattr(migracija_ukucana_parohijana, "extract_maiden"))
+        self.assertTrue(hasattr(migracija_ukucana_parohijana, "izdvoj_devojacko"))
 
     def test_helper_is_used_by_krstenja_module(self):
         from registar.uvoz import migracija_krstenja
 
-        self.assertTrue(hasattr(migracija_krstenja, "extract_maiden"))
+        self.assertTrue(hasattr(migracija_krstenja, "izdvoj_devojacko"))

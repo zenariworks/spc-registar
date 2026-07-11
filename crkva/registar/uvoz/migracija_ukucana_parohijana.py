@@ -13,8 +13,8 @@ from typing import Dict, Iterable
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
-from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
-from registar.migracija.helpers import cirilica, extract_maiden
+from registar.migracija.address import nadji_dodaj_adresu, warm_adresa_cache
+from registar.migracija.helpers import cirilica, izdvoj_devojacko
 from registar.migracija.osoba_repo import (
     cache_osoba,
     find_matching_osoba,
@@ -136,7 +136,7 @@ class Command(MigrationCommand):
                     continue
 
                 ime, prezime_raw = (puno_ime.split(" ", 1) + [""])[:2]
-                married_prezime, devojacko_prezime = extract_maiden(prezime_raw)
+                married_prezime, devojacko_prezime = izdvoj_devojacko(prezime_raw)
                 # Domaćin records with only a "р.<maiden>" surname can't
                 # be created without a married surname — fall back to the
                 # maiden value so the row isn't lost, and the cleanup
@@ -154,7 +154,7 @@ class Command(MigrationCommand):
                     continue
 
                 ulica_naziv = self.ulice_cache.get(ulica_uid, "") if ulica_uid else ""
-                adresa = find_or_create_adresa(
+                adresa = nadji_dodaj_adresu(
                     ulica=ulica_naziv,
                     broj=cirilica(str(broj_ulice or "")),
                     broj_stana=cirilica(str(broj_stana or "")),

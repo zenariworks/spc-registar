@@ -18,7 +18,7 @@ from typing import Iterator, Optional
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
-from registar.migracija.address import find_or_create_adresa, set_adresa_if_empty
+from registar.migracija.address import dodaj_adresu, nadji_dodaj_adresu
 from registar.migracija.cache import (
     LookupCache,
     normalise_hram_naziv,
@@ -28,10 +28,10 @@ from registar.migracija.errors import RecordContext, RecordSkipped
 from registar.migracija.helpers import (
     cirilica,
     cirilica_int,
-    extract_maiden,
+    izdvoj_devojacko,
     ocisti_prezime,
     parse_time,
-    split_full_name_last_word,
+    podeli_zadnju_rec,
 )
 from registar.migracija.osoba_repo import dodaj_novu_osobu, find_or_create_osoba
 from registar.migracija.sex import pol_prema_imenu
@@ -139,14 +139,14 @@ class KrstenjeRecord:
     otac_ime: str
     otac_prezime: str
     otac_zanimanje: str
-    otac_adresa: str
+    adresa_oca: str
     otac_veroispovest: str
     otac_narodnost: str
 
     majka_ime: str
     majka_prezime: str
     majka_zanimanje: str
-    majka_adresa: str
+    adresa_majke: str
     majka_veroispovest: str
 
     zivorodjeno: str
@@ -161,7 +161,7 @@ class KrstenjeRecord:
     kum_puno_ime: str
     kum_prezime: str
     kum_zanimanje: str
-    kum_mesto: str
+    mesto_kuma: str
 
     registracija_mesto: str
     registracija_broj: Optional[str]
@@ -208,13 +208,13 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         otac_ime=cirilica(row[23]),
         otac_prezime=cirilica(row[24]),
         otac_zanimanje=cirilica(row[25]),
-        otac_adresa=cirilica(row[26]),
+        adresa_oca=cirilica(row[26]),
         otac_veroispovest=cirilica(row[27]),
         otac_narodnost=cirilica(row[28]),
         majka_ime=cirilica(row[29]),
         majka_prezime=cirilica(row[30]),
         majka_zanimanje=cirilica(row[31]),
-        majka_adresa=cirilica(row[32]),
+        adresa_majke=cirilica(row[32]),
         majka_veroispovest=cirilica(row[33]),
         zivorodjeno=cirilica(row[34]),
         po_redu=cirilica_int(row[35]) or None,
@@ -226,7 +226,7 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         kum_puno_ime=cirilica(row[41]),
         kum_prezime=cirilica(row[42]),
         kum_zanimanje=cirilica(row[43]),
-        kum_mesto=cirilica(row[44]),
+        mesto_kuma=cirilica(row[44]),
         registracija_mesto=cirilica(row[45]),
         registracija_broj=cirilica(row[46]) or None,
         registracija_strana=cirilica(row[47]) or None,
@@ -390,7 +390,7 @@ class Command(MigrationCommand):
         )
 
         # Mother's maiden name handling
-        majka_married, majka_maiden = extract_maiden(r.majka_prezime.strip())
+        majka_married, majka_maiden = izdvoj_devojacko(r.majka_prezime.strip())
         majka_prezime = majka_married or otac_prezime
 
         majka = find_or_create_osoba(
@@ -403,7 +403,7 @@ class Command(MigrationCommand):
             devojacko_prezime=majka_maiden or None,
         )
 
-        kum = self._parse_kum(r)
+        kum = self._rasclani_kuma(r)
 
         # Update citizen name if present
         if dete and r.dete_gradjansko_ime.strip() and not dete.gradjansko_ime:
@@ -465,30 +465,27 @@ class Command(MigrationCommand):
 
         return otac_vera, otac_narod, majka_vera, majka_narod
 
-    def _parse_kum(self, r: KrstenjeRecord) -> Optional[Osoba]:
+    def _rasclani_kuma(self, zapis: KrstenjeRecord) -> Osoba | None:
         """Parse and create godparent (kum)."""
-        full = r.kum_puno_ime.strip()
-        if not full:
+        puno_ime = zapis.kum_puno_ime.strip()
+        if not puno_ime:
             return None
 
-        prez = r.kum_prezime.strip()
-        if prez:
-            ime = full
-        else:
-            ime, prez = split_full_name_last_word(full)
+        prezime = zapis.kum_prezime.strip()
+        ime, prezime = (puno_ime, prezime) if prezime else podeli_zadnju_rec(puno_ime)
 
-        if not (ime and prez):
+        if not (ime and prezime):
             if self._verbose:
-                self.log_warning(f"Неуспело цепање имена кума: '{full}'")
+                self.log_warning(f"Неуспело цепање имена кума: '{puno_ime}'")
             return None
 
-        kum_married, kum_maiden = extract_maiden(prez)
+        kumu_vencano, kumu_devojacko = izdvoj_devojacko(prezime)
         return find_or_create_osoba(
             ime=ime,
-            prezime=kum_married or kum_maiden,
+            prezime=kumu_vencano or kumu_devojacko,
             pol=pol_prema_imenu(ime),
-            zanimanje=self._zanimanje.get(r.kum_zanimanje),
-            devojacko_prezime=kum_maiden or None,
+            zanimanje=self._zanimanje.get(zapis.kum_zanimanje),
+            devojacko_prezime=kumu_devojacko or None,
         )
 
     def _set_addresses(
@@ -501,20 +498,20 @@ class Command(MigrationCommand):
     ) -> None:
         """Set addresses where available."""
         if dete and (r.adresa_deteta_grad or r.adresa_deteta_ulica):
-            set_adresa_if_empty(
+            dodaj_adresu(
                 dete,
-                find_or_create_adresa(
+                nadji_dodaj_adresu(
                     ulica=r.adresa_deteta_ulica or "",
                     broj=r.adresa_deteta_broj or "",
                     mesto=r.adresa_deteta_grad,
                 ),
             )
 
-        if otac and r.otac_adresa:
-            set_adresa_if_empty(otac, find_or_create_adresa(mesto=r.otac_adresa))
+        if otac and r.adresa_oca:
+            dodaj_adresu(otac, nadji_dodaj_adresu(mesto=r.adresa_oca))
 
-        if majka and r.majka_adresa:
-            set_adresa_if_empty(majka, find_or_create_adresa(mesto=r.majka_adresa))
+        if majka and r.adresa_majke:
+            dodaj_adresu(majka, nadji_dodaj_adresu(mesto=r.adresa_majke))
 
-        if kum and r.kum_mesto:
-            set_adresa_if_empty(kum, find_or_create_adresa(mesto=r.kum_mesto))
+        if kum and r.mesto_kuma:
+            dodaj_adresu(kum, nadji_dodaj_adresu(mesto=r.mesto_kuma))
