@@ -8,7 +8,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from registar.kalendar import WEEKDAY_LABELS, build_day_cell
 from registar.models import Slava
-from registar.views.search_view import _get_registry_stats
+from registar.views.search import _get_registry_stats
 
 
 @login_required

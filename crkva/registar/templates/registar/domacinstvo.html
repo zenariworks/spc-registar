@@ -20,10 +20,10 @@
       {% elif is_edit %}Измена домаћинства{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}
       {% else %}Домаћинство{% if domacinstvo.domacin %}<span class="u-page-title__subtitle">{{ domacinstvo.domacin.ime }} {{ domacinstvo.domacin.prezime }}</span>{% endif %}{% endif %}
     </h1>
-      {% include "registar/_view_actions.html" with back_list_url_name="domacinstva" back_detail_url_name="domacinstvo_detail" obj=domacinstvo edit_url_name="izmena_domacinstva" can_edit=can_edit_domacinstvo %}
+      {% include "_partials/_view_actions.html" with back_list_url_name="domacinstva" back_detail_url_name="domacinstvo_detail" obj=domacinstvo edit_url_name="izmena_domacinstva" can_edit=can_edit_domacinstvo %}
   </div>
 
-  {% if form.errors %}{% include "registar/_form_errors.html" %}{% endif %}
+  {% if form.errors %}{% include "_partials/_form_errors.html" %}{% endif %}
 
   {% if form %}
   {% info_section title="Домаћинство" icon="fa-house" %}
@@ -151,8 +151,8 @@
     {% endif %}
   {% endif %}
 
-  {% if form %}{% include "registar/_modal_adresa.html" %}{% include "registar/_modal_osoba.html" %}{% endif %}
-  {% if form %}{% include "registar/_modal_adresa_create.html" %}{% endif %}
+  {% if form %}{% include "_partials/_modal_adresa.html" %}{% include "_partials/_modal_osoba.html" %}{% endif %}
+  {% if form %}{% include "_partials/_modal_adresa_create.html" %}{% endif %}
 </form>
-{% if domacinstvo %}{% include "registar/_istorija_izmena.html" %}{% endif %}
+{% if domacinstvo %}{% include "_partials/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

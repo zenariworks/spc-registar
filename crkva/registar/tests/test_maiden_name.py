@@ -12,8 +12,8 @@ from io import StringIO
 
 from django.core.management import call_command
 from django.test import TestCase
-from registar.migracija.helpers import izdvoj_devojacko
 from registar.models import Domacinstvo, Osoba, Ukucanin
+from registar.utils.migracija.helpers import izdvoj_devojacko
 
 
 class ExtractdevojackoTests(TestCase):
@@ -237,11 +237,11 @@ class ImporterIntegrationTests(TestCase):
     expected (married, devojacko) tuple shape callers depend on."""
 
     def test_helper_is_used_by_ukucana_module(self):
-        from registar.uvoz import migracija_ukucana_parohijana
+        from registar.uvoz import ukucani_parohijani
 
-        self.assertTrue(hasattr(migracija_ukucana_parohijana, "izdvoj_devojacko"))
+        self.assertTrue(hasattr(ukucani_parohijani, "izdvoj_devojacko"))
 
     def test_helper_is_used_by_krstenja_module(self):
-        from registar.uvoz import migracija_krstenja
+        from registar.uvoz import krstenja
 
-        self.assertTrue(hasattr(migracija_krstenja, "izdvoj_devojacko"))
+        self.assertTrue(hasattr(krstenja, "izdvoj_devojacko"))

@@ -6,7 +6,7 @@
   3. parse_row()
   4. Command (orchestration + transform)
 
-Заједничка логика живи у пакету `registar.migracija`.
+Заједничка логика живи у пакету `registar.utils.migracija`.
 """
 
 from __future__ import annotations
@@ -18,23 +18,6 @@ from typing import Iterator
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
-from registar.migracija.address import dodaj_adresu, nadji_dodaj_adresu
-from registar.migracija.cache import (
-    LookupCache,
-    normalise_hram_naziv,
-    normalise_zanimanje,
-)
-from registar.migracija.errors import RecordContext, RecordSkipped
-from registar.migracija.helpers import (
-    cirilica,
-    cirilica_int,
-    izdvoj_devojacko,
-    ocisti_prezime,
-    podeli_zadnju_rec,
-    rasclani_vreme,
-)
-from registar.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
-from registar.migracija.sex import pol_prema_imenu
 from registar.models import (
     Hram,
     Krstenje,
@@ -44,8 +27,25 @@ from registar.models import (
     Veroispovest,
     Zanimanje,
 )
-from registar.utils_parser import rasclani_vera_narodnost
-from registar.uvoz.base_migration import MigrationCommand
+from registar.utils.migracija.address import dodaj_adresu, nadji_dodaj_adresu
+from registar.utils.migracija.cache import (
+    LookupCache,
+    normalise_hram_naziv,
+    normalise_zanimanje,
+)
+from registar.utils.migracija.errors import RecordContext, RecordSkipped
+from registar.utils.migracija.helpers import (
+    cirilica,
+    cirilica_int,
+    izdvoj_devojacko,
+    ocisti_prezime,
+    podeli_zadnju_rec,
+    rasclani_vreme,
+)
+from registar.utils.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
+from registar.utils.migracija.pol import pol_prema_imenu
+from registar.utils.parser import rasclani_vera_narodnost
+from registar.uvoz.osnovno import MigrationCommand
 
 SOURCE_COLUMNS = (
     "K_SIFRA",  # redni_broj

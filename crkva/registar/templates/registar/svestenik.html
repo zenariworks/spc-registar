@@ -19,10 +19,10 @@
       {% elif is_edit %}Измена свештеника{% if svestenik %}<span class="u-page-title__subtitle">{{ svestenik.ime }} {{ svestenik.prezime }}</span>{% endif %}
       {% else %}Свештеник<span class="u-page-title__subtitle">{{ svestenik.ime }} {{ svestenik.prezime }}</span>{% endif %}
     </h1>
-      {% include "registar/_view_actions.html" with back_list_url_name="svestenici" back_detail_url_name="svestenik_detail" obj=svestenik edit_url_name="izmena_svestenika" can_edit=can_edit_svestenik %}
+      {% include "_partials/_view_actions.html" with back_list_url_name="svestenici" back_detail_url_name="svestenik_detail" obj=svestenik edit_url_name="izmena_svestenika" can_edit=can_edit_svestenik %}
   </div>
 
-  {% if form.errors %}{% include "registar/_form_errors.html" %}{% endif %}
+  {% if form.errors %}{% include "_partials/_form_errors.html" %}{% endif %}
 
   {% if form %}
   {% info_section title="Лични подаци" icon="fa-user" %}
@@ -58,9 +58,9 @@
     {% endif %}
   {% endif %}
 
-  {% if form %}{% include "registar/_modal_adresa.html" %}{% endif %}
-  {% if form %}{% include "registar/_modal_adresa_create.html" %}{% endif %}
-  {% if form %}{% include "registar/_modal_parohija.html" %}{% endif %}
+  {% if form %}{% include "_partials/_modal_adresa.html" %}{% endif %}
+  {% if form %}{% include "_partials/_modal_adresa_create.html" %}{% endif %}
+  {% if form %}{% include "_partials/_modal_parohija.html" %}{% endif %}
 </form>
-{% if svestenik %}{% include "registar/_istorija_izmena.html" %}{% endif %}
+{% if svestenik %}{% include "_partials/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

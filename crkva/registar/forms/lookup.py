@@ -15,7 +15,7 @@ from __future__ import annotations
 from django import forms
 from django.core.exceptions import ValidationError
 from django_select2.forms import ModelSelect2Widget
-from registar.text_utils import normalize_naziv
+from registar.utils.tekst import normalize_naziv
 
 
 class PendingLookup:

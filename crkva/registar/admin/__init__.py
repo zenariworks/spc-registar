@@ -1,19 +1,19 @@
 """Модул за администрацију Django модела у апликацији регистар."""
 
-from .adresa_admin import AdresaAdmin
-from .crkvena_opstina_admin import CrkvenaOpstinaAdmin
-from .domacinstvo_admin import DomacinstvоAdmin
-from .eparhija_admin import EparhijaAdmin
-from .hram_admin import HramAdmin
-from .krstenje_admin import KrstenjeAdmin
-from .narodnost_admin import NarodnostAdmin
-from .parohija_admin import ParohijaAdmin
-from .parohijan_admin import ParohijanAdmin
-from .svestenik_admin import SvestenikAdmin
-from .ukucanin_admin import UkucaninAdmin
-from .vencanje_admin import VencanjeAdmin
-from .veroispovest_admin import VeroispovestAdmin
-from .zanimanje_admin import ZanimanjeAdmin
+from .adresa import AdresaAdmin
+from .crkvena_opstina import CrkvenaOpstinaAdmin
+from .domacinstvo import DomacinstvоAdmin
+from .eparhija import EparhijaAdmin
+from .hram import HramAdmin
+from .krstenje import KrstenjeAdmin
+from .narodnost import NarodnostAdmin
+from .parohija import ParohijaAdmin
+from .parohijan import ParohijanAdmin
+from .svestenik import SvestenikAdmin
+from .ukucanin import UkucaninAdmin
+from .vencanje import VencanjeAdmin
+from .veroispovest import VeroispovestAdmin
+from .zanimanje import ZanimanjeAdmin
 
 __all__ = [
     "AdresaAdmin",

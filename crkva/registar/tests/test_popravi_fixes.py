@@ -20,7 +20,7 @@ class ImportujPipelineTests(TestCase):
 
 class VencanjadevojackoStripTests(TestCase):
     def test_parse_person_strips_devojacko_marker(self):
-        from registar.uvoz.migracija_vencanja import Command as MigracijaVencanja
+        from registar.uvoz.vencanja import Command as MigracijaVencanja
 
         cmd = MigracijaVencanja()
         cmd._verbose = False

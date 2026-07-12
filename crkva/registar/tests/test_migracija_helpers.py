@@ -5,9 +5,9 @@
 from datetime import date, time
 
 from django.test import TestCase
-from registar.migracija.cache import normalise_hram_naziv, normalise_zanimanje
-from registar.migracija.errors import RecordContext, RecordSkipped
-from registar.migracija.helpers import (
+from registar.utils.migracija.cache import normalise_hram_naziv, normalise_zanimanje
+from registar.utils.migracija.errors import RecordContext, RecordSkipped
+from registar.utils.migracija.helpers import (
     cirilica,
     cirilica_int,
     ocisti_prezime,

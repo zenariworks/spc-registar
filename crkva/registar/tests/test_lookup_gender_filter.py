@@ -11,13 +11,13 @@ import re
 from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
-from registar.forms.krstenje_form import FemaleOsobaSelect2Widget as KrstFemale
-from registar.forms.krstenje_form import KrstenjeForm
-from registar.forms.krstenje_form import MaleOsobaSelect2Widget as KrstMale
-from registar.forms.krstenje_form import OsobaSelect2Widget as KrstUnfiltered
-from registar.forms.vencanje_form import FemaleOsobaSelect2Widget as VencFemale
-from registar.forms.vencanje_form import MaleOsobaSelect2Widget as VencMale
-from registar.forms.vencanje_form import VencanjeForm
+from registar.forms.krstenje import FemaleOsobaSelect2Widget as KrstFemale
+from registar.forms.krstenje import KrstenjeForm
+from registar.forms.krstenje import MaleOsobaSelect2Widget as KrstMale
+from registar.forms.krstenje import OsobaSelect2Widget as KrstUnfiltered
+from registar.forms.vencanje import FemaleOsobaSelect2Widget as VencFemale
+from registar.forms.vencanje import MaleOsobaSelect2Widget as VencMale
+from registar.forms.vencanje import VencanjeForm
 from registar.models import Osoba
 
 FIELD_ID_RE = re.compile(

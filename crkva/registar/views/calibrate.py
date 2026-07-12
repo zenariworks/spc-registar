@@ -7,7 +7,7 @@
 from django.conf import settings
 from django.http import Http404
 from django.shortcuts import render
-from registar.calibration import CALIBRATIONS
+from registar.utils.calibration import CALIBRATIONS
 
 
 def render_calibrate(request, kind):

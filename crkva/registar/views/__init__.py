@@ -5,8 +5,8 @@
 vencanje_view, ...) и по намени (home_view, search_view, brzi_view).
 """
 
-from .adresa_view import duplikati_adresa, spoji_adresu
-from .brzi_view import (
+from .adresa import duplikati_adresa, spoji_adresu
+from .brzi_prikaz import (
     brzi_izmena_adrese,
     brzi_unos_adrese,
     brzi_unos_hrama,
@@ -14,16 +14,16 @@ from .brzi_view import (
     brzi_unos_parohije,
     brzi_unos_svestenika,
 )
-from .domacinstvo_view import (
+from .domacinstvo import (
     PrikazDomacinstva,
     SpisakDomacinsta,
     domacinstva_print,
     izmena_domacinstva,
     unos_domacinstva,
 )
-from .home_view import index
-from .kalendar_view import kalendar
-from .krstenje_view import (
+from .home import index
+from .kalendar import kalendar
+from .krstenje import (
     KrstenjePDF,
     PrikazKrstenja,
     SpisakKrstenja,
@@ -31,23 +31,23 @@ from .krstenje_view import (
     izmena_krstenja,
     unos_krstenja,
 )
-from .parohijan_view import (
+from .parohijan import (
     ParohijanPDF,
     PrikazParohijana,
     SpisakParohijana,
     izmena_parohijana,
     unos_parohijana,
 )
-from .search_view import SEARCH_PREVIEW_LIMIT, search_autocomplete, search_view
-from .slava_view import slava_domacinstva
-from .svestenik_view import (
+from .search import SEARCH_PREVIEW_LIMIT, search_autocomplete, search_view
+from .slava import slava_domacinstva
+from .svestenik import (
     PrikazSvestenika,
     SpisakSvestenika,
     SvestenikPDF,
     izmena_svestenika,
     unos_svestenika,
 )
-from .vencanje_view import (
+from .vencanje import (
     PrikazVencanja,
     SpisakVencanja,
     VencanjePDF,
@@ -56,7 +56,7 @@ from .vencanje_view import (
     unos_vencanja,
 )
 from .view_404 import custom_404
-from .vodica_view import vaskrsnja_vodica
+from .vodica import vaskrsnja_vodica
 
 __all__ = [
     # Re-exports for url config and other modules

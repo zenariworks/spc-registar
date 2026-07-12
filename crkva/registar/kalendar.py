@@ -4,7 +4,7 @@
 исте константе (велики празници, ознаке дана, мапа поста) и изградњу ћелија.
 """
 
-from registar.utils_fasting import tip_posta
+from registar.utils.post import tip_posta
 
 # Ознаке дана у недељи (пон..нед), индекс = date.weekday()
 WEEKDAY_LABELS = ["пон", "уто", "сре", "чет", "пет", "суб", "нед"]

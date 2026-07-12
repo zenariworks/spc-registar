@@ -1,6 +1,6 @@
 """Template filter that exposes a form's field errors as a plain dict.
 
-Used by registar/_form_errors.html to feed components/form-errors.js, which
+Used by _partials/_form_errors.html to feed components/form-errors.js, which
 highlights the corresponding inputs and injects per-field error bubbles.
 
 Why a custom filter: `form.errors` is an ErrorDict whose values are

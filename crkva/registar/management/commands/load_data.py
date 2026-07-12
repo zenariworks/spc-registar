@@ -8,7 +8,7 @@ from pathlib import Path
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from registar.mock.tenant_ctx import with_tenant
-from registar.seed import (
+from registar.uvoz.seed import (
     unos_adresa,
     unos_domacinstava,
     unos_krstenja,

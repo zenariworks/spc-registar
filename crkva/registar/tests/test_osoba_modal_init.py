@@ -34,7 +34,7 @@ class OsobaModalDefersBindFormTests(TestCase):
     """``Modal.bindForm`` must not run inline -- it must wait for ``DOMContentLoaded``."""
 
     def setUp(self):
-        self.body = render_to_string("registar/_modal_osoba.html")
+        self.body = render_to_string("_partials/_modal_osoba.html")
 
     def test_bind_form_is_deferred_to_domcontentloaded(self):
         """The bind call must be inside a ``DOMContentLoaded`` listener."""

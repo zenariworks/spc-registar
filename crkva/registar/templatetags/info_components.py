@@ -35,7 +35,7 @@ from django.utils.safestring import mark_safe
 register = template.Library()
 
 
-@register.inclusion_tag("registar/_info_row.html")
+@register.inclusion_tag("_partials/_info_row.html")
 def info_row(
     icon,
     label,
@@ -96,7 +96,7 @@ def info_row(
     }
 
 
-@register.inclusion_tag("registar/_info_row_bool.html")
+@register.inclusion_tag("_partials/_info_row_bool.html")
 def info_row_bool(icon, label, value_label, field=None, value=None, sub=None):
     """Render a boolean (slider/checkbox) info-row.
 

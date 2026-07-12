@@ -2,7 +2,7 @@
 
 Креира Osoba (домаћин), Adresa, Domacinstvo, и Ukucanin записе. За разлику
 од miграcija_vencanja/krstenja, овде имамо два изворна table-а; код је
-донекле линеаран, али сада дели исте помоћнике из `registar.migracija`.
+донекле линеаран, али сада дели исте помоћнике из `registar.utils.migracija`.
 """
 
 # pylint: disable=missing-function-docstring,missing-class-docstring,attribute-defined-outside-init,too-many-locals,broad-exception-caught,not-callable
@@ -13,18 +13,18 @@ from typing import Dict, Iterable
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
-from registar.migracija.address import nadji_dodaj_adresu, warm_adresa_cache
-from registar.migracija.helpers import cirilica, izdvoj_devojacko
-from registar.migracija.osoba_repo import (
+from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
+from registar.utils.migracija.address import nadji_dodaj_adresu, warm_adresa_cache
+from registar.utils.migracija.helpers import cirilica, izdvoj_devojacko
+from registar.utils.migracija.osoba_repo import (
     cache_osoba,
     nadji_dodaj_osobu,
     nadji_osobu,
     warm_osoba_cache,
 )
-from registar.migracija.sex import pol_prema_imenu
-from registar.migracija.slava_map import resolve_slava
-from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
-from registar.uvoz.base_migration import MigrationCommand
+from registar.utils.migracija.pol import pol_prema_imenu
+from registar.utils.migracija.slava_map import resolve_slava
+from registar.uvoz.osnovno import MigrationCommand
 
 
 class Command(MigrationCommand):

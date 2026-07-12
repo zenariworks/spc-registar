@@ -25,7 +25,7 @@ from django.core.management import call_command
 from django.test import SimpleTestCase, TestCase
 from django_tenants.utils import schema_context
 from kalendar.models import Slava
-from registar.seed.unos_slava import Command as UnosSlava
+from registar.uvoz.seed.unos_slava import Command as UnosSlava
 
 JSONL = os.path.join(settings.BASE_DIR, "fixtures", "slave.jsonl")
 RESTORED_DAYS = [

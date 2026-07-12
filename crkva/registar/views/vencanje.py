@@ -8,7 +8,7 @@ from django.views.generic import DetailView, ListView
 from registar.forms import VencanjeForm
 from registar.models.vencanje import Vencanje
 from registar.services.izdavalac import get_izdavalac
-from registar.views.calibrate_view import render_calibrate
+from registar.views.calibrate import render_calibrate
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
 from tenants.permissions import tenant_role_required
@@ -34,7 +34,7 @@ class SpisakVencanja(
 
     model = Vencanje
     template_name = "registar/spisak_vencanja.html"
-    partial_template_name = "registar/_stavka_vencanja.html"
+    partial_template_name = "_partials/_stavka_vencanja.html"
     context_object_name = "vencanja"
     paginate_by = 10
     search_fields = [

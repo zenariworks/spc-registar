@@ -2,5 +2,5 @@
 
 {% block content %}
 {% if can_edit_svestenik %}{% url 'unos_svestenika' as add_url %}{% endif %}
-{% include "registar/_spisak.html" with title="Свештеници" stavka_template="registar/_stavka_svestenika.html" add_url=add_url add_label="Додај свештеника" %}
+{% include "_partials/_spisak.html" with title="Свештеници" stavka_template="_partials/_stavka_svestenika.html" add_url=add_url add_label="Додај свештеника" %}
 {% endblock %}

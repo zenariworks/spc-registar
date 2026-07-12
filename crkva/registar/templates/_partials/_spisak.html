@@ -7,18 +7,18 @@ Usage from a spisak template:
   {% templatetag openblock %} extends "base.html" {% templatetag closeblock %}
   {% templatetag openblock %} load marker_filter phone_filters {% templatetag closeblock %}  (whatever the stavka needs)
   {% templatetag openblock %} block content {% templatetag closeblock %}
-    {% templatetag openblock %} include "registar/_spisak.html" with title="..." stavka_template="registar/_stavka_X.html" {% templatetag closeblock %}
+    {% templatetag openblock %} include "_partials/_spisak.html" with title="..." stavka_template="_partials/_stavka_X.html" {% templatetag closeblock %}
   {% templatetag openblock %} endblock {% templatetag closeblock %}
 
 Required:
   title           h1 text
-  stavka_template path to the per-row partial (e.g. "registar/_stavka_parohijana.html")
+  stavka_template path to the per-row partial (e.g. "_partials/_stavka_parohijana.html")
 Optional:
   add_url         URL of the corresponding unos_* view; renders "Додај ..." primary button
   add_label       button text (e.g. "Додај парохијана")
 {% endcomment %}
-{% include "registar/_page_header.html" with title=title count=page_obj.paginator.count include_toolbar=True action_url=add_url action_icon="fa-solid fa-circle-plus" action_label=add_label %}
-{% include "registar/_filter_chips.html" %}
+{% include "_partials/_page_header.html" with title=title count=page_obj.paginator.count include_toolbar=True action_url=add_url action_icon="fa-solid fa-circle-plus" action_label=add_label %}
+{% include "_partials/_filter_chips.html" %}
 <ul class="spisak" id="spisak-list">
     {% include stavka_template %}
 </ul>

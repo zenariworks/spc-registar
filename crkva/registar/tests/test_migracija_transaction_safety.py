@@ -16,8 +16,8 @@ from django.core.management import call_command
 from django.db import connection
 from django.test import TestCase
 from registar.models import Krstenje
-from registar.uvoz.migracija_krstenja import SOURCE_COLUMNS
-from registar.uvoz.migracija_krstenja import Command as MigracijaKrstenja
+from registar.uvoz.krstenja import SOURCE_COLUMNS
+from registar.uvoz.krstenja import Command as MigracijaKrstenja
 
 
 def _staging_row(sifra: int, aktgod: int, dete_ime: str, otac_prezime: str) -> list:
@@ -39,8 +39,8 @@ class MigracijaKrstenjaTransactionSafetyTests(TestCase):
     def setUp(self):
         # Module-level caches survive across tests; clear so stale Osoba/Adresa
         # references from other tests don't leak in.
-        from registar.migracija.address import _cache
-        from registar.migracija.osoba_repo import _OSOBA_CACHE_BY_SCHEMA
+        from registar.utils.migracija.address import _cache
+        from registar.utils.migracija.osoba_repo import _OSOBA_CACHE_BY_SCHEMA
 
         _cache().clear()
         _OSOBA_CACHE_BY_SCHEMA.clear()
@@ -75,7 +75,7 @@ class MigracijaKrstenjaTransactionSafetyTests(TestCase):
         Krstenje.objects.create(godina_registracije=1999, redni_broj=7, strana=1)
         self._create_staging([_staging_row(1, 2000, "Марко", "Марковић")])
         with mock.patch(
-            "registar.uvoz.migracija_krstenja.Command._build_krstenje",
+            "registar.uvoz.krstenja.Command._build_krstenje",
             side_effect=RuntimeError("boom"),
         ):
             with self.assertRaises(RuntimeError):

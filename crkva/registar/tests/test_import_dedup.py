@@ -1,14 +1,14 @@
 """Tests for safety-checked dedup in migracija_ukucana_parohijana."""
 
 from django.test import TestCase
-from registar.migracija.osoba_repo import (
+from registar.models import Osoba
+from registar.utils.migracija.osoba_repo import (
     cache_osoba,
     lookup_all_osoba,
     lookup_osoba,
     nadji_osobu,
     warm_osoba_cache,
 )
-from registar.models import Osoba
 
 
 class LookupOsobaCacheTest(TestCase):
@@ -86,8 +86,8 @@ class ImporterSafetyCheckedDedup(TestCase):
     def setUp(self):
         # The migracija helpers keep module-level caches that survive across
         # tests; clear them so a previous test's Adresa/Osoba refs don't leak in.
-        from registar.migracija.address import _cache, warm_adresa_cache
-        from registar.migracija.osoba_repo import (
+        from registar.utils.migracija.address import _cache, warm_adresa_cache
+        from registar.utils.migracija.osoba_repo import (
             _OSOBA_CACHE_BY_SCHEMA,
             warm_osoba_cache,
         )
@@ -123,7 +123,7 @@ class ImporterSafetyCheckedDedup(TestCase):
     def test_same_name_same_phone_merges_into_one_osoba(self):
         """Two DBF rows with identical name + tel_fiksni → one Osoba."""
         from django.db import connection
-        from registar.uvoz.migracija_ukucana_parohijana import Command
+        from registar.uvoz.ukucani_parohijani import Command
 
         self._create_staging_table()
         with connection.cursor() as cur:
@@ -147,7 +147,7 @@ class ImporterSafetyCheckedDedup(TestCase):
     def test_same_name_different_phones_keeps_both(self):
         """Two DBF rows with same name but different phones → two Osobe."""
         from django.db import connection
-        from registar.uvoz.migracija_ukucana_parohijana import Command
+        from registar.uvoz.ukucani_parohijani import Command
 
         self._create_staging_table()
         with connection.cursor() as cur:
@@ -172,7 +172,7 @@ class ImporterSafetyCheckedDedup(TestCase):
         held the first same-name Osoba and #3 was never compared against #2.
         """
         from django.db import connection
-        from registar.uvoz.migracija_ukucana_parohijana import Command
+        from registar.uvoz.ukucani_parohijani import Command
 
         self._create_staging_table()
         with connection.cursor() as cur:

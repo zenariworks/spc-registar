@@ -16,7 +16,7 @@ from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 from kalendar.models import Slava
-from registar.utils_fasting import (
+from registar.utils.post import (
     apostolski_post,
     beli_mrs,
     fiksni_postovi,

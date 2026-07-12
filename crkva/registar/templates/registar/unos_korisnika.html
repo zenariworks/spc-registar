@@ -9,9 +9,9 @@
   {% csrf_token %}
 
   {% url 'parohija:user_list' as user_list_url %}
-  {% include "registar/_page_header.html" with title="Нови корисник" subtitle=parohija.naziv back_url=user_list_url action_submit=True action_icon="fa-solid fa-floppy-disk" action_label="Сачувај" %}
+  {% include "_partials/_page_header.html" with title="Нови корисник" subtitle=parohija.naziv back_url=user_list_url action_submit=True action_icon="fa-solid fa-floppy-disk" action_label="Сачувај" %}
 
-  {% if form.non_field_errors %}{% include "registar/_form_errors.html" %}{% endif %}
+  {% if form.non_field_errors %}{% include "_partials/_form_errors.html" %}{% endif %}
 
   {% info_section title="Налог" icon="fa-id-card" %}
     {% info_row icon="fa-at" label="Корисничко име" field=form.username %}

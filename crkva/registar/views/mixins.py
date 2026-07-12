@@ -95,7 +95,7 @@ class InfiniteScrollMixin:
     """Враћа само партиал шаблон када је захтев AJAX (за бесконачно скроловање).
 
     Сваки приказ дефинише:
-        partial_template_name = "registar/_stavka_krstenja.html"
+        partial_template_name = "_partials/_stavka_krstenja.html"
     """
 
     partial_template_name: str | None = None

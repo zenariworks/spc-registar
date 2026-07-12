@@ -15,7 +15,7 @@ from django.db import connection
 from django.test import TestCase
 from django_tenants.utils import schema_context
 from registar.management.commands._schema_target import razresi_ciljne_sheme
-from registar.uvoz.migracija_krstenja import Command as MigracijaKrstenja
+from registar.uvoz.krstenja import Command as MigracijaKrstenja
 from tenants.models import Tenant
 
 
