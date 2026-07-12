@@ -69,7 +69,7 @@ class Svestenik(TimeStampedModel):
         ),
     )
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(user_db_constraint=False)
 
     def __str__(self) -> str:
         return f"{self.zvanje} {self.ime} {self.prezime}"

@@ -143,7 +143,7 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
     razresenje = models.BooleanField(verbose_name="разрешење", default=True)
     primedba = models.TextField(verbose_name="примедба", blank=True, default="")
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(user_db_constraint=False)
 
     @property
     def ime_zenika(self):

@@ -52,7 +52,7 @@ class Domacinstvo(TimeStampedModel):
     vaskrsnja_vodica = models.BooleanField(default=False)
     napomena = models.TextField(blank=True, null=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(user_db_constraint=False)
 
     class Meta:
         db_table = "domacinstva"
