@@ -9,36 +9,37 @@
 
 from __future__ import annotations
 
-# Кључне речи за препознавање вероисповести -> канонски назив
-# ВАЖНО: гркокатол мора бити пре католик/католк јер је подстринг
-VERA_MAP = {
-    # Православна
+import re
+from typing import Mapping, TypedDict
+
+
+class OsobaPodaci(TypedDict):
+    veroispovest: str | None
+    narodnost: str | None
+
+
+# Важно: дужи термини морају бити пре краћих јер се тражи substring.
+VEROISPOVESTI = {
+    "гркокатол": "Гркокатоличка",
+    "римокатол": "Римокатоличка",
+    "католк": "Римокатоличка",
+    "католик": "Римокатоличка",
     "православн": "Православна",
     "правосл": "Православна",
     "прав.": "Православна",
     "прав ": "Православна",
-    "праволавн": "Православна",  # грешка у куцању
-    # Гркокатоличка (мора бити пре католик)
-    "гркокатол": "Гркокатоличка",
-    # Римокатоличка
-    "римокатол": "Римокатоличка",
-    "римока.": "Римокатоличка",
-    "католк": "Римокатоличка",
-    "католик": "Римокатоличка",
-    # Ислам
+    "праволавн": "Православна",
     "муслиман": "Ислам",
     "ислам": "Ислам",
-    # Протестантска
     "протестан": "Протестантска",
     "методист": "Протестантска",
-    # Остало
     "хришћан": "Хришћанска",
     "некрштен": "Некрштен",
     "атеист": "Атеиста",
 }
 
-# Кључне речи за препознавање народности -> канонски назив
-NAROD_MAP = {
+
+NARODNOSTI = {
     "срб": "Српска",
     "српк": "Српска",
     "мађар": "Мађарска",
@@ -75,55 +76,82 @@ NAROD_MAP = {
 }
 
 
-def _detect(text: str, mapping: dict[str, str]) -> str | None:
-    """Пронађи прво поклапање кључне речи у тексту (case-insensitive)."""
-    lower = text.lower()
-    for keyword, canonical in mapping.items():
-        if keyword.lower() in lower:
-            return canonical
-    return None
+def _napravi_pretragu(
+    mapa: Mapping[str, str],
+) -> re.Pattern[str]:
+    """Креира regex за препознавање кључних речи."""
+    obrasci = "|".join(map(re.escape, mapa))
+    return re.compile(obrasci, re.IGNORECASE)
 
 
-def _rasclani_segment(text: str) -> dict[str, str | None]:
-    """Парсирај један сегмент текста (једна особа) у vera + narod."""
-    vera = _detect(text, VERA_MAP)
-    narod = _detect(text, NAROD_MAP)
-    return {"veroispovest": vera, "narodnost": narod}
+_REGEX_VERA = _napravi_pretragu(VEROISPOVESTI)
+_REGEX_NARODNOST = _napravi_pretragu(NARODNOSTI)
+
+
+def _pronadji(
+    tekst: str,
+    mapa: Mapping[str, str],
+    regex: re.Pattern[str],
+) -> str | None:
+    """Пронађи канонску вредност за прво пронађено поклапање."""
+    match = regex.search(tekst.lower())
+
+    if not match:
+        return None
+
+    return mapa[match.group()]
+
+
+def _rasclani_segment(tekst: str) -> OsobaPodaci:
+    """Парсира једну особу."""
+    return {
+        "veroispovest": _pronadji(
+            tekst,
+            VEROISPOVESTI,
+            _REGEX_VERA,
+        ),
+        "narodnost": _pronadji(
+            tekst,
+            NARODNOSTI,
+            _REGEX_NARODNOST,
+        ),
+    }
 
 
 def rasclani_vera_narodnost(
-    text: str | None,
-) -> tuple[dict[str, str | None], dict[str, str | None] | None]:
+    tekst: str | None,
+) -> tuple[OsobaPodaci, OsobaPodaci | None]:
     """
-    Парсирај комбиновани текст вероисповести/народности у структуриране податке.
+    Парсира комбиновани текст вероисповести и народности.
 
-    Враћа (person1_data, person2_data) где је сваки:
-    {"veroispovest": "Православна", "narodnost": "Српска"} или None
-
-    person2_data се поставља само када текст садржи " и " (оба родитеља).
+    Враћа:
+        (
+            прва особа,
+            друга особа или None
+        )
     """
-    if not text or not text.strip():
-        return {"veroispovest": None, "narodnost": None}, None
 
-    text = text.strip()
+    prazno: OsobaPodaci = {
+        "veroispovest": None,
+        "narodnost": None,
+    }
 
-    # Провери да ли има " и " -- два лица
-    if " и " in text:
-        parts = text.split(" и ", 1)
-        p1 = _rasclani_segment(parts[0])
-        p2 = _rasclani_segment(parts[1])
-        return p1, p2
+    if not (tekst := (tekst or "").strip()):
+        return prazno, None
 
-    # Једно лице или оба иста
-    result = _rasclani_segment(text)
-    return result, None
+    osobe = [deo.strip() for deo in tekst.split(" и ", maxsplit=1)]
+
+    prvi = _rasclani_segment(osobe[0])
+    drugi = _rasclani_segment(osobe[1]) if len(osobe) == 2 else None
+
+    return prvi, drugi
 
 
 def get_canonical_vere() -> list[str]:
-    """Врати сортирану листу канонских назива вероисповести."""
-    return sorted(set(VERA_MAP.values()))
+    """Врати канонске називе вероисповести."""
+    return sorted(set(VEROISPOVESTI.values()))
 
 
 def get_canonical_narodnosti() -> list[str]:
-    """Врати сортирану листу канонских назива народности."""
-    return sorted(set(NAROD_MAP.values()))
+    """Врати канонске називе народности."""
+    return sorted(set(NARODNOSTI.values()))
