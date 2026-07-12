@@ -146,7 +146,7 @@ class KrstenjeZapis:
     majka_ime: str
     majka_prezime: str
     majka_zanimanje: str
-    adresa_majke: str
+    majka_adresa: str
     majka_veroispovest: str
 
     zivorodjeno: str
@@ -214,7 +214,7 @@ def parse_row(row: tuple) -> KrstenjeZapis:
         majka_ime=cirilica(row[29]),
         majka_prezime=cirilica(row[30]),
         majka_zanimanje=cirilica(row[31]),
-        adresa_majke=cirilica(row[32]),
+        majka_adresa=cirilica(row[32]),
         majka_veroispovest=cirilica(row[33]),
         zivorodjeno=cirilica(row[34]),
         po_redu=cirilica_int(row[35]) or None,
@@ -510,8 +510,8 @@ class Command(MigrationCommand):
         if otac and r.otac_adresa:
             dodaj_adresu(otac, nadji_dodaj_adresu(mesto=r.otac_adresa))
 
-        if majka and r.adresa_majke:
-            dodaj_adresu(majka, nadji_dodaj_adresu(mesto=r.adresa_majke))
+        if majka and r.majka_adresa:
+            dodaj_adresu(majka, nadji_dodaj_adresu(mesto=r.majka_adresa))
 
         if kum and r.kum_mesto:
             dodaj_adresu(kum, nadji_dodaj_adresu(mesto=r.kum_mesto))

@@ -148,7 +148,7 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     hram_mesto: str
     svestenik_id: int
 
-    kum_puno_ime: str
+    kum_ime: str
     stari_svat_ime: str
 
     razresenje: str
@@ -211,7 +211,7 @@ def parse_row(row: tuple) -> VencanjeRecord:
         hram_naziv=cirilica(row[40]),
         hram_mesto=cirilica(row[41]),
         svestenik_id=cirilica_int(row[42]),
-        kum_puno_ime=cirilica(row[43]),
+        kum_ime=cirilica(row[43]),
         stari_svat_ime=cirilica(row[44]),
         razresenje=cirilica(row[45]),
         primedba=cirilica(row[46]),
@@ -262,8 +262,8 @@ class Command(MigrationCommand):
     # ---------------- Pipeline ----------------
 
     def _fetch_records(self) -> Iterator[VencanjeRecord]:
-        col_list = ", ".join(f'"{c}"' for c in SOURCE_COLUMNS)
-        query = f'SELECT {col_list} FROM {self.staging_table} ORDER BY "V_SIFRA"'
+        kolone = ", ".join(f'"{c}"' for c in SOURCE_COLUMNS)
+        query = f'SELECT {kolone} FROM {self.staging_table} ORDER BY "V_SIFRA"'
         with connection.cursor() as cursor:
             cursor.execute(query)
             for row in cursor.fetchall():
@@ -371,7 +371,7 @@ class Command(MigrationCommand):
             narodnost=nevesta_narod,
         )
 
-        kum = self._rasclani_osobu(r.kum_puno_ime, label="кум")
+        kum = self._rasclani_osobu(r.kum_ime, label="кум")
         svekar = self._rasclani_roditelja(r.svekar, pol="М")
         svekrva = self._rasclani_roditelja(r.svekrva, pol="Ж")
         tast = self._rasclani_roditelja(r.tast, pol="М")
@@ -415,28 +415,28 @@ class Command(MigrationCommand):
 
     def _parse_vera_narod(self, vera_text: str, narod_text: str):
         """Parse blended vera/narodnost text (one column may contain both)."""
-        vera_obj = None
-        narod_obj = None
+        veroispovest = None
+        narodnost = None
         if vera_text and vera_text.strip():
             parsed, _ = pars_vera_narodnost(vera_text)
-            vera_obj = self._vera.get(parsed["veroispovest"])
+            veroispovest = self._vera.get(parsed["veroispovest"])
             if not (narod_text and narod_text.strip()):
-                narod_obj = self._narod.get(parsed["narodnost"])
+                narodnost = self._narod.get(parsed["narodnost"])
         if narod_text and narod_text.strip():
             narod_parsed, _ = pars_vera_narodnost(narod_text)
             if narod_parsed["narodnost"]:
-                narod_obj = self._narod.get(narod_parsed["narodnost"])
-        return vera_obj, narod_obj
+                narodnost = self._narod.get(narod_parsed["narodnost"])
+        return veroispovest, narodnost
 
     def _rasclani_osobu(self, full_str: str, *, label: str) -> Osoba | None:
         if not full_str or not full_str.strip():
             return None
         ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
-            married, devojacko = izdvoj_devojacko(prezime)
+            vencano, devojacko = izdvoj_devojacko(prezime)
             return nadji_dodaj_osobu(
                 ime=ime,
-                prezime=married or devojacko,
+                prezime=vencano or devojacko,
                 pol=pol_prema_imenu(ime),
                 devojacko=devojacko or None,
             )
@@ -451,10 +451,10 @@ class Command(MigrationCommand):
             return None
         ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
-            married, devojacko = izdvoj_devojacko(prezime)
+            vencano, devojacko = izdvoj_devojacko(prezime)
             return nadji_dodaj_osobu(
                 ime=ime,
-                prezime=married or devojacko,
+                prezime=vencano or devojacko,
                 pol=pol,
                 devojacko=devojacko or None,
             )

@@ -188,7 +188,7 @@
           <div class="krst-table-field krst-field-blizanac">{{ krstenje.blizanac|yesno:"јесте,није" }}</div>
           <div class="krst-table-field krst-field-telesna_mana">{{ krstenje.telesna_mana|yesno:"јесте,није,непознато" }}</div>
           <div class="krst-table-field krst-field-svestenik">{{ krstenje.svestenik|crtica }}</div>
-          <div class="krst-table-field krst-field-kum">{% if krstenje.ime_kuma or krstenje.zanimanje_kuma or krstenje.adresa_kuma_mesto %}{{ krstenje.ime_kuma }}, {{ krstenje.zanimanje_kuma }}<br>{{ krstenje.adresa_kuma_mesto }}{% else %}-{% endif %}</div>
+          <div class="krst-table-field krst-field-kum">{% if krstenje.ime_kuma or krstenje.zanimanje_kuma or krstenje.mesto_kuma %}{{ krstenje.ime_kuma }}, {{ krstenje.zanimanje_kuma }}<br>{{ krstenje.mesto_kuma }}{% else %}-{% endif %}</div>
           <div class="krst-table-field krst-field-domovnik"></div>
           <div class="krst-table-field krst-field-primedba">{{ krstenje.primedba|crtica }}</div>
           <div class="krst-field-footer_br">{% now "d.m" %}</div>
