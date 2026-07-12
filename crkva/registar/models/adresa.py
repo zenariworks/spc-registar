@@ -43,7 +43,7 @@ class Adresa(models.Model):
         help_text="Свештеник задужен за ову улицу (за васкршњу водицу).",
     )
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(user_db_constraint=False)
 
     def __str__(self):
         parts = [self.ulica, self.broj]

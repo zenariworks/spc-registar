@@ -90,7 +90,7 @@ class Osoba(TimeStampedModel):
         verbose_name="народност",
     )
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(user_db_constraint=False)
 
     def __str__(self):
         """Женске особе са девојачким презименом приказују га уз редовно име —

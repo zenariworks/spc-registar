@@ -121,7 +121,7 @@ class Krstenje(TimeStampedModel):
 
     primedba = models.TextField(blank=True, null=True, verbose_name="примедба")
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(user_db_constraint=False)
 
     @property
     def ime_deteta(self):

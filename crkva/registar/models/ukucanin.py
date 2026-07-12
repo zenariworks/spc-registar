@@ -38,7 +38,7 @@ class Ukucanin(TimeStampedModel):
 
     preminuo = models.BooleanField(default=False, verbose_name="преминуо")
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(user_db_constraint=False)
 
     def __str__(self):
         status = " (+)" if self.preminuo else ""
