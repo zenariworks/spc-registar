@@ -50,6 +50,20 @@ class IzmenaParohijanaTests(TestCase):
         self.osoba.refresh_from_db()
         self.assertEqual(self.osoba.ime, "Нови")
 
+    def test_edit_forces_parohijan_true(self):
+        """#301: измена мора (по)ставити parohijan=True, као и унос —
+        иначе уређивање не-парохијана овим приказом тихо не уписује флаг."""
+        self.osoba.parohijan = False
+        self.osoba.save()
+        self.client.force_login(self.clerk)
+        r = self.client.post(
+            self.url(),
+            {"ime": "Стари", "prezime": "Тест", "pol": "М"},
+        )
+        self.assertEqual(r.status_code, 302)
+        self.osoba.refresh_from_db()
+        self.assertTrue(self.osoba.parohijan)
+
     def test_priest_cannot_open(self):
         self.client.force_login(self.priest)
         r = self.client.get(self.url())

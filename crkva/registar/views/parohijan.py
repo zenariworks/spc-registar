@@ -215,22 +215,27 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
 @tenant_role_required("osoba")
 def izmena_parohijana(request, uid):
     """Измена постојеће инстанце."""
-    instance = get_object_or_404(Osoba, uid=uid)
+    parohijan = get_object_or_404(Osoba, uid=uid)
     if request.method == "POST":
-        form = ParohijanForm(request.POST, instance=instance)
+        form = ParohijanForm(request.POST, instance=parohijan)
         if form.is_valid():
-            form.save()
-            return redirect("parohijan_detail", uid=instance.uid)
+            # Force parohijan=True on edit too — mirror unos_parohijana so
+            # editing a person via this view never silently drops the flag.
+            obj = form.save(commit=False)
+            obj.parohijan = True
+            obj.save()
+            form.save_m2m()
+            return redirect("parohijan_detail", uid=parohijan.uid)
     else:
-        form = ParohijanForm(instance=instance)
+        form = ParohijanForm(instance=parohijan)
     return render(
         request,
         "registar/parohijan.html",
         {
             "form": form,
             "title": "Измена",
-            "back_url": reverse("parohijan_detail", kwargs={"uid": instance.uid}),
+            "back_url": reverse("parohijan_detail", kwargs={"uid": parohijan.uid}),
             "is_edit": True,
-            "parohijan": instance,
+            "parohijan": parohijan,
         },
     )
