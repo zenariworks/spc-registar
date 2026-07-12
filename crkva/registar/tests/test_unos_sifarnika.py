@@ -9,7 +9,7 @@ data-driven петљу (CSV за просте листе, JSONL за eparhije); 
 
 from django.test import TestCase
 from registar.models import Eparhija, Narodnost
-from registar.seed.unos_sifarnika import SIFARNICI, Command
+from registar.uvoz.seed.unos_sifarnika import SIFARNICI, Command
 
 
 def _sifarnik(model):

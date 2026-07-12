@@ -9,7 +9,7 @@ from __future__ import annotations
 import typer
 from django.core.management import call_command
 from django_typer.management import TyperCommand, command
-from registar.seed import (
+from registar.uvoz.seed import (
     unos_adresa,
     unos_domacinstava,
     unos_krstenja,

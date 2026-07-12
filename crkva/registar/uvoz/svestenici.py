@@ -6,7 +6,7 @@ from django.db import connection
 from django.db.utils import IntegrityError
 from registar.models import Parohija, Svestenik
 from registar.utils.konvertori import Konvertor
-from registar.uvoz.base_migration import MigrationCommand
+from registar.uvoz.osnovno import MigrationCommand
 
 
 class Command(MigrationCommand):

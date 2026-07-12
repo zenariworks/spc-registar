@@ -1,7 +1,7 @@
 """Тестови за парсер вероисповести и народности."""
 
 from django.test import TestCase
-from registar.utils_parser import rasclani_vera_narodnost
+from registar.utils.parser import rasclani_vera_narodnost
 
 
 class ParseVeraNarodnostTest(TestCase):

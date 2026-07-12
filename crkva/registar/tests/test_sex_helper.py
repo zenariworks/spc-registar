@@ -1,7 +1,7 @@
 """Unit tests for the sex inference helpers."""
 
 from django.test import SimpleTestCase
-from registar.migracija.sex import (
+from registar.utils.migracija.pol import (
     _FEMALE_NAMES,
     _MALE_NAMES,
     FEMALE,

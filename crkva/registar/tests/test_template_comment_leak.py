@@ -55,12 +55,12 @@ class ModalOsobaPartialRendersCleanlyTests(TestCase):
     """
 
     def test_partial_renders_without_leaking_template_tokens(self):
-        body = render_to_string("registar/_modal_osoba.html")
+        body = render_to_string("_partials/_modal_osoba.html")
         assert_no_template_tokens(self, body, where="_modal_osoba.html (direct render)")
 
     def test_partial_does_not_render_modal_component_doc_string(self):
         """The original bug surfaced this exact substring -- pin it."""
-        body = render_to_string("registar/_modal_osoba.html")
+        body = render_to_string("_partials/_modal_osoba.html")
         self.assertNotIn("Uses the generic Modal component", body)
         self.assertNotIn("registar/components/modali.css", body)
 

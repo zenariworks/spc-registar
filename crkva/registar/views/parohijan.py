@@ -44,7 +44,7 @@ class SpisakParohijana(
 
     model = Osoba
     template_name = "registar/spisak_parohijana.html"
-    partial_template_name = "registar/_stavka_parohijana.html"
+    partial_template_name = "_partials/_stavka_parohijana.html"
     context_object_name = "parohijani"
     paginate_by = 10
     ordering = ["prezime", "ime"]

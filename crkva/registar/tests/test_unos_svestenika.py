@@ -13,7 +13,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 from registar.models import Svestenik
-from registar.seed.unos_svestenika import Command as UnosSvestenika
+from registar.uvoz.seed.unos_svestenika import Command as UnosSvestenika
 
 
 class UnosSvestenikaTests(TestCase):

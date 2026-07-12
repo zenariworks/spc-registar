@@ -34,10 +34,10 @@
       {% elif is_edit %}Измена парохијана{% if parohijan %}<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko }})</span>{% endif %}</span>{% endif %}
       {% else %}Парохијан<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko }})</span>{% endif %}</span>{% endif %}
     </h1>
-      {% include "registar/_view_actions.html" with back_list_url_name="parohijani" back_detail_url_name="parohijan_detail" obj=parohijan edit_url_name="izmena_parohijana" can_edit=can_edit_osoba %}
+      {% include "_partials/_view_actions.html" with back_list_url_name="parohijani" back_detail_url_name="parohijan_detail" obj=parohijan edit_url_name="izmena_parohijana" can_edit=can_edit_osoba %}
   </div>
 
-  {% if form.errors %}{% include "registar/_form_errors.html" %}{% endif %}
+  {% if form.errors %}{% include "_partials/_form_errors.html" %}{% endif %}
 
   {% if form %}
   <div class="info-section">
@@ -232,8 +232,8 @@
   })();
 </script>
 {% endif %}
-  {% if form %}{% include "registar/_modal_adresa.html" %}{% endif %}
-  {% if form %}{% include "registar/_modal_adresa_create.html" %}{% endif %}
+  {% if form %}{% include "_partials/_modal_adresa.html" %}{% endif %}
+  {% if form %}{% include "_partials/_modal_adresa_create.html" %}{% endif %}
 </form>
-{% if parohijan %}{% include "registar/_istorija_izmena.html" %}{% endif %}
+{% if parohijan %}{% include "_partials/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

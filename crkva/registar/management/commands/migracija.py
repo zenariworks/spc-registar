@@ -11,11 +11,11 @@ from django.core.management import call_command
 from django_tenants.utils import schema_context
 from django_typer.management import TyperCommand, command
 from registar.uvoz import (
-    mark_major_feasts,
-    migracija_krstenja,
-    migracija_svestenika,
-    migracija_ukucana_parohijana,
-    migracija_vencanja,
+    krstenja,
+    svestenici,
+    ukucani_parohijani,
+    veliki_postovi,
+    vencanja,
 )
 
 # pylint: disable=missing-class-docstring,missing-function-docstring,too-many-arguments,too-many-positional-arguments,bad-staticmethod-argument,unused-argument
@@ -33,21 +33,21 @@ class Command(TyperCommand):
 
     @command(help="Свештеници.")
     def svestenici(self, schema: str = Schema, dry_run: bool = False, limit: int = 0):
-        self._migriraj(migracija_svestenika, schema, dry_run, limit)
+        self._migriraj(svestenici, schema, dry_run, limit)
 
     @command(help="Домаћинства + парохијани.")
     def ukucani(self, schema: str = Schema, dry_run: bool = False, limit: int = 0):
-        self._migriraj(migracija_ukucana_parohijana, schema, dry_run, limit)
+        self._migriraj(ukucani_parohijani, schema, dry_run, limit)
 
     @command(help="Крштења.")
     def krstenja(self, schema: str = Schema, dry_run: bool = False, limit: int = 0):
-        self._migriraj(migracija_krstenja, schema, dry_run, limit)
+        self._migriraj(krstenja, schema, dry_run, limit)
 
     @command(help="Венчања.")
     def vencanja(self, schema: str = Schema, dry_run: bool = False, limit: int = 0):
-        self._migriraj(migracija_vencanja, schema, dry_run, limit)
+        self._migriraj(vencanja, schema, dry_run, limit)
 
     @command(help="Обележавање црвених слова (велики празници).")
     def praznici(self, schema: str = Schema):
         with schema_context(schema):
-            call_command(mark_major_feasts.Command())
+            call_command(veliki_postovi.Command())

@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, ListView
 from registar.forms import DomacinstvoForm
-from registar.forms.domacinstvo_form import UkucaninFormSet
+from registar.forms.domacinstvo import UkucaninFormSet
 from registar.models import Domacinstvo, Svestenik
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from registar.views.spiskovi import grupisi_po_ulici, razdvoji_zive_i_preminule
@@ -41,7 +41,7 @@ class SpisakDomacinsta(
 
     model = Domacinstvo
     template_name = "registar/spisak_domacinstva.html"
-    partial_template_name = "registar/_stavka_domacinstva.html"
+    partial_template_name = "_partials/_stavka_domacinstva.html"
     context_object_name = "domacinstva"
     paginate_by = 20
     search_fields = ["domacin__ime", "domacin__prezime", "adresa__ulica"]

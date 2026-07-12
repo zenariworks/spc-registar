@@ -9,8 +9,11 @@
 from django.core.management import call_command
 from django.test import TestCase
 from kalendar.models import Slava
-from registar.migracija.slava_map import POKRETNE_SLAVE_OFFSET_BY_SIFRA, resolve_slava
-from registar.seed.unos_slava import Command as UnosSlava
+from registar.utils.migracija.slava_map import (
+    POKRETNE_SLAVE_OFFSET_BY_SIFRA,
+    resolve_slava,
+)
+from registar.uvoz.seed.unos_slava import Command as UnosSlava
 
 
 class ResolveSlavaTests(TestCase):

@@ -39,10 +39,10 @@
       {% elif is_edit %}Измена крштења{% if krstenje %}<span class="u-page-title__subtitle">{{ krstenje.ime_deteta }}</span>{% endif %}
       {% else %}Крштење<span class="u-page-title__subtitle">{{ krstenje.ime_deteta }} {{ krstenje.prezime_oca }}</span>{% endif %}
     </h1>
-      {% include "registar/_view_actions.html" with back_list_url_name="krstenja" back_detail_url_name="krstenje_detail" obj=krstenje edit_url_name="izmena_krstenja" can_edit=can_edit_krstenje pdf_url_name="krstenje_pdf" %}
+      {% include "_partials/_view_actions.html" with back_list_url_name="krstenja" back_detail_url_name="krstenje_detail" obj=krstenje edit_url_name="izmena_krstenja" can_edit=can_edit_krstenje pdf_url_name="krstenje_pdf" %}
   </div>
 
-  {% if form.errors %}{% include 'registar/_form_errors.html' %}{% endif %}
+  {% if form.errors %}{% include '_partials/_form_errors.html' %}{% endif %}
 
   {% if krstenje %}
   <div class="tab-group tab-group--with-panels">
@@ -202,9 +202,9 @@
   </div>
   {% endif %}
 
-  {% include 'registar/_modal_osoba.html' %}
-  {% include 'registar/_modal_hram.html' %}
-  {% include 'registar/_modal_svestenik.html' %}
+  {% include '_partials/_modal_osoba.html' %}
+  {% include '_partials/_modal_hram.html' %}
+  {% include '_partials/_modal_svestenik.html' %}
 </form>
-{% if krstenje %}{% include "registar/_istorija_izmena.html" %}{% endif %}
+{% if krstenje %}{% include "_partials/_istorija_izmena.html" %}{% endif %}
 {% endblock %}

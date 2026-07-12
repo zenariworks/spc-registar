@@ -46,7 +46,7 @@
             <div class="dashboard-today__none">Нема празника</div>
           {% endif %}
 
-          {% if today.is_fasting %}
+          {% if today.je_post %}
             <div class="dashboard-today__fasting">
               {% if today.fasting_type == 'вода' %}<i class="fa-solid fa-droplet"></i>
               {% elif today.fasting_type == 'уље' %}<i class="fa-solid fa-droplet icon-oil"></i>
@@ -76,8 +76,8 @@
                 <span class="dashboard-upcoming__feast">
                   {{ first_slava.naziv }}{% if all_slavas|length > 1 %}<span class="dashboard-upcoming__feast-more">+{{ all_slavas|length|add:"-1" }}</span>{% endif %}
                 </span>
-                <span class="dashboard-upcoming__fasting {% if not day.is_fasting %}dashboard-upcoming__fasting--none{% endif %}">
-                  {% if day.is_fasting %}
+                <span class="dashboard-upcoming__fasting {% if not day.je_post %}dashboard-upcoming__fasting--none{% endif %}">
+                  {% if day.je_post %}
                     {% if day.fasting_type == 'вода' %}<i class="fa-solid fa-droplet" title="вода"></i>
                     {% elif day.fasting_type == 'уље' %}<i class="fa-solid fa-droplet" title="уље"></i>
                     {% elif day.fasting_type == 'риба' %}<i class="fa-solid fa-fish" title="риба"></i>
@@ -94,8 +94,8 @@
               <span class="dashboard-upcoming__date">{{ day.date|date:"j.n." }}</span>
               <span class="dashboard-upcoming__day">{{ day.day_label }}</span>
               <span class="dashboard-upcoming__feast dashboard-upcoming__feast--empty">Нема празника</span>
-              <span class="dashboard-upcoming__fasting {% if not day.is_fasting %}dashboard-upcoming__fasting--none{% endif %}">
-                {% if day.is_fasting %}
+              <span class="dashboard-upcoming__fasting {% if not day.je_post %}dashboard-upcoming__fasting--none{% endif %}">
+                {% if day.je_post %}
                   {% if day.fasting_type == 'вода' %}<i class="fa-solid fa-droplet" title="вода"></i>
                   {% elif day.fasting_type == 'уље' %}<i class="fa-solid fa-droplet" title="уље"></i>
                   {% elif day.fasting_type == 'риба' %}<i class="fa-solid fa-fish" title="риба"></i>

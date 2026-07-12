@@ -8,7 +8,7 @@ priest or temple.
 # pylint: disable=missing-function-docstring
 
 from django.test import SimpleTestCase, TestCase
-from registar.forms.krstenje_form import KrstenjeForm
+from registar.forms.krstenje import KrstenjeForm
 from registar.models import Krstenje
 
 

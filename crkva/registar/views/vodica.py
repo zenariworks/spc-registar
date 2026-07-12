@@ -28,6 +28,6 @@ def vaskrsnja_vodica(request: HttpRequest) -> HttpResponse:
 
     # Очувај само очекивани параметар, уместо целог корисничког query string-а.
     svestenik = request.GET.get("svestenik")
-    query = urlencode({"svestenik": svestenik}) if svestenik else ""
+    upit = urlencode({"svestenik": svestenik}) if svestenik else ""
 
-    return redirect(f"{url}?{query}" if query else url)
+    return redirect(f"{url}?{upit}" if upit else url)

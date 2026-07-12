@@ -16,7 +16,7 @@ from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
 from kalendar.models import Slava
-from registar.utils_fasting import (
+from registar.utils.post import (
     apostolski_post,
     beli_mrs,
     fiksni_postovi,
@@ -250,7 +250,7 @@ class GetFastingTypeTestCase(TestCase):
         """Васкрс није постни дан."""
         vaskrs = Slava.calc_vaskrs(2026)
         result = tip_posta(vaskrs)
-        self.assertFalse(result["is_fasting"])
+        self.assertFalse(result["je_post"])
 
     def test_great_lent_weekday_water(self):
         """Радни дан у Великом посту: вода."""
@@ -258,7 +258,7 @@ class GetFastingTypeTestCase(TestCase):
         # Чисти понедељак
         clean_monday = vaskrs - dt.timedelta(days=48)
         result = tip_posta(clean_monday)
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "вода")
 
     def test_great_lent_weekend_oil(self):
@@ -268,14 +268,14 @@ class GetFastingTypeTestCase(TestCase):
         clean_monday = vaskrs - dt.timedelta(days=48)
         first_saturday = clean_monday + dt.timedelta(days=5)
         result = tip_posta(first_saturday)
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "уље")
 
     def test_annunciation_in_lent_fish(self):
         """Благовести (25. март) у Великом посту: риба."""
         # Благовести 2026 пада у Велики пост (Васкрс је 12. април)
         result = tip_posta(dt.date(2026, 3, 25))
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "риба")
 
     def test_palm_sunday_fish(self):
@@ -283,7 +283,7 @@ class GetFastingTypeTestCase(TestCase):
         vaskrs = Slava.calc_vaskrs(2026)
         cveti = vaskrs - dt.timedelta(days=7)
         result = tip_posta(cveti)
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "риба")
 
     def test_lazarus_saturday_fish(self):
@@ -291,7 +291,7 @@ class GetFastingTypeTestCase(TestCase):
         vaskrs = Slava.calc_vaskrs(2026)
         lazareva = vaskrs - dt.timedelta(days=8)
         result = tip_posta(lazareva)
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "риба")
 
     def test_cheesefare_beli_mrs(self):
@@ -299,30 +299,30 @@ class GetFastingTypeTestCase(TestCase):
         vaskrs = Slava.calc_vaskrs(2026)
         cheese_day = vaskrs - dt.timedelta(days=50)
         result = tip_posta(cheese_day)
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "бели_мрс")
 
     def test_christmas_fast_sochi_water(self):
         """Сочи дан (6. јануар): строг пост."""
         result = tip_posta(dt.date(2026, 1, 6))
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "вода")
 
     def test_christmas_day_not_fasting(self):
         """Божић (7. јануар): није пост."""
         result = tip_posta(dt.date(2026, 1, 7))
-        self.assertFalse(result["is_fasting"])
+        self.assertFalse(result["je_post"])
 
     def test_dormition_transfiguration_fish(self):
         """Преображење (6. август) у Успенском посту: риба."""
         result = tip_posta(dt.date(2026, 8, 6))
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "риба")
 
     def test_krstovdan_water(self):
         """Крстовдан (18. јануар): строг пост."""
         result = tip_posta(dt.date(2026, 1, 18))
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "вода")
 
     def test_regular_wednesday_fasting(self):
@@ -331,13 +331,13 @@ class GetFastingTypeTestCase(TestCase):
         # Јул 2026: Васкрс је 12. април, тако да је јул безбедан
         # 1. јул 2026 је среда
         result = tip_posta(dt.date(2026, 7, 1))
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "вода")
 
     def test_regular_friday_fasting(self):
         """Обична петак: пост (вода)."""
         result = tip_posta(dt.date(2026, 7, 3))
-        self.assertTrue(result["is_fasting"])
+        self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "вода")
 
     def test_regular_monday_not_fasting(self):
@@ -345,12 +345,12 @@ class GetFastingTypeTestCase(TestCase):
         # Септембар 2026: ван свих постова
         # 7. септембар 2026 је понедељак
         result = tip_posta(dt.date(2026, 9, 7))
-        self.assertFalse(result["is_fasting"])
+        self.assertFalse(result["je_post"])
 
     def test_return_dict_structure(self):
         """Повратни речник увек има тачне кључеве."""
         result = tip_posta(dt.date(2026, 6, 15))
-        self.assertIn("is_fasting", result)
+        self.assertIn("je_post", result)
         self.assertIn("type", result)
         self.assertIn("display", result)
         self.assertIn("description", result)
@@ -364,7 +364,7 @@ class IsFastingDayTestCase(TestCase):
         vaskrs = Slava.calc_vaskrs(2026)
         self.assertFalse(je_post(vaskrs))
 
-    def test_great_lent_is_fasting(self):
+    def test_great_lent_je_post(self):
         """Дан у Великом посту је постни дан."""
         vaskrs = Slava.calc_vaskrs(2026)
         clean_monday = vaskrs - dt.timedelta(days=48)
@@ -375,11 +375,11 @@ class IsFastingDayTestCase(TestCase):
         # 10. септембар 2026 је четвртак, ван свих постова
         self.assertFalse(je_post(dt.date(2026, 9, 10)))
 
-    def test_christmas_fast_is_fasting(self):
+    def test_christmas_fast_je_post(self):
         """Дан у Божићном посту је постни дан."""
         self.assertTrue(je_post(dt.date(2026, 12, 1)))
 
-    def test_dormition_fast_is_fasting(self):
+    def test_dormition_fast_je_post(self):
         """Дан у Успенском посту је постни дан."""
         self.assertTrue(je_post(dt.date(2026, 8, 5)))
 

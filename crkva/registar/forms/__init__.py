@@ -1,11 +1,11 @@
 """Django форме за унос и претрагу података."""
 
-from .domacinstvo_form import DomacinstvoForm
+from .domacinstvo import DomacinstvoForm
 from .forms import SearchForm
-from .krstenje_form import KrstenjeForm
-from .parohijan_form import ParohijanForm
-from .svestenik_form import SvestenikForm
-from .vencanje_form import VencanjeForm
+from .krstenje import KrstenjeForm
+from .parohijan import ParohijanForm
+from .svestenik import SvestenikForm
+from .vencanje import VencanjeForm
 
 __all__ = [
     "DomacinstvoForm",

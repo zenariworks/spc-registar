@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-{% include "registar/_page_header.html" with title="Дупликати адреса" count=total_groups %}
+{% include "_partials/_page_header.html" with title="Дупликати адреса" count=total_groups %}
 
 {% if messages %}
   {% for m in messages %}

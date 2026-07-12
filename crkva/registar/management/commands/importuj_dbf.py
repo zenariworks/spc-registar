@@ -14,14 +14,12 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from registar.management.commands.popravi_duplikate import Command as PopraviDuplikate
-from registar.seed.unos_slava import Command as UnosSlava
-from registar.uvoz.mark_major_feasts import Command as MarkMajorFeasts
-from registar.uvoz.migracija_krstenja import Command as MigracijaKrstenja
-from registar.uvoz.migracija_svestenika import Command as MigracijaSvestenika
-from registar.uvoz.migracija_ukucana_parohijana import (
-    Command as MigracijaUkucanaParohijana,
-)
-from registar.uvoz.migracija_vencanja import Command as MigracijaVencanja
+from registar.uvoz.krstenja import Command as MigracijaKrstenja
+from registar.uvoz.seed.unos_slava import Command as UnosSlava
+from registar.uvoz.svestenici import Command as MigracijaSvestenika
+from registar.uvoz.ukucani_parohijani import Command as MigracijaUkucanaParohijana
+from registar.uvoz.veliki_postovi import Command as MarkMajorFeasts
+from registar.uvoz.vencanja import Command as MigracijaVencanja
 
 # Run order matters: lookups → core entities → cleanups → calendar fixes.
 PIPELINE = [

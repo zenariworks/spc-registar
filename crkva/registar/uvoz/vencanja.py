@@ -9,7 +9,7 @@
 
 Заједничка логика (ocisti_prezime, nadji_dodaj_osobu, get/cache за
 Veroispovest/Narodnost/Zanimanje/Hram, split_adresa) живи у пакету
-`registar.migracija`.
+`registar.utils.migracija`.
 """
 
 # pylint: disable=missing-function-docstring,missing-class-docstring,attribute-defined-outside-init,too-many-locals,broad-exception-caught,not-callable
@@ -23,23 +23,6 @@ from typing import Iterator
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
-from registar.migracija.address import dodaj_adresu, rasclani_adresu
-from registar.migracija.cache import (
-    LookupCache,
-    normalise_hram_naziv,
-    normalise_zanimanje,
-)
-from registar.migracija.errors import RecordContext, RecordSkipped
-from registar.migracija.helpers import (
-    cirilica,
-    cirilica_int,
-    izdvoj_devojacko,
-    ocisti_prezime,
-    rasclani_puno_ime,
-    siguran_datum,
-)
-from registar.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
-from registar.migracija.sex import pol_prema_imenu
 from registar.models import (
     Hram,
     Narodnost,
@@ -49,8 +32,25 @@ from registar.models import (
     Veroispovest,
     Zanimanje,
 )
-from registar.utils_parser import rasclani_vera_narodnost
-from registar.uvoz.base_migration import MigrationCommand
+from registar.utils.migracija.address import dodaj_adresu, rasclani_adresu
+from registar.utils.migracija.cache import (
+    LookupCache,
+    normalise_hram_naziv,
+    normalise_zanimanje,
+)
+from registar.utils.migracija.errors import RecordContext, RecordSkipped
+from registar.utils.migracija.helpers import (
+    cirilica,
+    cirilica_int,
+    izdvoj_devojacko,
+    ocisti_prezime,
+    rasclani_puno_ime,
+    siguran_datum,
+)
+from registar.utils.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
+from registar.utils.migracija.pol import pol_prema_imenu
+from registar.utils.parser import rasclani_vera_narodnost
+from registar.uvoz.osnovno import MigrationCommand
 
 SOURCE_COLUMNS = (
     "V_SIFRA",

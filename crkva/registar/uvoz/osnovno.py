@@ -21,10 +21,10 @@ from typing import Iterable
 from django.core.management.base import BaseCommand, CommandError
 from django.db import connection
 from django.db.transaction import atomic
-from registar.migracija.errors import RecordContext, RecordSkipped
-from registar.migracija.helpers import rasclani_puno_ime as _rasclani_puno_ime
-from registar.migracija.osoba_repo import nadji_dodaj_osobu as _find_osoba
 from registar.models import Osoba
+from registar.utils.migracija.errors import RecordContext, RecordSkipped
+from registar.utils.migracija.helpers import rasclani_puno_ime as _rasclani_puno_ime
+from registar.utils.migracija.osoba_repo import nadji_dodaj_osobu as _find_osoba
 
 
 class MigrationCommand(BaseCommand):

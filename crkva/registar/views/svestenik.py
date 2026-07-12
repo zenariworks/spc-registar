@@ -37,7 +37,7 @@ class SpisakSvestenika(
 
     model = Svestenik
     template_name = "registar/spisak_svestenika.html"
-    partial_template_name = "registar/_stavka_svestenika.html"
+    partial_template_name = "_partials/_stavka_svestenika.html"
     context_object_name = "svestenici"
     paginate_by = 10
     search_fields = ["ime", "prezime", "zvanje"]

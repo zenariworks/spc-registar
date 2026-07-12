@@ -13,13 +13,13 @@ from django.core.management import call_command
 from django.db import connection
 from django.test import TestCase
 from registar.models import Krstenje, Svestenik
-from registar.uvoz.migracija_krstenja import SOURCE_COLUMNS as K_COLS
-from registar.uvoz.migracija_krstenja import Command as MigracijaKrstenja
+from registar.uvoz.krstenja import SOURCE_COLUMNS as K_COLS
+from registar.uvoz.krstenja import Command as MigracijaKrstenja
 
 
 def _clear_caches():
-    from registar.migracija.address import _cache
-    from registar.migracija.osoba_repo import _OSOBA_CACHE_BY_SCHEMA
+    from registar.utils.migracija.address import _cache
+    from registar.utils.migracija.osoba_repo import _OSOBA_CACHE_BY_SCHEMA
 
     _cache().clear()
     _OSOBA_CACHE_BY_SCHEMA.clear()
