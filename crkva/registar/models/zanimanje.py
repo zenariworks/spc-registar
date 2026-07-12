@@ -4,6 +4,7 @@ import uuid
 
 from django.db import models
 from django.db.models.functions import Lower
+from registar.models._naziv import NazivQuerySet
 from registar.utils.tekst import normalize_naziv
 
 
@@ -17,6 +18,8 @@ class Zanimanje(models.Model):
     zenski_naziv = models.CharField(
         verbose_name="женски назив", max_length=255, null=True
     )
+
+    objects = NazivQuerySet.as_manager()
 
     def __str__(self):
         return f"{self.naziv}"

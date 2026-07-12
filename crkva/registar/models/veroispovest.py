@@ -4,6 +4,7 @@ import uuid
 
 from django.db import models
 from django.db.models.functions import Lower
+from registar.models._naziv import NazivQuerySet
 from registar.utils.tekst import normalize_naziv
 
 
@@ -13,6 +14,8 @@ class Veroispovest(models.Model):
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     naziv = models.CharField(verbose_name="вероисповест", max_length=255)
+
+    objects = NazivQuerySet.as_manager()
 
     def __str__(self):
         return f"{self.naziv}"
