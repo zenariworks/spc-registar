@@ -33,7 +33,7 @@ from registar.migracija.helpers import (
     parse_time,
     podeli_zadnju_rec,
 )
-from registar.migracija.osoba_repo import dodaj_novu_osobu, find_or_create_osoba
+from registar.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
 from registar.migracija.sex import pol_prema_imenu
 from registar.models import (
     Hram,
@@ -371,7 +371,7 @@ class Command(MigrationCommand):
             r
         )
 
-        dete = dodaj_novu_osobu(
+        dete = dodaj_osobu(
             ime=dete_ime,
             prezime=otac_prezime,
             pol="М" if r.dete_pol.strip() == "1" else "Ж",
@@ -380,7 +380,7 @@ class Command(MigrationCommand):
             mesto_rodjenja=r.rodjenje_mesto,
         )
 
-        otac = find_or_create_osoba(
+        otac = nadji_dodaj_osobu(
             ime=r.otac_ime.strip(),
             prezime=otac_prezime,
             pol="М",
@@ -393,7 +393,7 @@ class Command(MigrationCommand):
         majka_married, majka_maiden = izdvoj_devojacko(r.majka_prezime.strip())
         majka_prezime = majka_married or otac_prezime
 
-        majka = find_or_create_osoba(
+        majka = nadji_dodaj_osobu(
             ime=r.majka_ime.strip(),
             prezime=majka_prezime,
             pol="Ж",
@@ -480,7 +480,7 @@ class Command(MigrationCommand):
             return None
 
         kumu_vencano, kumu_devojacko = izdvoj_devojacko(prezime)
-        return find_or_create_osoba(
+        return nadji_dodaj_osobu(
             ime=ime,
             prezime=kumu_vencano or kumu_devojacko,
             pol=pol_prema_imenu(ime),

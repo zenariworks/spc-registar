@@ -23,7 +23,7 @@ from django.db import connection
 from django.db.transaction import atomic
 from registar.migracija.errors import RecordContext, RecordSkipped
 from registar.migracija.helpers import rasclani_puno_ime as _rasclani_puno_ime
-from registar.migracija.osoba_repo import find_or_create_osoba as _find_osoba
+from registar.migracija.osoba_repo import nadji_dodaj_osobu as _find_osoba
 from registar.models import Osoba
 
 

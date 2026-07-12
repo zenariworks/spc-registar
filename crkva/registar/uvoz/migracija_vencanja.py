@@ -7,7 +7,7 @@
   4. build_vencanje_data() — претвара VencanjeRecord у kwargs за Vencanje()
   5. Command         — оркестрација: fetch → transform → batch insert
 
-Заједничка логика (ocisti_prezime, find_or_create_osoba, get/cache за
+Заједничка логика (ocisti_prezime, nadji_dodaj_osobu, get/cache за
 Veroispovest/Narodnost/Zanimanje/Hram, split_adresa) живи у пакету
 `registar.migracija`.
 """
@@ -38,7 +38,7 @@ from registar.migracija.helpers import (
     rasclani_puno_ime,
     safe_date,
 )
-from registar.migracija.osoba_repo import dodaj_novu_osobu, find_or_create_osoba
+from registar.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
 from registar.migracija.sex import pol_prema_imenu
 from registar.models import (
     Hram,
@@ -348,7 +348,7 @@ class Command(MigrationCommand):
         # спајала са његовом мајком (свекрвом) истог имена; сада се увек
         # креира нова особа (удато презиме = зеник_презиме, девојачко =
         # nevesta_prezime).
-        zenik = dodaj_novu_osobu(
+        zenik = dodaj_osobu(
             ime=zenik_ime,
             prezime=zenik_prezime,
             pol="М",
@@ -359,7 +359,7 @@ class Command(MigrationCommand):
             narodnost=zenik_narod,
         )
 
-        nevesta = dodaj_novu_osobu(
+        nevesta = dodaj_osobu(
             ime=nevesta_ime,
             prezime=zenik_prezime,  # married surname
             pol="Ж",
@@ -434,7 +434,7 @@ class Command(MigrationCommand):
         ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
             married, maiden = izdvoj_devojacko(prezime)
-            return find_or_create_osoba(
+            return nadji_dodaj_osobu(
                 ime=ime,
                 prezime=married or maiden,
                 pol=pol_prema_imenu(ime),
@@ -452,7 +452,7 @@ class Command(MigrationCommand):
         ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
             married, maiden = izdvoj_devojacko(prezime)
-            return find_or_create_osoba(
+            return nadji_dodaj_osobu(
                 ime=ime,
                 prezime=married or maiden,
                 pol=pol,

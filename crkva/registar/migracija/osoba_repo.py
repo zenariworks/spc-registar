@@ -46,7 +46,7 @@ def warm_osoba_cache() -> int:
 def lookup_osoba(ime: str | None, prezime: str | None) -> Osoba | None:
     """First cached Osoba with this name, or None. Kept for back-compat with
     callers that do simple name-only dedup (krstenja, vencanja). Prefer
-    `lookup_all_osoba` or `find_matching_osoba` when safety signals matter.
+    `lookup_all_osoba` or `nadji_osobu` when safety signals matter.
     """
     if not ime or not prezime:
         return None
@@ -61,7 +61,7 @@ def lookup_all_osoba(ime: str | None, prezime: str | None) -> list[Osoba]:
     return list(_cache().get(_key(ime, prezime), []))
 
 
-def find_matching_osoba(
+def nadji_osobu(
     ime: str | None,
     prezime: str | None,
     *,
@@ -93,7 +93,7 @@ def cache_osoba(osoba: Osoba | None) -> None:
         bucket.append(osoba)
 
 
-def dodaj_novu_osobu(ime: str | None, prezime: str | None, **extra) -> Osoba | None:
+def dodaj_osobu(ime: str | None, prezime: str | None, **dodatno) -> Osoba | None:
     """Увек креира НОВУ Osoba, без дедупликације по имену (#332).
 
     За регистарске принципе — дете (крштење), женик и невеста (венчање) —
@@ -109,13 +109,11 @@ def dodaj_novu_osobu(ime: str | None, prezime: str | None, **extra) -> Osoba | N
     if not ime or not prezime:
         return None
     data = {"ime": ime, "prezime": prezime, "parohijan": False}
-    data.update({k: v for k, v in extra.items() if v is not None})
+    data.update({k: v for k, v in dodatno.items() if v is not None})
     return Osoba.objects.create(**data)
 
 
-def find_or_create_osoba(
-    ime: str | None, prezime: str | None, **dodatno
-) -> Osoba | None:
+def nadji_dodaj_osobu(ime: str | None, prezime: str | None, **dodatno) -> Osoba | None:
     """Find an Osoba by (ime, prezime) case-insensitively, or create one.
 
     On match (first same-name Osoba), only fills in fields that are currently
@@ -128,22 +126,22 @@ def find_or_create_osoba(
     if not ime or not prezime:
         return None
 
-    existing = lookup_osoba(ime, prezime)
-    if existing is None:
-        existing = Osoba.objects.filter(
+    postojeca = lookup_osoba(ime, prezime)
+    if postojeca is None:
+        postojeca = Osoba.objects.filter(
             ime__iexact=ime, prezime__iexact=prezime
         ).first()
-        if existing:
-            cache_osoba(existing)
+        if postojeca:
+            cache_osoba(postojeca)
 
-    if existing:
-        updates = {
-            k: v for k, v in dodatno.items() if v and not getattr(existing, k, None)
+    if postojeca:
+        dodatno = {
+            k: v for k, v in dodatno.items() if v and not getattr(postojeca, k, None)
         }
-        if updates:
-            Osoba.objects.filter(pk=existing.pk).update(**updates)
-            existing.refresh_from_db()
-        return existing
+        if dodatno:
+            Osoba.objects.filter(pk=postojeca.pk).update(**dodatno)
+            postojeca.refresh_from_db()
+        return postojeca
 
     podaci = {"ime": ime, "prezime": prezime, "parohijan": False}
     podaci.update({k: v for k, v in dodatno.items() if v is not None})

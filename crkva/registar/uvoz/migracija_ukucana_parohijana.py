@@ -17,8 +17,8 @@ from registar.migracija.address import nadji_dodaj_adresu, warm_adresa_cache
 from registar.migracija.helpers import cirilica, izdvoj_devojacko
 from registar.migracija.osoba_repo import (
     cache_osoba,
-    find_matching_osoba,
-    find_or_create_osoba,
+    nadji_dodaj_osobu,
+    nadji_osobu,
     warm_osoba_cache,
 )
 from registar.migracija.sex import pol_prema_imenu
@@ -177,7 +177,7 @@ class Command(MigrationCommand):
                 # catches the case where row #1 has signal A and rows #2 and
                 # #3 share signal B — without this loop #3 would be created
                 # fresh instead of merging into #2.
-                match = find_matching_osoba(
+                match = nadji_osobu(
                     ime, prezime, adresa=adresa, tel_f=tel_f, tel_m=tel_m
                 )
                 if match is not None:
@@ -218,7 +218,7 @@ class Command(MigrationCommand):
                         created_parohijani += 1
                     # Always cache the newly-created (or reused-by-uid) Osoba
                     # so subsequent rows with the same name can match against
-                    # it via find_matching_osoba. cache_osoba is idempotent
+                    # it via nadji_osobu. cache_osoba is idempotent
                     # on pk so re-caching the same osoba is a no-op.
                     cache_osoba(osoba)
 
@@ -285,7 +285,7 @@ class Command(MigrationCommand):
                 preminuo = raw_ime.startswith("+")
                 ime = raw_ime[1:].strip() if preminuo else raw_ime
 
-                osoba = find_or_create_osoba(
+                osoba = nadji_dodaj_osobu(
                     ime, prezime, parohijan=False, pol=pol_prema_imenu(ime)
                 )
                 if not osoba:

@@ -7,7 +7,7 @@ so a bug fixed here is fixed everywhere.
 
 Modules:
     helpers      pure string / date / time helpers (no DB access)
-    osoba_repo   single canonical find_or_create_osoba
+    osoba_repo   single canonical nadji_dodaj_osobu
     cache        LookupCache class for memoised get_or_create of small lookups
     address      Adresa creation helpers
     errors       structured skip/error logging

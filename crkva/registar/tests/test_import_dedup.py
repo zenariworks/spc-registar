@@ -3,9 +3,9 @@
 from django.test import TestCase
 from registar.migracija.osoba_repo import (
     cache_osoba,
-    find_matching_osoba,
     lookup_all_osoba,
     lookup_osoba,
+    nadji_osobu,
     warm_osoba_cache,
 )
 from registar.models import Osoba
@@ -57,7 +57,7 @@ class LookupAllOsobaTest(TestCase):
 
 
 class FindMatchingOsobaTest(TestCase):
-    """find_matching_osoba must scan ALL same-name candidates for a signal match."""
+    """nadji_osobu must scan ALL same-name candidates for a signal match."""
 
     def test_picks_candidate_sharing_address(self):
         from registar.models import Adresa
@@ -68,16 +68,16 @@ class FindMatchingOsobaTest(TestCase):
         second = Osoba.objects.create(ime="Бранко", prezime=".", adresa=addr_b)
         warm_osoba_cache()
         # Should pick `second` because its adresa matches.
-        match = find_matching_osoba("Бранко", ".", adresa=addr_b)
+        match = nadji_osobu("Бранко", ".", adresa=addr_b)
         self.assertEqual(match.pk, second.pk)
 
     def test_returns_none_when_nothing_shares_signal(self):
         Osoba.objects.create(ime="Никола", prezime="Петровић", tel_fiksni="+38111")
         warm_osoba_cache()
-        self.assertIsNone(find_matching_osoba("Никола", "Петровић", tel_f="+38122"))
+        self.assertIsNone(nadji_osobu("Никола", "Петровић", tel_f="+38122"))
 
     def test_returns_none_for_blank_names(self):
-        self.assertIsNone(find_matching_osoba("", "."))
+        self.assertIsNone(nadji_osobu("", "."))
 
 
 class ImporterSafetyCheckedDedup(TestCase):
