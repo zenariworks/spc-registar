@@ -9,15 +9,15 @@ from typing import Any
 from registar.utils.konvertori import Konvertor
 
 # =============================================================================
-# Maiden name / surname markers
+# Маркери девојачког презимена
 # =============================================================================
 
-# Order is important — longer/more specific patterns first.
+# Редослед је важан — дужи/специфичнији обрасци иду први.
 _MARKER_RODJENA = re.compile(r"^рођена\s+", flags=re.IGNORECASE)
 _MARKER_RODJ_DOT = re.compile(r"^рођ\.\s*|^рођ\s+", flags=re.IGNORECASE)
 
-# "р." / "р " (Cyrillic) — requires dot or whitespace to avoid eating
-# names that legitimately start with Р (e.g. Радановић).
+# „р." / „р " (ћирилица) — захтева тачку или размак да не би прогутао
+# имена која легитимно почињу на Р (нпр. Радановић).
 _MARKER_R_CYR = re.compile(r"^р\.\s*|^р\s+", flags=re.IGNORECASE)
 _MARKER_R_LAT = re.compile(r"^r\.\s*|^r\s+", flags=re.IGNORECASE)
 _MARKERI_PREZIMENA = (
@@ -45,14 +45,14 @@ def ocisti_prezime(prezime: str | None) -> str:
 
 
 def izdvoj_devojacko(prezime: str | None) -> tuple[str, str]:
-    """Split surname field containing maiden name markers.
+    """Раздваја поље презимена које садржи маркере девојачког презимена.
 
-    Returns (married_surname, maiden_surname).
+    Враћа (удато_презиме, девојачко_презиме).
 
-    Rules:
-      - If a maiden marker is found → married_surname="", maiden_surname=extracted
-      - Otherwise → married_surname=cleaned input, maiden_surname=""
-      - Empty input → ("", "")
+    Правила:
+      - Ако се нађе маркер девојачког → удато_презиме="", девојачко=издвојено
+      - Иначе → удато_презиме=очишћен унос, девојачко=""
+      - Празан унос → ("", "")
     """
     if not prezime:
         return "", ""

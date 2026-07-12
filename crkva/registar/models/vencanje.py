@@ -190,11 +190,7 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
     @property
     def prezime_neveste(self):
         """Девојачко презиме невесте из везаног Osoba objekta."""
-        return (
-            self.nevesta.devojacko_prezime
-            if self.nevesta and self.nevesta.devojacko_prezime
-            else ""
-        )
+        return self.nevesta.devojacko if self.nevesta and self.nevesta.devojacko else ""
 
     @property
     def zanimanje_neveste(self):

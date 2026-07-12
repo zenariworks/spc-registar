@@ -56,7 +56,7 @@ class ParohijanForm(TaggableCreateMixin, forms.ModelForm):
         fields = [
             "ime",
             "prezime",
-            "devojacko_prezime",
+            "devojacko",
             "gradjansko_ime",
             "mesto_rodjenja",
             "datum_rodjenja",

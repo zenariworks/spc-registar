@@ -35,7 +35,7 @@ def warm_osoba_cache() -> int:
         "tel_fiksni",
         "tel_mobilni",
         "parohijan",
-        "devojacko_prezime",
+        "devojacko",
         "pol",
     ):
         bucket.setdefault(_key(osoba.ime or "", osoba.prezime or ""), []).append(osoba)
@@ -114,10 +114,10 @@ def dodaj_osobu(ime: str | None, prezime: str | None, **dodatno) -> Osoba | None
 
 
 def nadji_dodaj_osobu(ime: str | None, prezime: str | None, **dodatno) -> Osoba | None:
-    """Find an Osoba by (ime, prezime) case-insensitively, or create one.
+    """Нађи Osoba по (ime, prezime) без обзира на величину слова, или је креирај.
 
-    On match (first same-name Osoba), only fills in fields that are currently
-    None or empty. On miss, creates with parohijan=False by default.
+    При поклапању (прва истоимена Osoba) попуњава само поља која су
+    тренутно None или празна. При промашају креира са parohijan=False подразумевано.
     """
     if not ime or not prezime:
         return None

@@ -361,12 +361,12 @@ class Command(MigrationCommand):
 
         nevesta = dodaj_osobu(
             ime=nevesta_ime,
-            prezime=zenik_prezime,  # married surname
+            prezime=zenik_prezime,
             pol="Ж",
             datum_rodjenja=r.nevesta_datum_rodj,
             mesto_rodjenja=r.nevesta_mesto_rodj or None,
             zanimanje=self._zanimanje.get(r.nevesta_zanimanje),
-            devojacko_prezime=nevesta_prezime,
+            devojacko=nevesta_prezime,
             veroispovest=nevesta_vera,
             narodnost=nevesta_narod,
         )
@@ -433,12 +433,12 @@ class Command(MigrationCommand):
             return None
         ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
-            married, maiden = izdvoj_devojacko(prezime)
+            married, devojacko = izdvoj_devojacko(prezime)
             return nadji_dodaj_osobu(
                 ime=ime,
-                prezime=married or maiden,
+                prezime=married or devojacko,
                 pol=pol_prema_imenu(ime),
-                devojacko_prezime=maiden or None,
+                devojacko=devojacko or None,
             )
         if self._verbose:
             self.log_warning(f"Неуспело цепање имена ({label}): '{full_str}'")
@@ -451,11 +451,11 @@ class Command(MigrationCommand):
             return None
         ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
-            married, maiden = izdvoj_devojacko(prezime)
+            married, devojacko = izdvoj_devojacko(prezime)
             return nadji_dodaj_osobu(
                 ime=ime,
-                prezime=married or maiden,
+                prezime=married or devojacko,
                 pol=pol,
-                devojacko_prezime=maiden or None,
+                devojacko=devojacko or None,
             )
         return None

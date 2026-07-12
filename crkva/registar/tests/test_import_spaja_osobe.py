@@ -99,7 +99,7 @@ class VencanjeBrideNotMergedTests(TestCase):
         _make_staging(
             "hsp_vencanja",
             V_COLS,
-            # Bride "Мара" (maiden "Јовановић") marries a Петровић → married
+            # Bride "Мара" (devojacko "Јовановић") marries a Петровић → married
             # surname becomes Петровић, colliding by name with the mother.
             [_vencanje_row(1, 2000, "Петар", "Петровић", "Мара", "Јовановић")],
         )
@@ -115,8 +115,8 @@ class VencanjeBrideNotMergedTests(TestCase):
         self.assertEqual(
             Osoba.objects.filter(ime="Мара", prezime="Петровић").count(), 2
         )
-        # The mother's record is untouched (no maiden surname written to her).
+        # The mother's record is untouched (no devojacko surname written to her).
         svekrva.refresh_from_db()
-        self.assertFalse(svekrva.devojacko_prezime)
-        # The bride keeps her own maiden surname.
-        self.assertEqual(venc.nevesta.devojacko_prezime, "Јовановић")
+        self.assertFalse(svekrva.devojacko)
+        # The bride keeps her own devojacko surname.
+        self.assertEqual(venc.nevesta.devojacko, "Јовановић")

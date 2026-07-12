@@ -38,7 +38,7 @@ class OsobaModelTestCase(TestCase):
         osoba = Osoba.objects.create(
             ime="Јован",
             prezime="Јовановић",
-            devojacko_prezime=None,
+            devojacko=None,
             parohijan=True,
             mesto_rodjenja="Београд",
             datum_rodjenja=datetime.date(1990, 5, 15),

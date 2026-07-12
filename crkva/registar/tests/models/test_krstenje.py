@@ -38,7 +38,7 @@ class KrstenjeModelTestCase(TestCase):
         self.majka = Osoba.objects.create(
             ime="Ана",
             prezime="Петровић",
-            devojacko_prezime="Јовановић",
+            devojacko="Јовановић",
             zanimanje=None,
         )
         self.kum = Osoba.objects.create(

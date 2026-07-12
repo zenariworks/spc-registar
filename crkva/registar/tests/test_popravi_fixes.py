@@ -18,12 +18,12 @@ class ImportujPipelineTests(TestCase):
         self.assertIn("migracija_krstenja", ids)
 
 
-class VencanjaMaidenStripTests(TestCase):
-    def test_parse_person_strips_maiden_marker(self):
+class VencanjadevojackoStripTests(TestCase):
+    def test_parse_person_strips_devojacko_marker(self):
         from registar.uvoz.migracija_vencanja import Command as MigracijaVencanja
 
         cmd = MigracijaVencanja()
         cmd._verbose = False
         osoba = cmd._rasclani_osobu("Мара р.Алексић", label="свекрва")
         self.assertEqual(osoba.prezime, "Алексић")
-        self.assertEqual(osoba.devojacko_prezime, "Алексић")
+        self.assertEqual(osoba.devojacko, "Алексић")

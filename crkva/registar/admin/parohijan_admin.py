@@ -32,7 +32,7 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
 
     def get_full_name(self, obj):
         """Врати пуно име особе."""
-        devojacko = f", ({obj.devojacko_prezime})" if obj.devojacko_prezime else ""
+        devojacko = f", ({obj.devojacko})" if obj.devojacko else ""
         return f"{obj.ime} {obj.prezime}{devojacko}"
 
     get_full_name.short_description = "Име и Презиме"
@@ -45,7 +45,7 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
                     "pol",
                     "ime",
                     "prezime",
-                    "devojacko_prezime",
+                    "devojacko",
                 )
             },
         ),

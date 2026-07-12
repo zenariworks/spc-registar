@@ -18,7 +18,7 @@ class SpisakParohijanaFiltersByParohijanFlag(TestCase):
         Osoba.objects.create(ime="Парохијан", prezime="Прави", parohijan=True)
         Osoba.objects.create(ime="Мати", prezime="Из крштења", parohijan=False)
         Osoba.objects.create(
-            ime="Биљана", prezime="", devojacko_prezime="Томић", parohijan=False
+            ime="Биљана", prezime="", devojacko="Томић", parohijan=False
         )
 
     def test_list_includes_only_parohijani(self):

@@ -389,8 +389,8 @@ class Command(MigrationCommand):
             narodnost=otac_narod,
         )
 
-        # Mother's maiden name handling
-        majka_married, majka_maiden = izdvoj_devojacko(r.majka_prezime.strip())
+        # Mother's devojacko name handling
+        majka_married, majka_devojacko = izdvoj_devojacko(r.majka_prezime.strip())
         majka_prezime = majka_married or otac_prezime
 
         majka = nadji_dodaj_osobu(
@@ -400,7 +400,7 @@ class Command(MigrationCommand):
             zanimanje=self._zanimanje.get(r.majka_zanimanje),
             veroispovest=majka_vera,
             narodnost=majka_narod,
-            devojacko_prezime=majka_maiden or None,
+            devojacko=majka_devojacko or None,
         )
 
         kum = self._rasclani_kuma(r)
@@ -485,7 +485,7 @@ class Command(MigrationCommand):
             prezime=kumu_vencano or kumu_devojacko,
             pol=pol_prema_imenu(ime),
             zanimanje=self._zanimanje.get(zapis.kum_zanimanje),
-            devojacko_prezime=kumu_devojacko or None,
+            devojacko=kumu_devojacko or None,
         )
 
     def _set_addresses(

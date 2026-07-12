@@ -1,9 +1,9 @@
-"""Tests for the maiden-name marker split: izdvoj_devojacko helper +
+"""Tests for the devojacko-name marker split: izdvoj_devojacko helper +
 ``popravi_devojacka`` management command.
 
 The DBF import imported many female Osoba with surnames like
 "р.Бошковић" / "рођ. Видојевић". The marker means "рођена" (née) and
-the trailing surname is the maiden name, not the married one.
+the trailing surname is the devojacko name, not the married one.
 """
 
 # pylint: disable=missing-function-docstring,missing-class-docstring,invalid-name,protected-access,import-outside-toplevel
@@ -16,7 +16,7 @@ from registar.migracija.helpers import izdvoj_devojacko
 from registar.models import Domacinstvo, Osoba, Ukucanin
 
 
-class ExtractMaidenTests(TestCase):
+class ExtractdevojackoTests(TestCase):
     """Pure-function tests for helpers.izdvoj_devojacko — no DB."""
 
     def test_cyrillic_r_dot_no_space(self):
@@ -70,14 +70,14 @@ class ExtractMaidenTests(TestCase):
         self.assertEqual(izdvoj_devojacko("  р.Бошковић  "), ("", "Бошковић"))
         self.assertEqual(izdvoj_devojacko("  Marković  "), ("Marković", ""))
 
-    def test_capitalises_lowercase_maiden(self):
+    def test_capitalises_lowercase_devojacko(self):
         # Sometimes the source is sloppy: "р.бошковић" → "Бошковић".
         self.assertEqual(izdvoj_devojacko("р.бошковић"), ("", "Бошковић"))
         self.assertEqual(izdvoj_devojacko("r.marković"), ("", "Marković"))
 
     def test_documented_examples_from_task(self):
         # Татјана р.Бошковић → ime="Татјана", prezime="" (married blank),
-        # devojacko_prezime="Бошковић"
+        # devojacko="Бошковић"
         ime = "Татјана"
         vencano, devojacko = izdvoj_devojacko("р.Бошковић")
         self.assertEqual(ime, "Татјана")
@@ -110,21 +110,21 @@ class PopraviDevojackaCommandTests(TestCase):
         o.refresh_from_db()
         self.assertEqual(o.ime, "Татјана")
         self.assertEqual(o.prezime, "")
-        self.assertEqual(o.devojacko_prezime, "Бошковић")
+        self.assertEqual(o.devojacko, "Бошковић")
 
     def test_rodj_dot_marker_moved(self):
         o = Osoba.objects.create(ime="Верица", prezime="рођ. Видојевић")
         self.cmd._popravi(dry_run=False, keep_from_dom=False)
         o.refresh_from_db()
         self.assertEqual(o.prezime, "")
-        self.assertEqual(o.devojacko_prezime, "Видојевић")
+        self.assertEqual(o.devojacko, "Видојевић")
 
     def test_dry_run_does_not_modify(self):
         o = Osoba.objects.create(ime="Татјана", prezime="р.Бошковић")
         self.cmd._popravi(dry_run=True, keep_from_dom=False)
         o.refresh_from_db()
         self.assertEqual(o.prezime, "р.Бошковић")
-        self.assertIsNone(o.devojacko_prezime)
+        self.assertIsNone(o.devojacko)
 
     def test_no_marker_untouched(self):
         o = Osoba.objects.create(ime="Marko", prezime="Marković")
@@ -138,17 +138,15 @@ class PopraviDevojackaCommandTests(TestCase):
         self.cmd._popravi(dry_run=False, keep_from_dom=False)
         o.refresh_from_db()
         self.assertEqual(o.prezime, "Радановић")
-        self.assertFalse(o.devojacko_prezime)
+        self.assertFalse(o.devojacko)
 
     def test_keep_existing_devojacko(self):
-        # If devojacko_prezime is already set, don't overwrite it.
-        o = Osoba.objects.create(
-            ime="Татјана", prezime="р.Бошковић", devojacko_prezime="Стара"
-        )
+        # If devojacko is already set, don't overwrite it.
+        o = Osoba.objects.create(ime="Татјана", prezime="р.Бошковић", devojacko="Стара")
         self.cmd._popravi(dry_run=False, keep_from_dom=False)
         o.refresh_from_db()
         self.assertEqual(o.prezime, "")
-        self.assertEqual(o.devojacko_prezime, "Стара")
+        self.assertEqual(o.devojacko, "Стара")
 
     def test_keep_married_from_domacinstvo(self):
         # Set up: Татјана is an Ukucanin of a Domaćinstvo whose domaćin
@@ -163,7 +161,7 @@ class PopraviDevojackaCommandTests(TestCase):
         self.cmd._popravi(dry_run=False, keep_from_dom=True)
         tatjana.refresh_from_db()
         self.assertEqual(tatjana.prezime, "Петровић")
-        self.assertEqual(tatjana.devojacko_prezime, "Бошковић")
+        self.assertEqual(tatjana.devojacko, "Бошковић")
 
     def test_keep_from_dom_skips_when_host_also_marked(self):
         # If the host's prezime ALSO has a marker, we should not copy it.
@@ -177,25 +175,25 @@ class PopraviDevojackaCommandTests(TestCase):
         ana.refresh_from_db()
         # Host had a marker — fall back to blank prezime.
         self.assertEqual(ana.prezime, "")
-        self.assertEqual(ana.devojacko_prezime, "Илић")
+        self.assertEqual(ana.devojacko, "Илић")
 
     def test_capital_R_cyrillic_marker(self):
         o = Osoba.objects.create(ime="Ивана", prezime="Р.Алексић")
         self.cmd._popravi(dry_run=False, keep_from_dom=False)
         o.refresh_from_db()
         self.assertEqual(o.prezime, "")
-        self.assertEqual(o.devojacko_prezime, "Алексић")
+        self.assertEqual(o.devojacko, "Алексић")
 
     def test_bare_marker_untouched(self):
         # An Osoba whose prezime is literally "р." has nothing useful to
-        # extract — leave it alone (no maiden produced).
+        # extract — leave it alone (no devojacko produced).
         o = Osoba.objects.create(ime="Икс", prezime="р.")
         self.cmd._popravi(dry_run=False, keep_from_dom=False)
         o.refresh_from_db()
-        # izdvoj_devojacko("р.") returns ("", "") → maiden is empty so the
+        # izdvoj_devojacko("р.") returns ("", "") → devojacko is empty so the
         # row is skipped.
         self.assertEqual(o.prezime, "р.")
-        self.assertFalse(o.devojacko_prezime)
+        self.assertFalse(o.devojacko)
 
 
 class PopraviDevojackaCommandCLITests(TestCase):
@@ -236,7 +234,7 @@ class PopraviDevojackaCommandCLITests(TestCase):
 class ImporterIntegrationTests(TestCase):
     """The importers (migracija_*) call izdvoj_devojacko via the helpers
     module. Verify the integration point exists and produces the
-    expected (married, maiden) tuple shape callers depend on."""
+    expected (married, devojacko) tuple shape callers depend on."""
 
     def test_helper_is_used_by_ukucana_module(self):
         from registar.uvoz import migracija_ukucana_parohijana
