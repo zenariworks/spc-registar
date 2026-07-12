@@ -251,7 +251,7 @@
     opacity: 0.7;
 }
 
-/* Female parishioner's maiden name annotation */
+/* Ознака девојачког презимена за парохијанке */
 .osoba__devojacko {
     color: var(--color-text-muted);
     font-weight: 400;

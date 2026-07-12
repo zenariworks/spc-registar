@@ -1,6 +1,10 @@
 # Ruff configuration.
-# Rule selection stays at Ruff's defaults (E, F, ...); this file only
-# records project-wide, intentional exceptions.
+# Defaults (E, F, ...) plus UP007 (PEP 604: `X | Y` over `Union`/`Optional`).
+# UP045 splits Optional out but needs ruff >= 0.9; pinned hook is v0.8.4,
+# where UP007 already covers Optional. Re-add "UP045" when the pin is bumped.
+target-version = "py313"
+[lint]
+extend-select = ["UP007"]
 
 [lint.per-file-ignores]
 # Package __init__.py files re-export names to form the package public API

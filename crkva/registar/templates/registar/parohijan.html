@@ -31,8 +31,8 @@
   <div class="u-page-header">
     <h1 class="u-page-title">
       {% if is_edit and not parohijan %}Додавање парохијана
-      {% elif is_edit %}Измена парохијана{% if parohijan %}<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}</span>{% endif %}
-      {% else %}Парохијан<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko_prezime and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko_prezime }})</span>{% endif %}</span>{% endif %}
+      {% elif is_edit %}Измена парохијана{% if parohijan %}<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko }})</span>{% endif %}</span>{% endif %}
+      {% else %}Парохијан<span class="u-page-title__subtitle">{{ parohijan.ime }} {{ parohijan.prezime }}{% if parohijan.devojacko and parohijan.pol == "Ж" %} <span class="osoba__devojacko">(рођ. {{ parohijan.devojacko }})</span>{% endif %}</span>{% endif %}
     </h1>
       {% include "registar/_view_actions.html" with back_list_url_name="parohijani" back_detail_url_name="parohijan_detail" obj=parohijan edit_url_name="izmena_parohijana" can_edit=can_edit_osoba %}
   </div>
@@ -67,10 +67,10 @@
       <li class="info-row info-row--editable info-row--stacked" id="row-devojacko-prezime"{% if parohijan and parohijan.pol == "М" %} hidden{% endif %}>
         <div class="info-row__icon" data-tooltip="Девојачко презиме"><i class="fa-solid fa-id-card"></i></div>
         <div class="info-row__body">
-          <label class="info-row__label" for="{{ form.devojacko_prezime.id_for_label }}">Девојачко презиме</label>
+          <label class="info-row__label" for="{{ form.devojacko.id_for_label }}">Девојачко презиме</label>
           <div class="info-row__value">
-            <span class="info-row__static">{% if parohijan.devojacko_prezime %}{{ parohijan.devojacko_prezime }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
-            {{ form.devojacko_prezime }}
+            <span class="info-row__static">{% if parohijan.devojacko %}{{ parohijan.devojacko }}{% else %}<span class="info-row__static--muted">—</span>{% endif %}</span>
+            {{ form.devojacko }}
           </div>
         </div>
       </li>
@@ -144,7 +144,7 @@
       <h2 class="info-section__title">Родитељи</h2>
       <ul class="info-list">
         {% if otac %}<li class="info-list__item"><span><a href="{% url "parohijan_detail" uid=otac.uid %}">{{ otac.ime }} {{ otac.prezime }}</a></span><span class="info-list__role">отац</span></li>{% endif %}
-        {% if majka %}<li class="info-list__item"><span><a href="{% url "parohijan_detail" uid=majka.uid %}">{{ majka.ime }} {{ majka.prezime }}</a></span><span class="info-list__role">мајка{% if majka.devojacko_prezime %} · рођ. {{ majka.devojacko_prezime }}{% endif %}</span></li>{% endif %}
+        {% if majka %}<li class="info-list__item"><span><a href="{% url "parohijan_detail" uid=majka.uid %}">{{ majka.ime }} {{ majka.prezime }}</a></span><span class="info-list__role">мајка{% if majka.devojacko %} · рођ. {{ majka.devojacko }}{% endif %}</span></li>{% endif %}
       </ul>
     </div>
     {% endif %}

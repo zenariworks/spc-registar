@@ -62,7 +62,7 @@ class KrstenjeCreationIntegrationTest(TestCase):
         majka = Osoba.objects.create(
             ime="Јелена",
             prezime="Стефановић",
-            devojacko_prezime="Јовановић",
+            devojacko="Јовановић",
             zanimanje=None,
             veroispovest=self.vera,
             narodnost=self.narod,
@@ -164,7 +164,7 @@ class VencanjeCreationIntegrationTest(TestCase):
         nevesta_data = {
             "ime": "Ана",
             "prezime": "Јовановић",
-            "devojacko_prezime": "Јовановић",
+            "devojacko": "Јовановић",
             "datum_rodjenja": "1992-08-20",
             "mesto_rodjenja": "Нови Сад",
             "veroispovest": str(self.vera.uid),
@@ -288,7 +288,7 @@ class ModelRelationshipsIntegrationTest(TestCase):
         self.majka = Osoba.objects.create(
             ime="Ана",
             prezime="Марковић",
-            devojacko_prezime="Јовановић",
+            devojacko="Јовановић",
             zanimanje=None,
         )
 

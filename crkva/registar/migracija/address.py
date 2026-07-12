@@ -43,7 +43,7 @@ def warm_adresa_cache() -> int:
     return len(_cache())
 
 
-def find_or_create_adresa(
+def nadji_dodaj_adresu(
     ulica: str | None = None,
     broj: str | None = None,
     broj_stana: str | None = None,
@@ -75,17 +75,17 @@ def find_or_create_adresa(
     return created
 
 
-def split_adresa(adresa_text: str | None, mesto: str | None) -> Adresa:
+def rasclani_adresu(adresa_text: str | None, mesto: str | None) -> Adresa:
     """Split 'Улица 4а' into ulica + broj and dedupe through ``find_or_create_adresa``."""
     if not adresa_text:
-        return find_or_create_adresa(mesto=mesto)
+        return nadji_dodaj_adresu(mesto=mesto)
     parts = adresa_text.rsplit(None, 1)
     if len(parts) == 2 and any(c.isdigit() for c in parts[1]):
-        return find_or_create_adresa(ulica=parts[0], broj=parts[1][:20], mesto=mesto)
-    return find_or_create_adresa(ulica=adresa_text, mesto=mesto)
+        return nadji_dodaj_adresu(ulica=parts[0], broj=parts[1][:20], mesto=mesto)
+    return nadji_dodaj_adresu(ulica=adresa_text, mesto=mesto)
 
 
-def set_adresa_if_empty(osoba: Osoba | None, adresa: Adresa | None) -> None:
+def dodaj_adresu(osoba: Osoba | None, adresa: Adresa | None) -> None:
     """Attach `adresa` to `osoba` only if the Osoba doesn't already have one."""
     if osoba is None or adresa is None:
         return

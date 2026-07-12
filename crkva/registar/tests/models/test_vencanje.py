@@ -41,7 +41,7 @@ class VencanjeModelTestCase(TestCase):
         self.nevesta = Osoba.objects.create(
             ime="Ана",
             prezime="Јовановић",
-            devojacko_prezime="Јовановић",
+            devojacko="Јовановић",
             datum_rodjenja=datetime.date(1992, 8, 20),
             mesto_rodjenja="Нови Сад",
             zanimanje=self.z_ucitelj,

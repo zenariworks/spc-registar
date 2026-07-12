@@ -7,7 +7,7 @@
   4. build_vencanje_data() — претвара VencanjeRecord у kwargs за Vencanje()
   5. Command         — оркестрација: fetch → transform → batch insert
 
-Заједничка логика (ocisti_prezime, find_or_create_osoba, get/cache за
+Заједничка логика (ocisti_prezime, nadji_dodaj_osobu, get/cache за
 Veroispovest/Narodnost/Zanimanje/Hram, split_adresa) живи у пакету
 `registar.migracija`.
 """
@@ -18,12 +18,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import Iterator, Optional
+from typing import Iterator
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
 from django.db.transaction import atomic
-from registar.migracija.address import set_adresa_if_empty, split_adresa
+from registar.migracija.address import dodaj_adresu, rasclani_adresu
 from registar.migracija.cache import (
     LookupCache,
     normalise_hram_naziv,
@@ -33,11 +33,12 @@ from registar.migracija.errors import RecordContext, RecordSkipped
 from registar.migracija.helpers import (
     cirilica,
     cirilica_int,
+    izdvoj_devojacko,
     ocisti_prezime,
+    rasclani_puno_ime,
     safe_date,
-    split_full_name,
 )
-from registar.migracija.osoba_repo import dodaj_novu_osobu, find_or_create_osoba
+from registar.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
 from registar.migracija.sex import pol_prema_imenu
 from registar.models import (
     Hram,
@@ -111,7 +112,7 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     knjiga: str
     strana: str
     broj: str
-    datum: Optional[date]
+    datum: date | None
 
     zenik_ime: str
     zenik_prezime: str
@@ -120,7 +121,7 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     zenik_adresa: str
     zenik_veroispovest: str
     zenik_narodnost: str
-    zenik_datum_rodj: Optional[date]
+    zenik_datum_rodj: date | None
     zenik_mesto_rodj: str
 
     nevesta_ime: str
@@ -130,7 +131,7 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     nevesta_adresa: str
     nevesta_veroispovest: str
     nevesta_narodnost: str
-    nevesta_datum_rodj: Optional[date]
+    nevesta_datum_rodj: date | None
     nevesta_mesto_rodj: str
 
     svekar: str
@@ -141,13 +142,13 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     zenik_rb_braka: int
     nevesta_rb_braka: int
 
-    datum_ispita: Optional[date]
+    datum_ispita: date | None
 
     hram_naziv: str
     hram_mesto: str
     svestenik_id: int
 
-    kum_puno_ime: str
+    kum_ime: str
     stari_svat_ime: str
 
     razresenje: str
@@ -210,7 +211,7 @@ def parse_row(row: tuple) -> VencanjeRecord:
         hram_naziv=cirilica(row[40]),
         hram_mesto=cirilica(row[41]),
         svestenik_id=cirilica_int(row[42]),
-        kum_puno_ime=cirilica(row[43]),
+        kum_ime=cirilica(row[43]),
         stari_svat_ime=cirilica(row[44]),
         razresenje=cirilica(row[45]),
         primedba=cirilica(row[46]),
@@ -261,8 +262,8 @@ class Command(MigrationCommand):
     # ---------------- Pipeline ----------------
 
     def _fetch_records(self) -> Iterator[VencanjeRecord]:
-        col_list = ", ".join(f'"{c}"' for c in SOURCE_COLUMNS)
-        query = f'SELECT {col_list} FROM {self.staging_table} ORDER BY "V_SIFRA"'
+        kolone = ", ".join(f'"{c}"' for c in SOURCE_COLUMNS)
+        query = f'SELECT {kolone} FROM {self.staging_table} ORDER BY "V_SIFRA"'
         with connection.cursor() as cursor:
             cursor.execute(query)
             for row in cursor.fetchall():
@@ -323,7 +324,7 @@ class Command(MigrationCommand):
 
     # ---------------- Transform ----------------
 
-    def _build_vencanje_data(self, r: VencanjeRecord) -> Optional[dict]:
+    def _build_vencanje_data(self, r: VencanjeRecord) -> dict | None:
         zenik_ime = r.zenik_ime.strip()
         zenik_prezime = ocisti_prezime(r.zenik_prezime.strip())
         nevesta_ime = r.nevesta_ime.strip()
@@ -347,7 +348,7 @@ class Command(MigrationCommand):
         # спајала са његовом мајком (свекрвом) истог имена; сада се увек
         # креира нова особа (удато презиме = зеник_презиме, девојачко =
         # nevesta_prezime).
-        zenik = dodaj_novu_osobu(
+        zenik = dodaj_osobu(
             ime=zenik_ime,
             prezime=zenik_prezime,
             pol="М",
@@ -358,35 +359,33 @@ class Command(MigrationCommand):
             narodnost=zenik_narod,
         )
 
-        nevesta = dodaj_novu_osobu(
+        nevesta = dodaj_osobu(
             ime=nevesta_ime,
-            prezime=zenik_prezime,  # married surname
+            prezime=zenik_prezime,
             pol="Ж",
             datum_rodjenja=r.nevesta_datum_rodj,
             mesto_rodjenja=r.nevesta_mesto_rodj or None,
             zanimanje=self._zanimanje.get(r.nevesta_zanimanje),
-            devojacko_prezime=nevesta_prezime,
+            devojacko=nevesta_prezime,
             veroispovest=nevesta_vera,
             narodnost=nevesta_narod,
         )
 
-        kum = self._parse_person(r.kum_puno_ime, label="кум")
-        svekar = self._parse_parent(r.svekar, pol="М")
-        svekrva = self._parse_parent(r.svekrva, pol="Ж")
-        tast = self._parse_parent(r.tast, pol="М")
-        tasta = self._parse_parent(r.tasta, pol="Ж")
-        stari_svat = self._parse_person(
+        kum = self._rasclani_osobu(r.kum_ime, label="кум")
+        svekar = self._rasclani_roditelja(r.svekar, pol="М")
+        svekrva = self._rasclani_roditelja(r.svekrva, pol="Ж")
+        tast = self._rasclani_roditelja(r.tast, pol="М")
+        tasta = self._rasclani_roditelja(r.tasta, pol="Ж")
+        stari_svat = self._rasclani_osobu(
             r.stari_svat_ime.split(",")[0] if r.stari_svat_ime else "",
             label="стари сват",
         )
 
         # Addresses (only attach if Osoba doesn't already have one)
         if zenik and (r.zenik_adresa or r.zenik_mesto):
-            set_adresa_if_empty(zenik, split_adresa(r.zenik_adresa, r.zenik_mesto))
+            dodaj_adresu(zenik, rasclani_adresu(r.zenik_adresa, r.zenik_mesto))
         if nevesta and (r.nevesta_adresa or r.nevesta_mesto):
-            set_adresa_if_empty(
-                nevesta, split_adresa(r.nevesta_adresa, r.nevesta_mesto)
-            )
+            dodaj_adresu(nevesta, rasclani_adresu(r.nevesta_adresa, r.nevesta_mesto))
 
         return {
             "godina_registracije": r.godina if r.godina >= 1900 else 2000,
@@ -416,37 +415,47 @@ class Command(MigrationCommand):
 
     def _parse_vera_narod(self, vera_text: str, narod_text: str):
         """Parse blended vera/narodnost text (one column may contain both)."""
-        vera_obj = None
-        narod_obj = None
+        veroispovest = None
+        narodnost = None
         if vera_text and vera_text.strip():
             parsed, _ = pars_vera_narodnost(vera_text)
-            vera_obj = self._vera.get(parsed["veroispovest"])
+            veroispovest = self._vera.get(parsed["veroispovest"])
             if not (narod_text and narod_text.strip()):
-                narod_obj = self._narod.get(parsed["narodnost"])
+                narodnost = self._narod.get(parsed["narodnost"])
         if narod_text and narod_text.strip():
             narod_parsed, _ = pars_vera_narodnost(narod_text)
             if narod_parsed["narodnost"]:
-                narod_obj = self._narod.get(narod_parsed["narodnost"])
-        return vera_obj, narod_obj
+                narodnost = self._narod.get(narod_parsed["narodnost"])
+        return veroispovest, narodnost
 
-    def _parse_person(self, full_str: str, *, label: str) -> Optional[Osoba]:
+    def _rasclani_osobu(self, full_str: str, *, label: str) -> Osoba | None:
         if not full_str or not full_str.strip():
             return None
-        ime, prezime = split_full_name(full_str.split(",")[0].strip())
+        ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
-            return find_or_create_osoba(
-                ime=ime, prezime=prezime, pol=pol_prema_imenu(ime)
+            vencano, devojacko = izdvoj_devojacko(prezime)
+            return nadji_dodaj_osobu(
+                ime=ime,
+                prezime=vencano or devojacko,
+                pol=pol_prema_imenu(ime),
+                devojacko=devojacko or None,
             )
         if self._verbose:
             self.log_warning(f"Неуспело цепање имена ({label}): '{full_str}'")
         return None
 
-    def _parse_parent(
-        self, full_str: str, pol: Optional[str] = None
-    ) -> Optional[Osoba]:
+    def _rasclani_roditelja(
+        self, full_str: str, pol: str | None = None
+    ) -> Osoba | None:
         if not full_str:
             return None
-        ime, prezime = split_full_name(full_str.split(",")[0].strip())
+        ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
         if ime and prezime:
-            return find_or_create_osoba(ime=ime, prezime=prezime, pol=pol)
+            vencano, devojacko = izdvoj_devojacko(prezime)
+            return nadji_dodaj_osobu(
+                ime=ime,
+                prezime=vencano or devojacko,
+                pol=pol,
+                devojacko=devojacko or None,
+            )
         return None

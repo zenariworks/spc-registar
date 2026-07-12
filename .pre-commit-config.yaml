@@ -96,6 +96,9 @@ repos:
     hooks:
       - id: djlint-django
         files: \.html$
+        # Mirror .djlintrc extend_exclude: pre-commit passes explicit
+        # filenames, which djLint lints regardless of its own exclude.
+        exclude: (^|/)(pdf_|calibrate_)[^/]*\.html$
 
 
   # Inline-script debug guard — biome catches .js files; this catches inline

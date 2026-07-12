@@ -19,7 +19,7 @@ class Osoba(TimeStampedModel):
     ime = models.CharField(max_length=100, verbose_name="име", db_index=True)
     prezime = models.CharField(max_length=100, verbose_name="презиме", db_index=True)
 
-    devojacko_prezime = models.CharField(
+    devojacko = models.CharField(
         max_length=100, verbose_name="девојачко презиме", blank=True, null=True
     )
 
@@ -93,13 +93,14 @@ class Osoba(TimeStampedModel):
     history = HistoricalRecords()
 
     def __str__(self):
-        # Females with a maiden name surface it inline so they read as
-        # "Љиљана Ристивојевић (рођ. Јовановић)" wherever an Osoba renders
-        # as plain text (select2 options, vencanje role fields, admin
-        # labels). HTML-styled detail subtitles still render the parts
-        # by hand for distinct typography.
-        if self.pol == "Ж" and self.devojacko_prezime:
-            return f"{self.ime} {self.prezime} (рођ. {self.devojacko_prezime})"
+        """Женске особе са девојачким презименом приказују га уз редовно име —
+        „Љиљана Ристивојевић (рођ. Јовановић)" — свуда где се Osoba
+        приказује као чист текст (select2 опције, поља улога у
+        венчању, админ ознаке). HTML-стилизовани поднаслови
+        детаља и даље исписују делове ручно ради посебне типографије.
+        """
+        if self.pol == "Ж" and self.devojacko:
+            return f"{self.ime} {self.prezime} (рођ. {self.devojacko})"
         return f"{self.ime} {self.prezime}"
 
     class Meta:

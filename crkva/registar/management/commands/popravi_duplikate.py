@@ -55,7 +55,7 @@ def _osoba_richness(p: Osoba) -> int:
         "zanimanje_id",
         "veroispovest_id",
         "narodnost_id",
-        "devojacko_prezime",
+        "devojacko",
         "gradjansko_ime",
     ):
         if getattr(p, fld, None):
@@ -326,7 +326,7 @@ class Command(BaseCommand):
             "datum_rodjenja",
             "mesto_rodjenja",
             "vreme_rodjenja",
-            "devojacko_prezime",
+            "devojacko",
             "gradjansko_ime",
             "adresa_id",
             "tel_fiksni",

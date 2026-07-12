@@ -1,20 +1,19 @@
-"""Post-hoc cleanup: split ``р.<X>`` / ``рођ.<X>`` / ``r.<X>`` surname
-prefixes into ``devojacko_prezime``.
+"""Накнадно чишћење: раздваја префиксе презимена ``р.<X>`` / ``рођ.<X>`` /
+``r.<X>`` у поље ``devojacko``.
 
-The DBF import historically glued the maiden-name marker onto the
-``prezime`` field — e.g. ``"Татјана р.Бошковић"`` became
-``ime="Татјана", prezime="р.Бошковић"`` instead of
-``prezime="", devojacko_prezime="Бошковић"``. The ``р.`` is Serbian
-shorthand for "рођена" (née / maiden surname).
+DBF увоз је историјски лепио маркер девојачког презимена на поље
+``prezime`` — нпр. ``"Татјана р.Бошковић"`` је постало
+``ime="Татјана", prezime="р.Бошковић"`` уместо
+``prezime="", devojacko="Бошковић"``. ``р.`` је скраћеница за „рођена".
 
-This command finds those rows and moves the maiden part to
-``devojacko_prezime``. The married surname is NOT recorded in the source
-DBF — by default we leave ``prezime`` blank so a clerk can fill it in.
-With ``--keep-married-from-domacinstvo`` we attempt to infer the married
-surname from a Domaćinstvo whose domaćin is a different Osoba with a
-non-prefixed prezime.
+Ова команда налази такве редове и премешта девојачки део у ``devojacko``.
+Удато презиме није записано у изворном DBF-у — подразумевано
+остављамо ``prezime`` празно да га службеник попуни. Уз
+``--keep-married-from-domacinstvo`` покушавамо да закључимо удато
+презиме из Домаћинства чији је домаћин друга Osoba са презименом
+без префикса.
 
-Usage:
+Употреба:
   manage.py popravi_devojacka --dry-run
   manage.py popravi_devojacka --schema crkva_sv_petke_cukarica
   manage.py popravi_devojacka --keep-married-from-domacinstvo
@@ -27,7 +26,7 @@ from __future__ import annotations
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from registar.management.commands._schema_target import razresi_ciljne_sheme
-from registar.migracija.helpers import extract_maiden
+from registar.migracija.helpers import izdvoj_devojacko
 from registar.models import Domacinstvo, Osoba, Ukucanin
 
 
@@ -85,10 +84,9 @@ class Command(BaseCommand):
 
     # ------------------------------------------------------------------ #
     def _popravi(self, dry_run: bool, keep_from_dom: bool) -> None:
-        # Match anything whose prezime starts with a recognised marker.
-        # Done via Python (not SQL ILIKE) because the regex has several
-        # variants and we want extract_maiden to be the single source of
-        # truth.
+        # Хвата све чије prezime почиње препознатим маркером. Ради се
+        # кроз Python (не SQL ILIKE) јер regex има више варијанти, а
+        # желимо да izdvoj_devojacko буде једини извор истине.
         candidates = list(
             Osoba.objects.exclude(prezime__isnull=True)
             .exclude(prezime__exact="")
@@ -99,32 +97,32 @@ class Command(BaseCommand):
         skipped_no_marker = 0
         married_from_dom = 0
         for o in candidates:
-            _, maiden = extract_maiden(o.prezime)
-            if not maiden:
+            _, devojacko = izdvoj_devojacko(o.prezime)
+            if not devojacko:
                 skipped_no_marker += 1
                 continue
 
-            new_devojacko = o.devojacko_prezime or maiden
-            new_prezime = ""  # default: blank — clerk fills in
+            novo_devojacko = o.devojacko or devojacko
+            novo_prezime = ""  # подразумевано празно — службеник попуњава
 
             if keep_from_dom:
                 inferred = self._infer_married_from_domacinstvo(o)
                 if inferred:
-                    new_prezime = inferred
+                    novo_prezime = inferred
                     married_from_dom += 1
 
             affected += 1
             self.stdout.write(
                 f"  uid={o.uid} {o.ime!r}: "
-                f"prezime {o.prezime!r} -> {new_prezime!r}, "
-                f"devojacko {o.devojacko_prezime!r} -> {new_devojacko!r}"
+                f"prezime {o.prezime!r} -> {novo_prezime!r}, "
+                f"devojacko {o.devojacko!r} -> {novo_devojacko!r}"
             )
             if dry_run:
                 continue
             with transaction.atomic():
                 Osoba.objects.filter(pk=o.pk).update(
-                    prezime=new_prezime,
-                    devojacko_prezime=new_devojacko,
+                    prezime=novo_prezime,
+                    devojacko=novo_devojacko,
                 )
 
         verb = "Препознато" if dry_run else "Поправљено"
@@ -146,10 +144,10 @@ class Command(BaseCommand):
              linked Domaćinstvo's domaćin.prezime, IF that prezime is
              non-blank AND has no marker.
         """
-        # case (1)
+        # случај (1)
         if Domacinstvo.objects.filter(domacin=osoba).exists():
             return ""
-        # case (2)
+        # случај (2)
         for u in Ukucanin.objects.filter(osoba=osoba).select_related(
             "domacinstvo__domacin"
         ):
@@ -159,8 +157,8 @@ class Command(BaseCommand):
             host_prez = (d.domacin.prezime or "").strip()
             if not host_prez:
                 continue
-            host_married, host_maiden = extract_maiden(host_prez)
-            if host_maiden:  # host itself still has a marker — skip
+            host_married, host_devojacko = izdvoj_devojacko(host_prez)
+            if host_devojacko:  # домаћин и сам има маркер — прескочи
                 continue
             return host_married
         return ""

@@ -248,7 +248,7 @@ class Krstenje(TimeStampedModel):
         return self.kum.adresa if self.kum else None
 
     @property
-    def adresa_kuma_mesto(self):
+    def mesto_kuma(self):
         """Место адресе кума из везаног Osoba objekta."""
         return str(self.kum.adresa) if self.kum and self.kum.adresa else ""
 

@@ -13,12 +13,12 @@ from typing import Dict, Iterable
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
-from registar.migracija.address import find_or_create_adresa, warm_adresa_cache
-from registar.migracija.helpers import cirilica, extract_maiden
+from registar.migracija.address import nadji_dodaj_adresu, warm_adresa_cache
+from registar.migracija.helpers import cirilica, izdvoj_devojacko
 from registar.migracija.osoba_repo import (
     cache_osoba,
-    find_matching_osoba,
-    find_or_create_osoba,
+    nadji_dodaj_osobu,
+    nadji_osobu,
     warm_osoba_cache,
 )
 from registar.migracija.sex import pol_prema_imenu
@@ -90,8 +90,8 @@ class Command(MigrationCommand):
     # ---------------- Domaćin pass ----------------
 
     def _create_parohijani_and_domacinstva(self, limit: int = 0) -> None:
-        created_parohijani = 0
-        created_domacinstva = 0
+        dodato_parohijana = 0
+        dodato_domacinstava = 0
         self._dbf_uid_to_osoba_uid: Dict[int, int] = {}
 
         with connection.cursor() as cursor:
@@ -135,13 +135,13 @@ class Command(MigrationCommand):
                 if not puno_ime:
                     continue
 
-                ime, prezime_raw = (puno_ime.split(" ", 1) + [""])[:2]
-                married_prezime, devojacko_prezime = extract_maiden(prezime_raw)
-                # Domaćin records with only a "р.<maiden>" surname can't
+                ime, puno_prezime = (puno_ime.split(" ", 1) + [""])[:2]
+                vencano, devojacko = izdvoj_devojacko(puno_prezime)
+                # Domaćin records with only a "р.<devojacko>" surname can't
                 # be created without a married surname — fall back to the
-                # maiden value so the row isn't lost, and the cleanup
+                # devojacko value so the row isn't lost, and the cleanup
                 # command (popravi_devojacka) can re-split it later.
-                prezime = married_prezime or devojacko_prezime
+                prezime = vencano or devojacko
                 if not ime or not prezime:
                     self.log_skip(
                         f"Парохијан UID {parohijan_uid}: непотпуно име '{puno_ime}'"
@@ -149,12 +149,12 @@ class Command(MigrationCommand):
                     continue
 
                 if self._dry_run:
-                    created_parohijani += 1
-                    created_domacinstva += 1
+                    dodato_parohijana += 1
+                    dodato_domacinstava += 1
                     continue
 
                 ulica_naziv = self.ulice_cache.get(ulica_uid, "") if ulica_uid else ""
-                adresa = find_or_create_adresa(
+                adresa = nadji_dodaj_adresu(
                     ulica=ulica_naziv,
                     broj=cirilica(str(broj_ulice or "")),
                     broj_stana=cirilica(str(broj_stana or "")),
@@ -177,7 +177,7 @@ class Command(MigrationCommand):
                 # catches the case where row #1 has signal A and rows #2 and
                 # #3 share signal B — without this loop #3 would be created
                 # fresh instead of merging into #2.
-                match = find_matching_osoba(
+                match = nadji_osobu(
                     ime, prezime, adresa=adresa, tel_f=tel_f, tel_m=tel_m
                 )
                 if match is not None:
@@ -191,8 +191,8 @@ class Command(MigrationCommand):
                         updates["tel_fiksni"] = tel_f
                     if not osoba.tel_mobilni and tel_m:
                         updates["tel_mobilni"] = tel_m
-                    if not osoba.devojacko_prezime and devojacko_prezime:
-                        updates["devojacko_prezime"] = devojacko_prezime
+                    if not osoba.devojacko and devojacko:
+                        updates["devojacko"] = devojacko
                     if not osoba.pol:
                         inferred_pol = pol_prema_imenu(ime)
                         if inferred_pol:
@@ -206,7 +206,7 @@ class Command(MigrationCommand):
                         defaults={
                             "ime": ime,
                             "prezime": prezime,
-                            "devojacko_prezime": devojacko_prezime or None,
+                            "devojacko": devojacko or None,
                             "parohijan": True,
                             "adresa": adresa,
                             "tel_fiksni": tel_f,
@@ -215,10 +215,10 @@ class Command(MigrationCommand):
                         },
                     )
                     if p_created:
-                        created_parohijani += 1
+                        dodato_parohijana += 1
                     # Always cache the newly-created (or reused-by-uid) Osoba
                     # so subsequent rows with the same name can match against
-                    # it via find_matching_osoba. cache_osoba is idempotent
+                    # it via nadji_osobu. cache_osoba is idempotent
                     # on pk so re-caching the same osoba is a no-op.
                     cache_osoba(osoba)
 
@@ -241,7 +241,7 @@ class Command(MigrationCommand):
                     },
                 )
                 if d_created:
-                    created_domacinstva += 1
+                    dodato_domacinstava += 1
 
             except (ValueError, IntegrityError, ValidationError) as e:
                 # Narrow except so OperationalError / ProgrammingError / KeyboardInterrupt
@@ -250,7 +250,7 @@ class Command(MigrationCommand):
                 continue
 
         self.stdout.write(
-            f"Креирано {created_parohijani} парохијана и {created_domacinstva} домаћинстава."
+            f"Креирано {dodato_parohijana} парохијана и {dodato_domacinstava} домаћинстава."
         )
 
     # ---------------- Ukucanin pass ----------------
@@ -285,7 +285,7 @@ class Command(MigrationCommand):
                 preminuo = raw_ime.startswith("+")
                 ime = raw_ime[1:].strip() if preminuo else raw_ime
 
-                osoba = find_or_create_osoba(
+                osoba = nadji_dodaj_osobu(
                     ime, prezime, parohijan=False, pol=pol_prema_imenu(ime)
                 )
                 if not osoba:
