@@ -11,10 +11,10 @@ from registar.migracija.helpers import (
     cirilica,
     cirilica_int,
     ocisti_prezime,
-    parse_time,
     podeli_zadnju_rec,
     rasclani_puno_ime,
-    safe_date,
+    rasclani_vreme,
+    siguran_datum,
 )
 
 
@@ -87,42 +87,42 @@ class SplitFullNameLastWordTests(TestCase):
 
 class SafeDateTests(TestCase):
     def test_valid_date(self):
-        self.assertEqual(safe_date(2020, 5, 14), date(2020, 5, 14))
+        self.assertEqual(siguran_datum(2020, 5, 14), date(2020, 5, 14))
 
     def test_rejects_pre_1900(self):
-        self.assertIsNone(safe_date(0, 1, 1))
-        self.assertIsNone(safe_date(1899, 12, 31))
+        self.assertIsNone(siguran_datum(0, 1, 1))
+        self.assertIsNone(siguran_datum(1899, 12, 31))
 
     def test_fills_in_default_month_day_when_zero(self):
-        self.assertEqual(safe_date(2020, 0, 0), date(2020, 1, 1))
+        self.assertEqual(siguran_datum(2020, 0, 0), date(2020, 1, 1))
 
     def test_invalid_returns_none(self):
-        self.assertIsNone(safe_date(2020, 2, 30))
-        self.assertIsNone(safe_date(2020, 13, 1))
+        self.assertIsNone(siguran_datum(2020, 2, 30))
+        self.assertIsNone(siguran_datum(2020, 13, 1))
 
 
 class ParseTimeTests(TestCase):
     def test_simple_hour(self):
-        self.assertEqual(parse_time("14"), time(14, 0))
+        self.assertEqual(rasclani_vreme("14"), time(14, 0))
 
     def test_dot_separator(self):
-        self.assertEqual(parse_time("14.30"), time(14, 30))
+        self.assertEqual(rasclani_vreme("14.30"), time(14, 30))
 
     def test_comma_separator(self):
-        self.assertEqual(parse_time("14,30"), time(14, 30))
+        self.assertEqual(rasclani_vreme("14,30"), time(14, 30))
 
     def test_normalises_24_to_0(self):
-        self.assertEqual(parse_time("24"), time(0, 0))
+        self.assertEqual(rasclani_vreme("24"), time(0, 0))
 
     def test_clamps_out_of_range(self):
-        self.assertEqual(parse_time("99.99"), time(23, 59))
+        self.assertEqual(rasclani_vreme("99.99"), time(23, 59))
 
     def test_empty_returns_none(self):
-        self.assertIsNone(parse_time(""))
-        self.assertIsNone(parse_time(None))
+        self.assertIsNone(rasclani_vreme(""))
+        self.assertIsNone(rasclani_vreme(None))
 
     def test_garbage_returns_none(self):
-        self.assertIsNone(parse_time("nope"))
+        self.assertIsNone(rasclani_vreme("nope"))
 
 
 class CyrTests(TestCase):
