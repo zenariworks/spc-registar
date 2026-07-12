@@ -22,7 +22,7 @@ from tenants.permissions import tenant_admin_required
 
 
 def _adresa_key(a: Adresa) -> tuple:
-    """Normalized identity key — same heuristic as popravi_duplikate Phase 1."""
+    """Normalized identity key for the address-duplicates admin view."""
     return (
         (a.ulica or "").strip().lower(),
         (a.broj or "").strip().lower(),
