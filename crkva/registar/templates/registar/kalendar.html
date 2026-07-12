@@ -37,8 +37,8 @@
     {% if day.is_placeholder %}
       <div class="calendar-cell placeholder"></div>
     {% else %}
-      <div class="calendar-cell {% if day.is_today %}today{% endif %} {% if day.is_crveno_slovo %}crveno-slovo{% elif day.is_important %}important{% elif day.is_fasting %}fasting fasting-{{ day.fasting_class }}{% endif %}">
-        {% if day.is_fasting %}
+      <div class="calendar-cell {% if day.is_today %}today{% endif %} {% if day.is_crveno_slovo %}crveno-slovo{% elif day.is_important %}important{% elif day.je_post %}fasting fasting-{{ day.fasting_class }}{% endif %}">
+        {% if day.je_post %}
           <div class="fasting-info">
             {% if day.fasting_type == 'вода' %}
               <i class="fa-solid fa-water fasting-icon"></i>

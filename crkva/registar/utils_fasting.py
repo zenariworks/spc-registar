@@ -226,7 +226,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
     """Врати тип поста и дозвољена јела за дати датум.
 
     Враћа речник са следећим кључевима:
-    - 'is_fasting': Да ли је постни дан (True/False)
+    - 'je_post': Да ли је постни дан (True/False)
     - 'type': Тип поста ('вода', 'уље', 'риба', 'бели_мрс', None)
     - 'display': Текст за приказ ('Вода', 'Уље', 'Риба', 'Бели мрс', None)
     - 'description': Опис дозвољених јела
@@ -239,7 +239,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
     # Провери да ли је у трапавој седмици (без поста)
     trapave = trapave_sedmice(godina)
     if datum in trapave:
-        return {"is_fasting": False, "type": None, "display": None, "description": None}
+        return {"je_post": False, "type": None, "display": None, "description": None}
 
     # Велики пост (Great Lent)
     great_lent = veliki_post(godina)
@@ -249,7 +249,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Проверa за Благовести (25. март) у Великом посту
         if datum.month == 3 and datum.day == 25:
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "риба",
                 "display": "Риба",
                 "description": "Дозвољени: уље, вино и риба",
@@ -259,7 +259,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         lazareva_subota = vaskrs - dt.timedelta(days=8)
         if datum == lazareva_subota:
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "риба",
                 "display": "Риба",
                 "description": "Дозвољени: уље, вино и риба",
@@ -269,7 +269,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         cveti = vaskrs - dt.timedelta(days=7)
         if datum == cveti:
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "риба",
                 "display": "Риба",
                 "description": "Дозвољени: уље, вино и риба",
@@ -278,7 +278,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Субота и недеља у Великом посту - уље и вино
         if dan_u_nedelji in (5, 6):  # субота или недеља
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "уље",
                 "display": "Уље",
                 "description": "Дозвољени: уље и вино",
@@ -286,7 +286,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
 
         # Други дани Великог поста - вода
         return {
-            "is_fasting": True,
+            "je_post": True,
             "type": "вода",
             "display": "Вода",
             "description": "Пост без уља и рибе",
@@ -296,7 +296,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
     cheesefare = beli_mrs(godina)
     if datum in cheesefare:
         return {
-            "is_fasting": True,
+            "je_post": True,
             "type": "бели_мрс",
             "display": "Бели мрс",
             "description": "Дозвољено све осим меса",
@@ -311,7 +311,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Провери изузетке (Божић 25.12 по Јулијанском = 7.1 по Грегоријанском)
         if datum.month == 1 and datum.day == 7:
             return {
-                "is_fasting": False,
+                "je_post": False,
                 "type": None,
                 "display": None,
                 "description": None,
@@ -320,7 +320,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Сочи дан (6. јануар) - строг пост
         if datum.month == 1 and datum.day == 6:
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "вода",
                 "display": "Вода",
                 "description": "Пост без уља и рибе",
@@ -329,7 +329,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Субота и недеља - риба
         if dan_u_nedelji in (5, 6):
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "риба",
                 "display": "Риба",
                 "description": "Дозвољени: уље, вино и риба",
@@ -338,7 +338,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Уторак и четвртак - уље
         if dan_u_nedelji in (1, 3):
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "уље",
                 "display": "Уље",
                 "description": "Дозвољени: уље и вино",
@@ -346,7 +346,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
 
         # Понедељак, среда, петак - вода
         return {
-            "is_fasting": True,
+            "je_post": True,
             "type": "вода",
             "display": "Вода",
             "description": "Пост без уља и рибе",
@@ -357,7 +357,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Преображење (6. август) - риба
         if datum.day == 6:
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "риба",
                 "display": "Риба",
                 "description": "Дозвољени: уље, вино и риба",
@@ -366,7 +366,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Субота и недеља - риба
         if dan_u_nedelji in (5, 6):
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "риба",
                 "display": "Риба",
                 "description": "Дозвољени: уље, вино и риба",
@@ -375,7 +375,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Среда и петак - вода
         if dan_u_nedelji in (2, 4):
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "вода",
                 "display": "Вода",
                 "description": "Пост без уља и рибе",
@@ -383,7 +383,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
 
         # Други дани - уље
         return {
-            "is_fasting": True,
+            "je_post": True,
             "type": "уље",
             "display": "Уље",
             "description": "Дозвољени: уље и вино",
@@ -395,7 +395,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Субота и недеља - риба
         if dan_u_nedelji in (5, 6):
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "риба",
                 "display": "Риба",
                 "description": "Дозвољени: уље, вино и риба",
@@ -404,7 +404,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Уторак и четвртак - риба
         if dan_u_nedelji in (1, 3):
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "риба",
                 "display": "Риба",
                 "description": "Дозвољени: уље, вино и риба",
@@ -413,7 +413,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
         # Понедељак - уље
         if dan_u_nedelji == 0:
             return {
-                "is_fasting": True,
+                "je_post": True,
                 "type": "уље",
                 "display": "Уље",
                 "description": "Дозвољени: уље и вино",
@@ -421,7 +421,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
 
         # Среда и петак - вода
         return {
-            "is_fasting": True,
+            "je_post": True,
             "type": "вода",
             "display": "Вода",
             "description": "Пост без уља и рибе",
@@ -430,7 +430,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
     # Крстовдан (18. јануар) - вода
     if datum.month == 1 and datum.day == 18:
         return {
-            "is_fasting": True,
+            "je_post": True,
             "type": "вода",
             "display": "Вода",
             "description": "Пост без уља и рибе",
@@ -439,11 +439,11 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
     # Општи пост (среда и петак)
     if dan_u_nedelji in (2, 4):
         return {
-            "is_fasting": True,
+            "je_post": True,
             "type": "вода",
             "display": "Вода",
             "description": "Пост без уља и рибе",
         }
 
     # Није постни дан
-    return {"is_fasting": False, "type": None, "display": None, "description": None}
+    return {"je_post": False, "type": None, "display": None, "description": None}

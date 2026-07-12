@@ -54,7 +54,7 @@ def build_day_cell(d, day_slavas, today):
     return {
         "date": d,
         "weekday_label": WEEKDAY_LABELS[d.weekday()],
-        "is_fasting": fasting_info["is_fasting"],
+        "je_post": fasting_info["je_post"],
         "fasting_type": fasting_info["type"],
         "fasting_class": FASTING_CSS_CLASS.get(fasting_info["type"]) or "",
         "fasting_display": fasting_info["display"],
