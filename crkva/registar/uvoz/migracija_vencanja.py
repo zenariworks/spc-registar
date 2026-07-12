@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import Iterator, Optional
+from typing import Iterator
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
@@ -112,7 +112,7 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     knjiga: str
     strana: str
     broj: str
-    datum: Optional[date]
+    datum: date | None
 
     zenik_ime: str
     zenik_prezime: str
@@ -121,7 +121,7 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     zenik_adresa: str
     zenik_veroispovest: str
     zenik_narodnost: str
-    zenik_datum_rodj: Optional[date]
+    zenik_datum_rodj: date | None
     zenik_mesto_rodj: str
 
     nevesta_ime: str
@@ -131,7 +131,7 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     nevesta_adresa: str
     nevesta_veroispovest: str
     nevesta_narodnost: str
-    nevesta_datum_rodj: Optional[date]
+    nevesta_datum_rodj: date | None
     nevesta_mesto_rodj: str
 
     svekar: str
@@ -142,7 +142,7 @@ class VencanjeRecord:  # pylint: disable=too-many-instance-attributes
     zenik_rb_braka: int
     nevesta_rb_braka: int
 
-    datum_ispita: Optional[date]
+    datum_ispita: date | None
 
     hram_naziv: str
     hram_mesto: str
@@ -324,7 +324,7 @@ class Command(MigrationCommand):
 
     # ---------------- Transform ----------------
 
-    def _build_vencanje_data(self, r: VencanjeRecord) -> Optional[dict]:
+    def _build_vencanje_data(self, r: VencanjeRecord) -> dict | None:
         zenik_ime = r.zenik_ime.strip()
         zenik_prezime = ocisti_prezime(r.zenik_prezime.strip())
         nevesta_ime = r.nevesta_ime.strip()
@@ -428,7 +428,7 @@ class Command(MigrationCommand):
                 narod_obj = self._narod.get(narod_parsed["narodnost"])
         return vera_obj, narod_obj
 
-    def _rasclani_osobu(self, full_str: str, *, label: str) -> Optional[Osoba]:
+    def _rasclani_osobu(self, full_str: str, *, label: str) -> Osoba | None:
         if not full_str or not full_str.strip():
             return None
         ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())
@@ -445,8 +445,8 @@ class Command(MigrationCommand):
         return None
 
     def _rasclani_roditelja(
-        self, full_str: str, pol: Optional[str] = None
-    ) -> Optional[Osoba]:
+        self, full_str: str, pol: str | None = None
+    ) -> Osoba | None:
         if not full_str:
             return None
         ime, prezime = rasclani_puno_ime(full_str.split(",")[0].strip())

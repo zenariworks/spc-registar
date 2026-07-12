@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from typing import Iterator, Optional
+from typing import Iterator
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection
@@ -109,7 +109,7 @@ def _date_or_default(y: int, m: int, d: int) -> date:
 
 
 @dataclass(frozen=True, slots=True)
-class KrstenjeRecord:
+class KrstenjeZapis:
     """Parsed and cleaned row from the staging table."""
 
     redni_broj: int
@@ -122,12 +122,12 @@ class KrstenjeRecord:
     adresa_deteta_ulica: str
     adresa_deteta_broj: str
 
-    datum_rodjenja: date
+    rodjenje_datum: date
     rodjenje_vreme: str
     rodjenje_mesto: str
     rodjenje_opstina: str
 
-    datum_krstenja: date
+    krstenje_datum: date
     krstenje_vreme: str
     krstenje_mesto: str
     hram_naziv: str
@@ -139,7 +139,7 @@ class KrstenjeRecord:
     otac_ime: str
     otac_prezime: str
     otac_zanimanje: str
-    adresa_oca: str
+    otac_adresa: str
     otac_veroispovest: str
     otac_narodnost: str
 
@@ -150,7 +150,7 @@ class KrstenjeRecord:
     majka_veroispovest: str
 
     zivorodjeno: str
-    po_redu: Optional[int]
+    po_redu: int | None
     vanbracno: str
     blizanac: str
     blizanac_ime: str
@@ -161,11 +161,11 @@ class KrstenjeRecord:
     kum_puno_ime: str
     kum_prezime: str
     kum_zanimanje: str
-    mesto_kuma: str
+    kum_mesto: str
 
     registracija_mesto: str
-    registracija_broj: Optional[str]
-    registracija_strana: Optional[str]
+    registracija_broj: str | None
+    registracija_strana: str | None
 
     @property
     def context(self) -> RecordContext:
@@ -179,9 +179,9 @@ class KrstenjeRecord:
         )
 
 
-def parse_row(row: tuple) -> KrstenjeRecord:
+def parse_row(row: tuple) -> KrstenjeZapis:
     """Parse raw DB row into a clean, typed record."""
-    return KrstenjeRecord(
+    return KrstenjeZapis(
         redni_broj=cirilica_int(row[0]),
         knjiga=cirilica(row[1]),
         broj=cirilica(row[2]),
@@ -190,13 +190,13 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         adresa_deteta_grad=cirilica(row[5]),
         adresa_deteta_ulica=cirilica(row[6]),
         adresa_deteta_broj=cirilica(row[7]),
-        datum_rodjenja=_date_or_default(
+        rodjenje_datum=_date_or_default(
             cirilica_int(row[8]), cirilica_int(row[9]), cirilica_int(row[10])
         ),
         rodjenje_vreme=cirilica(row[11]),
         rodjenje_mesto=cirilica(row[12]),
         rodjenje_opstina=cirilica(row[13]),
-        datum_krstenja=_date_or_default(
+        krstenje_datum=_date_or_default(
             cirilica_int(row[14]), cirilica_int(row[15]), cirilica_int(row[16])
         ),
         krstenje_vreme=cirilica(row[17]),
@@ -208,7 +208,7 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         otac_ime=cirilica(row[23]),
         otac_prezime=cirilica(row[24]),
         otac_zanimanje=cirilica(row[25]),
-        adresa_oca=cirilica(row[26]),
+        otac_adresa=cirilica(row[26]),
         otac_veroispovest=cirilica(row[27]),
         otac_narodnost=cirilica(row[28]),
         majka_ime=cirilica(row[29]),
@@ -226,7 +226,7 @@ def parse_row(row: tuple) -> KrstenjeRecord:
         kum_puno_ime=cirilica(row[41]),
         kum_prezime=cirilica(row[42]),
         kum_zanimanje=cirilica(row[43]),
-        mesto_kuma=cirilica(row[44]),
+        kum_mesto=cirilica(row[44]),
         registracija_mesto=cirilica(row[45]),
         registracija_broj=cirilica(row[46]) or None,
         registracija_strana=cirilica(row[47]) or None,
@@ -276,7 +276,7 @@ class Command(MigrationCommand):
         self._vera.warm()
         self._narod.warm()
 
-    def _fetch_records(self) -> Iterator[KrstenjeRecord]:
+    def _fetch_records(self) -> Iterator[KrstenjeZapis]:
         """Stream records from the staging table."""
         columns = ", ".join(f'"{col}"' for col in SOURCE_COLUMNS)
         query = f'SELECT {columns} FROM {self.staging_table} ORDER BY "K_SIFRA"'
@@ -287,7 +287,7 @@ class Command(MigrationCommand):
                 yield parse_row(row)
 
     @atomic
-    def _build_and_save(self, records: list[KrstenjeRecord]) -> int:
+    def _build_and_save(self, records: list[KrstenjeZapis]) -> int:
         if not self._dry_run:
             self.clear_target_table()
 
@@ -335,7 +335,7 @@ class Command(MigrationCommand):
         return created
 
     def _is_duplicate(
-        self, seen: set[tuple], data: dict, record: KrstenjeRecord
+        self, seen: set[tuple], data: dict, record: KrstenjeZapis
     ) -> bool:
         """Dedupe on (godina, knjiga, strana, broj, dete_ime, dete_prezime, datum)."""
         dete = data.get("dete")
@@ -355,7 +355,7 @@ class Command(MigrationCommand):
 
     # ---------------- Transform ----------------
 
-    def _build_krstenje(self, r: KrstenjeRecord) -> Optional[dict]:
+    def _build_krstenje(self, r: KrstenjeZapis) -> dict | None:
         dete_ime = r.dete_ime.strip()
         otac_prezime = ocisti_prezime(r.otac_prezime.strip())
 
@@ -375,7 +375,7 @@ class Command(MigrationCommand):
             ime=dete_ime,
             prezime=otac_prezime,
             pol="М" if r.dete_pol.strip() == "1" else "Ж",
-            datum_rodjenja=r.datum_rodjenja,
+            datum_rodjenja=r.rodjenje_datum,
             vreme_rodjenja=parse_time(r.rodjenje_vreme),
             mesto_rodjenja=r.rodjenje_mesto,
         )
@@ -421,11 +421,11 @@ class Command(MigrationCommand):
             "hram": hram,
             "svestenik": svestenik,
             "redni_broj": r.redni_broj,
-            "godina_registracije": r.godina_registracije or r.datum_krstenja.year,
+            "godina_registracije": r.godina_registracije or r.krstenje_datum.year,
             "knjiga": cirilica_int(r.knjiga, 0),
             "broj": cirilica_int(r.broj, 0),
             "strana": cirilica_int(r.strana, 0),
-            "datum": r.datum_krstenja,
+            "datum": r.krstenje_datum,
             "vreme": parse_time(r.krstenje_vreme),
             "zivorodjeno": r.zivorodjeno.strip() == "1",
             "po_redu": r.po_redu,
@@ -439,7 +439,7 @@ class Command(MigrationCommand):
             "primedba": "",
         }
 
-    def _parse_vera_narod_parents(self, r: KrstenjeRecord):
+    def _parse_vera_narod_parents(self, r: KrstenjeZapis):
         """Parse confession/nationality for both parents."""
         otac_data, majka_from_otac = pars_vera_narodnost(r.otac_veroispovest)
         otac_vera = self._vera.get(otac_data["veroispovest"])
@@ -465,7 +465,7 @@ class Command(MigrationCommand):
 
         return otac_vera, otac_narod, majka_vera, majka_narod
 
-    def _rasclani_kuma(self, zapis: KrstenjeRecord) -> Osoba | None:
+    def _rasclani_kuma(self, zapis: KrstenjeZapis) -> Osoba | None:
         """Parse and create godparent (kum)."""
         puno_ime = zapis.kum_puno_ime.strip()
         if not puno_ime:
@@ -493,8 +493,8 @@ class Command(MigrationCommand):
         dete: Osoba,
         otac: Osoba,
         majka: Osoba,
-        kum: Optional[Osoba],
-        r: KrstenjeRecord,
+        kum: Osoba | None,
+        r: KrstenjeZapis,
     ) -> None:
         """Set addresses where available."""
         if dete and (r.adresa_deteta_grad or r.adresa_deteta_ulica):
@@ -507,11 +507,11 @@ class Command(MigrationCommand):
                 ),
             )
 
-        if otac and r.adresa_oca:
-            dodaj_adresu(otac, nadji_dodaj_adresu(mesto=r.adresa_oca))
+        if otac and r.otac_adresa:
+            dodaj_adresu(otac, nadji_dodaj_adresu(mesto=r.otac_adresa))
 
         if majka and r.adresa_majke:
             dodaj_adresu(majka, nadji_dodaj_adresu(mesto=r.adresa_majke))
 
-        if kum and r.mesto_kuma:
-            dodaj_adresu(kum, nadji_dodaj_adresu(mesto=r.mesto_kuma))
+        if kum and r.kum_mesto:
+            dodaj_adresu(kum, nadji_dodaj_adresu(mesto=r.kum_mesto))
