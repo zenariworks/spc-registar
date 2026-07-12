@@ -84,14 +84,14 @@ def _detect(text: str, mapping: dict[str, str]) -> str | None:
     return None
 
 
-def _parse_segment(text: str) -> dict[str, str | None]:
+def _rasclani_segment(text: str) -> dict[str, str | None]:
     """Парсирај један сегмент текста (једна особа) у vera + narod."""
     vera = _detect(text, VERA_MAP)
     narod = _detect(text, NAROD_MAP)
     return {"veroispovest": vera, "narodnost": narod}
 
 
-def pars_vera_narodnost(
+def rasclani_vera_narodnost(
     text: str | None,
 ) -> tuple[dict[str, str | None], dict[str, str | None] | None]:
     """
@@ -110,12 +110,12 @@ def pars_vera_narodnost(
     # Провери да ли има " и " -- два лица
     if " и " in text:
         parts = text.split(" и ", 1)
-        p1 = _parse_segment(parts[0])
-        p2 = _parse_segment(parts[1])
+        p1 = _rasclani_segment(parts[0])
+        p2 = _rasclani_segment(parts[1])
         return p1, p2
 
     # Једно лице или оба иста
-    result = _parse_segment(text)
+    result = _rasclani_segment(text)
     return result, None
 
 

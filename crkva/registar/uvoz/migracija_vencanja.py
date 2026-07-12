@@ -36,7 +36,7 @@ from registar.migracija.helpers import (
     izdvoj_devojacko,
     ocisti_prezime,
     rasclani_puno_ime,
-    safe_date,
+    siguran_datum,
 )
 from registar.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
 from registar.migracija.sex import pol_prema_imenu
@@ -49,7 +49,7 @@ from registar.models import (
     Veroispovest,
     Zanimanje,
 )
-from registar.utils_parser import pars_vera_narodnost
+from registar.utils_parser import rasclani_vera_narodnost
 from registar.uvoz.base_migration import MigrationCommand
 
 SOURCE_COLUMNS = (
@@ -174,7 +174,7 @@ def parse_row(row: tuple) -> VencanjeRecord:
         knjiga=cirilica(row[2]),
         strana=cirilica(row[3]),
         broj=cirilica(row[4]),
-        datum=safe_date(
+        datum=siguran_datum(
             cirilica_int(row[6]), cirilica_int(row[7]), cirilica_int(row[8])
         ),
         zenik_ime=cirilica(row[9]),
@@ -184,7 +184,7 @@ def parse_row(row: tuple) -> VencanjeRecord:
         zenik_adresa=cirilica(row[13]),
         zenik_veroispovest=cirilica(row[14]),
         zenik_narodnost=cirilica(row[15]),
-        zenik_datum_rodj=safe_date(
+        zenik_datum_rodj=siguran_datum(
             cirilica_int(row[16]), cirilica_int(row[17]), cirilica_int(row[18])
         ),
         zenik_mesto_rodj=cirilica(row[19]),
@@ -195,7 +195,7 @@ def parse_row(row: tuple) -> VencanjeRecord:
         nevesta_adresa=cirilica(row[24]),
         nevesta_veroispovest=cirilica(row[25]),
         nevesta_narodnost=cirilica(row[26]),
-        nevesta_datum_rodj=safe_date(
+        nevesta_datum_rodj=siguran_datum(
             cirilica_int(row[27]), cirilica_int(row[28]), cirilica_int(row[29])
         ),
         nevesta_mesto_rodj=cirilica(row[30]),
@@ -205,7 +205,7 @@ def parse_row(row: tuple) -> VencanjeRecord:
         tasta=cirilica(row[34]),
         zenik_rb_braka=max(cirilica_int(row[35]), 1),
         nevesta_rb_braka=max(cirilica_int(row[36]), 1),
-        datum_ispita=safe_date(
+        datum_ispita=siguran_datum(
             cirilica_int(row[37]), cirilica_int(row[38]), cirilica_int(row[39])
         ),
         hram_naziv=cirilica(row[40]),
@@ -418,12 +418,12 @@ class Command(MigrationCommand):
         veroispovest = None
         narodnost = None
         if vera_text and vera_text.strip():
-            parsed, _ = pars_vera_narodnost(vera_text)
+            parsed, _ = rasclani_vera_narodnost(vera_text)
             veroispovest = self._vera.get(parsed["veroispovest"])
             if not (narod_text and narod_text.strip()):
                 narodnost = self._narod.get(parsed["narodnost"])
         if narod_text and narod_text.strip():
-            narod_parsed, _ = pars_vera_narodnost(narod_text)
+            narod_parsed, _ = rasclani_vera_narodnost(narod_text)
             if narod_parsed["narodnost"]:
                 narodnost = self._narod.get(narod_parsed["narodnost"])
         return veroispovest, narodnost

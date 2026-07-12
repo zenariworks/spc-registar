@@ -30,8 +30,8 @@ from registar.migracija.helpers import (
     cirilica_int,
     izdvoj_devojacko,
     ocisti_prezime,
-    parse_time,
     podeli_zadnju_rec,
+    rasclani_vreme,
 )
 from registar.migracija.osoba_repo import dodaj_osobu, nadji_dodaj_osobu
 from registar.migracija.sex import pol_prema_imenu
@@ -44,7 +44,7 @@ from registar.models import (
     Veroispovest,
     Zanimanje,
 )
-from registar.utils_parser import pars_vera_narodnost
+from registar.utils_parser import rasclani_vera_narodnost
 from registar.uvoz.base_migration import MigrationCommand
 
 SOURCE_COLUMNS = (
@@ -89,7 +89,7 @@ SOURCE_COLUMNS = (
     "K_DETBLIZ2",  # blizanac_ime
     "K_DETMANA",  # dete_sa_manom
     "K_RBRSVE",  # svestenik_id
-    "K_KUMIME",  # kum_puno_ime
+    "K_KUMIME",  # kum_ime
     "K_KUMPREZ",  # kum_prezime
     "K_KUMZANIM",  # kum_zanimanje
     "K_KUMMEST",  # kum_mesto
@@ -158,7 +158,7 @@ class KrstenjeZapis:
 
     svestenik_id: int
 
-    kum_puno_ime: str
+    kum_ime: str
     kum_prezime: str
     kum_zanimanje: str
     kum_mesto: str
@@ -223,7 +223,7 @@ def parse_row(row: tuple) -> KrstenjeZapis:
         blizanac_ime=cirilica(row[38]),
         dete_sa_manom=cirilica(row[39]),
         svestenik_id=cirilica_int(row[40]),
-        kum_puno_ime=cirilica(row[41]),
+        kum_ime=cirilica(row[41]),
         kum_prezime=cirilica(row[42]),
         kum_zanimanje=cirilica(row[43]),
         kum_mesto=cirilica(row[44]),
@@ -367,8 +367,8 @@ class Command(MigrationCommand):
         if r.svestenik_id:
             svestenik, _ = Svestenik.objects.get_or_create(uid=r.svestenik_id)
 
-        otac_vera, otac_narod, majka_vera, majka_narod = self._parse_vera_narod_parents(
-            r
+        otac_vera, otac_narod, majka_vera, majka_narod = (
+            self._rasclani_vera_narod_parents(r)
         )
 
         dete = dodaj_osobu(
@@ -376,7 +376,7 @@ class Command(MigrationCommand):
             prezime=otac_prezime,
             pol="М" if r.dete_pol.strip() == "1" else "Ж",
             datum_rodjenja=r.rodjenje_datum,
-            vreme_rodjenja=parse_time(r.rodjenje_vreme),
+            vreme_rodjenja=rasclani_vreme(r.rodjenje_vreme),
             mesto_rodjenja=r.rodjenje_mesto,
         )
 
@@ -426,7 +426,7 @@ class Command(MigrationCommand):
             "broj": cirilica_int(r.broj, 0),
             "strana": cirilica_int(r.strana, 0),
             "datum": r.krstenje_datum,
-            "vreme": parse_time(r.krstenje_vreme),
+            "vreme": rasclani_vreme(r.krstenje_vreme),
             "zivorodjeno": r.zivorodjeno.strip() == "1",
             "po_redu": r.po_redu,
             "vanbracno": r.vanbracno.strip() == "1",
@@ -439,21 +439,21 @@ class Command(MigrationCommand):
             "primedba": "",
         }
 
-    def _parse_vera_narod_parents(self, r: KrstenjeZapis):
+    def _rasclani_vera_narod_parents(self, r: KrstenjeZapis):
         """Parse confession/nationality for both parents."""
-        otac_data, majka_from_otac = pars_vera_narodnost(r.otac_veroispovest)
+        otac_data, majka_from_otac = rasclani_vera_narodnost(r.otac_veroispovest)
         otac_vera = self._vera.get(otac_data["veroispovest"])
         otac_narod = self._narod.get(otac_data["narodnost"])
 
         # Override with dedicated narodnost column if present
         if r.otac_narodnost and r.otac_narodnost.strip():
-            narod_parsed, _ = pars_vera_narodnost(r.otac_narodnost)
+            narod_parsed, _ = rasclani_vera_narodnost(r.otac_narodnost)
             if narod_parsed["narodnost"]:
                 otac_narod = self._narod.get(narod_parsed["narodnost"])
 
         # Mother
         if r.majka_veroispovest and r.majka_veroispovest.strip():
-            majka_data, _ = pars_vera_narodnost(r.majka_veroispovest)
+            majka_data, _ = rasclani_vera_narodnost(r.majka_veroispovest)
             majka_vera = self._vera.get(majka_data["veroispovest"])
             majka_narod = self._narod.get(majka_data["narodnost"])
         elif majka_from_otac:
@@ -467,7 +467,7 @@ class Command(MigrationCommand):
 
     def _rasclani_kuma(self, zapis: KrstenjeZapis) -> Osoba | None:
         """Parse and create godparent (kum)."""
-        puno_ime = zapis.kum_puno_ime.strip()
+        puno_ime = zapis.kum_ime.strip()
         if not puno_ime:
             return None
 

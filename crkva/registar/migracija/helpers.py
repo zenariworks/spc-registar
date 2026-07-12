@@ -54,18 +54,14 @@ def izdvoj_devojacko(prezime: str | None) -> tuple[str, str]:
       - Иначе → удато_презиме=очишћен унос, девојачко=""
       - Празан унос → ("", "")
     """
-    if not prezime:
+    if not (tekst := (prezime or "").strip()):
         return "", ""
 
-    raw = prezime.strip()
-    if not raw:
-        return "", ""
+    if marker := next((m for m in _MARKERI_PREZIMENA if m.match(tekst)), None):
+        devojacko = marker.sub("", tekst).strip()
+        return "", veliko_prvo_slovo(devojacko)
 
-    for marker in _MARKERI_PREZIMENA:
-        if marker.match(raw):
-            return "", veliko_prvo_slovo(marker.sub("", raw).strip())
-
-    return ocisti_prezime(raw), ""
+    return ocisti_prezime(tekst), ""
 
 
 # =============================================================================
@@ -82,39 +78,31 @@ def rasclani_puno_ime(puno_ime: str | None) -> tuple[str | None, str | None]:
     Also handles glued names like 'МаркоПетровић'.
     Returns (None, None) when splitting is not reliable.
     """
-    if not puno_ime:
+    if not (tekst := (puno_ime or "").strip()):
         return None, None
 
-    ocisceno = puno_ime.strip()
-    if not ocisceno:
-        return None, None
+    if " " in tekst:
+        ime, prezime = tekst.split(maxsplit=1)
+        return ime, prezime
 
-    # Normal case with space
-    if " " in ocisceno:
-        delovi = ocisceno.split(maxsplit=1)
-        return delovi[0] or None, delovi[1] or None
-
-    # Try camel-case split
-    if poklapanje := _CAMEL_SPLIT.match(ocisceno):
+    if poklapanje := _CAMEL_SPLIT.fullmatch(tekst):
         return poklapanje.group(1), poklapanje.group(2)
 
     return None, None
 
 
 def podeli_zadnju_rec(puno_ime: str | None) -> tuple[str, str]:
-    """Split on last whitespace token.
+    """Split on the last whitespace-separated word.
 
-    Example: 'Петар Никола Петровић' → ('Петар Никола', 'Петровић')
-    Used in baptism records where the last word is always the surname.
+    Example:
+        "Петар Никола Петровић" -> ("Петар Никола", "Петровић")
     """
-    if not puno_ime:
+    if not (tekst := (puno_ime or "").strip()):
         return "", ""
 
-    parts = puno_ime.strip().split()
-    if len(parts) < 2:
-        return puno_ime.strip(), ""
+    *ime, prezime = tekst.split()
 
-    return " ".join(parts[:-1]), parts[-1]
+    return (" ".join(ime), prezime) if ime else (prezime, "")
 
 
 # =============================================================================
@@ -122,17 +110,15 @@ def podeli_zadnju_rec(puno_ime: str | None) -> tuple[str, str]:
 # =============================================================================
 
 
-def safe_date(yyyy: int | None, mm: int | None, dd: int | None) -> date | None:
-    """Return valid date or None. Rejects years before 1900."""
-    yyyy = yyyy or 0
-    mm = mm or 0
-    dd = dd or 0
-
-    if yyyy < 1900:
+def siguran_datum(
+    godina: int | None, mesec: int | None, dan: int | None
+) -> date | None:
+    """Return a valid date or ``None``. Reject years before 1900."""
+    if (godina := godina or 0) < 1900:
         return None
 
     try:
-        return date(yyyy, mm or 1, dd or 1)
+        return date(godina, mesec or 1, dan or 1)
     except ValueError:
         return None
 
@@ -140,28 +126,18 @@ def safe_date(yyyy: int | None, mm: int | None, dd: int | None) -> date | None:
 _TIME_NUMERIC = re.compile(r"^\d+([.,]\d+)?$")
 
 
-def parse_time(text: str | None) -> time | None:
-    """Parse sloppy time strings: '14', '14.30', '14,30', '9' → time object."""
-    if not text:
+def rasclani_vreme(tekst: str | None) -> time | None:
+    """Parse sloppy time strings: '14', '14.30', '14,30', '9'."""
+    if not (tekst := (tekst or "").strip()) or not _TIME_NUMERIC.fullmatch(tekst):
         return None
 
-    s = text.strip()
-    if not s or not _TIME_NUMERIC.match(s):
-        return None
+    sati_s, *minuti_s = tekst.replace(",", ".").split(".", 1)
 
-    # Handle decimal/comma separator
-    if "." in s:
-        hh_s, mm_s = s.split(".", 1)
-    elif "," in s:
-        hh_s, mm_s = s.split(",", 1)
-    else:
-        hh_s, mm_s = s, "0"
+    sati = Konvertor.int(sati_s, 12)
+    minuti = Konvertor.int(minuti_s[0] if minuti_s else "0", 0)
 
-    sati = Konvertor.int(hh_s, 12)
-    minuti = Konvertor.int(mm_s, 0)
-
-    sati = 0 if sati == 24 else min(max(sati, 0), 23)
-    minuti = max(0, min(59, minuti))
+    sati = 0 if sati == 24 else max(0, min(sati, 23))
+    minuti = max(0, min(minuti, 59))
 
     return time(sati, minuti)
 
