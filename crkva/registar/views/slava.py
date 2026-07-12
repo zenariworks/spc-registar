@@ -22,19 +22,10 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
     """
     slava = get_object_or_404(Slava, uid=uid)
 
-    # Only priests with a parish can drive the territory filter (we filter
-    # households by the priest's parish), so omit parish-less priests (#27).
-    svestenici = list(
-        Svestenik.objects.filter(parohija__isnull=False)
-        .select_related("parohija")
-        .order_by("prezime", "ime")
-    )
     svestenik = resolve_svestenik(request)
     selected_id = (request.GET.get("svestenik") or "").strip()
     nema_parohije = svestenik is not None and not svestenik.parohija_id
 
-    # Households celebrating this slava, optionally narrowed to the selected
-    # priest's parish (territory resolved by parish, not by priest — #26).
     # За Васкрс списак крсне славе је увек празан; приказујемо домаћинства
     # означена за васкршњу водицу (једна страница уместо две — #325).
     je_vaskrs = slava.je_vaskrs
@@ -43,6 +34,26 @@ def slava_domacinstva(request: HttpRequest, uid: int) -> HttpResponse:
         if je_vaskrs
         else Domacinstvo.objects.filter(slava=slava)
     )
+
+    # Понуди у избору само свештенике чија парохија заиста има домаћинстава у
+    # овом приказу — свештеник без домаћинстава дао би празан списак, па га не
+    # нудимо. Само свештеници са парохијом воде територијални филтер (#27);
+    # територија се додељује преко `Adresa.svestenik.parohija` (#26, #325).
+    parohije_sa_domacinstvima = set(
+        base_qs.filter(adresa__svestenik__parohija__isnull=False)
+        .values_list("adresa__svestenik__parohija_id", flat=True)
+        .distinct()
+    )
+    svestenici = [
+        s
+        for s in Svestenik.objects.filter(parohija__isnull=False)
+        .select_related("parohija")
+        .order_by("prezime", "ime")
+        if s.parohija_id in parohije_sa_domacinstvima
+    ]
+
+    # Households celebrating this slava, optionally narrowed to the selected
+    # priest's parish (territory resolved by parish, not by priest — #26).
     domacinstva = list(
         by_parish_filter(
             base_qs.select_related("domacin", "adresa").prefetch_related(
