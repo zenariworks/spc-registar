@@ -58,8 +58,8 @@ def fiksni_postovi(godina: int) -> frozenset[dt.date]:
     # Део у следећој години (1.1 - 6.1)
     postni_dani.update(_opseg_datuma(dt.date(godina, 1, 1), dt.date(godina, 1, 6)))
 
-    # Успенски пост (Dormition fast): 1-14. август
-    postni_dani.update(_opseg_datuma(dt.date(godina, 8, 1), dt.date(godina, 8, 14)))
+    # Успенски пост (Dormition fast): 14-27. август (грегоријански)
+    postni_dani.update(_opseg_datuma(dt.date(godina, 8, 14), dt.date(godina, 8, 27)))
 
     # Крстовдан: 18. јануар (појединачни дан)
     postni_dani.add(dt.date(godina, 1, 18))
@@ -246,8 +246,8 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
     if datum in great_lent:
         vaskrs = Slava.calc_vaskrs(godina)
 
-        # Проверa за Благовести (25. март) у Великом посту
-        if datum.month == 3 and datum.day == 25:
+        # Проверa за Благовести (7. април) у Великом посту
+        if datum.month == 4 and datum.day == 7:
             return {
                 "je_post": True,
                 "type": "риба",
@@ -352,10 +352,10 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
             "description": "Пост без уља и рибе",
         }
 
-    # Успенски пост (Dormition Fast) - 1-14. август
-    if datum.month == 8 and 1 <= datum.day <= 14:
-        # Преображење (6. август) - риба
-        if datum.day == 6:
+    # Успенски пост (Dormition Fast) - 14-27. август (грегоријански)
+    if datum.month == 8 and 14 <= datum.day <= 27:
+        # Преображење (19. август) - риба
+        if datum.day == 19:
             return {
                 "je_post": True,
                 "type": "риба",

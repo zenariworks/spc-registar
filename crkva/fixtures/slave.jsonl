@@ -4,7 +4,7 @@
 {"naziv": "Света великомученица Анастасија", "opsti_naziv": "Оци", "dan": 4, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети Наум охридски", "opsti_naziv": "", "dan": 5, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Света преподобномученица Евгенија", "opsti_naziv": "Бадњи дан", "dan": 6, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
-{"naziv": "Рождество Христово", "opsti_naziv": "Божић", "dan": 7, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
+{"naziv": "Рождество Христово", "opsti_naziv": "Божић", "dan": 7, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": true}
 {"naziv": "Сабор Пресвете Богородице", "opsti_naziv": "", "dan": 8, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети првомученик и архиЂакон Стефан", "opsti_naziv": "", "dan": 9, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Светих 20 000 мученика Никодијских", "opsti_naziv": "", "dan": 10, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
@@ -16,7 +16,7 @@
 {"naziv": "Свети пророк Малахија", "opsti_naziv": "", "dan": 16, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Сабор 70 светих апостола", "opsti_naziv": "", "dan": 17, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети Теопемт и Теона", "opsti_naziv": "Крстовдан", "dan": 18, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
-{"naziv": "Богојављање", "opsti_naziv": "", "dan": 19, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
+{"naziv": "Богојављање", "opsti_naziv": "", "dan": 19, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": true}
 {"naziv": "Сабор светог Јована Крститеља", "opsti_naziv": "Јовањдан", "dan": 20, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Преподобни Георгије Хозевит", "opsti_naziv": "", "dan": 21, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети мученик Полиевкт", "opsti_naziv": "", "dan": 22, "mesec": 1, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
@@ -123,7 +123,7 @@
 {"naziv": "Преподобни Теодор", "opsti_naziv": "", "dan": 3, "mesec": 5, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети свештеномученик Јануарије", "opsti_naziv": "", "dan": 4, "mesec": 5, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Преподобни Теодор Сикеот", "opsti_naziv": "", "dan": 5, "mesec": 5, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
-{"naziv": "Свети великомученик Георгије", "opsti_naziv": "ЂурЂевдан", "dan": 6, "mesec": 5, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
+{"naziv": "Свети великомученик Георгије", "opsti_naziv": "ЂурЂевдан", "dan": 6, "mesec": 5, "pokretni": false, "offset_dani": null, "crveno_slovo": true}
 {"naziv": "Свети Сава Стратилат", "opsti_naziv": "", "dan": 7, "mesec": 5, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети апостол и јеванЂелист Марко", "opsti_naziv": "Марковдан", "dan": 8, "mesec": 5, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети свештеномученик Василије Амасијски", "opsti_naziv": "", "dan": 9, "mesec": 5, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
@@ -237,7 +237,7 @@
 {"naziv": "Свети мученици Фотије, Аникита и други с њима", "opsti_naziv": "", "dan": 25, "mesec": 8, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети мученик Иполит (Оданије Преображења)", "opsti_naziv": "", "dan": 26, "mesec": 8, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети пророк Михеј (Претпразништво Успенија)", "opsti_naziv": "", "dan": 27, "mesec": 8, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
-{"naziv": "Успење Пресвете Богородице", "opsti_naziv": "", "dan": 28, "mesec": 8, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
+{"naziv": "Успење Пресвете Богородице", "opsti_naziv": "", "dan": 28, "mesec": 8, "pokretni": false, "offset_dani": null, "crveno_slovo": true}
 {"naziv": "Свети Јевспатије, преподобни Роман, Рафаило Банатски", "opsti_naziv": "", "dan": 29, "mesec": 8, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети мученици Мирон и Патрокло", "opsti_naziv": "", "dan": 30, "mesec": 8, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети мученик Флор, преподобни Јован Рилски", "opsti_naziv": "", "dan": 31, "mesec": 8, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
@@ -261,7 +261,7 @@
 {"naziv": "Свети пророк Захарија и праведна Јелисавета", "opsti_naziv": "", "dan": 18, "mesec": 9, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Чудо светог архангела Мијаила, свети мученик Евдоксије", "opsti_naziv": "", "dan": 19, "mesec": 9, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свети мученик Созонт (Претпразништво рождества Пресвете Богородице)", "opsti_naziv": "", "dan": 20, "mesec": 9, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
-{"naziv": "РоЂење Пресвете Богородице", "opsti_naziv": "Мала Госпојина", "dan": 21, "mesec": 9, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
+{"naziv": "РоЂење Пресвете Богородице", "opsti_naziv": "Мала Госпојина", "dan": 21, "mesec": 9, "pokretni": false, "offset_dani": null, "crveno_slovo": true}
 {"naziv": "Свети праведни Јоаким и Ана", "opsti_naziv": "", "dan": 22, "mesec": 9, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Свете мученице Минодора, Митродора и Нимфодора", "opsti_naziv": "", "dan": 23, "mesec": 9, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
 {"naziv": "Преподобна Теодора, преподобни Сергије и Герман", "opsti_naziv": "", "dan": 24, "mesec": 9, "pokretni": false, "offset_dani": null, "crveno_slovo": false}
