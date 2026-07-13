@@ -189,12 +189,12 @@ class FixedFastingTestCase(TestCase):
         self.assertNotIn(dt.date(2026, 1, 7), fasting)
 
     def test_dormition_fast(self):
-        """Успенски пост: 1-14. август."""
+        """Успенски пост: 14-27. август (грегоријански)."""
         fasting = fiksni_postovi(2026)
-        self.assertIn(dt.date(2026, 8, 1), fasting)
         self.assertIn(dt.date(2026, 8, 14), fasting)
-        self.assertNotIn(dt.date(2026, 7, 31), fasting)
-        self.assertNotIn(dt.date(2026, 8, 15), fasting)
+        self.assertIn(dt.date(2026, 8, 27), fasting)
+        self.assertNotIn(dt.date(2026, 8, 13), fasting)
+        self.assertNotIn(dt.date(2026, 8, 28), fasting)
 
     def test_krstovdan(self):
         """Крстовдан: 18. јануар."""
@@ -272,9 +272,9 @@ class GetFastingTypeTestCase(TestCase):
         self.assertEqual(result["type"], "уље")
 
     def test_annunciation_in_lent_fish(self):
-        """Благовести (25. март) у Великом посту: риба."""
+        """Благовести (7. април) у Великом посту: риба."""
         # Благовести 2026 пада у Велики пост (Васкрс је 12. април)
-        result = tip_posta(dt.date(2026, 3, 25))
+        result = tip_posta(dt.date(2026, 4, 7))
         self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "риба")
 
@@ -314,8 +314,8 @@ class GetFastingTypeTestCase(TestCase):
         self.assertFalse(result["je_post"])
 
     def test_dormition_transfiguration_fish(self):
-        """Преображење (6. август) у Успенском посту: риба."""
-        result = tip_posta(dt.date(2026, 8, 6))
+        """Преображење (19. август) у Успенском посту: риба."""
+        result = tip_posta(dt.date(2026, 8, 19))
         self.assertTrue(result["je_post"])
         self.assertEqual(result["type"], "риба")
 
@@ -381,7 +381,7 @@ class IsFastingDayTestCase(TestCase):
 
     def test_dormition_fast_je_post(self):
         """Дан у Успенском посту је постни дан."""
-        self.assertTrue(je_post(dt.date(2026, 8, 5)))
+        self.assertTrue(je_post(dt.date(2026, 8, 18)))
 
 
 class FastingCacheTests(TestCase):
