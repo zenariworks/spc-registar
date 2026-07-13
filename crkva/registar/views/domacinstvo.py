@@ -4,34 +4,29 @@
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render
 from django.views.generic import DetailView, ListView
 from registar.forms import DomacinstvoForm
 from registar.forms.domacinstvo import UkucaninFormSet
 from registar.models import Domacinstvo, Svestenik
+from registar.views.base import EditChromeMixin, RegistarCreateView, RegistarUpdateView
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from registar.views.spiskovi import grupisi_po_ulici, razdvoji_zive_i_preminule
 from registar.views.territory import by_parish_filter, resolve_svestenik
-from tenants.permissions import tenant_role_required
 
 
-@tenant_role_required("domacinstvo")
-def unos_domacinstva(request):
-    """Обрађује захтев за додавање новог домаћинства."""
-    if request.method == "POST":
-        form = DomacinstvoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("domacinstva")
-    else:
-        form = DomacinstvoForm()
-    return render(
-        request,
-        "registar/domacinstvo.html",
-        {"form": form, "is_edit": True, "domacinstvo": None},
-    )
+class DomacinstvoCreate(RegistarCreateView):
+    """Унос новог домаћинства (без inline формсета)."""
+
+    form_class = DomacinstvoForm
+    template_name = "registar/domacinstvo.html"
+    context_object_name = "domacinstvo"
+    role = "domacinstvo"
+    success_url_name = "domacinstva"
+
+
+unos_domacinstva = DomacinstvoCreate.as_view()
 
 
 class SpisakDomacinsta(
@@ -114,40 +109,45 @@ class PrikazDomacinstva(LoginRequiredMixin, DetailView):
         return context
 
 
-@tenant_role_required("domacinstvo")
-def izmena_domacinstva(request, uid):
-    """Измена постојеће инстанце."""
-    instance = get_object_or_404(Domacinstvo, uid=uid)
-    if request.method == "POST":
-        form = DomacinstvoForm(request.POST, instance=instance)
-        # The Ukucanin formset is only bound when the management form is
-        # actually present in the POST (the formset is rendered only in
-        # edit-mode of the inline edit toggle).
+class DomacinstvoUpdate(EditChromeMixin, RegistarUpdateView):
+    """Измена домаћинства са inline формсетом укућана.
+
+    Формсет се везује из POST-а само када је његов management form
+    заиста присутан (рендерује се тек у edit-моду inline toggle-а),
+    исто као стари FBV.
+    """
+
+    model = Domacinstvo
+    form_class = DomacinstvoForm
+    template_name = "registar/domacinstvo.html"
+    context_object_name = "domacinstvo"
+    role = "domacinstvo"
+    detail_url_name = "domacinstvo_detail"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.setdefault("ukucanin_formset", UkucaninFormSet(instance=self.object))
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
         has_formset = "ukucani-TOTAL_FORMS" in request.POST
         if has_formset:
-            ukucanin_formset = UkucaninFormSet(request.POST, instance=instance)
+            formset = UkucaninFormSet(request.POST, instance=self.object)
         else:
-            ukucanin_formset = UkucaninFormSet(instance=instance)
-        if form.is_valid() and (not has_formset or ukucanin_formset.is_valid()):
+            formset = UkucaninFormSet(instance=self.object)
+        if form.is_valid() and (not has_formset or formset.is_valid()):
             form.save()
             if has_formset:
-                ukucanin_formset.save()
-            return redirect("domacinstvo_detail", uid=instance.uid)
-    else:
-        form = DomacinstvoForm(instance=instance)
-        ukucanin_formset = UkucaninFormSet(instance=instance)
-    return render(
-        request,
-        "registar/domacinstvo.html",
-        {
-            "form": form,
-            "ukucanin_formset": ukucanin_formset,
-            "title": "Измена",
-            "back_url": reverse("domacinstvo_detail", kwargs={"uid": instance.uid}),
-            "is_edit": True,
-            "domacinstvo": instance,
-        },
-    )
+                formset.save()
+            return HttpResponseRedirect(self.get_success_url())
+        return self.render_to_response(
+            self.get_context_data(form=form, ukucanin_formset=formset)
+        )
+
+
+izmena_domacinstva = DomacinstvoUpdate.as_view()
 
 
 @login_required

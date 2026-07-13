@@ -3,38 +3,32 @@
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
 from registar.forms import ParohijanForm
 from registar.models import Krstenje
 from registar.models.parohijan import Osoba
+from registar.views.base import (
+    EditChromeMixin,
+    ForceParohijanMixin,
+    RegistarCreateView,
+    RegistarUpdateView,
+)
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
-from tenants.permissions import tenant_role_required
 
 
-@tenant_role_required("osoba")
-def unos_parohijana(request):
-    """
-    Обрађује захтев за додавање новог парохијана. Ако је метод POST,
-    подаци се чувају у базу. У супротном, приказује се формулар за унос.
-    """
-    if request.method == "POST":
-        form = ParohijanForm(request.POST)
-        if form.is_valid():
-            obj = form.save(commit=False)
-            obj.parohijan = True
-            obj.save()
-            form.save_m2m()
-            return redirect("parohijani")
-    else:
-        form = ParohijanForm()
-    return render(
-        request,
-        "registar/parohijan.html",
-        {"form": form, "is_edit": True, "parohijan": None},
-    )
+class ParohijanCreate(ForceParohijanMixin, RegistarCreateView):
+    """Унос новог парохијана (принудно ``parohijan=True``)."""
+
+    form_class = ParohijanForm
+    template_name = "registar/parohijan.html"
+    context_object_name = "parohijan"
+    role = "osoba"
+    success_url_name = "parohijani"
+
+
+unos_parohijana = ParohijanCreate.as_view()
 
 
 class SpisakParohijana(
@@ -212,30 +206,16 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
         return context
 
 
-@tenant_role_required("osoba")
-def izmena_parohijana(request, uid):
-    """Измена постојеће инстанце."""
-    parohijan = get_object_or_404(Osoba, uid=uid)
-    if request.method == "POST":
-        form = ParohijanForm(request.POST, instance=parohijan)
-        if form.is_valid():
-            # Force parohijan=True on edit too — mirror unos_parohijana so
-            # editing a person via this view never silently drops the flag.
-            obj = form.save(commit=False)
-            obj.parohijan = True
-            obj.save()
-            form.save_m2m()
-            return redirect("parohijan_detail", uid=parohijan.uid)
-    else:
-        form = ParohijanForm(instance=parohijan)
-    return render(
-        request,
-        "registar/parohijan.html",
-        {
-            "form": form,
-            "title": "Измена",
-            "back_url": reverse("parohijan_detail", kwargs={"uid": parohijan.uid}),
-            "is_edit": True,
-            "parohijan": parohijan,
-        },
-    )
+class ParohijanUpdate(ForceParohijanMixin, EditChromeMixin, RegistarUpdateView):
+    """Измена парохијана. ``parohijan=True`` се намеће и при измени, да
+    уређивање особе кроз овај приказ никад тихо не обори заставицу."""
+
+    model = Osoba
+    form_class = ParohijanForm
+    template_name = "registar/parohijan.html"
+    context_object_name = "parohijan"
+    role = "osoba"
+    detail_url_name = "parohijan_detail"
+
+
+izmena_parohijana = ParohijanUpdate.as_view()

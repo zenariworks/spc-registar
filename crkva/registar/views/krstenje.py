@@ -3,11 +3,12 @@
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
 from registar.forms import KrstenjeForm
 from registar.models import Krstenje
 from registar.services.izdavalac import get_izdavalac
+from registar.views.base import RegistarCreateView, RegistarUpdateView
 from registar.views.calibrate import render_calibrate
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
@@ -23,24 +24,17 @@ KRSTENJE_RELATED = (
 )
 
 
-@tenant_role_required("krstenje")
-def unos_krstenja(request):
-    """
-    Обрађује захтеве за унос новог крштења. Ако је захтев POST,
-    чува податке у базу, иначе приказује формулар за унос.
-    """
-    if request.method == "POST":
-        form = KrstenjeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("krstenja")
-    else:
-        form = KrstenjeForm()
-    return render(
-        request,
-        "registar/krstenje.html",
-        {"form": form, "is_edit": True, "krstenje": None},
-    )
+class KrstenjeCreate(RegistarCreateView):
+    """Унос новог крштења."""
+
+    form_class = KrstenjeForm
+    template_name = "registar/krstenje.html"
+    context_object_name = "krstenje"
+    role = "krstenje"
+    success_url_name = "krstenja"
+
+
+unos_krstenja = KrstenjeCreate.as_view()
 
 
 class SpisakKrstenja(
@@ -116,23 +110,15 @@ def calibrate_krstenje(request):
     return render_calibrate(request, "krstenje")
 
 
-@tenant_role_required("krstenje")
-def izmena_krstenja(request, uid):
-    """Измена постојеће инстанце."""
-    instance = get_object_or_404(Krstenje, uid=uid)
-    if request.method == "POST":
-        form = KrstenjeForm(request.POST, instance=instance)
-        if form.is_valid():
-            form.save()
-            return redirect("krstenje_detail", uid=instance.uid)
-    else:
-        form = KrstenjeForm(instance=instance)
-    return render(
-        request,
-        "registar/krstenje.html",
-        {
-            "form": form,
-            "is_edit": True,
-            "krstenje": instance,
-        },
-    )
+class KrstenjeUpdate(RegistarUpdateView):
+    """Измена постојећег крштења."""
+
+    model = Krstenje
+    form_class = KrstenjeForm
+    template_name = "registar/krstenje.html"
+    context_object_name = "krstenje"
+    role = "krstenje"
+    detail_url_name = "krstenje_detail"
+
+
+izmena_krstenja = KrstenjeUpdate.as_view()

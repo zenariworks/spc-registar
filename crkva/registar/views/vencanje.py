@@ -3,11 +3,12 @@
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
 from registar.forms import VencanjeForm
 from registar.models.vencanje import Vencanje
 from registar.services.izdavalac import get_izdavalac
+from registar.views.base import RegistarCreateView, RegistarUpdateView
 from registar.views.calibrate import render_calibrate
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
@@ -102,21 +103,17 @@ class PrikazVencanja(LoginRequiredMixin, DetailView):
         return context
 
 
-@tenant_role_required("vencanje")
-def unos_vencanja(request):
-    """Обрада уноса новог венчања."""
-    if request.method == "POST":
-        form = VencanjeForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("vencanja")
-    else:
-        form = VencanjeForm()
-    return render(
-        request,
-        "registar/vencanje.html",
-        {"form": form, "is_edit": True, "vencanje": None},
-    )
+class VencanjeCreate(RegistarCreateView):
+    """Унос новог венчања."""
+
+    form_class = VencanjeForm
+    template_name = "registar/vencanje.html"
+    context_object_name = "vencanje"
+    role = "vencanje"
+    success_url_name = "vencanja"
+
+
+unos_vencanja = VencanjeCreate.as_view()
 
 
 @tenant_role_required("vencanje")
@@ -125,23 +122,15 @@ def calibrate_vencanje(request):
     return render_calibrate(request, "vencanje")
 
 
-@tenant_role_required("vencanje")
-def izmena_vencanja(request, uid):
-    """Измена постојеће инстанце."""
-    instance = get_object_or_404(Vencanje, uid=uid)
-    if request.method == "POST":
-        form = VencanjeForm(request.POST, instance=instance)
-        if form.is_valid():
-            form.save()
-            return redirect("vencanje_detail", uid=instance.uid)
-    else:
-        form = VencanjeForm(instance=instance)
-    return render(
-        request,
-        "registar/vencanje.html",
-        {
-            "form": form,
-            "is_edit": True,
-            "vencanje": instance,
-        },
-    )
+class VencanjeUpdate(RegistarUpdateView):
+    """Измена постојећег венчања."""
+
+    model = Vencanje
+    form_class = VencanjeForm
+    template_name = "registar/vencanje.html"
+    context_object_name = "vencanje"
+    role = "vencanje"
+    detail_url_name = "vencanje_detail"
+
+
+izmena_vencanja = VencanjeUpdate.as_view()
