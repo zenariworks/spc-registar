@@ -18,7 +18,7 @@ import zipfile
 from django.core.management.base import BaseCommand
 from django_tenants.utils import schema_context
 from registar.models import Adresa, Svestenik
-from registar.utils.preslovljavanje import Konvertor
+from registar.utils.preslovljavanje import preslovljavanje
 
 # Исто кодирање као `load_dbf` (dbfread encoding="cp1250"), да називи улица
 # овде декодирају идентично онима сачуваним у `Adresa.ulica` (#336). Стари
@@ -103,7 +103,7 @@ class Command(BaseCommand):
         by_street = {}  # norm -> {"naziv": str, "priests": set(rbrsv)}
         for u in ulice:
             rbrsv = u.get("UL_RBRSV") or 0
-            naziv = Konvertor.string(u.get("UL_NAZIV") or "")
+            naziv = preslovljavanje(u.get("UL_NAZIV") or "")
             if not (rbrsv and naziv):
                 continue
             entry = by_street.setdefault(

@@ -2,26 +2,27 @@
 Пресловљавање латиница ↔ ћирилица (српски) и DBF конвертори.
 
 Садржи:
-- ``latin_to_cyrillic`` / ``cyrillic_to_latin`` — стандардна транслитерација.
-- ``get_query_variants`` — варијанте упита за претрагу (латиница без
-  дијакритика се разграна у све смислене ћириличне облике).
-- ``Konvertor`` — помоћне статичке методе за миграцију из legacy DBF фајлова
-  (укључујући стару HramSP/YUSCII енкодирану латиницу).
-
-Дели заједничку мапу ``LATINICA_CIRILICA`` и листу дводелних слова ``DIGRAFI``
-између стандардне транслитерације и ``Konvertor.string``.
+- ``preslovljavanje(tekst, u="cir"|"lat")`` — транслитерација у оба смера.
+- ``get_query_variants`` — варијанте упита за претрагу (подршка за латиницу без дијакритика).
+- ``Konvertor`` — помоћне методе за миграцију из legacy DBF фајлова.
 """
+
+from __future__ import annotations
 
 import logging
 import re
 from datetime import date
+from functools import lru_cache
+from itertools import product
+from typing import Literal
 
 logger = logging.getLogger(__name__)
 
+# =============================================================================
+# Константе и мапе
+# =============================================================================
 
-# --- Заједничке мапе ---
-# Дводелна слова која важе за обе стране (стандардна и legacy латиница).
-DIGRAFI = [
+DIGRAFI = (
     ("DŽ", "Џ"),
     ("Dž", "Џ"),
     ("dž", "џ"),
@@ -31,14 +32,11 @@ DIGRAFI = [
     ("LJ", "Љ"),
     ("Lj", "Љ"),
     ("lj", "љ"),
-]
+)
 
-# Дводелна слова само за кориснички унос: тастатуре без đ куцају "dj", а
-# дијакритици се третирају као замене пре мапе појединачних слова.
-DIGRAFI_UNOS = DIGRAFI + [
+DIGRAFI_UNOS = DIGRAFI + (
     ("Đ", "Ђ"),
     ("đ", "ђ"),
-    # Честа замена кад је тастатура без đ: "dj" → "ђ"
     ("DJ", "Ђ"),
     ("Dj", "Ђ"),
     ("dj", "ђ"),
@@ -50,12 +48,10 @@ DIGRAFI_UNOS = DIGRAFI + [
     ("ć", "ћ"),
     ("Ž", "Ж"),
     ("ž", "ж"),
-]
+)
 
-# Канонско мапирање појединачних слова стандардне српске латинице у ћирилицу
-# (укључујући дијакритике). Не мапирамо Q/W/X/Y — нису део српске латинице
-# (у legacy HramSP енкодингу они имају засебно значење, види _HRAMSP_LEGACY).
-LATINICA_CIRILICA = {
+# Канонска мапа (латиница → ћирилица)
+LATINICA_CIRILICA: dict[str, str] = {
     "A": "А",
     "a": "а",
     "B": "Б",
@@ -112,93 +108,10 @@ LATINICA_CIRILICA = {
     "ć": "ћ",
 }
 
-
-# --- Транслитерација латинице ↔ ћирилице (српски) ---
-def latin_to_cyrillic(text: str) -> str:
-    """
-    Преводи српску латиницу у ћирилицу.
-
-    Подржани су диграфи/триграфи: dž/Dž/DŽ, nj/Nj/NJ, lj/Lj/LJ, као и слова са
-    дијакритицима: š/Š, č/Č, ć/Ć, ž/Ž, đ/Đ. Такође мапира основна латинична
-    слова на ћирилична еквивалентна (a→а, b→б, ... j→ј, c→ц, итд.).
-
-    Напомена: не покушавамо да преводимо енглеска слова попут "w", "y", "x"
-    јер нису део српске латинице – остављају се како јесу.
-    """
-    if not text:
-        return text
-
-    # Прво заменити сложене комбинације да се не разбију појединачним словима
-    out = text
-    for src, dst in DIGRAFI_UNOS:
-        out = out.replace(src, dst)
-
-    return "".join(LATINICA_CIRILICA.get(ch, ch) for ch in out)
-
-
-def preslovljavanje(text: str) -> str:
-    """
-    Преводи српску ћирилицу у латиницу, укључујући ђ/Ћ/Џ/Љ/Њ/Ш/Ч/Ћ/Ж.
-    """
-    if not text:
-        return text
-
-    # Мапирање појединачних ћириличних слова
-    single_map = {
-        "А": "A",
-        "а": "a",
-        "Б": "B",
-        "б": "b",
-        "В": "V",
-        "в": "v",
-        "Г": "G",
-        "г": "g",
-        "Д": "D",
-        "д": "d",
-        "Е": "E",
-        "е": "e",
-        "З": "Z",
-        "з": "z",
-        "И": "I",
-        "и": "i",
-        "Ј": "J",
-        "ј": "j",
-        "К": "K",
-        "к": "k",
-        "Л": "L",
-        "л": "l",
-        "М": "M",
-        "м": "m",
-        "Н": "N",
-        "н": "n",
-        "О": "O",
-        "о": "o",
-        "П": "P",
-        "п": "p",
-        "Р": "R",
-        "р": "r",
-        "С": "S",
-        "с": "s",
-        "Т": "T",
-        "т": "t",
-        "У": "U",
-        "у": "u",
-        "Ф": "F",
-        "ф": "f",
-        "Х": "H",
-        "х": "h",
-        "Ц": "C",
-        "ц": "c",
-        "Ш": "Š",
-        "ш": "š",
-        "Ч": "Č",
-        "ч": "č",
-        "Ћ": "Ć",
-        "ћ": "ć",
-        "Ж": "Ž",
-        "ж": "ž",
-        "Ђ": "Đ",
-        "ђ": "đ",
+# Инверзна мапа (ћирилица → латиница)
+CIRILICA_LATINICA: dict[str, str] = {cir: lat for lat, cir in LATINICA_CIRILICA.items()}
+CIRILICA_LATINICA.update(
+    {
         "Џ": "Dž",
         "џ": "dž",
         "Љ": "Lj",
@@ -206,114 +119,9 @@ def preslovljavanje(text: str) -> str:
         "Њ": "Nj",
         "њ": "nj",
     }
-    return "".join(single_map.get(ch, ch) for ch in text)
+)
 
-
-# --- Експанзија варијанти за латиницу без дијакритика ---
-# Корисници често куцају "kalicanin" уместо "kaličanin" / "Каличанин".
-# Када латиница нема дијакритике, једно слово (c, s, z, d) може стајати
-# за више ћириличних знакова. Овде генеришемо све смислене варијанте.
-
-_LATIN_AMBIGUOUS_LETTERS = {
-    "c": ["ц", "ч", "ћ"],
-    "C": ["Ц", "Ч", "Ћ"],
-    "s": ["с", "ш"],
-    "S": ["С", "Ш"],
-    "z": ["з", "ж"],
-    "Z": ["З", "Ж"],
-    "d": ["д", "ђ"],
-    "D": ["Д", "Ђ"],
-}
-
-_LATIN_SIMPLE_MAP = {
-    "A": "А",
-    "a": "а",
-    "B": "Б",
-    "b": "б",
-    "V": "В",
-    "v": "в",
-    "G": "Г",
-    "g": "г",
-    "E": "Е",
-    "e": "е",
-    "I": "И",
-    "i": "и",
-    "J": "Ј",
-    "j": "ј",
-    "K": "К",
-    "k": "к",
-    "L": "Л",
-    "l": "л",
-    "M": "М",
-    "m": "м",
-    "N": "Н",
-    "n": "н",
-    "O": "О",
-    "o": "о",
-    "P": "П",
-    "p": "п",
-    "R": "Р",
-    "r": "р",
-    "T": "Т",
-    "t": "т",
-    "U": "У",
-    "u": "у",
-    "F": "Ф",
-    "f": "ф",
-    "H": "Х",
-    "h": "х",
-}
-
-_LATIN_VARIANT_CAP = 64
-
-
-def _latin_to_cyrillic_variants(text: str) -> list[str]:
-    """Враћа све смислене ћириличне варијанте за латинични унос који може
-    бити без дијакритика. Дводелна слова (dž/nj/lj/đ/š/č/ć/ž) се прво
-    замењују, а онда се појединачна двосмислена слова (c, s, z, d)
-    разгранавају у све могуће ћириличне еквиваленте.
-    """
-    if not text:
-        return [text]
-    intermediate = text
-    for src, dst in DIGRAFI_UNOS:
-        intermediate = intermediate.replace(src, dst)
-
-    variants: list[str] = [""]
-    for ch in intermediate:
-        if ch in _LATIN_AMBIGUOUS_LETTERS:
-            variants = [
-                v + opt for v in variants for opt in _LATIN_AMBIGUOUS_LETTERS[ch]
-            ]
-        elif ch in _LATIN_SIMPLE_MAP:
-            mapped = _LATIN_SIMPLE_MAP[ch]
-            variants = [v + mapped for v in variants]
-        else:
-            variants = [v + ch for v in variants]
-        if len(variants) > _LATIN_VARIANT_CAP:
-            variants = variants[:_LATIN_VARIANT_CAP]
-            break
-    return variants
-
-
-def get_query_variants(text: str) -> list[str]:
-    """
-    Враћа јединствене варијанте упита за претрагу:
-    - оригинал
-    - све ћириличне варијанте за латиницу без дијакритика (c/s/z/d → ц,ч,ћ / с,ш / з,ж / д,ђ)
-    - ћирилица → латиница
-    """
-    if not text:
-        return []
-    variants = {text}
-    variants.update(_latin_to_cyrillic_variants(text))
-    variants.add(preslovljavanje(text))
-    return [v for v in variants if v]
-
-
-# --- Legacy HramSP/YUSCII енкодинг (само за миграцију из DBF фајлова) ---
-# У старом HramSP запису поједини латинични знакови и симболи представљају
-# ћирилична слова која иначе нису део стандардне латинице.
+# Legacy HramSP/YUSCII подршка (само за DBF миграцију)
 _HRAMSP_LEGACY = {
     "Q": "Љ",
     "q": "љ",
@@ -333,135 +141,160 @@ _HRAMSP_LEGACY = {
     "x": "џ",
 }
 
+_HRAMSP_MAPA = LATINICA_CIRILICA | _HRAMSP_LEGACY
+
+# =============================================================================
+# Варијанте за претрагу (латиница без дијакритика)
+# =============================================================================
+
+_LATIN_AMBIGUOUS = {
+    "c": ("ц", "ч", "ћ"),
+    "C": ("Ц", "Ч", "Ћ"),
+    "s": ("с", "ш"),
+    "S": ("С", "Ш"),
+    "z": ("з", "ж"),
+    "Z": ("З", "Ж"),
+    "d": ("д", "ђ"),
+    "D": ("Д", "Ђ"),
+}
+
+_LATIN_SIMPLE_MAP = {
+    lat: cir
+    for lat, cir in LATINICA_CIRILICA.items()
+    if lat.isascii() and lat not in _LATIN_AMBIGUOUS
+}
+
+
+# =============================================================================
+# Помоћне функције
+# =============================================================================
+
+
+def _make_translator(mapping: dict[str, str]) -> dict[int, str]:
+    """Креира str.translate табелу."""
+    return str.maketrans(mapping)
+
+
+_HRAMSP_PREVOD = _make_translator(_HRAMSP_MAPA)
+_CIR_TO_LAT_PREVOD = _make_translator(CIRILICA_LATINICA)
+
+
+def _preslovi(
+    text: str | None,
+    *,
+    digrafi: tuple[tuple[str, str], ...],
+    prevod: dict[int, str],
+) -> str:
+    """Језгро пресловљавања: прво диграфи, па појединачни карактери."""
+    if not text:
+        return ""
+
+    text = text.strip()
+    if not text:
+        return ""
+
+    for src, dst in digrafi:
+        text = text.replace(src, dst)
+
+    return text.translate(prevod)
+
+
+@lru_cache(maxsize=512)
+def preslovljavanje(text: str | None, u: Literal["cir", "lat"] = "cir") -> str:
+    """Пресловљава српски текст између латинице и ћирилице."""
+    if not text:
+        return ""
+
+    if u == "cir":
+        return _preslovi(text, digrafi=DIGRAFI_UNOS, prevod=_HRAMSP_PREVOD)
+    elif u == "lat":
+        return text.translate(_CIR_TO_LAT_PREVOD)
+    else:
+        raise ValueError(
+            f"nepoznat smer preslovljavanja: {u!r} (ocekivano 'cir'/'lat')"
+        )
+
+
+def _latin_to_cyrillic_variants(text: str) -> list[str]:
+    """Генерише све разумне ћириличне варијанте за латиницу без дијакритика."""
+    if not text:
+        return [""]
+
+    # Замени диграфе
+    intermediate = text
+    for src, dst in DIGRAFI_UNOS:
+        intermediate = intermediate.replace(src, dst)
+
+    # Генериши варијанте помоћу product (много читљивије од ручног loop-а)
+    parts = []
+    for ch in intermediate:
+        if ch in _LATIN_AMBIGUOUS:
+            parts.append(_LATIN_AMBIGUOUS[ch])
+        elif ch in _LATIN_SIMPLE_MAP:
+            parts.append((_LATIN_SIMPLE_MAP[ch],))
+        else:
+            parts.append((ch,))
+
+    # Ограничимо експлозију
+    variants = ["".join(combo) for combo in product(*parts)][:64]
+    return variants
+
+
+def get_query_variants(tekst: str) -> list[str]:
+    """Враћа јединствене варијанте за претрагу (оригинал + ћирилица + латиница)."""
+    if not tekst:
+        return []
+
+    variante = {tekst}
+    variante.update(_latin_to_cyrillic_variants(tekst))
+    variante.add(preslovljavanje(tekst, u="lat"))
+
+    return sorted(v for v in variante if v)  # sorted за детерминистички редослед
+
+
+# =============================================================================
+# Konvertor — DBF миграција
+# =============================================================================
+
 
 class Konvertor:
-    """
-    Utility class for converting legacy DBF data to Django model formats.
-
-    Provides static methods for:
-    - Latin to Cyrillic string conversion (including legacy HramSP encoding)
-    - Safe integer conversion with defaults
-    - Date parsing with zero-component handling
-    - Full name splitting for Cyrillic names
-    """
+    """Помоћне методе за конверзију legacy DBF података."""
 
     @staticmethod
-    def int(value, default=0):
-        """
-        Safely converts a string to an integer.
-
-        Args:
-            value: The value to convert (string or None)
-            default: The default value to return if conversion fails (default: 0)
-
-        Returns:
-            int: The converted integer or the default value
-        """
-        if value is None:
+    def int(vrednost: str | int | None, default: int = 0) -> int:
+        """Безбедна конверзија у int."""
+        if vrednost is None:
             return default
-
         try:
-            return int(value)
+            return int(vrednost)
         except (ValueError, TypeError):
-            logger.warning(f"Warning: '{value}' cannot be converted to an integer.")
+            logger.warning("Неуспела конверзија у int: %r", vrednost)
             return default
 
     @staticmethod
-    def string(text):
-        """
-        Converts Serbian Latin text to Cyrillic, including legacy HramSP encoding.
-
-        Handles:
-        - Standard Serbian Latin characters (a-z, č, ć, š, ž, đ)
-        - Latin digraphs Lj/Nj/Dž (any case) → љ/њ/џ
-        - Legacy HramSP special encoding (q→љ, w→њ, ]→Ћ, }→ћ, \\→Ђ, |→ђ, x→џ)
-        - Already Cyrillic text (passes through unchanged)
-
-        Дели ``LATINICA_CIRILICA`` са ``latin_to_cyrillic``; поврх ње наноси
-        legacy HramSP знакове. За разлику од ``latin_to_cyrillic``, НЕ третира
-        "dj" као ђ — у DBF запису ђ долази као ``\\``/``|``.
-
-        Args:
-            text (str): The text to convert
-
-        Returns:
-            str: Converted Cyrillic text or empty string
-        """
-        if not text:
-            return ""
-
-        text = text.strip()
-        if not text:
-            return ""
-
-        for latinica, cirilica in DIGRAFI:
-            text = text.replace(latinica, cirilica)
-
-        mapa = {**LATINICA_CIRILICA, **_HRAMSP_LEGACY}
-        return "".join(mapa.get(char, char) for char in text)
+    def datum(g: int | None, m: int | None, d: int | None) -> date:
+        """Креира датум, замењујући 0 вредности из DBF-ова."""
+        godina = g or 1900
+        mesec = m or 1
+        dan = d or 1
+        return date(godina, mesec, dan)
 
     @staticmethod
-    def date(y, m, d):
-        """
-        Create a date from year/month/day components, replacing zeros with default values.
-
-        Legacy DBF files often have zero values for missing date components.
-        This method replaces them with safe defaults:
-        - year=0 → 1900
-        - month=0 → 1
-        - day=0 → 1
-
-        Args:
-            y: Year (int or None)
-            m: Month (int or None)
-            d: Day (int or None)
-
-        Returns:
-            date: A valid date object with zero components replaced
-        """
-        # Handle None values by treating them as zeros
-        year = y if y is not None else 0
-        month = m if m is not None else 0
-        day = d if d is not None else 0
-
-        # Replace zero components with defaults
-        if year == 0:
-            year = 1900
-        if month == 0:
-            month = 1
-        if day == 0:
-            day = 1
-
-        return date(year, month, day)
-
-    @staticmethod
-    def split_name(full_name):
-        """
-        Split a full Cyrillic name into first and last name.
-
-        Handles two patterns:
-        1. Space-separated: "Петар Петровић" → ("Петар", "Петровић")
-        2. CamelCase Cyrillic (no space): "СлавицаЋуковић" → ("Славица", "Ћуковић")
-
-        Args:
-            full_name (str): The full name to split
-
-        Returns:
-            tuple: (first_name, last_name) or (None, None) if splitting fails
-        """
-        if not full_name or not (full_name := full_name.strip()):
+    def split_name(puno_ime: str | None) -> tuple[str | None, str | None]:
+        """Раздваја име и презиме (подршка за размак и CamelCase ћирилицу)."""
+        if not puno_ime or not (puno_ime := puno_ime.strip()):
             return None, None
 
-        # 1. Standard split by space
-        if " " in full_name:
-            first, last = full_name.split(maxsplit=1)
-            return first, last
+        # 1. Обичан размак
+        if " " in puno_ime:
+            first, *rest = puno_ime.split()
+            return first, " ".join(rest)
 
-        # 2. Split by uppercase Cyrillic letter in the middle (CamelCase)
+        # 2. CamelCase (нпр. СлавицаЋуковић)
         if match := re.match(
-            r"^([А-ЯЂЈЉЊЋЏа-яђјљњћџ]+?)([А-ЯЂЈЉЊЋЏ][а-яђјљњћџ]+)$", full_name
+            r"^([А-ЯЂЈЉЊЋЏ][а-яђјљњћџ]*?)([А-ЯЂЈЉЊЋЏ][а-яђјљњћџ]*)$",
+            puno_ime,
         ):
             return match.group(1), match.group(2)
 
-        # Can't split - return None, None
         return None, None

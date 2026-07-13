@@ -6,7 +6,7 @@ import re
 from datetime import date, time
 from typing import Any
 
-from registar.utils.preslovljavanje import Konvertor
+from registar.utils.preslovljavanje import Konvertor, preslovljavanje
 
 # =============================================================================
 # Маркери девојачког презимена
@@ -151,7 +151,7 @@ def cirilica(tekst: str | None) -> str:
     """Convert from YUSCII/latin and strip whitespace."""
     if tekst is None:
         return ""
-    return Konvertor.string(tekst).strip()
+    return preslovljavanje(tekst).strip()
 
 
 def cirilica_int(vrednost: Any, podrazumevano: int = 0) -> int:

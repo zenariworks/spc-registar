@@ -15,7 +15,7 @@ from __future__ import annotations
 from django import forms
 from django.core.exceptions import ValidationError
 from django_select2.forms import ModelSelect2Widget
-from registar.utils.tekst import normalize_naziv
+from registar.utils.tekst import normalizuj
 
 
 class PendingLookup:
@@ -43,7 +43,7 @@ def get_or_create_lookup(model, label: str, field: str = "naziv"):
     дупликати не подигну ``MultipleObjectsReturned``; нормализује назив пре
     поређења/уписа (#252).
     """
-    label = normalize_naziv(label)
+    label = normalizuj(label)
     obj = model.objects.filter(**{f"{field}__iexact": label}).first()
     if obj is None:
         obj = model.objects.create(**{field: label})
@@ -112,7 +112,7 @@ class TaggableLookupField(forms.ModelChoiceField):
             ValidationError,
             self.queryset.model.DoesNotExist,
         ):
-            label = normalize_naziv(str(value))
+            label = normalizuj(str(value))
             if not label:
                 return None
             return PendingLookup(label)

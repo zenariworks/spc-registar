@@ -6,89 +6,89 @@ Tests the Konvertor class used in data migration from legacy DBF files.
 from datetime import date
 
 from django.test import SimpleTestCase
-from registar.utils.preslovljavanje import Konvertor
+from registar.utils.preslovljavanje import Konvertor, preslovljavanje
 
 
 class TestKonvertor(SimpleTestCase):
     """Test suite for the Konvertor utility class."""
 
-    # ===== Konvertor.string() tests =====
+    # ===== preslovljavanje() tests =====
 
     def test_string_latin_to_cyrillic_simple(self):
         """Latin 'Beograd' converts to Cyrillic 'Београд'."""
-        self.assertEqual(Konvertor.string("Beograd"), "Београд")
+        self.assertEqual(preslovljavanje("Beograd"), "Београд")
 
     def test_string_latin_to_cyrillic_uppercase(self):
         """Uppercase Latin 'BEOGRAD' converts to uppercase Cyrillic 'БЕОГРАД'."""
-        self.assertEqual(Konvertor.string("BEOGRAD"), "БЕОГРАД")
+        self.assertEqual(preslovljavanje("BEOGRAD"), "БЕОГРАД")
 
     def test_string_special_serbian_chars_cacak(self):
         """Special Serbian Latin 'Čačak' converts to 'Чачак'."""
-        self.assertEqual(Konvertor.string("Čačak"), "Чачак")
+        self.assertEqual(preslovljavanje("Čačak"), "Чачак")
 
     def test_string_special_serbian_chars_sabac(self):
         """Special Serbian Latin 'Šabac' converts to 'Шабац'."""
-        self.assertEqual(Konvertor.string("Šabac"), "Шабац")
+        self.assertEqual(preslovljavanje("Šabac"), "Шабац")
 
     def test_string_special_serbian_chars_zabalj(self):
         """Serbian Latin 'Žabalj' converts to 'Жабаљ' (lj is one digraph, #339)."""
-        self.assertEqual(Konvertor.string("Žabalj"), "Жабаљ")
+        self.assertEqual(preslovljavanje("Žabalj"), "Жабаљ")
 
     def test_string_cirilica_cd_letters(self):
         """Ć/ć and Đ/đ transliterate to Ћ/ћ and Ђ/ђ (#339)."""
-        self.assertEqual(Konvertor.string("Ćuković"), "Ћуковић")
-        self.assertEqual(Konvertor.string("Đorđe"), "Ђорђе")
-        self.assertEqual(Konvertor.string("ćup"), "ћуп")
-        self.assertEqual(Konvertor.string("među"), "међу")
+        self.assertEqual(preslovljavanje("Ćuković"), "Ћуковић")
+        self.assertEqual(preslovljavanje("Đorđe"), "Ђорђе")
+        self.assertEqual(preslovljavanje("ćup"), "ћуп")
+        self.assertEqual(preslovljavanje("među"), "међу")
 
     def test_string_digraphs_lj_nj_dz(self):
         """Latin digraphs Lj/Nj/Dž (any case) map to single љ/њ/џ (#339)."""
-        self.assertEqual(Konvertor.string("Ljubomir"), "Љубомир")
-        self.assertEqual(Konvertor.string("konj"), "коњ")
-        self.assertEqual(Konvertor.string("Njegoš"), "Његош")
-        self.assertEqual(Konvertor.string("džak"), "џак")
-        self.assertEqual(Konvertor.string("NJEGOŠ"), "ЊЕГОШ")
-        self.assertEqual(Konvertor.string("LJUBA"), "ЉУБА")
+        self.assertEqual(preslovljavanje("Ljubomir"), "Љубомир")
+        self.assertEqual(preslovljavanje("konj"), "коњ")
+        self.assertEqual(preslovljavanje("Njegoš"), "Његош")
+        self.assertEqual(preslovljavanje("džak"), "џак")
+        self.assertEqual(preslovljavanje("NJEGOŠ"), "ЊЕГОШ")
+        self.assertEqual(preslovljavanje("LJUBA"), "ЉУБА")
 
     def test_string_legacy_hramsp_encoding_q(self):
         """Legacy HramSP encoding 'q' converts to 'љ'."""
-        self.assertEqual(Konvertor.string("q"), "љ")
+        self.assertEqual(preslovljavanje("q"), "љ")
 
     def test_string_legacy_hramsp_encoding_w(self):
         """Legacy HramSP encoding 'w' converts to 'њ'."""
-        self.assertEqual(Konvertor.string("w"), "њ")
+        self.assertEqual(preslovljavanje("w"), "њ")
 
     def test_string_legacy_hramsp_encoding_bracket(self):
         """Legacy HramSP encoding ']' converts to 'Ћ'."""
-        self.assertEqual(Konvertor.string("]"), "Ћ")
+        self.assertEqual(preslovljavanje("]"), "Ћ")
 
     def test_string_legacy_hramsp_encoding_brace(self):
         """Legacy HramSP encoding '}' converts to 'ћ'."""
-        self.assertEqual(Konvertor.string("}"), "ћ")
+        self.assertEqual(preslovljavanje("}"), "ћ")
 
     def test_string_legacy_hramsp_encoding_backslash(self):
         """Legacy HramSP encoding '\\' converts to 'Ђ'."""
-        self.assertEqual(Konvertor.string("\\"), "Ђ")
+        self.assertEqual(preslovljavanje("\\"), "Ђ")
 
     def test_string_legacy_hramsp_encoding_pipe(self):
         """Legacy HramSP encoding '|' converts to 'ђ'."""
-        self.assertEqual(Konvertor.string("|"), "ђ")
+        self.assertEqual(preslovljavanje("|"), "ђ")
 
     def test_string_legacy_hramsp_encoding_x(self):
         """Legacy HramSP encoding 'x' converts to 'џ'."""
-        self.assertEqual(Konvertor.string("x"), "џ")
+        self.assertEqual(preslovljavanje("x"), "џ")
 
     def test_string_empty_returns_empty(self):
         """Empty string returns empty string."""
-        self.assertEqual(Konvertor.string(""), "")
+        self.assertEqual(preslovljavanje(""), "")
 
     def test_string_whitespace_only_returns_empty(self):
         """Whitespace-only string returns empty string."""
-        self.assertEqual(Konvertor.string("   "), "")
+        self.assertEqual(preslovljavanje("   "), "")
 
     def test_string_already_cyrillic_unchanged(self):
         """Already-Cyrillic text passes through unchanged."""
-        self.assertEqual(Konvertor.string("Београд"), "Београд")
+        self.assertEqual(preslovljavanje("Београд"), "Београд")
 
     # ===== Konvertor.int() tests =====
 
@@ -120,27 +120,27 @@ class TestKonvertor(SimpleTestCase):
 
     def test_date_normal(self):
         """Normal date (2000, 3, 15) returns date(2000, 3, 15)."""
-        self.assertEqual(Konvertor.date(2000, 3, 15), date(2000, 3, 15))
+        self.assertEqual(Konvertor.datum(2000, 3, 15), date(2000, 3, 15))
 
     def test_date_zero_year(self):
         """Zero year (0, 3, 15) returns date(1900, 3, 15)."""
-        self.assertEqual(Konvertor.date(0, 3, 15), date(1900, 3, 15))
+        self.assertEqual(Konvertor.datum(0, 3, 15), date(1900, 3, 15))
 
     def test_date_zero_month(self):
         """Zero month (2000, 0, 15) returns date(2000, 1, 15)."""
-        self.assertEqual(Konvertor.date(2000, 0, 15), date(2000, 1, 15))
+        self.assertEqual(Konvertor.datum(2000, 0, 15), date(2000, 1, 15))
 
     def test_date_zero_day(self):
         """Zero day (2000, 3, 0) returns date(2000, 3, 1)."""
-        self.assertEqual(Konvertor.date(2000, 3, 0), date(2000, 3, 1))
+        self.assertEqual(Konvertor.datum(2000, 3, 0), date(2000, 3, 1))
 
     def test_date_all_zeros(self):
         """All zeros (0, 0, 0) returns date(1900, 1, 1)."""
-        self.assertEqual(Konvertor.date(0, 0, 0), date(1900, 1, 1))
+        self.assertEqual(Konvertor.datum(0, 0, 0), date(1900, 1, 1))
 
     def test_date_none_values(self):
         """None values return date(1900, 1, 1)."""
-        self.assertEqual(Konvertor.date(None, None, None), date(1900, 1, 1))
+        self.assertEqual(Konvertor.datum(None, None, None), date(1900, 1, 1))
 
     # ===== Konvertor.split_name() tests =====
 

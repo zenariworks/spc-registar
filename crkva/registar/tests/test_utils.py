@@ -1,118 +1,126 @@
 """
-Тестови за функције транслитерације и претраге у utils.py.
+Тестови за функције пресловљавања и претраге у registar.utils.
 """
 
 from django.test import TestCase
-from registar.utils import preslovljavanje, get_query_variants, latin_to_cyrillic
+from registar.utils import get_query_variants, preslovljavanje
 
 
 class LatinToCyrillicTestCase(TestCase):
-    """Тестови за конверзију латинице у ћирилицу."""
+    """Тестови за пресловљавање латинице у ћирилицу (u="cir")."""
 
     def test_simple_lowercase(self):
-        """Конверзија једноставних малих слова."""
-        self.assertEqual(latin_to_cyrillic("beograd"), "београд")
+        """Пресловљавање једноставних малих слова."""
+        self.assertEqual(preslovljavanje("beograd"), "београд")
 
     def test_simple_uppercase(self):
-        """Конверзија великих слова."""
-        self.assertEqual(latin_to_cyrillic("BEOGRAD"), "БЕОГРАД")
+        """Пресловљавање великих слова."""
+        self.assertEqual(preslovljavanje("BEOGRAD"), "БЕОГРАД")
 
     def test_mixed_case(self):
-        """Конверзија мешовитих великих и малих слова."""
-        self.assertEqual(latin_to_cyrillic("Beograd"), "Београд")
+        """Пресловљавање мешовитих великих и малих слова."""
+        self.assertEqual(preslovljavanje("Beograd"), "Београд")
 
     def test_digraphs_nj(self):
-        """Конверзија диграфа NJ/Nj/nj."""
-        self.assertEqual(latin_to_cyrillic("nj"), "њ")
-        self.assertEqual(latin_to_cyrillic("Nj"), "Њ")
-        self.assertEqual(latin_to_cyrillic("NJ"), "Њ")
-        self.assertEqual(latin_to_cyrillic("Njegoš"), "Његош")
+        """Пресловљавање диграфа NJ/Nj/nj."""
+        self.assertEqual(preslovljavanje("nj"), "њ")
+        self.assertEqual(preslovljavanje("Nj"), "Њ")
+        self.assertEqual(preslovljavanje("NJ"), "Њ")
+        self.assertEqual(preslovljavanje("Njegoš"), "Његош")
 
     def test_digraphs_lj(self):
-        """Конверзија диграфа LJ/Lj/lj."""
-        self.assertEqual(latin_to_cyrillic("lj"), "љ")
-        self.assertEqual(latin_to_cyrillic("Lj"), "Љ")
-        self.assertEqual(latin_to_cyrillic("LJ"), "Љ")
-        self.assertEqual(latin_to_cyrillic("Ljubljana"), "Љубљана")
+        """Пресловљавање диграфа LJ/Lj/lj."""
+        self.assertEqual(preslovljavanje("lj"), "љ")
+        self.assertEqual(preslovljavanje("Lj"), "Љ")
+        self.assertEqual(preslovljavanje("LJ"), "Љ")
+        self.assertEqual(preslovljavanje("Ljubljana"), "Љубљана")
 
     def test_digraphs_dz(self):
-        """Конверзија диграфа DŽ/Dž/dž."""
-        self.assertEqual(latin_to_cyrillic("dž"), "џ")
-        self.assertEqual(latin_to_cyrillic("Dž"), "Џ")
-        self.assertEqual(latin_to_cyrillic("DŽ"), "Џ")
+        """Пресловљавање диграфа DŽ/Dž/dž."""
+        self.assertEqual(preslovljavanje("dž"), "џ")
+        self.assertEqual(preslovljavanje("Dž"), "Џ")
+        self.assertEqual(preslovljavanje("DŽ"), "Џ")
 
     def test_diacritics(self):
-        """Конверзија слова са дијакритицима."""
-        self.assertEqual(latin_to_cyrillic("š"), "ш")
-        self.assertEqual(latin_to_cyrillic("č"), "ч")
-        self.assertEqual(latin_to_cyrillic("ć"), "ћ")
-        self.assertEqual(latin_to_cyrillic("ž"), "ж")
-        self.assertEqual(latin_to_cyrillic("đ"), "ђ")
+        """Пресловљавање слова са дијакритицима."""
+        self.assertEqual(preslovljavanje("š"), "ш")
+        self.assertEqual(preslovljavanje("č"), "ч")
+        self.assertEqual(preslovljavanje("ć"), "ћ")
+        self.assertEqual(preslovljavanje("ž"), "ж")
+        self.assertEqual(preslovljavanje("đ"), "ђ")
 
     def test_dj_alternative(self):
-        """Конверзија DJ као алтернативе за Đ."""
-        self.assertEqual(latin_to_cyrillic("dj"), "ђ")
-        self.assertEqual(latin_to_cyrillic("Dj"), "Ђ")
-        self.assertEqual(latin_to_cyrillic("Djordje"), "Ђорђе")
+        """Пресловљавање DJ као алтернативе за Đ."""
+        self.assertEqual(preslovljavanje("dj"), "ђ")
+        self.assertEqual(preslovljavanje("Dj"), "Ђ")
+        self.assertEqual(preslovljavanje("Djordje"), "Ђорђе")
 
     def test_full_name(self):
-        """Конверзија пуног имена."""
-        self.assertEqual(latin_to_cyrillic("Nikola Petrović"), "Никола Петровић")
-
-    def test_empty_string(self):
-        """Празан стринг остаје празан."""
-        self.assertEqual(latin_to_cyrillic(""), "")
-
-    def test_none_returns_none(self):
-        """None вредност остаје None."""
-        self.assertIsNone(latin_to_cyrillic(None))
-
-    def test_numbers_preserved(self):
-        """Бројеви остају непромењени."""
-        self.assertEqual(latin_to_cyrillic("2024"), "2024")
-
-    def test_mixed_with_numbers(self):
-        """Мешавина слова и бројева."""
-        self.assertEqual(latin_to_cyrillic("Beograd 2024"), "Београд 2024")
-
-
-class CyrillicToLatinTestCase(TestCase):
-    """Тестови за конверзију ћирилице у латиницу."""
-
-    def test_simple_lowercase(self):
-        """Конверзија једноставних малих слова."""
-        self.assertEqual(preslovljavanje("београд"), "beograd")
-
-    def test_simple_uppercase(self):
-        """Конверзија великих слова."""
-        self.assertEqual(preslovljavanje("БЕОГРАД"), "BEOGRAD")
-
-    def test_mixed_case(self):
-        """Конверзија мешовитих великих и малих слова."""
-        self.assertEqual(preslovljavanje("Београд"), "Beograd")
-
-    def test_special_letters(self):
-        """Конверзија посебних ћириличних слова."""
-        self.assertEqual(preslovljavanje("њ"), "nj")
-        self.assertEqual(preslovljavanje("љ"), "lj")
-        self.assertEqual(preslovljavanje("џ"), "dž")
-        self.assertEqual(preslovljavanje("ш"), "š")
-        self.assertEqual(preslovljavanje("ч"), "č")
-        self.assertEqual(preslovljavanje("ћ"), "ć")
-        self.assertEqual(preslovljavanje("ж"), "ž")
-        self.assertEqual(preslovljavanje("ђ"), "đ")
-
-    def test_full_name(self):
-        """Конверзија пуног имена."""
-        self.assertEqual(preslovljavanje("Никола Петровић"), "Nikola Petrović")
+        """Пресловљавање пуног имена."""
+        self.assertEqual(preslovljavanje("Nikola Petrović"), "Никола Петровић")
 
     def test_empty_string(self):
         """Празан стринг остаје празан."""
         self.assertEqual(preslovljavanje(""), "")
 
-    def test_none_returns_none(self):
-        """None вредност остаје None."""
-        self.assertIsNone(preslovljavanje(None))
+    def test_none_returns_empty(self):
+        """None вредност се враћа као "" (миграција очекује стринг)."""
+        self.assertEqual(preslovljavanje(None), "")
+
+    def test_numbers_preserved(self):
+        """Бројеви остају непромењени."""
+        self.assertEqual(preslovljavanje("2024"), "2024")
+
+    def test_mixed_with_numbers(self):
+        """Мешавина слова и бројева."""
+        self.assertEqual(preslovljavanje("Beograd 2024"), "Београд 2024")
+
+
+class CyrillicToLatinTestCase(TestCase):
+    """Тестови за пресловљавање ћирилице у латиницу (u="lat")."""
+
+    def test_simple_lowercase(self):
+        """Пресловљавање једноставних малих слова."""
+        self.assertEqual(preslovljavanje("београд", u="lat"), "beograd")
+
+    def test_simple_uppercase(self):
+        """Пресловљавање великих слова."""
+        self.assertEqual(preslovljavanje("БЕОГРАД", u="lat"), "BEOGRAD")
+
+    def test_mixed_case(self):
+        """Пресловљавање мешовитих великих и малих слова."""
+        self.assertEqual(preslovljavanje("Београд", u="lat"), "Beograd")
+
+    def test_special_letters(self):
+        """Пресловљавање посебних ћириличних слова."""
+        self.assertEqual(preslovljavanje("њ", u="lat"), "nj")
+        self.assertEqual(preslovljavanje("љ", u="lat"), "lj")
+        self.assertEqual(preslovljavanje("џ", u="lat"), "dž")
+        self.assertEqual(preslovljavanje("ш", u="lat"), "š")
+        self.assertEqual(preslovljavanje("ч", u="lat"), "č")
+        self.assertEqual(preslovljavanje("ћ", u="lat"), "ć")
+        self.assertEqual(preslovljavanje("ж", u="lat"), "ž")
+        self.assertEqual(preslovljavanje("ђ", u="lat"), "đ")
+
+    def test_full_name(self):
+        """Пресловљавање пуног имена."""
+        self.assertEqual(preslovljavanje("Никола Петровић", u="lat"), "Nikola Petrović")
+
+    def test_empty_string(self):
+        """Празан стринг остаје празан."""
+        self.assertEqual(preslovljavanje("", u="lat"), "")
+
+    def test_none_returns_empty(self):
+        """None вредност се враћа као ""."""
+        self.assertEqual(preslovljavanje(None, u="lat"), "")
+
+
+class NepoznatSmerTestCase(TestCase):
+    """Непознат смер подиже ValueError."""
+
+    def test_invalid_direction_raises(self):
+        with self.assertRaises(ValueError):
+            preslovljavanje("beograd", u="xx")
 
 
 class GetQueryVariantsTestCase(TestCase):
@@ -151,25 +159,25 @@ class GetQueryVariantsTestCase(TestCase):
 
 
 class RoundTripConversionTestCase(TestCase):
-    """Тестови за кружну конверзију латиница → ћирилица → латиница."""
+    """Тестови за кружно пресловљавање латиница → ћирилица → латиница."""
 
     def test_roundtrip_simple(self):
-        """Кружна конверзија једноставног текста."""
+        """Кружно пресловљавање једноставног текста."""
         original = "Beograd"
-        cyrillic = latin_to_cyrillic(original)
-        back_to_latin = preslovljavanje(cyrillic)
+        cyrillic = preslovljavanje(original)
+        back_to_latin = preslovljavanje(cyrillic, u="lat")
         self.assertEqual(back_to_latin, original)
 
     def test_roundtrip_with_diacritics(self):
-        """Кружна конверзија текста са дијакритицима."""
+        """Кружно пресловљавање текста са дијакритицима."""
         original = "Petrović"
-        cyrillic = latin_to_cyrillic(original)
-        back_to_latin = preslovljavanje(cyrillic)
+        cyrillic = preslovljavanje(original)
+        back_to_latin = preslovljavanje(cyrillic, u="lat")
         self.assertEqual(back_to_latin, original)
 
     def test_roundtrip_cyrillic_start(self):
-        """Кружна конверзија почевши од ћирилице."""
+        """Кружно пресловљавање почевши од ћирилице."""
         original = "Петровић"
-        latin = preslovljavanje(original)
-        back_to_cyrillic = latin_to_cyrillic(latin)
+        latin = preslovljavanje(original, u="lat")
+        back_to_cyrillic = preslovljavanje(latin)
         self.assertEqual(back_to_cyrillic, original)

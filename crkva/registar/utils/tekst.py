@@ -7,11 +7,11 @@ import re
 _WS_RE = re.compile(r"\s+")
 
 
-def normalize_naziv(value: str | None) -> str:
+def normalizuj(tekst: str | None) -> str:
     """Скрати водеће/пратеће размаке и сведи унутрашње на један размак.
 
     Користи се да lookup називи (Занимање/Вероисповест/Народност) буду
     конзистентни, па case-insensitive ограничење јединствености не пропусти
     дупликате типа „лекар“ / „Лекар “ (#252).
     """
-    return _WS_RE.sub(" ", (value or "").strip())
+    return _WS_RE.sub(" ", (tekst or "").strip())
