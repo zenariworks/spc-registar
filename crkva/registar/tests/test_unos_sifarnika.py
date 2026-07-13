@@ -1,8 +1,8 @@
 """#340: unos_sifarnika сеје равне шифарнике data-driven из fixtures.
 
 Спојене команде unos_narodnosti/veroispovesti/zanimanja/eparhija у једну
-data-driven петљу (CSV за просте листе, JSONL за eparhije); unos_slava
-(покретни празници) остаје засебно.
+data-driven петљу (све из JSONL fixtures); unos_slava (покретни празници)
+остаје засебно.
 """
 
 # pylint: disable=missing-function-docstring,missing-class-docstring,protected-access
