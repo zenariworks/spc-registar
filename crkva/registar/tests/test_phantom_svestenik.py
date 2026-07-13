@@ -1,8 +1,10 @@
-"""#340: увоз крштења не сме да прави фантомског свештеника за uid=0.
+"""#340: увоз крштења не сме да прави фантомског свештеника.
 
 ``migracija_krstenja`` је радила ``get_or_create(uid=svestenik_id)`` за сваки
-ред — укључујући празне (``K_RBRSVE`` = 0), па су настајали празни
-``Svestenik`` редови (``__str__`` = „  ") који искачу у select2.
+ред, па су настајали празни ``Svestenik`` редови (``__str__`` = „  ") који
+искачу у select2 — не само за ``K_RBRSVE`` = 0 него за сваки непостојећи id.
+Сада се крштење везује само за већ увезеног свештеника (као ``vencanja``);
+непознат id остаје ``None``, никад не прави празан ред.
 """
 
 # pylint: disable=missing-function-docstring,missing-class-docstring
@@ -59,8 +61,17 @@ class PhantomSvestenikTests(TestCase):
         self.assertEqual(Svestenik.objects.count(), 0)
         self.assertIsNone(Krstenje.objects.get().svestenik_id)
 
-    def test_valid_uid_creates_svestenik(self):
+    def test_known_uid_links_existing_svestenik(self):
+        # Свештеник већ увезен (`svestenici` иде пре `krstenja`) → веза, без новог реда.
+        Svestenik.objects.create(uid=5, ime="Марко", prezime="Марковић", zvanje="јереј")
         _staging([_row(1, "Ана", "Петровић", 5)])
         call_command(MigracijaKrstenja(), stdout=StringIO())
-        self.assertEqual(Svestenik.objects.filter(uid=5).count(), 1)
+        self.assertEqual(Svestenik.objects.count(), 1)
         self.assertEqual(Krstenje.objects.get().svestenik.uid, 5)
+
+    def test_unknown_uid_does_not_create_svestenik(self):
+        # Непостојећи свештеник → крштење остаје без свештеника, нема празног реда.
+        _staging([_row(1, "Ана", "Петровић", 7)])
+        call_command(MigracijaKrstenja(), stdout=StringIO())
+        self.assertEqual(Svestenik.objects.count(), 0)
+        self.assertIsNone(Krstenje.objects.get().svestenik_id)

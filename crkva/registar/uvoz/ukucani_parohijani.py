@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import Dict, Iterable
 
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, connection
+from django.db import IntegrityError, connection, transaction
 from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
 from registar.utils.migracija.address import nadji_dodaj_adresu, warm_adresa_cache
 from registar.utils.migracija.helpers import cirilica, izdvoj_devojacko
@@ -177,69 +177,79 @@ class Command(MigrationCommand):
                 # catches the case where row #1 has signal A and rows #2 and
                 # #3 share signal B — without this loop #3 would be created
                 # fresh instead of merging into #2.
-                match = nadji_osobu(
-                    ime, prezime, adresa=adresa, tel_f=tel_f, tel_m=tel_m
-                )
-                if match is not None:
-                    osoba = match
-                    updates = {}
-                    if not osoba.parohijan:
-                        updates["parohijan"] = True
-                    if not osoba.adresa_id and adresa is not None:
-                        updates["adresa"] = adresa
-                    if not osoba.tel_fiksni and tel_f:
-                        updates["tel_fiksni"] = tel_f
-                    if not osoba.tel_mobilni and tel_m:
-                        updates["tel_mobilni"] = tel_m
-                    if not osoba.devojacko and devojacko:
-                        updates["devojacko"] = devojacko
-                    if not osoba.pol:
-                        inferred_pol = pol_prema_imenu(ime)
-                        if inferred_pol:
-                            updates["pol"] = inferred_pol
-                    if updates:
-                        Osoba.objects.filter(pk=osoba.pk).update(**updates)
-                        osoba.refresh_from_db()
-                else:
-                    osoba, p_created = Osoba.objects.get_or_create(
-                        uid=parohijan_uid,
+                with transaction.atomic():
+                    # Per-row atomic: ако упис домаћинства падне, поништи и
+                    # особу — ред не сме да остане напола направљен. Бројачи,
+                    # кеш и dbf-uid мапа се ажурирају ТЕК по успешном commit-у
+                    # (испод), да не показују на поништену особу (#340).
+                    match = nadji_osobu(
+                        ime, prezime, adresa=adresa, tel_f=tel_f, tel_m=tel_m
+                    )
+                    if match is not None:
+                        osoba = match
+                        p_created = False
+                        updates = {}
+                        if not osoba.parohijan:
+                            updates["parohijan"] = True
+                        if not osoba.adresa_id and adresa is not None:
+                            updates["adresa"] = adresa
+                        if not osoba.tel_fiksni and tel_f:
+                            updates["tel_fiksni"] = tel_f
+                        if not osoba.tel_mobilni and tel_m:
+                            updates["tel_mobilni"] = tel_m
+                        if not osoba.devojacko and devojacko:
+                            updates["devojacko"] = devojacko
+                        if not osoba.pol:
+                            inferred_pol = pol_prema_imenu(ime)
+                            if inferred_pol:
+                                updates["pol"] = inferred_pol
+                        if updates:
+                            Osoba.objects.filter(pk=osoba.pk).update(**updates)
+                            osoba.refresh_from_db()
+                    else:
+                        osoba, p_created = Osoba.objects.get_or_create(
+                            uid=parohijan_uid,
+                            defaults={
+                                "ime": ime,
+                                "prezime": prezime,
+                                "devojacko": devojacko or None,
+                                "parohijan": True,
+                                "adresa": adresa,
+                                "tel_fiksni": tel_f,
+                                "tel_mobilni": tel_m,
+                                "pol": pol_prema_imenu(ime),
+                            },
+                        )
+
+                    _, d_created = Domacinstvo.objects.get_or_create(
+                        domacin=osoba,
                         defaults={
-                            "ime": ime,
-                            "prezime": prezime,
-                            "devojacko": devojacko or None,
-                            "parohijan": True,
                             "adresa": adresa,
+                            "slava": slava,
                             "tel_fiksni": tel_f,
                             "tel_mobilni": tel_m,
-                            "pol": pol_prema_imenu(ime),
+                            # bool(): DOM_SLAVOD/DOM_USKVOD може бити NULL →
+                            # `x and ...` враћа None, а колоне су NOT NULL. Раније
+                            # је то рушило упис домаћинства (особа остане сирота);
+                            # сад експлицитно False (#340).
+                            "slavska_vodica": bool(
+                                slavska_vodica and slavska_vodica.strip() == "D"
+                            ),
+                            "vaskrsnja_vodica": bool(
+                                uskrsnja_vodica and uskrsnja_vodica.strip() == "D"
+                            ),
+                            "napomena": cirilica(napomena or ""),
                         },
                     )
-                    if p_created:
-                        dodato_parohijana += 1
-                    # Always cache the newly-created (or reused-by-uid) Osoba
-                    # so subsequent rows with the same name can match against
-                    # it via nadji_osobu. cache_osoba is idempotent
-                    # on pk so re-caching the same osoba is a no-op.
-                    cache_osoba(osoba)
 
-                # Track DBF UID -> canonical Osoba so the ukucani pass can resolve
-                # UK_RBRDOM even when we deduped onto an Osoba with a different uid.
+                # Пост-commit: кеширај особу (idempotent на pk) да наредни
+                # редови истог имена match-ују преко nadji_osobu, упиши
+                # dbf-uid -> canonical osoba (ukucani pass резолвује UK_RBRDOM),
+                # и увећај бројаче тек кад је ред стварно уписан.
+                if p_created:
+                    dodato_parohijana += 1
+                cache_osoba(osoba)
                 self._dbf_uid_to_osoba_uid[parohijan_uid] = osoba.uid
-
-                _, d_created = Domacinstvo.objects.get_or_create(
-                    domacin=osoba,
-                    defaults={
-                        "adresa": adresa,
-                        "slava": slava,
-                        "tel_fiksni": tel_f,
-                        "tel_mobilni": tel_m,
-                        "slavska_vodica": slavska_vodica
-                        and slavska_vodica.strip() == "D",
-                        "vaskrsnja_vodica": uskrsnja_vodica
-                        and uskrsnja_vodica.strip() == "D",
-                        "napomena": cirilica(napomena or ""),
-                    },
-                )
                 if d_created:
                     dodato_domacinstava += 1
 
