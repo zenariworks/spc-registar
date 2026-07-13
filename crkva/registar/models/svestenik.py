@@ -61,6 +61,10 @@ class Svestenik(TimeStampedModel):
         null=True,
         blank=True,
         related_name="svestenik",
+        # Cross-schema FK: User lives in the public schema; Postgres cannot
+        # enforce FK constraints across schemas in django-tenants, so we drop
+        # the DB-level constraint and keep only the Python-level relationship.
+        db_constraint=False,
         verbose_name="кориснички налог",
         help_text=(
             "Налог којим се свештеник пријављује; потпис у подножју "
