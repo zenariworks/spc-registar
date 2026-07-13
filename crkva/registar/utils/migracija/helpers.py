@@ -6,7 +6,7 @@ import re
 from datetime import date, time
 from typing import Any
 
-from registar.utils.konvertori import Konvertor
+from registar.utils.preslovljavanje import Konvertor
 
 # =============================================================================
 # Маркери девојачког презимена

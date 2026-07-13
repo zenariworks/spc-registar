@@ -6,7 +6,7 @@ Tests the Konvertor class used in data migration from legacy DBF files.
 from datetime import date
 
 from django.test import SimpleTestCase
-from registar.utils.konvertori import Konvertor
+from registar.utils.preslovljavanje import Konvertor
 
 
 class TestKonvertor(SimpleTestCase):

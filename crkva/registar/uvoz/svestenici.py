@@ -5,7 +5,7 @@ Migracija tabele svestenika iz PostgreSQL staging tabele 'hsp_svestenici' u tabe
 from django.db import connection
 from django.db.utils import IntegrityError
 from registar.models import Parohija, Svestenik
-from registar.utils.konvertori import Konvertor
+from registar.utils.preslovljavanje import Konvertor
 from registar.uvoz.osnovno import MigrationCommand
 
 
