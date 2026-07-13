@@ -275,6 +275,7 @@ class Command(MigrationCommand):
 
         self._vera.warm()
         self._narod.warm()
+        self._svestenici = {s.uid: s for s in Svestenik.objects.all()}
 
     def _fetch_records(self) -> Iterator[KrstenjeZapis]:
         """Stream records from the staging table."""
@@ -363,9 +364,11 @@ class Command(MigrationCommand):
             raise RecordSkipped(r.context, "недостаје име детета или презиме оца")
 
         hram = self._hram.get(r.hram_naziv) or self._hram.get("Непознат храм")
-        svestenik = None
-        if r.svestenik_id:
-            svestenik, _ = Svestenik.objects.get_or_create(uid=r.svestenik_id)
+        # Вежи само за већ увезеног свештеника (`svestenici`). Раније је
+        # get_or_create правио празан Svestenik (без имена → „  " у select2)
+        # кад свештеник није постојао; сада непознат свештеник остаје None,
+        # као у vencanja.py и у складу са skip-blank политиком увоза (#340).
+        svestenik = self._svestenici.get(r.svestenik_id) if r.svestenik_id else None
 
         otac_vera, otac_narod, majka_vera, majka_narod = (
             self._rasclani_vera_narod_parents(r)

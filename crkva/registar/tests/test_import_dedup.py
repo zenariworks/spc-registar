@@ -195,3 +195,29 @@ class ImporterSafetyCheckedDedup(TestCase):
             2,
             "row #2 + #3 share phone → should merge; row #1 stays separate",
         )
+
+    def test_null_vodica_creates_domacinstvo_not_orphan_osoba(self):
+        """NULL DOM_SLAVOD/DOM_USKVOD не сме да сруши упис домаћинства и
+        остави сироту особу без домаћинства (#340)."""
+        from django.db import connection
+        from registar.models import Domacinstvo
+        from registar.uvoz.ukucani_parohijani import Command
+
+        self._create_staging_table()
+        with connection.cursor() as cur:
+            cur.execute(
+                "INSERT INTO hsp_domacini VALUES "
+                "(77, 'Сирота Особа', NULL, '5', '', '', "
+                "'+38160000', NULL, NULL, NULL, NULL, '')"
+            )
+
+        cmd = Command()
+        cmd._dry_run = False
+        cmd.stdout = type("S", (), {"write": lambda self, *a, **k: None})()
+        cmd.ulice_cache = {}
+        cmd._create_parohijani_and_domacinstva()
+
+        osoba = Osoba.objects.get(ime="Сирота", prezime="Особа")
+        dom = Domacinstvo.objects.get(domacin=osoba)
+        self.assertFalse(dom.slavska_vodica)
+        self.assertFalse(dom.vaskrsnja_vodica)
