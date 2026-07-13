@@ -3,31 +3,26 @@
 """
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView, ListView
 from registar.forms import SvestenikForm
 from registar.models.svestenik import Svestenik
+from registar.views.base import EditChromeMixin, RegistarCreateView, RegistarUpdateView
 from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
 from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
-from tenants.permissions import tenant_role_required
 
 
-@tenant_role_required("svestenik")
-def unos_svestenika(request):
-    """Обрађује захтев за додавање новог свештеника."""
-    if request.method == "POST":
-        form = SvestenikForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("svestenici")
-    else:
-        form = SvestenikForm()
-    return render(
-        request,
-        "registar/svestenik.html",
-        {"form": form, "is_edit": True, "svestenik": None},
-    )
+class SvestenikCreate(RegistarCreateView):
+    """Унос новог свештеника."""
+
+    form_class = SvestenikForm
+    template_name = "registar/svestenik.html"
+    context_object_name = "svestenik"
+    role = "svestenik"
+    success_url_name = "svestenici"
+
+
+unos_svestenika = SvestenikCreate.as_view()
 
 
 class SpisakSvestenika(
@@ -93,25 +88,15 @@ class PrikazSvestenika(LoginRequiredMixin, DetailView):
         return context
 
 
-@tenant_role_required("svestenik")
-def izmena_svestenika(request, uid):
-    """Измена постојеће инстанце."""
-    instance = get_object_or_404(Svestenik, uid=uid)
-    if request.method == "POST":
-        form = SvestenikForm(request.POST, instance=instance)
-        if form.is_valid():
-            form.save()
-            return redirect("svestenik_detail", uid=instance.uid)
-    else:
-        form = SvestenikForm(instance=instance)
-    return render(
-        request,
-        "registar/svestenik.html",
-        {
-            "form": form,
-            "title": "Измена",
-            "back_url": reverse("svestenik_detail", kwargs={"uid": instance.uid}),
-            "is_edit": True,
-            "svestenik": instance,
-        },
-    )
+class SvestenikUpdate(EditChromeMixin, RegistarUpdateView):
+    """Измена постојећег свештеника."""
+
+    model = Svestenik
+    form_class = SvestenikForm
+    template_name = "registar/svestenik.html"
+    context_object_name = "svestenik"
+    role = "svestenik"
+    detail_url_name = "svestenik_detail"
+
+
+izmena_svestenika = SvestenikUpdate.as_view()
