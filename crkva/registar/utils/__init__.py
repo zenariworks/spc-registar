@@ -6,13 +6,10 @@ Utility modules for the registar app.
 """
 
 from kalendar.models.slava import MESECI  # noqa: F401
-from registar.utils.preslovljavanje import (  # noqa: F401
-    get_query_variants,
-    preslovljavanje,
-)
+from registar.utils.preslovljavanje import get_query_variants, preslovi  # noqa: F401
 
 __all__ = [
     "MESECI",
     "get_query_variants",
-    "preslovljavanje",
+    "preslovi",
 ]

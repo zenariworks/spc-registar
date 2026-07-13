@@ -5,7 +5,7 @@ Migracija tabele svestenika iz PostgreSQL staging tabele 'hsp_svestenici' u tabe
 from django.db import connection
 from django.db.utils import IntegrityError
 from registar.models import Parohija, Svestenik
-from registar.utils import preslovljavanje
+from registar.utils import preslovi
 from registar.uvoz.osnovno import MigrationCommand
 
 
@@ -61,11 +61,11 @@ class Command(MigrationCommand):
                 ime, prezime = (ime_prezime.strip().split(" ", 1) + [""])[:2]
                 svestenik = Svestenik(
                     uid=svestenik_id,
-                    ime=preslovljavanje(ime),
-                    prezime=preslovljavanje(prezime),
+                    ime=preslovi(ime),
+                    prezime=preslovi(prezime),
                     mesto_rodjenja="",
                     datum_rodjenja=datum_rodjenja if datum_rodjenja else None,
-                    zvanje=self._normalize_zvanje(preslovljavanje(zvanje)),
+                    zvanje=self._normalize_zvanje(preslovi(zvanje)),
                     parohija=parohija,
                 )
                 svestenik.save()

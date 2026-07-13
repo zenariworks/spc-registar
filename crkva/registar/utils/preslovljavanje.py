@@ -1,17 +1,14 @@
 """
-Пресловљавање латиница ↔ ћирилица (српски) и DBF конвертори.
+Пресловљавање латиница ↔ ћирилица (српски).
 
 Садржи:
-- ``preslovljavanje(tekst, u="cir"|"lat")`` — транслитерација у оба смера.
+- ``preslovi(tekst, u="cir"|"lat")`` — транслитерација у оба смера.
 - ``get_query_variants`` — варијанте упита за претрагу (подршка за латиницу без дијакритика).
-- ``Konvertor`` — помоћне методе за миграцију из legacy DBF фајлова.
 """
 
 from __future__ import annotations
 
 import logging
-import re
-from datetime import date
 from functools import lru_cache
 from itertools import product
 from typing import Literal
@@ -200,7 +197,7 @@ def _preslovi(
 
 
 @lru_cache(maxsize=512)
-def preslovljavanje(text: str | None, u: Literal["cir", "lat"] = "cir") -> str:
+def preslovi(text: str | None, u: Literal["cir", "lat"] = "cir") -> str:
     """Пресловљава српски текст између латинице и ћирилице."""
     if not text:
         return ""
@@ -215,29 +212,29 @@ def preslovljavanje(text: str | None, u: Literal["cir", "lat"] = "cir") -> str:
         )
 
 
-def _latin_to_cyrillic_variants(text: str) -> list[str]:
+def _latin_to_cyrillic_variants(tekst: str) -> list[str]:
     """Генерише све разумне ћириличне варијанте за латиницу без дијакритика."""
-    if not text:
+    if not tekst:
         return [""]
 
     # Замени диграфе
-    intermediate = text
+    intermediate = tekst
     for src, dst in DIGRAFI_UNOS:
         intermediate = intermediate.replace(src, dst)
 
     # Генериши варијанте помоћу product (много читљивије од ручног loop-а)
-    parts = []
+    delovi = []
     for ch in intermediate:
         if ch in _LATIN_AMBIGUOUS:
-            parts.append(_LATIN_AMBIGUOUS[ch])
+            delovi.append(_LATIN_AMBIGUOUS[ch])
         elif ch in _LATIN_SIMPLE_MAP:
-            parts.append((_LATIN_SIMPLE_MAP[ch],))
+            delovi.append((_LATIN_SIMPLE_MAP[ch],))
         else:
-            parts.append((ch,))
+            delovi.append((ch,))
 
     # Ограничимо експлозију
-    variants = ["".join(combo) for combo in product(*parts)][:64]
-    return variants
+    verzije = ["".join(kombo) for kombo in product(*delovi)][:64]
+    return verzije
 
 
 def get_query_variants(tekst: str) -> list[str]:
@@ -247,54 +244,6 @@ def get_query_variants(tekst: str) -> list[str]:
 
     variante = {tekst}
     variante.update(_latin_to_cyrillic_variants(tekst))
-    variante.add(preslovljavanje(tekst, u="lat"))
+    variante.add(preslovi(tekst, u="lat"))
 
-    return sorted(v for v in variante if v)  # sorted за детерминистички редослед
-
-
-# =============================================================================
-# Konvertor — DBF миграција
-# =============================================================================
-
-
-class Konvertor:
-    """Помоћне методе за конверзију legacy DBF података."""
-
-    @staticmethod
-    def int(vrednost: str | int | None, default: int = 0) -> int:
-        """Безбедна конверзија у int."""
-        if vrednost is None:
-            return default
-        try:
-            return int(vrednost)
-        except (ValueError, TypeError):
-            logger.warning("Неуспела конверзија у int: %r", vrednost)
-            return default
-
-    @staticmethod
-    def datum(g: int | None, m: int | None, d: int | None) -> date:
-        """Креира датум, замењујући 0 вредности из DBF-ова."""
-        godina = g or 1900
-        mesec = m or 1
-        dan = d or 1
-        return date(godina, mesec, dan)
-
-    @staticmethod
-    def split_name(puno_ime: str | None) -> tuple[str | None, str | None]:
-        """Раздваја име и презиме (подршка за размак и CamelCase ћирилицу)."""
-        if not puno_ime or not (puno_ime := puno_ime.strip()):
-            return None, None
-
-        # 1. Обичан размак
-        if " " in puno_ime:
-            first, *rest = puno_ime.split()
-            return first, " ".join(rest)
-
-        # 2. CamelCase (нпр. СлавицаЋуковић)
-        if match := re.match(
-            r"^([А-ЯЂЈЉЊЋЏ][а-яђјљњћџ]*?)([А-ЯЂЈЉЊЋЏ][а-яђјљњћџ]*)$",
-            puno_ime,
-        ):
-            return match.group(1), match.group(2)
-
-        return None, None
+    return sorted(v for v in variante if v)

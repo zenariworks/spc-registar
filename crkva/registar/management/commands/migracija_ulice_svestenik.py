@@ -2,12 +2,12 @@
 
 Стара база (`crkva.zip` → `HSPULICE.DBF`) чува за сваку улицу шифру свештеника
 (`UL_RBRSV`), а свештеничке шифре (`HSPSVEST.SV_RBR`) су при увозу сачуване као
-`Svestenik.uid`. Ова команда декодира називе улица (`Konvertor`), мапира
+`Svestenik.uid`. Ова команда декодира називе улица, мапира
 `UL_RBRSV → Svestenik` и поставља `Adresa.svestenik` за све адресе чија се улица
 поклапа — основа за извештај васкршње водице по улицама.
 
-    python manage.py migracija_ulice_svestenik --schema crkva_sv_petke_cukarica
-    python manage.py migracija_ulice_svestenik --schema crkva_sv_petke_cukarica --dry-run
+    python manage.py migracija ulice_svestenik --schema crkva_sv_petke_cukarica
+    python manage.py migracija ulice_svestenik --schema crkva_sv_petke_cukarica --dry-run
 """
 
 from __future__ import annotations
@@ -18,7 +18,7 @@ import zipfile
 from django.core.management.base import BaseCommand
 from django_tenants.utils import schema_context
 from registar.models import Adresa, Svestenik
-from registar.utils.preslovljavanje import preslovljavanje
+from registar.utils.preslovljavanje import preslovi
 
 # Исто кодирање као `load_dbf` (dbfread encoding="cp1250"), да називи улица
 # овде декодирају идентично онима сачуваним у `Adresa.ulica` (#336). Стари
@@ -100,19 +100,17 @@ class Command(BaseCommand):
         # Иста улица може имати више редова (стара база је неке улице делила
         # међу свештеницима по бројевима); такве сматрамо конфликтним и
         # прескачемо (додела по самом називу не може да их раздвоји).
-        by_street = {}  # norm -> {"naziv": str, "priests": set(rbrsv)}
+        po_ulici = {}  # norm -> {"naziv": str, "priests": set(rbrsv)}
         for u in ulice:
             rbrsv = u.get("UL_RBRSV") or 0
-            naziv = preslovljavanje(u.get("UL_NAZIV") or "")
+            naziv = preslovi(u.get("UL_NAZIV") or "")
             if not (rbrsv and naziv):
                 continue
-            entry = by_street.setdefault(
-                _norm(naziv), {"naziv": naziv, "priests": set()}
-            )
-            entry["priests"].add(rbrsv)
+            unos = po_ulici.setdefault(_norm(naziv), {"naziv": naziv, "priests": set()})
+            unos["priests"].add(rbrsv)
 
         self.stdout.write(
-            f"Улица са додељеним свештеником у старој бази: {len(by_street)}"
+            f"Улица са додељеним свештеником у старој бази: {len(po_ulici)}"
         )
 
         with schema_context(schema):
@@ -123,35 +121,35 @@ class Command(BaseCommand):
 
             svestenici = {s.uid: s for s in Svestenik.objects.all()}
 
-            assigned_addr = 0
-            matched_streets = 0
-            unmatched_streets = []
-            missing_priest = []
-            conflict_streets = []
+            dodeljena_adresa = 0
+            pronadjene_ulice = 0
+            nepronadjene_ulice = []
+            nepronadjeni_svestenici = []
+            konfliktne_ulice = []
 
-            for norm_key, entry in by_street.items():
-                naziv = entry["naziv"]
-                priest_ids = entry["priests"]
+            for norm_key, unos in po_ulici.items():
+                naziv = unos["naziv"]
+                priest_ids = unos["priests"]
                 if len(priest_ids) > 1:
                     # Улица подељена међу више свештеника — не можемо по називу.
-                    conflict_streets.append(naziv)
+                    konfliktne_ulice.append(naziv)
                     continue
                 rbrsv = next(iter(priest_ids))
                 svestenik = svestenici.get(rbrsv)
                 if svestenik is None:
-                    missing_priest.append((naziv, rbrsv))
+                    nepronadjeni_svestenici.append((naziv, rbrsv))
                     continue
                 adrese = adrese_by_ulica.get(norm_key, [])
                 if not adrese:
-                    unmatched_streets.append(naziv)
+                    nepronadjene_ulice.append(naziv)
                     continue
-                matched_streets += 1
+                pronadjene_ulice += 1
                 for a in adrese:
                     if a.svestenik_id != svestenik.uid:
                         a.svestenik = svestenik
                         if not dry:
                             a.save(update_fields=["svestenik"])
-                        assigned_addr += 1
+                        dodeljena_adresa += 1
                 self.stdout.write(
                     f"  {naziv} → {svestenik.ime} {svestenik.prezime} "
                     f"({len(adrese)} адр.)"
@@ -159,27 +157,27 @@ class Command(BaseCommand):
 
             self.stdout.write("")
             self.stdout.write(
-                f"{'[DRY-RUN] ' if dry else ''}Поклопљено улица: {matched_streets}; "
-                f"ажурирано адреса: {assigned_addr}"
+                f"{'[DRY-RUN] ' if dry else ''}Поклопљено улица: {pronadjene_ulice}; "
+                f"ажурирано адреса: {dodeljena_adresa}"
             )
-            if conflict_streets:
+            if konfliktne_ulice:
                 self.stdout.write(
                     self.style.WARNING(
-                        f"Подељене улице — прескочене, додела ручно ({len(conflict_streets)}): "
-                        + ", ".join(conflict_streets)
+                        f"Подељене улице — прескочене, додела ручно ({len(konfliktne_ulice)}): "
+                        + ", ".join(konfliktne_ulice)
                     )
                 )
-            if unmatched_streets:
+            if nepronadjene_ulice:
                 self.stdout.write(
                     self.style.WARNING(
-                        f"Неупарене улице ({len(unmatched_streets)}): "
-                        + ", ".join(unmatched_streets)
+                        f"Неупарене улице ({len(nepronadjene_ulice)}): "
+                        + ", ".join(nepronadjene_ulice)
                     )
                 )
-            if missing_priest:
+            if nepronadjeni_svestenici:
                 self.stdout.write(
                     self.style.WARNING(
-                        f"Без свештеника у новој бази ({len(missing_priest)}): "
-                        + ", ".join(f"{n}#{r}" for n, r in missing_priest)
+                        f"Без свештеника у новој бази ({len(nepronadjeni_svestenici)}): "
+                        + ", ".join(f"{n}#{r}" for n, r in nepronadjeni_svestenici)
                     )
                 )
