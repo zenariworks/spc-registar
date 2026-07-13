@@ -5,7 +5,7 @@ import uuid
 from django.db import models
 from django.db.models.functions import Lower
 from registar.models._naziv import NazivQuerySet
-from registar.utils.tekst import normalize_naziv
+from registar.utils.tekst import normalizuj
 
 
 class Veroispovest(models.Model):
@@ -24,7 +24,7 @@ class Veroispovest(models.Model):
         # Нормализуј назив да case-insensitive ограничење не пропусти
         # дупликате са вишком размака (#252).
         if self.naziv:
-            self.naziv = normalize_naziv(self.naziv)
+            self.naziv = normalizuj(self.naziv)
         super().save(*args, **kwargs)
 
     class Meta:

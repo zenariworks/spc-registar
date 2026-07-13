@@ -14,7 +14,7 @@ Narodnost/Zanimanje/Veroispovest нормализују `naziv` у `save()`, а�
 from __future__ import annotations
 
 from django.db import models
-from registar.utils.tekst import normalize_naziv
+from registar.utils.tekst import normalizuj
 
 
 class NazivQuerySet(models.QuerySet):
@@ -24,12 +24,12 @@ class NazivQuerySet(models.QuerySet):
         objs = list(objs)
         for obj in objs:
             if getattr(obj, "naziv", None):
-                obj.naziv = normalize_naziv(obj.naziv)
+                obj.naziv = normalizuj(obj.naziv)
         return super().bulk_create(objs, *args, **kwargs)
 
     def bulk_update(self, objs, fields, *args, **kwargs):
         if "naziv" in fields:
             for obj in objs:
                 if getattr(obj, "naziv", None):
-                    obj.naziv = normalize_naziv(obj.naziv)
+                    obj.naziv = normalizuj(obj.naziv)
         return super().bulk_update(objs, fields, *args, **kwargs)

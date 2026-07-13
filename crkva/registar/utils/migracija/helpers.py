@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 import re
 from datetime import date, time
 from typing import Any
 
-from registar.utils.konvertori import Konvertor
+from registar.utils.preslovljavanje import preslovi
+
+logger = logging.getLogger(__name__)
 
 # =============================================================================
 # Маркери девојачког презимена
@@ -126,6 +129,15 @@ def siguran_datum(
 _TIME_NUMERIC = re.compile(r"^\d+([.,]\d+)?$")
 
 
+def u_int(vrednost: object, podrazumevano: int = 0) -> int:
+    """Безбедна конверзија у int."""
+    try:
+        return int(vrednost)
+    except (TypeError, ValueError):
+        logger.warning("Неуспела конверзија у int: %r", vrednost)
+        return podrazumevano
+
+
 def rasclani_vreme(tekst: str | None) -> time | None:
     """Parse sloppy time strings: '14', '14.30', '14,30', '9'."""
     if not (tekst := (tekst or "").strip()) or not _TIME_NUMERIC.fullmatch(tekst):
@@ -133,8 +145,8 @@ def rasclani_vreme(tekst: str | None) -> time | None:
 
     sati_s, *minuti_s = tekst.replace(",", ".").split(".", 1)
 
-    sati = Konvertor.int(sati_s, 12)
-    minuti = Konvertor.int(minuti_s[0] if minuti_s else "0", 0)
+    sati = u_int(sati_s, 12)
+    minuti = u_int(minuti_s[0] if minuti_s else "0", 0)
 
     sati = 0 if sati == 24 else max(0, min(sati, 23))
     minuti = max(0, min(minuti, 59))
@@ -151,9 +163,9 @@ def cirilica(tekst: str | None) -> str:
     """Convert from YUSCII/latin and strip whitespace."""
     if tekst is None:
         return ""
-    return Konvertor.string(tekst).strip()
+    return preslovi(tekst).strip()
 
 
 def cirilica_int(vrednost: Any, podrazumevano: int = 0) -> int:
     """Safe integer conversion with fallback."""
-    return Konvertor.int(vrednost, podrazumevano)
+    return u_int(vrednost, podrazumevano)
