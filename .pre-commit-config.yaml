@@ -70,10 +70,10 @@ repos:
   - repo: local
     hooks:
       - id: django-tests
-        name: django tests
-        entry: python crkva/manage.py test registar.tests tenants.tests kalendar.tests --keepdb --parallel 1 --verbosity=1
+        name: django tests (affected)
+        entry: python scripts/affected_tests.py
         language: system
-        pass_filenames: false
+        pass_filenames: true
         files: '\.py$'
 
 
