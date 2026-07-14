@@ -19,7 +19,6 @@ django-simple-history==3.11.0
 django-tenants==3.10.1
 # Grouped management subcommands
 django-typer==3.7.3
-djangorestframework==3.15.2
 # WSGI Server (active in production)
 gunicorn==26.0.0
 phonenumbers==8.13.55
