@@ -113,8 +113,8 @@ if SECURE_SSL and not _RUNNING_TESTS:
 # tenant); TENANT_APPS get their own copy in each tenant's Postgres schema.
 SHARED_APPS = [
     "django_tenants",  # MUST be first
-    "tenants",  # Tenant + Domain + UserMembership
-    "kalendar",  # Slava (saint feast day) — canonical list, shared across tenants
+    "tenants",  # Parohija + Domen + Clanstvo
+    "kalendar",  # Slava (дани поста) — canonical list, shared across tenants
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -138,8 +138,8 @@ TENANT_APPS = [
 
 INSTALLED_APPS = list(SHARED_APPS) + [a for a in TENANT_APPS if a not in SHARED_APPS]
 
-TENANT_MODEL = "tenants.Tenant"
-TENANT_DOMAIN_MODEL = "tenants.Domain"
+TENANT_MODEL = "tenants.Zakupac"
+TENANT_DOMAIN_MODEL = "tenants.Domen"
 
 DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 

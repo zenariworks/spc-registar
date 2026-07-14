@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from registar.history import history_for
 from registar.models import Osoba, Svestenik
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -18,22 +18,22 @@ class HistoryHelperTests(TestCase):
         # In SQLite/Postgres tests, simple-history fires on save(); after a single
         # save there is one history record (no diff).
         o = Osoba.objects.create(ime="Тест", prezime="Један", pol="М")
-        entries = history_for(o)
-        self.assertEqual(len(entries), 1)
-        self.assertEqual(entries[0].record.history_type, "+")
-        self.assertEqual(entries[0].changes, [])
+        unosi = history_for(o)
+        self.assertEqual(len(unosi), 1)
+        self.assertEqual(unosi[0].record.history_type, "+")
+        self.assertEqual(unosi[0].changes, [])
 
     def test_returns_two_entries_after_update(self):
         o = Osoba.objects.create(ime="Тест", prezime="Два", pol="М")
         o.prezime = "Промењено"
         o.save()
-        entries = history_for(o)
-        self.assertEqual(len(entries), 2)
+        unosi = history_for(o)
+        self.assertEqual(len(unosi), 2)
         # newest first
-        self.assertEqual(entries[0].record.history_type, "~")
+        self.assertEqual(unosi[0].record.history_type, "~")
         # the update entry should diff against the create
-        field_names = [c.field for c in entries[0].changes]
-        self.assertIn("prezime", field_names)
+        polje = [c.polje for c in unosi[0].changes]
+        self.assertIn("prezime", polje)
 
     def test_returns_entries_for_svestenik_too(self):
         # PR 6 also added HistoricalRecords to Svestenik
@@ -43,7 +43,7 @@ class HistoryHelperTests(TestCase):
         entries = history_for(s)
         self.assertEqual(len(entries), 2)
         changes = entries[0].changes
-        self.assertTrue(any(c.field == "zvanje" for c in changes))
+        self.assertTrue(any(c.polje == "zvanje" for c in changes))
 
 
 class HistoryPanelTemplateTests(TestCase):
@@ -51,10 +51,10 @@ class HistoryPanelTemplateTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.viewer = User.objects.create_user(username="view", password="x")
-        UserMembership.objects.create(
-            user=cls.viewer, tenant=cls.tenant, role=Role.PREGLED
+        Clanstvo.objects.create(
+            korisnik=cls.viewer, parohija=cls.tenant, uloga=Uloga.PREGLED
         )
         cls.osoba = Osoba.objects.create(ime="Историја", prezime="Тест", pol="М")
         cls.osoba.prezime = "Тест2"

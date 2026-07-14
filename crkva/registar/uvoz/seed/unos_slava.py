@@ -34,8 +34,8 @@ class Command(BaseCommand):
                             "opsti_naziv": row.get("opsti_naziv", ""),
                             "dan": None,
                             "mesec": None,
-                            "offset_dani": row.get("offset_dani"),
-                            "offset_nedelje": 0,
+                            "pomak_dani": row.get("offset_dani"),
+                            "pomak_nedelje": 0,
                             "crveno_slovo": row.get("crveno_slovo", False),
                         },
                     )
@@ -49,8 +49,8 @@ class Command(BaseCommand):
                         defaults={
                             "opsti_naziv": row.get("opsti_naziv", ""),
                             "pokretni": False,
-                            "offset_dani": None,
-                            "offset_nedelje": None,
+                            "pomak_dani": None,
+                            "pomak_nedelje": None,
                             "crveno_slovo": row.get("crveno_slovo", False),
                         },
                     )

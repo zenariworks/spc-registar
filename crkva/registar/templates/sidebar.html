@@ -116,14 +116,14 @@
     </button>
 
     {% if is_parohija_admin %}
-    <a href="{% url 'parohija:user_list' %}" class="sidebar-action-btn {% if request.path == '/parohija/users/' or request.path|slice:':16' == '/parohija/users/' %}active{% endif %}" title="Корисници" aria-label="Корисници">
+    <a href="{% url 'parohija:korisnici' %}" class="sidebar-action-btn {% if request.path == '/parohija/users/' or request.path|slice:':16' == '/parohija/users/' %}active{% endif %}" title="Корисници" aria-label="Корисници">
       <i class="fa-solid fa-users-gear"></i>
       <span class="sidebar-text">Корисници</span>
     </a>
     {% endif %}
 
     {% if user.is_authenticated %}
-    <a href="{% url 'parohija:profile' %}" class="sidebar-action-btn {% if request.path == '/parohija/profile/' %}active{% endif %}" title="Профил" aria-label="Профил">
+    <a href="{% url 'parohija:profil' %}" class="sidebar-action-btn {% if request.path == '/parohija/profile/' %}active{% endif %}" title="Профил" aria-label="Профил">
       <i class="fa-solid fa-user"></i>
       <span class="sidebar-text">{{ user.username }}</span>
     </a>

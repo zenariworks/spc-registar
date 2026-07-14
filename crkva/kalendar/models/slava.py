@@ -62,14 +62,14 @@ class Slava(TimeStampedModel):
         help_text="Празник који се рачуна у односу на Васкрс",
     )
 
-    offset_dani = models.IntegerField(
+    pomak_dani = models.IntegerField(
         verbose_name="помак у данима",
         null=True,
         blank=True,
         help_text="Број дана у односу на Васкрс",
     )
 
-    offset_nedelje = models.IntegerField(
+    pomak_nedelje = models.IntegerField(
         verbose_name="помак у недељама",
         null=True,
         blank=True,
@@ -101,7 +101,7 @@ class Slava(TimeStampedModel):
     )
 
     @staticmethod
-    def calc_vaskrs(year):
+    def sracunaj_vaskrs(year):
         """Рачуна православни Васкрс за дату годину користећи Гаусов алгоритам."""
         a = year % 19
         b = year % 4
@@ -142,12 +142,12 @@ class Slava(TimeStampedModel):
     def get_datum(self, year):
         """Враћа датум славе за дату годину."""
         if self.pokretni:
-            vaskrs = self.calc_vaskrs(year)
+            vaskrs = self.sracunaj_vaskrs(year)
             offset = 0
-            if self.offset_dani:
-                offset += self.offset_dani
-            if self.offset_nedelje:
-                offset += self.offset_nedelje * 7
+            if self.pomak_dani:
+                offset += self.pomak_dani
+            if self.pomak_nedelje:
+                offset += self.pomak_nedelje * 7
             return vaskrs + timedelta(days=offset)
 
         if self.dan and self.mesec:
@@ -159,7 +159,7 @@ class Slava(TimeStampedModel):
         if not self.post:
             return None
 
-        vaskrs = self.calc_vaskrs(year)
+        vaskrs = self.sracunaj_vaskrs(year)
         start = None
         end = None
 
@@ -179,8 +179,8 @@ class Slava(TimeStampedModel):
         """
         return (
             self.pokretni
-            and not (self.offset_dani or 0)
-            and not (self.offset_nedelje or 0)
+            and not (self.pomak_dani or 0)
+            and not (self.pomak_nedelje or 0)
         )
 
     @classmethod

@@ -25,8 +25,8 @@ class VaskrsnjaVodicaTests(TestCase):
             naziv="Васкрсење Господа Исуса Христа",
             opsti_naziv="Васкрс",
             pokretni=True,
-            offset_dani=0,
-            offset_nedelje=0,
+            pomak_dani=0,
+            pomak_nedelje=0,
         )
 
         cls.p3 = Parohija.objects.create(naziv="3")

@@ -35,7 +35,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Hram, Krstenje, Osoba, Svestenik
 from registar.models.parohija import Parohija
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -62,10 +62,10 @@ class _BaseUnosKrstenjeAuditTest(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="audit-kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         # Reference data for FK widgets.
         cls.parohija = Parohija.objects.create(naziv="Тест парохија")
@@ -439,12 +439,14 @@ class Select2CacheBackendTests(TestCase):
         from django.core import signing
         from django.core.cache import cache as _cache
         from django_select2.conf import settings as s2_settings
-        from tenants.models import Role, Tenant, UserMembership
+        from tenants.models import Clanstvo, Uloga, Zakupac
 
         User_ = _gu()
-        tenant = Tenant.objects.get(schema_name="test_tenant")
+        tenant = Zakupac.objects.get(schema_name="test_tenant")
         clerk = User_.objects.create_user(username="cache-probe", password="x")
-        UserMembership.objects.create(user=clerk, tenant=tenant, role=Role.KANCELARIJA)
+        Clanstvo.objects.create(
+            korisnik=clerk, parohija=tenant, uloga=Uloga.KANCELARIJA
+        )
         c = Client()
         c.force_login(clerk)
         r = c.get(reverse("unos_krstenja"))

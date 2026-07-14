@@ -16,10 +16,10 @@ from kalendar.models.slava import Slava
 class CalcVaskrsTests(SimpleTestCase):
     def test_known_year_2024(self):
         # Православни Васкрс 2024 (грегоријански) = 5. мај.
-        self.assertEqual(Slava.calc_vaskrs(2024), datetime.date(2024, 5, 5))
+        self.assertEqual(Slava.sracunaj_vaskrs(2024), datetime.date(2024, 5, 5))
 
     def test_known_year_2023(self):
-        self.assertEqual(Slava.calc_vaskrs(2023), datetime.date(2023, 4, 16))
+        self.assertEqual(Slava.sracunaj_vaskrs(2023), datetime.date(2023, 4, 16))
 
 
 class GetDatumTests(SimpleTestCase):
@@ -29,11 +29,11 @@ class GetDatumTests(SimpleTestCase):
 
     def test_movable_feast_uses_offset(self):
         # Покретни празник 49 дана после Васкрса 2024 (5. мај).
-        s = Slava(naziv="X", opsti_naziv="X", pokretni=True, offset_dani=49)
+        s = Slava(naziv="X", opsti_naziv="X", pokretni=True, pomak_dani=49)
         self.assertEqual(s.get_datum(2024), datetime.date(2024, 6, 23))
 
     def test_movable_feast_weeks_offset(self):
-        s = Slava(naziv="X", opsti_naziv="X", pokretni=True, offset_nedelje=1)
+        s = Slava(naziv="X", opsti_naziv="X", pokretni=True, pomak_nedelje=1)
         self.assertEqual(s.get_datum(2024), datetime.date(2024, 5, 12))
 
     def test_no_date_returns_none(self):

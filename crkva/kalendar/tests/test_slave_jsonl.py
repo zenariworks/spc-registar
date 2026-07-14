@@ -143,13 +143,13 @@ class SlavaCalcTests(SimpleTestCase):
     """Дате покретних празника рачуна модел (offset од Васкрса)."""
 
     def test_pascha_offset_zero_equals_vaskrs(self):
-        s = Slava(naziv="Васкрс", pokretni=True, offset_dani=0, offset_nedelje=0)
-        self.assertEqual(s.get_datum(2025), Slava.calc_vaskrs(2025))
+        s = Slava(naziv="Васкрс", pokretni=True, pomak_dani=0, pomak_nedelje=0)
+        self.assertEqual(s.get_datum(2025), Slava.sracunaj_vaskrs(2025))
 
     def test_offset_shifts_from_vaskrs(self):
-        vaskrs = Slava.calc_vaskrs(2025)
+        vaskrs = Slava.sracunaj_vaskrs(2025)
         s = Slava(
-            naziv="Духовски уторак", pokretni=True, offset_dani=51, offset_nedelje=0
+            naziv="Духовски уторак", pokretni=True, pomak_dani=51, pomak_nedelje=0
         )
         self.assertEqual(s.get_datum(2025), vaskrs + datetime.timedelta(days=51))
 

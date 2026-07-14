@@ -12,7 +12,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from registar.forms.select2 import ParohijaSelect2Widget, SvestenikSelect2Widget
 from registar.models import Parohija, Svestenik
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -20,15 +20,15 @@ User = get_user_model()
 class BrziSvestenikParohijaTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         # Свештенички ресурс има ADMIN (и SVESTENSTVO); KANCELARIJA нема.
         cls.admin = User.objects.create_user(username="adm", password="x")
-        UserMembership.objects.create(
-            user=cls.admin, tenant=cls.tenant, role=Role.ADMIN
+        Clanstvo.objects.create(
+            korisnik=cls.admin, parohija=cls.tenant, uloga=Uloga.ADMIN
         )
         cls.clerk = User.objects.create_user(username="kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
 
     def setUp(self):

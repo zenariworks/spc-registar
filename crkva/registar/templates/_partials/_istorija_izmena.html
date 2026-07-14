@@ -36,10 +36,10 @@
               <ul class="history-entry__changes">
                 {% for change in entry.changes %}
                   <li>
-                    <strong>{{ change.field }}</strong>:
-                    <span class="history-entry__old">{{ change.old|default:"—"|truncatechars:60 }}</span>
+                    <strong>{{ change.polje }}</strong>:
+                    <span class="history-entry__old">{{ change.staro|default:"—"|truncatechars:60 }}</span>
                     →
-                    <span class="history-entry__new">{{ change.new|default:"—"|truncatechars:60 }}</span>
+                    <span class="history-entry__new">{{ change.novo|default:"—"|truncatechars:60 }}</span>
                   </li>
                 {% endfor %}
               </ul>

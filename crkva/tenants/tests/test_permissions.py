@@ -4,7 +4,7 @@
 
 from django.contrib.auth.models import AnonymousUser, User
 from django.test import RequestFactory, TestCase
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 from tenants.permissions import (
     DOMACINSTVO,
     KRSTENJE,
@@ -18,25 +18,25 @@ from tenants.permissions import (
 class CanEditTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.superuser = User.objects.create_superuser(
             username="root", password="x", email="root@test"
         )
         cls.admin = User.objects.create_user(username="adm", password="x")
-        UserMembership.objects.create(
-            user=cls.admin, tenant=cls.tenant, role=Role.ADMIN
+        Clanstvo.objects.create(
+            korisnik=cls.admin, parohija=cls.tenant, uloga=Uloga.ADMIN
         )
         cls.clerk = User.objects.create_user(username="kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         cls.priest = User.objects.create_user(username="svest", password="x")
-        UserMembership.objects.create(
-            user=cls.priest, tenant=cls.tenant, role=Role.SVESTENSTVO
+        Clanstvo.objects.create(
+            korisnik=cls.priest, parohija=cls.tenant, uloga=Uloga.SVESTENSTVO
         )
         cls.viewer = User.objects.create_user(username="view", password="x")
-        UserMembership.objects.create(
-            user=cls.viewer, tenant=cls.tenant, role=Role.PREGLED
+        Clanstvo.objects.create(
+            korisnik=cls.viewer, parohija=cls.tenant, uloga=Uloga.PREGLED
         )
         cls.stranger = User.objects.create_user(username="nope", password="x")
 
@@ -82,7 +82,7 @@ class CanEditTests(TestCase):
     def test_deactivated_membership_cannot_edit(self):
         # A clerk normally edits osoba; deactivating the membership revokes it
         # without touching the shared User account (#227).
-        m = UserMembership.objects.get(user=self.clerk, tenant=self.tenant)
+        m = Clanstvo.objects.get(korisnik=self.clerk, parohija=self.tenant)
         m.is_active = False
         m.save(update_fields=["is_active"])
         for resource in [OSOBA, DOMACINSTVO, KRSTENJE, VENCANJE]:
@@ -100,14 +100,14 @@ class GatedViewTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         cls.priest = User.objects.create_user(username="svest", password="x")
-        UserMembership.objects.create(
-            user=cls.priest, tenant=cls.tenant, role=Role.SVESTENSTVO
+        Clanstvo.objects.create(
+            korisnik=cls.priest, parohija=cls.tenant, uloga=Uloga.SVESTENSTVO
         )
 
     def test_clerk_can_open_parohijan_form(self):
@@ -146,10 +146,10 @@ class GatedViewTests(TestCase):
 class ContextProcessorTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
 
     def test_template_sees_can_edit_flags(self):
@@ -215,10 +215,10 @@ class MembershipPrimingTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="prime_kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
 
     def _membership_queries(self, fn):
@@ -239,7 +239,7 @@ class MembershipPrimingTests(TestCase):
         )
 
         user = User.objects.get(pk=self.clerk.pk)  # fresh instance
-        membership = UserMembership.objects.get(user=user, tenant=self.tenant)
+        membership = Clanstvo.objects.get(korisnik=user, parohija=self.tenant)
         prime_tenant_permissions(user, self.tenant, membership)
 
         q = self._membership_queries(

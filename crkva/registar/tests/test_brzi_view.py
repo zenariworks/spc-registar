@@ -11,7 +11,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Adresa, Hram
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -19,11 +19,11 @@ User = get_user_model()
 class BrziViewTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         # Канцеларија има права за osoba/domacinstvo/krstenje/vencanje.
         cls.user = User.objects.create_user(username="kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.user, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.user, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
 
     def setUp(self):

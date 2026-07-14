@@ -45,12 +45,12 @@ class SessionTenantMiddleware:
     def _resolve_tenant(request: HttpRequest):
         """Return ``(tenant, membership)``.
 
-        ``membership`` is the caller's active ``UserMembership`` in the resolved
+        ``membership`` is the caller's active ``Clanstvo`` in the resolved
         tenant when known (so callers can prime the permission cache), or
         ``None`` for superusers (no row needed), anonymous users, or when the
         user has no active membership in the resolved tenant.
         """
-        from tenants.models import Tenant, UserMembership
+        from tenants.models import Clanstvo, Zakupac
 
         user = getattr(request, "user", None)
         is_authenticated = user is not None and user.is_authenticated
@@ -62,8 +62,8 @@ class SessionTenantMiddleware:
             # never others, and never the shared User.is_active flag.
             if not is_authenticated:
                 return None
-            return UserMembership.objects.filter(
-                user=user, tenant=tenant, is_active=True
+            return Clanstvo.objects.filter(
+                korisnik=user, parohija=tenant, is_active=True
             ).first()
 
         session_tid = (
@@ -73,8 +73,8 @@ class SessionTenantMiddleware:
         )
         if session_tid:
             try:
-                tenant = Tenant.objects.get(pk=session_tid, is_active=True)
-            except Tenant.DoesNotExist:
+                tenant = Zakupac.objects.get(pk=session_tid, is_active=True)
+            except Zakupac.DoesNotExist:
                 request.session.pop(SESSION_TENANT_KEY, None)
             else:
                 # Superusers may enter any parish without a membership row.
@@ -87,22 +87,22 @@ class SessionTenantMiddleware:
 
         if is_authenticated:
             membership = (
-                UserMembership.objects.filter(
-                    user=user, tenant__is_active=True, is_active=True
+                Clanstvo.objects.filter(
+                    korisnik=user, parohija__is_active=True, is_active=True
                 )
-                .select_related("tenant")
+                .select_related("parohija")
                 .order_by("-is_default", "created_at")
                 .first()
             )
             if membership is not None:
-                request.session[SESSION_TENANT_KEY] = membership.tenant_id
-                return membership.tenant, membership
+                request.session[SESSION_TENANT_KEY] = membership.parohija_id
+                return membership.parohija, membership
 
         # Fallback: the default parish. An authenticated user reaching here has
         # no active membership anywhere, so (correctly) no permissions in it.
         try:
-            return Tenant.objects.get(is_default=True, is_active=True), None
-        except Tenant.DoesNotExist:
+            return Zakupac.objects.get(is_default=True, is_active=True), None
+        except Zakupac.DoesNotExist:
             return None, None
 
     @staticmethod

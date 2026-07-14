@@ -28,9 +28,9 @@ class FieldChange:
     ``__str__``; for everything else they are the raw scalar value.
     """
 
-    field: str
-    old: object
-    new: object
+    polje: str
+    staro: object
+    novo: object
 
 
 @dataclass(frozen=True)
@@ -104,7 +104,7 @@ def history_for(instance, limit: int = 20) -> list[HistoryEntry]:
             :limit
         ]
     )
-    entries: list[HistoryEntry] = []
+    unosi: list[HistoryEntry] = []
     for i, rec in enumerate(records):
         # diff_against(prev) gives ModelChange objects; oldest revision has no diff.
         prev = records[i + 1] if i + 1 < len(records) else None
@@ -114,9 +114,9 @@ def history_for(instance, limit: int = 20) -> list[HistoryEntry]:
                 delta = rec.diff_against(prev)
                 for c in delta.changes:
                     old, new = _resolve_change(model, c.field, c.old, c.new)
-                    changes.append(FieldChange(field=c.field, old=old, new=new))
+                    changes.append(FieldChange(polje=c.field, staro=old, novo=new))
             except Exception:  # pylint: disable=broad-except
                 # If models differ between revisions diff_against can raise; ignore.
                 changes = []
-        entries.append(HistoryEntry(record=rec, changes=changes))
-    return entries
+        unosi.append(HistoryEntry(record=rec, changes=changes))
+    return unosi

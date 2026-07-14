@@ -8,7 +8,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from registar.forms.lookup import PendingLookup, TaggableLookupField
 from registar.models import Narodnost, Osoba, Veroispovest, Zanimanje
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -16,10 +16,10 @@ User = get_user_model()
 class TaggableLookupTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.user = User.objects.create_user(username="kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.user, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.user, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         cls.existing_zanimanje = Zanimanje.objects.create(naziv="Учитељ")
 

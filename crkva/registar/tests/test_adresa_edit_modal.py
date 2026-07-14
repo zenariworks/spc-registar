@@ -14,7 +14,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Adresa, Domacinstvo, Osoba
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -22,14 +22,14 @@ User = get_user_model()
 class _BaseDomacinstvoMixin:
     @classmethod
     def _make_users_and_household(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="kanc-adr", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         cls.priest = User.objects.create_user(username="svest-adr", password="x")
-        UserMembership.objects.create(
-            user=cls.priest, tenant=cls.tenant, role=Role.SVESTENSTVO
+        Clanstvo.objects.create(
+            korisnik=cls.priest, parohija=cls.tenant, uloga=Uloga.SVESTENSTVO
         )
         cls.domacin = Osoba.objects.create(ime="Адр", prezime="Тест", pol="М")
         cls.adresa = Adresa.objects.create(

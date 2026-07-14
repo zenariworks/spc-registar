@@ -24,7 +24,7 @@ from kalendar.models import Slava
 from registar.forms import DomacinstvoForm
 from registar.forms.select2 import PublicSchemaModelSelect2Widget
 from registar.models import Domacinstvo, Osoba
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -43,10 +43,10 @@ class SlavaFilterQuerysetCrossSchemaTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="slavasel", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         with schema_context("public"):
             cls.slava_jovan = Slava.objects.create(naziv="Свети Јован", dan=20, mesec=1)
@@ -92,10 +92,10 @@ class SlavaSelect2AjaxEndpointTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="slavajson", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         cls.domacin = Osoba.objects.create(ime="Ђ", prezime="Тест", pol="М")
         cls.dom = Domacinstvo.objects.create(domacin=cls.domacin)

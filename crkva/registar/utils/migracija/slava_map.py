@@ -43,5 +43,5 @@ def resolve_slava(slava_uid, slava_model):
         return None
     offset = POKRETNE_SLAVE_OFFSET_BY_SIFRA.get(slava_uid)
     if offset is not None:
-        return slava_model.objects.filter(pokretni=True, offset_dani=offset).first()
+        return slava_model.objects.filter(pokretni=True, pomak_dani=offset).first()
     return slava_model.objects.filter(uid=slava_uid).first()

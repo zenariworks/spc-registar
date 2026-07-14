@@ -23,7 +23,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Hram, Krstenje, Osoba, Svestenik, Vencanje
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -230,14 +230,14 @@ class IzmenaSaveBranchTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="kanc-222", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         cls.priest = User.objects.create_user(username="svest-222", password="x")
-        UserMembership.objects.create(
-            user=cls.priest, tenant=cls.tenant, role=Role.SVESTENSTVO
+        Clanstvo.objects.create(
+            korisnik=cls.priest, parohija=cls.tenant, uloga=Uloga.SVESTENSTVO
         )
         cls.hram = Hram.objects.create(naziv="Храм")
         cls.svestenik = Svestenik.objects.create(

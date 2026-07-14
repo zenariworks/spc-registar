@@ -21,7 +21,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from registar.forms.distinct_lookup import DistinctValuesSelect2Widget
 from registar.models import Krstenje, Osoba, Svestenik
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -99,12 +99,12 @@ class DistinctValuesWidgetTests(TestCase):
 class _ClerkLoggedInMixin:
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(
             username=f"distinct-clerk-{cls.__name__.lower()}", password="x"
         )
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
 
     def setUp(self):
@@ -203,10 +203,10 @@ class AutoJsonEndpointTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.user = User.objects.create_user(username="auto-json-tester", password="x")
-        UserMembership.objects.create(
-            user=cls.user, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.user, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         Osoba.objects.create(ime="Тест", prezime="Један", mesto_rodjenja="Београд")
         Osoba.objects.create(ime="Тест", prezime="Два", mesto_rodjenja="Нови Сад")

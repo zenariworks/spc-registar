@@ -10,13 +10,13 @@ from django.contrib.auth.models import AnonymousUser
 from django.db import ProgrammingError
 from django.test import RequestFactory, TestCase
 from registar.middleware import HandleMissingTablesMiddleware
-from tenants.models import Tenant
+from tenants.models import Zakupac
 
 
 class MissingTablesMiddlewareTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
 
     def setUp(self):
         self.mw = HandleMissingTablesMiddleware(lambda r: None)

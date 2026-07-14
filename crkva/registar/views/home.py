@@ -41,7 +41,7 @@ def index(request) -> HttpResponse:
 
     # Add moveable slavas
     pokretne_slave = Slava.objects.filter(pokretni=True).order_by(
-        "offset_nedelje", "offset_dani", "naziv"
+        "pomak_nedelje", "pomak_dani", "naziv"
     )
     year = today.year
     for s in pokretne_slave:
