@@ -7,6 +7,7 @@
   <form method="get" id="dom-svestenik-form" class="dom-filter__form">
     {% if upit %}<input type="hidden" name="search" value="{{ upit }}">{% endif %}
     {% if current_sort %}<input type="hidden" name="sort" value="{{ current_sort }}">{% endif %}
+    {% if prikaz == "tabela" %}<input type="hidden" name="prikaz" value="tabela">{% endif %}
     <label for="dom-svestenik" class="vodica-toolbar__label">Свештеник:</label>
     <select name="svestenik" id="dom-svestenik" class="list-toolbar__select" onchange="document.getElementById('dom-svestenik-form').submit()">
       <option value="">сви свештеници</option>
@@ -20,5 +21,5 @@
   {% endif %}
 </div>
 {% endif %}
-{% include "_partials/_spisak.html" with title="Домаћинства" stavka_template="_partials/_stavka_domacinstva.html" add_url=add_url add_label="Додај домаћинство" %}
+{% include "_partials/_spisak.html" with title="Домаћинства" stavka_template="_partials/_stavka_domacinstva.html" red_template="_partials/_red_domacinstva.html" add_url=add_url add_label="Додај домаћинство" %}
 {% endblock %}

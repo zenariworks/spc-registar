@@ -37,6 +37,15 @@ class SpisakDomacinsta(
     model = Domacinstvo
     template_name = "registar/spisak_domacinstva.html"
     partial_template_name = "_partials/_stavka_domacinstva.html"
+    partial_template_name_table = "_partials/_red_domacinstva.html"
+    tabela_kolone = [
+        "Домаћин",
+        "Адреса",
+        "Тел. фиксни",
+        "Тел. мобилни",
+        "Слава",
+        "Бр. укућана",
+    ]
     context_object_name = "domacinstva"
     paginate_by = 20
     search_fields = ["domacin__ime", "domacin__prezime", "adresa__ulica"]

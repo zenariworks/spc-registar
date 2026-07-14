@@ -1,25 +1,44 @@
 {% comment %}
 Full body for a paginated infinite-scroll list page. Used by all
 spisak_*.html entry-point templates - they each just {% templatetag openblock %} include {% templatetag closeblock %} this
-partial with the right title and stavka template name.
+partial with the right title and stavka/red template names.
 
 Usage from a spisak template:
   {% templatetag openblock %} extends "base.html" {% templatetag closeblock %}
   {% templatetag openblock %} load marker_filter phone_filters {% templatetag closeblock %}  (whatever the stavka needs)
   {% templatetag openblock %} block content {% templatetag closeblock %}
-    {% templatetag openblock %} include "_partials/_spisak.html" with title="..." stavka_template="_partials/_stavka_X.html" {% templatetag closeblock %}
+    {% templatetag openblock %} include "_partials/_spisak.html" with title="..." stavka_template="_partials/_stavka_X.html" red_template="_partials/_red_X.html" {% templatetag closeblock %}
   {% templatetag openblock %} endblock {% templatetag closeblock %}
 
 Required:
   title           h1 text
-  stavka_template path to the per-row partial (e.g. "_partials/_stavka_parohijana.html")
+  stavka_template path to the per-row card partial (e.g. "_partials/_stavka_parohijana.html")
 Optional:
+  red_template    path to the per-row table partial (e.g. "_partials/_red_parohijana.html").
+                  When present + prikaz=tabela (+ tabela_kolone from the view), renders a table
+                  instead of cards. Falls back to cards if absent.
   add_url         URL of the corresponding unos_* view; renders "Додај ..." primary button
   add_label       button text (e.g. "Додај парохијана")
+
+`prikaz`, `tabela_kolone`, `qs_kartice`, `qs_tabela` come from ListControlsMixin.
 {% endcomment %}
 {% include "_partials/_page_header.html" with title=title count=page_obj.paginator.count include_toolbar=True action_url=add_url action_icon="fa-solid fa-circle-plus" action_label=add_label %}
+{% if red_template %}{% include "_partials/_prikaz_prekidac.html" %}{% endif %}
 {% include "_partials/_filter_chips.html" %}
+{% if red_template and prikaz == "tabela" %}
+<div class="spisak-tabela-wrap">
+    <table class="spisak-tabela">
+        <thead>
+            <tr>{% for kolona in tabela_kolone %}<th scope="col">{{ kolona }}</th>{% endfor %}</tr>
+        </thead>
+        <tbody id="spisak-list">
+            {% include red_template %}
+        </tbody>
+    </table>
+</div>
+{% else %}
 <ul class="spisak" id="spisak-list">
     {% include stavka_template %}
 </ul>
+{% endif %}
 <div id="scroll-sentinel" class="scroll-sentinel" aria-hidden="true"><span class="scroll-sentinel__spinner"><i class="fa-solid fa-spinner fa-spin"></i></span></div>

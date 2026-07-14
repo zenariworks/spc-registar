@@ -45,6 +45,8 @@ class SpisakKrstenja(
     model = Krstenje
     template_name = "registar/spisak_krstenja.html"
     partial_template_name = "_partials/_stavka_krstenja.html"
+    partial_template_name_table = "_partials/_red_krstenja.html"
+    tabela_kolone = ["Датум", "Име детета", "Презиме оца", "Отац", "Мајка", "Храм"]
     context_object_name = "krstenja"
     paginate_by = 10
     search_fields = [

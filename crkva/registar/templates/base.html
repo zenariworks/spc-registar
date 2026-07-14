@@ -150,7 +150,7 @@
             tpl.innerHTML = html.trim();
 
             // Append new <li> items
-            const items = tpl.content.querySelectorAll('li.stavka');
+            const items = tpl.content.querySelectorAll('li.stavka, tr.stavka-red');
             items.forEach(li => list.appendChild(li));
 
             // Read the next page marker from the response

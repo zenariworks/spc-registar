@@ -1,0 +1,15 @@
+{% load marker_filter %}
+{% for krstenje in krstenja %}
+<tr class="stavka-red">
+    <td class="stavka-red__glavno stavka-red__datum"><a href="{% url 'krstenje_detail' uid=krstenje.uid %}" class="stavka-red__veza">{{ krstenje.datum|default:"—" }}</a></td>
+    {# safe-ok: markiraj filter escapes input before adding <span> highlight wrapping — see marker_filter.py for the contract #}
+    <td>{{ krstenje.ime_deteta|markiraj:upit|safe }}</td>
+    <td>{{ krstenje.prezime_oca|markiraj:upit|safe }}</td>
+    <td>{{ krstenje.ime_oca|markiraj:upit|safe }}</td>
+    <td>{{ krstenje.ime_majke|markiraj:upit|safe }}</td>
+    <td>{{ krstenje.hram|default:"—" }}</td>
+</tr>
+{% empty %}
+{% if page_obj.number == 1 %}<tr class="spisak-tabela__prazno"><td colspan="6">Нема уноса крштења у бази.</td></tr>{% endif %}
+{% endfor %}
+{% if page_obj.has_next %}<tr class="next-page-marker" data-next-page="{{ page_obj.next_page_number }}"></tr>{% endif %}
