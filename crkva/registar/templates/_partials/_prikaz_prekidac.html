@@ -1,0 +1,9 @@
+{% comment %}
+Прекидач приказа списка: картице ↔ табела (#378).
+Чува остале параметре упита (search/sort/per_page) преко qs_kartice/qs_tabela
+из ListControlsMixin; `page` се одбацује да пребацивање врати на прву страну.
+{% endcomment %}
+<div class="prikaz-prekidac" role="group" aria-label="Приказ списка">
+    <a href="?{{ qs_kartice }}" class="prikaz-prekidac__dugme{% if prikaz != 'tabela' %} is-active{% endif %}" aria-pressed="{% if prikaz != 'tabela' %}true{% else %}false{% endif %}"><i class="fa-solid fa-table-cells-large"></i> Картице</a>
+    <a href="?{{ qs_tabela }}" class="prikaz-prekidac__dugme{% if prikaz == 'tabela' %} is-active{% endif %}" aria-pressed="{% if prikaz == 'tabela' %}true{% else %}false{% endif %}"><i class="fa-solid fa-table-list"></i> Табела</a>
+</div>

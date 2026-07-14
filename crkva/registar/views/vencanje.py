@@ -36,6 +36,8 @@ class SpisakVencanja(
     model = Vencanje
     template_name = "registar/spisak_vencanja.html"
     partial_template_name = "_partials/_stavka_vencanja.html"
+    partial_template_name_table = "_partials/_red_vencanja.html"
+    tabela_kolone = ["Датум", "Женик", "Невеста", "Презиме женика", "Храм"]
     context_object_name = "vencanja"
     paginate_by = 10
     search_fields = [

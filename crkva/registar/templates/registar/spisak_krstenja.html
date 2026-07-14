@@ -2,5 +2,5 @@
 
 {% block content %}
 {% if can_edit_krstenje %}{% url 'unos_krstenja' as add_url %}{% endif %}
-{% include "_partials/_spisak.html" with title="Крштења" stavka_template="_partials/_stavka_krstenja.html" add_url=add_url add_label="Додај крштење" %}
+{% include "_partials/_spisak.html" with title="Крштења" stavka_template="_partials/_stavka_krstenja.html" red_template="_partials/_red_krstenja.html" add_url=add_url add_label="Додај крштење" %}
 {% endblock %}

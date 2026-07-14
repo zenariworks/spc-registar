@@ -2,5 +2,5 @@
 
 {% block content %}
 {% if can_edit_vencanje %}{% url 'unos_vencanja' as add_url %}{% endif %}
-{% include "_partials/_spisak.html" with title="Венчања" stavka_template="_partials/_stavka_vencanja.html" add_url=add_url add_label="Додај венчање" %}
+{% include "_partials/_spisak.html" with title="Венчања" stavka_template="_partials/_stavka_vencanja.html" red_template="_partials/_red_vencanja.html" add_url=add_url add_label="Додај венчање" %}
 {% endblock %}

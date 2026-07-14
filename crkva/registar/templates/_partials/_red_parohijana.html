@@ -1,0 +1,14 @@
+{% load marker_filter %}
+{% for parohijan in parohijani %}
+<tr class="stavka-red">
+    {# safe-ok: markiraj filter escapes input before adding <span> highlight wrapping — see marker_filter.py for the contract #}
+    <td class="stavka-red__glavno"><a href="{% url 'parohijan_detail' uid=parohijan.uid %}" class="stavka-red__veza">{{ parohijan.ime|markiraj:upit|safe }}</a></td>
+    <td>{{ parohijan.prezime|markiraj:upit|safe }}</td>
+    <td>{{ parohijan.get_pol_display|default:"—" }}</td>
+    <td class="stavka-red__datum">{{ parohijan.datum_rodjenja|default:"—" }}</td>
+    <td>{{ parohijan.adresa|default:"—" }}</td>
+</tr>
+{% empty %}
+{% if page_obj.number == 1 %}<tr class="spisak-tabela__prazno"><td colspan="5">Нема уписаних парохијана у бази.</td></tr>{% endif %}
+{% endfor %}
+{% if page_obj.has_next %}<tr class="next-page-marker" data-next-page="{{ page_obj.next_page_number }}"></tr>{% endif %}

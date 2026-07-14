@@ -1083,3 +1083,119 @@ body.history-open {
   border-bottom: 0;
   color: var(--color-heading);
 }
+
+/* ===== Прекидач приказа: картице ↔ табела (#378) ===== */
+.prikaz-prekidac {
+    display: inline-flex;
+    gap: 0;
+    margin: 0 0 var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm, 4px);
+    overflow: hidden;
+}
+
+.prikaz-prekidac__dugme {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px var(--space-3);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    background: var(--color-surface);
+    border: 0;
+    border-left: 1px solid var(--color-border);
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.prikaz-prekidac__dugme:first-child {
+    border-left: 0;
+}
+
+.prikaz-prekidac__dugme:hover {
+    background-color: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface));
+    color: var(--color-text);
+}
+
+.prikaz-prekidac__dugme.is-active {
+    background-color: var(--color-accent);
+    color: var(--color-on-accent, #fff);
+}
+
+/* ===== Табеларни приказ спискова (#378) ===== */
+.spisak-tabela-wrap {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.spisak-tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    background: var(--color-surface);
+}
+
+.spisak-tabela thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+    padding: var(--space-2) var(--space-3);
+    color: var(--color-text-muted);
+    background: var(--color-surface);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.spisak-tabela td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+}
+
+.stavka-red {
+    border-left: 3px solid transparent;
+    transition: background-color 0.15s ease, border-left-color 0.15s ease;
+}
+
+.stavka-red:hover {
+    background-color: color-mix(in oklab, var(--color-accent) 6%, var(--color-surface));
+    border-left-color: var(--color-accent);
+}
+
+.stavka-red__glavno {
+    font-weight: 600;
+}
+
+.stavka-red__veza {
+    color: var(--color-text);
+    text-decoration: none;
+}
+
+.stavka-red__veza:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+}
+
+.stavka-red__datum,
+.stavka-red__tel {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.stavka-red__broj {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.spisak-tabela__prazno td {
+    padding: var(--space-4);
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+/* Маркер следеће стране је празан ред — сакривен (чита га само бесконачни скрол). */
+.spisak-tabela tr.next-page-marker {
+    display: none;
+}

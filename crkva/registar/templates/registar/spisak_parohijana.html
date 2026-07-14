@@ -2,5 +2,5 @@
 
 {% block content %}
 {% if can_edit_osoba %}{% url 'unos_parohijana' as add_url %}{% endif %}
-{% include "_partials/_spisak.html" with title="Парохијани" stavka_template="_partials/_stavka_parohijana.html" add_url=add_url add_label="Додај парохијана" %}
+{% include "_partials/_spisak.html" with title="Парохијани" stavka_template="_partials/_stavka_parohijana.html" red_template="_partials/_red_parohijana.html" add_url=add_url add_label="Додај парохијана" %}
 {% endblock %}
