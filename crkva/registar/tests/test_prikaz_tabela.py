@@ -119,3 +119,33 @@ class PrikazTabelaTests(TestCase):
         body = self.client.get(reverse("parohijani"), **AJAX).content.decode()
         self.assertIn('<li class="stavka"', body)
         self.assertNotIn("stavka-red", body)
+
+    def test_izbor_prikaza_pamti_se_u_kolacicu(self):
+        """`?prikaz=tabela` поставља колачић да се избор запамти."""
+        resp = self.client.get(reverse("parohijani") + "?prikaz=tabela")
+        self.assertEqual(resp.cookies["prikaz"].value, "tabela")
+        resp = self.client.get(reverse("parohijani") + "?prikaz=kartice")
+        self.assertEqual(resp.cookies["prikaz"].value, "kartice")
+
+    def test_kolacic_tabela_postaje_podrazumevani(self):
+        """Запамћен „tabela" чини табелу подразумеваном без параметра у упиту."""
+        self.client.cookies["prikaz"] = "tabela"
+        body = self.client.get(reverse("parohijani")).content.decode()
+        self.assertIn('<table class="spisak-tabela"', body)
+        self.assertNotIn('<ul class="spisak"', body)
+
+    def test_kolacic_tabela_vazi_i_za_ajax(self):
+        """Запамћен „tabela" враћа редове и на AJAX захтев без параметра."""
+        self.client.cookies["prikaz"] = "tabela"
+        body = self.client.get(reverse("parohijani"), **AJAX).content.decode()
+        self.assertIn('<tr class="stavka-red"', body)
+        self.assertNotIn('<li class="stavka"', body)
+
+    def test_upit_nadjacava_kolacic(self):
+        """Изричит `?prikaz=kartice` надјачава запамћену табелу."""
+        self.client.cookies["prikaz"] = "tabela"
+        body = self.client.get(
+            reverse("parohijani") + "?prikaz=kartice"
+        ).content.decode()
+        self.assertIn('<ul class="spisak"', body)
+        self.assertNotIn("spisak-tabela", body)

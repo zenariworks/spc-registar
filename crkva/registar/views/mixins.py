@@ -39,8 +39,27 @@ class ListControlsMixin:
         return super().get_ordering() or []
 
     def get_prikaz(self):
-        """Тренутни приказ: „tabela" или „kartice" (подразумевано)."""
-        return "tabela" if self.request.GET.get("prikaz") == "tabela" else "kartice"
+        """Тренутни приказ: „tabela" или „kartice".
+
+        Приоритет: изричит `?prikaz=` из упита, па запамћен избор из колачића
+        (последње што је корисник изабрао), па подразумевано „kartice" (#378).
+        """
+        izbor = self.request.GET.get("prikaz")
+        if izbor in ("tabela", "kartice"):
+            return izbor
+        if self.request.COOKIES.get("prikaz") == "tabela":
+            return "tabela"
+        return "kartice"
+
+    def get(self, request, *args, **kwargs):
+        """Памти последњи избор приказа у колачићу кад га корисник изричито мења."""
+        response = super().get(request, *args, **kwargs)
+        izbor = request.GET.get("prikaz")
+        if izbor in ("tabela", "kartice"):
+            response.set_cookie(
+                "prikaz", izbor, max_age=60 * 60 * 24 * 365, samesite="Lax"
+            )
+        return response
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -122,10 +141,8 @@ class InfiniteScrollMixin:
     def get_template_names(self):
         is_ajax = self.request.headers.get("X-Requested-With") == "XMLHttpRequest"
         if is_ajax:
-            if (
-                self.request.GET.get("prikaz") == "tabela"
-                and self.partial_template_name_table
-            ):
+            prikaz = self.get_prikaz() if hasattr(self, "get_prikaz") else "kartice"
+            if prikaz == "tabela" and self.partial_template_name_table:
                 return [self.partial_template_name_table]
             if self.partial_template_name:
                 return [self.partial_template_name]
