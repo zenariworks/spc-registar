@@ -9,7 +9,7 @@ from kalendar.models import Slava
 class JeVaskrsTests(TestCase):
     def test_zero_offset_movable_is_vaskrs(self):
         s = Slava.objects.create(
-            naziv="Васкрс", pokretni=True, offset_dani=0, offset_nedelje=0
+            naziv="Васкрс", pokretni=True, pomak_dani=0, pomak_nedelje=0
         )
         self.assertTrue(s.je_vaskrs)
 
@@ -20,7 +20,7 @@ class JeVaskrsTests(TestCase):
 
     def test_offset_movable_is_not_vaskrs(self):
         s = Slava.objects.create(
-            naziv="Васкрсни понедељак", pokretni=True, offset_dani=1
+            naziv="Васкрсни понедељак", pokretni=True, pomak_dani=1
         )
         self.assertFalse(s.je_vaskrs)
 
@@ -29,9 +29,9 @@ class JeVaskrsTests(TestCase):
         self.assertFalse(s.je_vaskrs)
 
     def test_get_vaskrs_returns_the_anchor(self):
-        Slava.objects.create(naziv="Духови", pokretni=True, offset_dani=49)
+        Slava.objects.create(naziv="Духови", pokretni=True, pomak_dani=49)
         vaskrs = Slava.objects.create(
-            naziv="Васкрс", pokretni=True, offset_dani=0, offset_nedelje=0
+            naziv="Васкрс", pokretni=True, pomak_dani=0, pomak_nedelje=0
         )
         self.assertEqual(Slava.get_vaskrs(), vaskrs)
 

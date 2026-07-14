@@ -3,7 +3,7 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'registar/pages/korisnici.css' %}">{% endblock %}
 
 {% block content %}
-  {% url 'parohija:user_add' as add_user_url %}
+  {% url 'parohija:dodavanje' as add_user_url %}
   {% include "_partials/_page_header.html" with title="Корисници" subtitle=parohija.naziv count=memberships|length action_url=add_user_url action_icon="fa-solid fa-circle-plus" action_label="Додај корисника" %}
 
   {% if messages %}
@@ -89,27 +89,27 @@
     <tbody>
       {% for m in memberships %}
         <tr>
-          <td>{{ m.user.username }}</td>
-          <td>{{ m.user.first_name }} {{ m.user.last_name }}</td>
-          <td>{{ m.user.email|default:"—" }}</td>
+          <td>{{ m.korisnik.username }}</td>
+          <td>{{ m.korisnik.first_name }} {{ m.korisnik.last_name }}</td>
+          <td>{{ m.korisnik.email|default:"—" }}</td>
           <td>
-            <form method="post" action="{% url 'parohija:user_edit_role' m.user.pk %}" class="data-table__role-form">
+            <form method="post" action="{% url 'parohija:izmena_uloge' m.korisnik.pk %}" class="data-table__role-form">
               {% csrf_token %}
               <select name="role" onchange="this.form.submit()" class="list-toolbar__select">
-                <option value="admin" {% if m.role == "admin" %}selected{% endif %}>Администратор</option>
-                <option value="kancelarija" {% if m.role == "kancelarija" %}selected{% endif %}>Канцеларија</option>
-                <option value="svestenstvo" {% if m.role == "svestenstvo" %}selected{% endif %}>Свештенство</option>
-                <option value="pregled" {% if m.role == "pregled" %}selected{% endif %}>Преглед</option>
+                <option value="admin" {% if m.uloga == "admin" %}selected{% endif %}>Администратор</option>
+                <option value="kancelarija" {% if m.uloga == "kancelarija" %}selected{% endif %}>Канцеларија</option>
+                <option value="svestenstvo" {% if m.uloga == "svestenstvo" %}selected{% endif %}>Свештенство</option>
+                <option value="pregled" {% if m.uloga == "pregled" %}selected{% endif %}>Преглед</option>
               </select>
             </form>
           </td>
           <td>
-            <form method="post" action="{% url 'parohija:user_bind_svestenik' m.user.pk %}" class="data-table__role-form">
+            <form method="post" action="{% url 'parohija:user_bind_svestenik' m.korisnik.pk %}" class="data-table__role-form">
               {% csrf_token %}
               <select name="svestenik" onchange="this.form.submit()" class="list-toolbar__select">
                 <option value="">— није везан —</option>
                 {% for s in svestenici %}
-                  <option value="{{ s.uid }}"{% if s.user_id == m.user.pk %} selected{% endif %}{% if s.user_id and s.user_id != m.user.pk %} disabled{% endif %}>{{ s }}{% if s.user_id and s.user_id != m.user.pk %} (везан){% endif %}</option>
+                  <option value="{{ s.uid }}"{% if s.user_id == m.korisnik.pk %} selected{% endif %}{% if s.user_id and s.user_id != m.korisnik.pk %} disabled{% endif %}>{{ s }}{% if s.user_id and s.user_id != m.korisnik.pk %} (везан){% endif %}</option>
                 {% endfor %}
               </select>
             </form>
@@ -123,8 +123,8 @@
             {% endif %}
           </td>
           <td class="data-table__actions">
-            {% if m.user.pk != request.user.pk %}
-              <form method="post" action="{% url 'parohija:user_deactivate' m.user.pk %}" class="data-table__role-form" onsubmit="return confirm('{% if m.is_active %}Деактивирати{% else %}Активирати{% endif %} {{ m.user.username }}?');">
+            {% if m.korisnik.pk != request.user.pk %}
+              <form method="post" action="{% url 'parohija:deaktiviranje' m.korisnik.pk %}" class="data-table__role-form" onsubmit="return confirm('{% if m.is_active %}Деактивирати{% else %}Активирати{% endif %} {{ m.korisnik.username }}?');">
                 {% csrf_token %}
                 <button type="submit" class="button button--ghost" title="{% if m.is_active %}Деактивирај{% else %}Активирај{% endif %}">
                   <i class="fa-solid {% if m.is_active %}fa-user-slash{% else %}fa-user-check{% endif %}"></i>

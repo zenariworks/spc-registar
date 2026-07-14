@@ -22,15 +22,15 @@ def current_tenant(request):
     The role is resolved once (a single membership query) and every flag is
     derived from it in memory, so a render costs one query rather than six.
     """
-    tenant = getattr(request, "tenant", None)
-    user = getattr(request, "user", None)
-    is_admin, writable = tenant_permissions(user, tenant)
+    parohija = getattr(request, "tenant", None)
+    korisnik = getattr(request, "user", None)
+    is_admin, writable = tenant_permissions(korisnik, parohija)
     return {
         # django-tenants infrastructure naming (kept for backwards compat)
-        "tenant": tenant,
+        "tenant": parohija,
         "is_tenant_admin": is_admin,
         # User-facing aliases — preferred in new templates.
-        "parohija": tenant,
+        "parohija": parohija,
         "is_parohija_admin": is_admin,
         "can_edit_osoba": OSOBA in writable,
         "can_edit_domacinstvo": DOMACINSTVO in writable,

@@ -75,7 +75,7 @@ def apostolski_post(godina: int) -> frozenset[dt.date]:
     """
     from registar.models import Slava
 
-    vaskrs = Slava.calc_vaskrs(godina)
+    vaskrs = Slava.sracunaj_vaskrs(godina)
 
     # Духови (Педесетница) су 49 дана после Васкрса (50. дан рачунајући Васкрс
     # као први дан), и увек падају у недељу.
@@ -100,7 +100,7 @@ def beli_mrs(godina: int) -> frozenset[dt.date]:
     """Врати Бели мрс (недеља пре Великог поста - делимични пост без меса)."""
     from registar.models import Slava
 
-    vaskrs = Slava.calc_vaskrs(godina)
+    vaskrs = Slava.sracunaj_vaskrs(godina)
 
     # Чисти понедељак је 48 дана пре Васкрса
     cisti_ponedeljak = vaskrs - dt.timedelta(days=48)
@@ -121,7 +121,7 @@ def veliki_post(godina: int) -> frozenset[dt.date]:
     """
     from registar.models import Slava
 
-    vaskrs = Slava.calc_vaskrs(godina)
+    vaskrs = Slava.sracunaj_vaskrs(godina)
 
     # Чисти понедељак (Clean Monday) - 48 дана пре Васкрса
     pocetak = vaskrs - dt.timedelta(days=48)
@@ -137,7 +137,7 @@ def trapave_sedmice(godina: int) -> frozenset[dt.date]:
     """Врати трапаве седмице (седмице без поста) за дату годину."""
     from registar.models import Slava
 
-    vaskrs = Slava.calc_vaskrs(godina)
+    vaskrs = Slava.sracunaj_vaskrs(godina)
     trapave = set()
 
     # Светла седмица (недеља после Васкрса)
@@ -244,7 +244,7 @@ def tip_posta(datum: dt.date) -> dict[str, str | bool]:
     # Велики пост (Great Lent)
     great_lent = veliki_post(godina)
     if datum in great_lent:
-        vaskrs = Slava.calc_vaskrs(godina)
+        vaskrs = Slava.sracunaj_vaskrs(godina)
 
         # Проверa за Благовести (7. април) у Великом посту
         if datum.month == 4 and datum.day == 7:

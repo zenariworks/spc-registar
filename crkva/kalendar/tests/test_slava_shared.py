@@ -9,7 +9,7 @@ from django.test import TestCase
 from django_tenants.utils import schema_context
 from kalendar.models import Slava
 from registar.models import Domacinstvo, Osoba
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -48,10 +48,10 @@ class SlavaCrossSchemaFKTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.user = User.objects.create_user(username="cross", password="x")
-        UserMembership.objects.create(
-            user=cls.user, tenant=cls.tenant, role=Role.PREGLED
+        Clanstvo.objects.create(
+            korisnik=cls.user, parohija=cls.tenant, uloga=Uloga.PREGLED
         )
 
     def test_fk_field_has_db_constraint_disabled(self):

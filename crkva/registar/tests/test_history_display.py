@@ -24,11 +24,11 @@ class HistoryFKDisplayTests(TestCase):
         entries = history_for(o)
         # newest first: the update we just did
         update = entries[0]
-        change = next(c for c in update.changes if c.field == "zanimanje")
-        self.assertEqual(change.old, None)
-        self.assertEqual(change.new, "радник")
+        change = next(c for c in update.changes if c.polje == "zanimanje")
+        self.assertEqual(change.staro, None)
+        self.assertEqual(change.novo, "радник")
         # Sanity: the raw PK must not leak through.
-        self.assertNotIn(str(radnik.pk), str(change.new))
+        self.assertNotIn(str(radnik.pk), str(change.novo))
 
     def test_veroispovest_resolves_to_naziv_not_uuid(self):
         pravo = Veroispovest.objects.create(naziv="православна")
@@ -38,9 +38,9 @@ class HistoryFKDisplayTests(TestCase):
 
         entries = history_for(o)
         update = entries[0]
-        change = next(c for c in update.changes if c.field == "veroispovest")
-        self.assertEqual(change.new, "православна")
-        self.assertNotIn(str(pravo.pk), str(change.new))
+        change = next(c for c in update.changes if c.polje == "veroispovest")
+        self.assertEqual(change.novo, "православна")
+        self.assertNotIn(str(pravo.pk), str(change.novo))
 
     def test_deleted_fk_target_falls_back_to_label(self):
         z = Zanimanje.objects.create(sifra="2", naziv="привремено")
@@ -54,8 +54,8 @@ class HistoryFKDisplayTests(TestCase):
 
         entries = history_for(o)
         update = entries[0]
-        change = next(c for c in update.changes if c.field == "zanimanje")
-        self.assertEqual(change.new, DELETED_LABEL)
+        change = next(c for c in update.changes if c.polje == "zanimanje")
+        self.assertEqual(change.novo, DELETED_LABEL)
 
     def test_non_fk_field_values_pass_through_unchanged(self):
         o = Osoba.objects.create(ime="Скаларно", prezime="Прво", pol="М")
@@ -64,10 +64,10 @@ class HistoryFKDisplayTests(TestCase):
 
         entries = history_for(o)
         update = entries[0]
-        change = next(c for c in update.changes if c.field == "prezime")
+        change = next(c for c in update.changes if c.polje == "prezime")
         # Plain strings should not be touched by the FK resolver.
-        self.assertEqual(change.old, "Прво")
-        self.assertEqual(change.new, "Друго")
+        self.assertEqual(change.staro, "Прво")
+        self.assertEqual(change.novo, "Друго")
 
     def test_template_renders_resolved_label_not_uuid(self):
         """End-to-end: the panel template must show the readable label."""
@@ -81,7 +81,7 @@ class HistoryFKDisplayTests(TestCase):
         entries = history_for(o)
         tpl = Template(
             "{% for e in entries %}{% for c in e.changes %}"
-            "[{{ c.field }}:{{ c.old|default:'—' }}->{{ c.new|default:'—' }}]"
+            "[{{ c.polje }}:{{ c.staro|default:'—' }}->{{ c.novo|default:'—' }}]"
             "{% endfor %}{% endfor %}"
         )
         rendered = tpl.render(Context({"entries": entries}))

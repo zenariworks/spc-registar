@@ -1,10 +1,10 @@
-"""Tenant + Domain + UserMembership models — Phase 2b.
+"""Zakupac + Domen + Clanstvo models — Phase 2b.
 
-Phase 2b: registar moves to TENANT_APPS, so its tables (including Parohija)
+Phase 2b: registar moves to TENANT_APPS, so its tables (including Zakupac)
 live in per-tenant schemas. A FK from `public.tenants_tenant` to
 `crkva_sv_petke_cukarica.parohije` is impossible to model cleanly in Postgres,
 so `Tenant.parohija` was dropped; the parish name lives in `Tenant.naziv`
-and the per-schema `Parohija` rows.
+and the per-schema `Zakupac` rows.
 
 `auto_create_schema = True` so creating a Tenant row automatically
 creates the corresponding Postgres schema and runs TENANT_APPS migrations
@@ -25,10 +25,8 @@ def _slugify_ascii(value: str) -> str:
     return re.sub(r"[^a-z0-9_]+", "_", value.lower()).strip("_") or "tenant"
 
 
-class Tenant(TenantMixin):
+class Zakupac(TenantMixin):
     """One parish acting as a tenant. Owns a Postgres schema."""
-
-    # Inherited from TenantMixin: schema_name (unique CharField + validator)
 
     naziv = models.CharField(
         max_length=200,
@@ -87,7 +85,7 @@ class Tenant(TenantMixin):
         super().save(*args, **kwargs)
 
 
-class Domain(DomainMixin):
+class Domen(DomainMixin):
     """Required by django-tenants for setup, but not used at runtime
     (we route by session, not by host)."""
 
@@ -97,7 +95,7 @@ class Domain(DomainMixin):
         verbose_name_plural = "Домени"
 
 
-class Role(models.TextChoices):
+class Uloga(models.TextChoices):
     # Канцеларија editirá parohijane/domaćinstva/krštenja/venčanja.
     # Свештенство editirá svestenike. Преглед је read-only за све.
     ADMIN = "admin", "Администратор"
@@ -106,23 +104,23 @@ class Role(models.TextChoices):
     PREGLED = "pregled", "Преглед"
 
 
-class UserMembership(models.Model):
+class Clanstvo(models.Model):
     """Пар User × Tenant — корисник припада једној (или више) парохија."""
 
-    user = models.ForeignKey(
+    korisnik = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         related_name="memberships",
     )
-    tenant = models.ForeignKey(
-        Tenant,
+    parohija = models.ForeignKey(
+        Zakupac,
         on_delete=models.CASCADE,
         related_name="memberships",
     )
-    role = models.CharField(
+    uloga = models.CharField(
         max_length=20,
-        choices=Role.choices,
-        default=Role.PREGLED,
+        choices=Uloga.choices,
+        default=Uloga.PREGLED,
     )
     is_default = models.BooleanField(
         default=False,
@@ -140,7 +138,7 @@ class UserMembership(models.Model):
         db_table = "tenants_user_membership"
         verbose_name = "Чланство корисника"
         verbose_name_plural = "Чланства корисника"
-        unique_together = [("user", "tenant")]
+        unique_together = [("korisnik", "parohija")]
 
     def __str__(self) -> str:
-        return f"{self.user} → {self.tenant} ({self.get_role_display()})"
+        return f"{self.korisnik} → {self.parohija} ({self.get_uloga_display()})"

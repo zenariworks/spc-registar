@@ -22,7 +22,7 @@ class ProfileViewTests(TestCase):
         self.client = Client()
 
     def url(self):
-        return reverse("parohija:profile")
+        return reverse("parohija:profil")
 
     def test_anonymous_redirects_to_login(self):
         r = self.client.get(self.url())

@@ -7,37 +7,37 @@ from django.db import connection
 from django.test import Client, TestCase
 from django.urls import reverse
 from tenants.middleware import SESSION_TENANT_KEY
-from tenants.models import Tenant, UserMembership
+from tenants.models import Clanstvo, Zakupac
 
 
 class SwitchTenantViewTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.tenant_a = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant_a = Zakupac.objects.get(schema_name="test_tenant")
         # bulk_create bypasses TenantMixin.save() so we don't try to provision
         # new Postgres schemas from inside the active tenant schema.
-        Tenant.objects.bulk_create(
+        Zakupac.objects.bulk_create(
             [
-                Tenant(
+                Zakupac(
                     schema_name="test_tenant_b",
                     naziv="Test B",
                     is_active=True,
                 ),
-                Tenant(
+                Zakupac(
                     schema_name="test_tenant_off",
                     naziv="Test Off",
                     is_active=False,
                 ),
             ]
         )
-        cls.tenant_b = Tenant.objects.get(schema_name="test_tenant_b")
-        cls.tenant_inactive = Tenant.objects.get(schema_name="test_tenant_off")
+        cls.tenant_b = Zakupac.objects.get(schema_name="test_tenant_b")
+        cls.tenant_inactive = Zakupac.objects.get(schema_name="test_tenant_off")
 
         cls.superuser = User.objects.create_superuser(
             username="root", password="x", email="root@test"
         )
         cls.user = User.objects.create_user(username="alice", password="x")
-        UserMembership.objects.create(user=cls.user, tenant=cls.tenant_a)
+        Clanstvo.objects.create(korisnik=cls.user, parohija=cls.tenant_a)
 
     def setUp(self):
         # Each test starts on the default test_tenant schema; ensure that
@@ -46,7 +46,7 @@ class SwitchTenantViewTests(TestCase):
         self.client = Client()
 
     def url(self, tenant_id):
-        return reverse("parohija:switch", kwargs={"tenant_id": tenant_id})
+        return reverse("parohija:promena", kwargs={"parohija_id": tenant_id})
 
     def test_anonymous_redirects_to_login(self):
         r = self.client.post(self.url(self.tenant_a.pk))

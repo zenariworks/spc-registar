@@ -77,7 +77,7 @@ def kalendar(
     pokretne_slave = (
         Slava.objects.filter(pokretni=True)
         .annotate(dom_count=Count("domacinstvo"))
-        .order_by("offset_nedelje", "offset_dani", "naziv")
+        .order_by("pomak_nedelje", "pomak_dani", "naziv")
     )
     for s in pokretne_slave:
         datum = s.get_datum(year)

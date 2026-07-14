@@ -6,20 +6,20 @@ from django.contrib.auth.models import User
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Domacinstvo, Osoba
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 
 class UnosDomacinstvaViewTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="kanc", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         cls.priest = User.objects.create_user(username="svest", password="x")
-        UserMembership.objects.create(
-            user=cls.priest, tenant=cls.tenant, role=Role.SVESTENSTVO
+        Clanstvo.objects.create(
+            korisnik=cls.priest, parohija=cls.tenant, uloga=Uloga.SVESTENSTVO
         )
         cls.admin = User.objects.create_superuser(
             username="root", password="x", email="r@x.test"

@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Svestenik
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -16,14 +16,14 @@ class BindSvestenikTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.admin = User.objects.create_user(username="adm", password="x")
-        UserMembership.objects.create(
-            user=cls.admin, tenant=cls.tenant, role=Role.ADMIN
+        Clanstvo.objects.create(
+            korisnik=cls.admin, parohija=cls.tenant, uloga=Uloga.ADMIN
         )
         cls.priest_user = User.objects.create_user(username="pop", password="x")
-        UserMembership.objects.create(
-            user=cls.priest_user, tenant=cls.tenant, role=Role.SVESTENSTVO
+        Clanstvo.objects.create(
+            korisnik=cls.priest_user, parohija=cls.tenant, uloga=Uloga.SVESTENSTVO
         )
         cls.sv1 = Svestenik.objects.create(
             ime="Марко", prezime="Марковић", zvanje="јереј"
@@ -81,12 +81,12 @@ class BindSvestenikTests(TestCase):
         self.assertEqual(self.sv1.user_id, other.pk)
 
     def test_list_shows_warning_when_unbound(self):
-        r = self.client.get(reverse("parohija:user_list"))
+        r = self.client.get(reverse("parohija:korisnici"))
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, "није везан")
 
     def test_list_shows_priest_when_bound(self):
         self.sv1.user = self.priest_user
         self.sv1.save(update_fields=["user"])
-        r = self.client.get(reverse("parohija:user_list"))
+        r = self.client.get(reverse("parohija:korisnici"))
         self.assertContains(r, str(self.sv1))

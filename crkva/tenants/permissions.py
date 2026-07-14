@@ -28,7 +28,7 @@ from functools import wraps
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse
-from tenants.models import Role, UserMembership
+from tenants.models import Clanstvo, Uloga
 
 OSOBA = "osoba"
 DOMACINSTVO = "domacinstvo"
@@ -41,10 +41,10 @@ KANCELARIJA_RESOURCES = frozenset({OSOBA, DOMACINSTVO, KRSTENJE, VENCANJE})
 SVESTENSTVO_RESOURCES = frozenset({SVESTENIK})
 
 WRITE_BY_ROLE: dict[str, frozenset[str]] = {
-    Role.ADMIN: ALL_RESOURCES,
-    Role.KANCELARIJA: KANCELARIJA_RESOURCES,
-    Role.SVESTENSTVO: SVESTENSTVO_RESOURCES,
-    Role.PREGLED: frozenset(),
+    Uloga.ADMIN: ALL_RESOURCES,
+    Uloga.KANCELARIJA: KANCELARIJA_RESOURCES,
+    Uloga.SVESTENSTVO: SVESTENSTVO_RESOURCES,
+    Uloga.PREGLED: frozenset(),
 }
 
 
@@ -52,8 +52,8 @@ def _perms_from_membership(membership) -> tuple[bool, frozenset[str]]:
     """Derive ``(is_admin, writable_resources)`` from a membership row."""
     if membership is None:
         return False, frozenset()
-    return membership.role == Role.ADMIN, WRITE_BY_ROLE.get(
-        membership.role, frozenset()
+    return membership.uloga == Uloga.ADMIN, WRITE_BY_ROLE.get(
+        membership.uloga, frozenset()
     )
 
 
@@ -94,7 +94,7 @@ def tenant_permissions(user, tenant) -> tuple[bool, frozenset[str]]:
 
     Issues at most **one** query per ``(user, tenant)`` per request, and zero
     when the middleware has already primed the cache (see
-    ``prime_tenant_permissions``). `UserMembership` is unique per
+    ``prime_tenant_permissions``). `Clanstvo` is unique per
     ``(user, tenant)``, so a single active row fully determines the role.
 
     - Anonymous users / missing tenant → ``(False, frozenset())`` (no query).
@@ -110,8 +110,8 @@ def tenant_permissions(user, tenant) -> tuple[bool, frozenset[str]]:
     cache = _perm_cache(user)
     if tenant.pk in cache:
         return cache[tenant.pk]
-    membership = UserMembership.objects.filter(
-        user=user, tenant=tenant, is_active=True
+    membership = Clanstvo.objects.filter(
+        korisnik=user, parohija=tenant, is_active=True
     ).first()
     result = _perms_from_membership(membership)
     cache[tenant.pk] = result

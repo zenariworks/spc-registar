@@ -6,7 +6,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
-from tenants.models import Role
+from tenants.models import Uloga
 
 User = get_user_model()
 
@@ -42,7 +42,7 @@ class AddUserForm(forms.Form):
         min_length=8,
         help_text="Обавезна само за новог корисника; за постојећег се игнорише.",
     )
-    role = forms.ChoiceField(choices=Role.choices, label="Улога")
+    role = forms.ChoiceField(choices=Uloga.choices, label="Улога")
     is_default = forms.BooleanField(
         required=False, initial=True, label="Подразумевана парохија"
     )
@@ -78,4 +78,4 @@ class AddUserForm(forms.Form):
 class EditRoleForm(forms.Form):
     """Admin form: change a membership's role."""
 
-    role = forms.ChoiceField(choices=Role.choices, label="Улога")
+    role = forms.ChoiceField(choices=Uloga.choices, label="Улога")

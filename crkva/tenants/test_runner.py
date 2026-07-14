@@ -32,20 +32,20 @@ class TenantTestRunner(DiscoverRunner):
 
     @classmethod
     def _create_test_tenant(cls):
-        from tenants.models import Tenant
+        from tenants.models import Zakupac
 
         # The unique constraint allows only one is_default=True row, so
         # clear any existing default first (the data migration may have
         # set one).
-        Tenant.objects.filter(is_default=True).update(is_default=False)
+        Zakupac.objects.filter(is_default=True).update(is_default=False)
 
-        if Tenant.objects.filter(schema_name=cls.TEST_TENANT_SCHEMA).exists():
-            tenant = Tenant.objects.get(schema_name=cls.TEST_TENANT_SCHEMA)
+        if Zakupac.objects.filter(schema_name=cls.TEST_TENANT_SCHEMA).exists():
+            tenant = Zakupac.objects.get(schema_name=cls.TEST_TENANT_SCHEMA)
             tenant.is_default = True
             tenant.is_active = True
             tenant.save(update_fields=["is_default", "is_active"])
         else:
-            tenant = Tenant(
+            tenant = Zakupac(
                 schema_name=cls.TEST_TENANT_SCHEMA,
                 naziv=cls.TEST_TENANT_NAZIV,
                 is_active=True,

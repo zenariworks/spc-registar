@@ -31,13 +31,13 @@ class ResolveSlavaTests(TestCase):
             slava = resolve_slava(sifra, Slava)
             self.assertIsNotNone(slava, f"сифра {sifra} није разрешена")
             self.assertTrue(slava.pokretni, f"сифра {sifra} није покретна")
-            self.assertEqual(slava.offset_dani, offset)
+            self.assertEqual(slava.pomak_dani, offset)
 
     def test_map_offsets_unique_and_present(self):
         # Сваки помак из мапе постоји тачно једном међу покретним редовима.
         for offset in set(POKRETNE_SLAVE_OFFSET_BY_SIFRA.values()):
             self.assertEqual(
-                Slava.objects.filter(pokretni=True, offset_dani=offset).count(), 1
+                Slava.objects.filter(pokretni=True, pomak_dani=offset).count(), 1
             )
 
     def test_lazareva_subota_sifra_93(self):

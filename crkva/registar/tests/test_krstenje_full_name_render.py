@@ -15,7 +15,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Krstenje, Osoba
-from tenants.models import Role, Tenant, UserMembership
+from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
 
@@ -25,10 +25,10 @@ class KrstenjeFullNameAndToggleTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tenant = Tenant.objects.get(schema_name="test_tenant")
+        cls.tenant = Zakupac.objects.get(schema_name="test_tenant")
         cls.clerk = User.objects.create_user(username="kanc-krst", password="x")
-        UserMembership.objects.create(
-            user=cls.clerk, tenant=cls.tenant, role=Role.KANCELARIJA
+        Clanstvo.objects.create(
+            korisnik=cls.clerk, parohija=cls.tenant, uloga=Uloga.KANCELARIJA
         )
         cls.dete = Osoba.objects.create(ime="Дете", prezime="Презименко", pol="М")
         cls.otac = Osoba.objects.create(ime="Отац", prezime="Презименко", pol="М")

@@ -16,7 +16,7 @@ from django.test import TestCase
 from django_tenants.utils import schema_context
 from registar.management.commands._schema_target import razresi_ciljne_sheme
 from registar.uvoz.krstenja import Command as MigracijaKrstenja
-from tenants.models import Tenant
+from tenants.models import Zakupac
 
 
 class ResolveTargetSchemasTests(TestCase):
@@ -54,8 +54,8 @@ class PopraviDefaultDoesNotTouchOtherTenantsTests(TestCase):
         # A second tenant row exists but must NOT be visited by the default run.
         # bulk_create skips schema provisioning; if the command looped all
         # tenants it would enter this (unprovisioned) schema and blow up.
-        Tenant.objects.bulk_create(
-            [Tenant(schema_name="test_tenant_other", naziv="Other", is_active=True)]
+        Zakupac.objects.bulk_create(
+            [Zakupac(schema_name="test_tenant_other", naziv="Other", is_active=True)]
         )
         out = StringIO()
         # Must not raise and must only mention the active schema.

@@ -1,11 +1,11 @@
-"""Django admin for Tenant + UserMembership."""
+"""Django admin for Zakupac + Clanstvo."""
 
 from django.contrib import admin
 
-from .models import Domain, Tenant, UserMembership
+from .models import Clanstvo, Domen, Zakupac
 
 
-@admin.register(Tenant)
+@admin.register(Zakupac)
 class TenantAdmin(admin.ModelAdmin):
     list_display = (
         "naziv",
@@ -21,15 +21,15 @@ class TenantAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
 
 
-@admin.register(UserMembership)
+@admin.register(Clanstvo)
 class UserMembershipAdmin(admin.ModelAdmin):
-    list_display = ("user", "tenant", "role", "is_default", "created_at")
-    list_filter = ("tenant", "role", "is_default")
-    search_fields = ("user__username", "tenant__naziv")
-    raw_id_fields = ("user",)
+    list_display = ("korisnik", "parohija", "uloga", "is_default", "created_at")
+    list_filter = ("parohija", "uloga", "is_default")
+    search_fields = ("korisnik__username", "parohija__naziv")
+    raw_id_fields = ("korisnik",)
 
 
-@admin.register(Domain)
+@admin.register(Domen)
 class DomainAdmin(admin.ModelAdmin):
     list_display = ("domain", "tenant", "is_primary")
     list_filter = ("is_primary",)

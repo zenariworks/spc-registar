@@ -11,22 +11,22 @@ from contextlib import contextmanager
 from django.core.management.base import CommandError
 from django.db import connection
 from django_tenants.utils import schema_exists
-from tenants.models import Tenant
+from tenants.models import Zakupac
 
 
 @contextmanager
-def with_tenant(schema_name: str):
+def with_tenant(shema: str):
     """Set connection.tenant for the duration of the with-block."""
-    if not schema_exists(schema_name):
+    if not schema_exists(shema):
         raise CommandError(
-            f"Schema {schema_name!r} не постоји. Доступни: "
-            f"{', '.join(t.schema_name for t in Tenant.objects.all())}"
+            f"Schema {shema!r} не постоји. Доступни: "
+            f"{', '.join(t.schema_name for t in Zakupac.objects.all())}"
         )
-    tenant = Tenant.objects.get(schema_name=schema_name)
+    parohija = Zakupac.objects.get(schema_name=shema)
     prior = getattr(connection, "tenant", None)
-    connection.set_tenant(tenant)
+    connection.set_tenant(parohija)
     try:
-        yield tenant
+        yield parohija
     finally:
         if prior is not None:
             connection.set_tenant(prior)
