@@ -160,28 +160,256 @@ t.save()  # auto_create_schema=True → шема се креира и мигра
 
 #### Релације
 
+Дијаграм испод **није писан руком** — генерише га `scripts/er_dijagram.py`
+интроспекцијом самих модела (колоне, PK/FK, кардиналност, `verbose_name` као
+ознака везе). Регенерисање после промене модела:
+
+```bash
+cd crkva && python ../scripts/er_dijagram.py --upisi
+```
+
+`--check` пада ако је блок испод застарео у односу на моделе; тако дијаграм не
+може тихо да оде из корака (за разлику од прозе изнад, коју и даље одржавамо
+руком).
+
+<!-- er:start -->
+
 ```mermaid
 erDiagram
-    Osoba ||--o| Domacinstvo : "домаћин (1:1)"
-    Domacinstvo ||--o{ Ukucanin : "укућани"
-    Osoba ||--o{ Ukucanin : "особа"
+    Adresa {
+        uuid uid PK
+        string ulica
+        string broj
+        string sprat
+        string broj_stana
+        string mesto
+        string postkod
+        text primedba
+        int svestenik_id FK
+    }
+    Clanstvo {
+        int id PK
+        int korisnik_id FK
+        int parohija_id FK
+        string uloga
+        bool is_default
+        bool is_active
+        datetime created_at
+    }
+    CrkvenaOpstina {
+        uuid uid PK
+        string naziv
+        uuid eparhija_id FK
+    }
+    Domacinstvo {
+        datetime created
+        datetime modified
+        uuid uid PK
+        int domacin_id FK
+        uuid adresa_id FK
+        int slava_id FK
+        string tel_fiksni
+        string tel_mobilni
+        bool slavska_vodica
+        bool vaskrsnja_vodica
+        text napomena
+    }
+    Domen {
+        int id PK
+        string domain
+        int tenant_id FK
+        bool is_primary
+    }
+    Eparhija {
+        uuid uid PK
+        string nivo
+        string naziv
+        string sediste
+    }
+    Hram {
+        uuid uid PK
+        string naziv
+        string mesto
+    }
+    Krstenje {
+        datetime created
+        datetime modified
+        uuid uid PK
+        int godina_registracije
+        int redni_broj
+        int knjiga
+        int strana
+        int broj
+        date datum
+        time vreme
+        uuid hram_id FK
+        int dete_id FK
+        int otac_id FK
+        int majka_id FK
+        int kum_id FK
+        bool zivorodjeno
+        int po_redu
+        bool vanbracno
+        bool blizanac
+        string ime_blizanca
+        bool telesna_mana
+        int svestenik_id FK
+        string mesto_registracije
+        date datum_registracije
+        string maticni_broj
+        string strana_registracije
+        text primedba
+    }
+    Narodnost {
+        uuid uid PK
+        string naziv
+    }
+    Osoba {
+        datetime created
+        datetime modified
+        int uid PK
+        string ime
+        string prezime
+        string devojacko
+        string gradjansko_ime
+        bool parohijan
+        uuid adresa_id FK
+        string tel_fiksni
+        string tel_mobilni
+        string email
+        string mesto_rodjenja
+        date datum_rodjenja
+        time vreme_rodjenja
+        string pol
+        uuid zanimanje_id FK
+        uuid veroispovest_id FK
+        uuid narodnost_id FK
+    }
+    Parohija {
+        uuid uid PK
+        string naziv
+        uuid crkvena_opstina_id FK
+    }
+    Slava {
+        datetime created
+        datetime modified
+        int uid PK
+        string naziv
+        string opsti_naziv
+        int dan
+        int mesec
+        bool pokretni
+        int pomak_dani
+        int pomak_nedelje
+        bool post
+        int post_od
+        int post_do
+        bool crveno_slovo
+    }
+    Svestenik {
+        datetime created
+        datetime modified
+        int uid PK
+        string ime
+        string prezime
+        string mesto_rodjenja
+        date datum_rodjenja
+        string zvanje
+        uuid parohija_id FK
+        uuid adresa_id FK
+        int user_id FK
+    }
+    Ukucanin {
+        int id PK
+        datetime created
+        datetime modified
+        uuid domacinstvo_id FK
+        int osoba_id FK
+        string ime_ukucana
+        string uloga
+        bool preminuo
+    }
+    Vencanje {
+        datetime created
+        datetime modified
+        uuid uid PK
+        int godina_registracije
+        int redni_broj
+        int knjiga
+        int strana
+        int broj
+        date datum
+        int zenik_id FK
+        int zenik_rb_brak
+        int nevesta_id FK
+        int nevesta_rb_brak
+        int kum_id FK
+        int svekar_id FK
+        int svekrva_id FK
+        int tast_id FK
+        int tasta_id FK
+        int stari_svat_id FK
+        date datum_ispita
+        uuid hram_id FK
+        int svestenik_id FK
+        bool razresenje
+        text primedba
+    }
+    Veroispovest {
+        uuid uid PK
+        string naziv
+    }
+    Zakupac {
+        int id PK
+        string schema_name
+        string naziv
+        string mesto
+        string default_phone_region
+        bool is_active
+        bool is_default
+        datetime created_at
+    }
+    Zanimanje {
+        uuid uid PK
+        string sifra
+        string naziv
+        string zenski_naziv
+    }
+    Adresa ||--o{ Domacinstvo : "адреса домаћинства"
     Adresa ||--o{ Osoba : "адреса"
-    Adresa ||--o{ Domacinstvo : "адреса"
-    Slava ||--o{ Domacinstvo : "слава (cross-schema)"
-    Osoba ||--o{ Krstenje : "дете, отац, мајка, кум"
-    Osoba ||--o{ Vencanje : "женик, невеста, кум, сватови"
-    Hram ||--o{ Krstenje : "храм"
-    Hram ||--o{ Vencanje : "храм"
-    Svestenik ||--o{ Krstenje : "обавио"
-    Svestenik ||--o{ Vencanje : "обавио"
-    Svestenik ||--o{ Adresa : "задужен за улицу"
-    Parohija ||--o{ Svestenik : "парохија"
+    Adresa ||--o{ Svestenik : "адреса"
     CrkvenaOpstina ||--o{ Parohija : "црквена општина"
+    Domacinstvo ||--o{ Ukucanin : "domacinstvo"
     Eparhija ||--o{ CrkvenaOpstina : "епархија"
-    Zanimanje ||--o{ Osoba : "занимање"
-    Veroispovest ||--o{ Osoba : "вероисповест"
+    Hram ||--o{ Krstenje : "храм"
+    Hram ||--o{ Vencanje : "место венчања"
     Narodnost ||--o{ Osoba : "народност"
+    Osoba ||--o{ Krstenje : "дете"
+    Osoba ||--o{ Krstenje : "кум"
+    Osoba ||--o{ Krstenje : "мајка"
+    Osoba ||--o{ Krstenje : "отац"
+    Osoba ||--o{ Ukucanin : "особа"
+    Osoba ||--o{ Vencanje : "женик"
+    Osoba ||--o{ Vencanje : "име старог свата"
+    Osoba ||--o{ Vencanje : "кум"
+    Osoba ||--o{ Vencanje : "мајка женика"
+    Osoba ||--o{ Vencanje : "мајка невесте"
+    Osoba ||--o{ Vencanje : "невеста"
+    Osoba ||--o{ Vencanje : "отац женика"
+    Osoba ||--o{ Vencanje : "отац невесте"
+    Osoba ||--o| Domacinstvo : "домаћин"
+    Parohija ||--o{ Svestenik : "парохија"
+    Slava ||--o{ Domacinstvo : "слава домаћинства (cross-schema)"
+    Svestenik ||--o{ Adresa : "свештеник (улица)"
+    Svestenik ||--o{ Krstenje : "свештеник"
+    Svestenik ||--o{ Vencanje : "свештеник"
+    Veroispovest ||--o{ Osoba : "вероисповест"
+    Zakupac ||--o{ Clanstvo : "parohija"
+    Zakupac ||--o{ Domen : "tenant"
+    Zanimanje ||--o{ Osoba : "занимање"
 ```
+
+<!-- er:end -->
 
 Кључни модели (`Krstenje`, `Vencanje`, `Osoba`, `Svestenik`, `Domacinstvo`, `Adresa`, `Ukucanin`) користе [`simple_history`](https://django-simple-history.readthedocs.io/) за audit лог промена — свака тенант шема зато носи и пратеће `registar_historical*` табеле.
 
