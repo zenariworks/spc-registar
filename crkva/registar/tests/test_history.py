@@ -4,7 +4,7 @@
 
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
-from registar.history import history_for
+from registar.istorija import history_for
 from registar.models import Osoba, Svestenik
 from tenants.models import Clanstvo, Uloga, Zakupac
 

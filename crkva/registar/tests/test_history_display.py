@@ -8,7 +8,7 @@ must be the related row's ``__str__`` (e.g. ``радник``).
 # pylint: disable=missing-function-docstring
 
 from django.test import TestCase
-from registar.history import DELETED_LABEL, history_for
+from registar.istorija import DELETED_LABEL, history_for
 from registar.models import Osoba, Veroispovest, Zanimanje
 
 

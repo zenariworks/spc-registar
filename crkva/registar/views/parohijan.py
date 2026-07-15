@@ -162,7 +162,7 @@ class PrikazParohijana(LoginRequiredMixin, DetailView):
         return get_object_or_404(qs, uid=uid)
 
     def get_context_data(self, **kwargs):
-        from registar.history import history_for
+        from registar.istorija import history_for
 
         context = super().get_context_data(**kwargs)
         context["history_entries"] = history_for(self.object)

@@ -65,7 +65,7 @@ ROOT_TO_MODEL: dict[str, str] = {
     "tasta": "Osoba",
     "stari_svat": "Osoba",
     # ``entry`` and ``change`` in _history_panel.html are HistoryEntry /
-    # FieldChange dataclasses (see registar/history.py), not Django models,
+    # FieldChange dataclasses (see registar/istorija.py), not Django models,
     # so we deliberately leave them out of the table -- the audit can't
     # introspect dataclass fields and would flag every access.
 }
