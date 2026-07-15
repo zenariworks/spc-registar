@@ -6,7 +6,7 @@ from django.db import connection
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from registar.models import Domacinstvo, Krstenje, Osoba, Svestenik, Vencanje
-from registar.search import build_search_q
+from registar.pretraga import build_search_q
 from registar.utils import get_query_variants
 
 SEARCH_PREVIEW_LIMIT = 5
