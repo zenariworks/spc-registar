@@ -1,5 +1,9 @@
 [MASTER]
 load-plugins=pylint_django
+# Django пројекат је у `crkva/`; без овога pylint_django не може да учита
+# `crkva.settings` кад лintује фајл ван тог стабла (нпр. `scripts/*.py`)
+# и пада на F5110, што обара оцену на 0.
+init-hook=import sys; sys.path.insert(0, "crkva")
 # #303: fail-under и ignore-paths су раније били у нестандардним секцијама
 # ([PYLINT] / [TOOL:pylint]) па их pylint није уважавао. Пребачени у [MASTER].
 fail-under=9

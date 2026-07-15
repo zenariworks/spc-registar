@@ -76,6 +76,17 @@ repos:
         pass_filenames: true
         files: '\.py$'
 
+  # ER дијаграм у docs/architecture.md се генерише из модела — пади ако је
+  # неко дирао моделе а није регенерисао дијаграм.
+  - repo: local
+    hooks:
+      - id: er-dijagram
+        name: ER дијаграм прати моделе
+        entry: python scripts/er_dijagram.py --check
+        language: system
+        pass_filenames: false
+        files: '(crkva/(registar|tenants|kalendar)/models.*\.py|docs/architecture\.md)$'
+
 
   # Biome — CSS + JS linter. Catches CSS parse errors, duplicate selectors,
   # dead overrides, plus JS noConsoleLog / noDebugger / noVar / unused vars.
