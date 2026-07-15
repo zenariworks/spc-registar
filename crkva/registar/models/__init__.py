@@ -25,7 +25,6 @@ __all__ = [
     "Narodnost",
     "Parohija",
     "Osoba",
-    "Osoba",
     "Svestenik",
     "Ukucanin",
     "Vencanje",

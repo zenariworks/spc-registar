@@ -32,7 +32,7 @@ spc-registar/
 │   │   ├── static/registar/    # CSS (BEM, дизајн-токени), JS (ванилла)
 │   │   ├── management/commands/# DBF import, миграциони one-shots
 │   │   ├── migrations/         # Django миграције за registar шему
-│   │   └── tests/              # 570+ unit + интеграционих тестова
+│   │   └── tests/              # 950+ unit + интеграционих тестова
 │   ├── tenants/                # django-tenants апликација (Tenant, Domain, Role, UserMembership)
 │   │   ├── models.py
 │   │   ├── permissions.py      # tenant_role_required, tenant_admin_required, can_edit
@@ -93,14 +93,16 @@ t.save()  # auto_create_schema=True → шема се креира и мигра
 
 Сви request-ови захтевају пријаву (`@login_required` / `LoginRequiredMixin`); анонимни саобраћај иде на `/prijava/?next=<rutu>`. Писање је уско по улози.
 
-### Улоге (`tenants.models.Role`)
+### Улоге (`tenants.models.Uloga`)
 
-| Улога | Шта може да пише | Где |
-|---|---|---|
-| `Админ` | Све у тенанту | `osoba`, `domacinstvo`, `krstenje`, `vencanje`, `svestenik` |
-| `Канцеларија` | Парохијане, домаћинства, крштења, венчања | (изузев `svestenik`) |
-| `Свештенство` | Свештеници | само `svestenik` |
-| `Преглед` | Ништа — само чита | — |
+`Uloga` је `TextChoices`; вредност се чува у `Clanstvo.uloga`, подразумевано `PREGLED`.
+
+| Улога | Вредност у бази | Шта може да пише | Где |
+|---|---|---|---|
+| `Uloga.ADMIN` — Администратор | `admin` | Све у тенанту | `osoba`, `domacinstvo`, `krstenje`, `vencanje`, `svestenik` |
+| `Uloga.KANCELARIJA` — Канцеларија | `kancelarija` | Парохијане, домаћинства, крштења, венчања | све изузев `svestenik` |
+| `Uloga.SVESTENSTVO` — Свештенство | `svestenstvo` | Свештеници | само `svestenik` |
+| `Uloga.PREGLED` — Преглед | `pregled` | Ништа — само чита | — |
 
 Дефинисано у `crkva/tenants/permissions.py:WRITE_BY_ROLE`. Superuser заобилази проверу. Декоратор `@tenant_role_required("osoba")` се ставља изнад view-a који пише.
 
@@ -115,15 +117,75 @@ t.save()  # auto_create_schema=True → шема се креира и мигра
 
 ### Модели
 
-- **`Osoba`** (`registar.models.parohijan`) — једина "person" табела; `parohijan=True` означава парохијане. Алиаси: `Parohijan = Osoba` (за читљивост).
-- **`Domacinstvo`** — домаћинство; везано преко `domacin` (FK на Osoba) и `adresa` (FK на Adresa); чланови преко `Ukucanin` join модела.
-- **`Krstenje`, `Vencanje`** — записи са FK на учеснике (отац/мајка/кум; зеник/невеста/кум/стари сват). Обоје имају `uid` (UUID) као primary ID за URL-ове.
-- **`Svestenik`** — свештеници, посебан скуп људи (не унакрсно са Osoba).
-- **`Slava`** (`kalendar.models`) — фиксне и покретне славе; помоћи метод `get_datum(year)` за покретне.
+18 модела: 14 у `registar` (тенант шема), 3 у `tenants` (public шема), 1 у `kalendar` (public шема, дељен).
 
-Кључни модели (`Krstenje`, `Vencanje`, `Osoba`, `Svestenik`, `Domacinstvo`, `Adresa`, `Ukucanin`) користе [`simple_history`](https://django-simple-history.readthedocs.io/) за audit лог промена.
+#### Језгро — тенант шема
 
-> За детаљан ER приказ шеме (нпр. увоз у [dbdiagram.io](https://dbdiagram.io/)) покрени `./scripts/schema_dump.sh` — генерише `schema.sql` за изабрану тенант шему (подразумевано `crkva_sv_petke_cukarica`; промени преко `TENANT_SCHEMA=…`).
+| Модел | Табела | Улога |
+|---|---|---|
+| `Osoba` | `osobe` | Једина „person“ табела — и парохијани и све остале особе из записа (родитељи, кумови). `parohijan=True` издваја парохијане. FK: `adresa`, `zanimanje`, `veroispovest`, `narodnost`. |
+| `Domacinstvo` | `domacinstva` | Домаћинство. `domacin` је OneToOne на `Osoba`; FK `adresa`; FK `slava` (**cross-schema**, `db_constraint=False`). Заставице `slavska_vodica` / `vaskrsnja_vodica`. |
+| `Ukucanin` | `ukucani` | Join `Domacinstvo` ↔ `Osoba`, са `uloga` (домаћин / супружник / дете / рођак / остало) и `preminuo`. `ime_ukucana` је резервно име кад особа није повезана (за старије преминуле). Unique `(domacinstvo, osoba)` кад `osoba` постоји. |
+| `Krstenje` | `krstenja` | Запис крштења. FK на учеснике: `dete`, `otac`, `majka`, `kum` (све `Osoba`), плус `hram` и `svestenik`. Књиговодство: `knjiga`, `strana`, `broj`, `redni_broj`, `godina_registracije`. |
+| `Vencanje` | `vencanja` | Запис венчања. FK на учеснике: `zenik`, `nevesta`, `kum`, `svekar`, `svekrva`, `tast`, `tasta`, `stari_svat` (све `Osoba`), плус `hram` и `svestenik`. Исто књиговодство као `Krstenje`. |
+| `Svestenik` | `svestenici` | Свештеници — посебан скуп људи, не унакрсно са `Osoba`. `zvanje` из фиксне листе (јереј, протојереј, …); FK `parohija`, `adresa`; OneToOne `user` (**cross-schema**, `db_constraint=False`). |
+| `Adresa` | `adrese` | Улица, број, спрат, стан, место, поштански број. FK `svestenik` = свештеник задужен **за ту улицу** (#26 — подела територије парохије за васкршњу водицу). Unique по нормализованим (`Lower`) `ulica`, `broj`, `broj_stana`, `mesto`. |
+
+`Krstenje`, `Vencanje` и `Domacinstvo` имају `uid` (UUID) као primary ID — отуда UUID у URL-овима. `Osoba` и `Svestenik` користе `AutoField`.
+
+#### Шифарници — тенант шема
+
+| Модел | Табела | Улога |
+|---|---|---|
+| `Narodnost` | `narodnosti` | Само `naziv`. Case-insensitive unique. |
+| `Veroispovest` | `veroispovesti` | Само `naziv`. Case-insensitive unique. |
+| `Zanimanje` | `zanimanja` | `sifra`, `naziv`, `zenski_naziv`. Case-insensitive unique по `naziv`. |
+| `Eparhija` | `eparhije` | `nivo` (Епархија / Архиепископија / Митрополија), `naziv`, `sediste`. |
+| `CrkvenaOpstina` | `crkvene_opstine` | `naziv` + FK `eparhija`. |
+| `Parohija` | `parohije` | `naziv` + FK `crkvena_opstina`. **Није** исто што и `tenants.Zakupac` — ово је шифарник унутар тенанта, којим се везује свештеник. |
+| `Hram` | `hramovi` | `naziv`, `mesto`. |
+
+`Narodnost`, `Veroispovest` и `Zanimanje` нормализују `naziv` у `save()` **и** преко `NazivQuerySet` (`registar/models/_naziv.py`) на `bulk_create` / `bulk_update` путањама — иначе би bulk упис заобишао case-insensitive ограничење (#298).
+
+#### Public шема
+
+| Модел | Табела | Улога |
+|---|---|---|
+| `Zakupac` | `tenants_tenant` | Тенант = парохија (`TenantMixin`). `schema_name`, `naziv`, `mesto`, `default_phone_region`, `is_active`, `is_default`. `auto_create_schema=True`. |
+| `Domen` | `tenants_domain` | `DomainMixin` — постоји јер га django-tenants захтева; рутирање **није** по домену (види горе). |
+| `Clanstvo` | `tenants_user_membership` | Веза `User` ↔ `Zakupac` плус `uloga`. `is_default` бира парохију при пријави. |
+| `Slava` | `slave` | Фиксне (`dan` / `mesec`) и покретне (`pomak_dani` / `pomak_nedelje` од Васкрса) славе; постови, црвена слова. Методе `get_datum(year)`, `get_post(year)`, `sracunaj_vaskrs(year)`. Дељена — али `Domacinstvo.slava` је зато cross-schema FK. |
+
+`Uloga` (`tenants/models.py`) није модел него `TextChoices` — скуп вредности за `Clanstvo.uloga`; шта која улога сме види у [Ауторизација](#ауторизација).
+
+#### Релације
+
+```mermaid
+erDiagram
+    Osoba ||--o| Domacinstvo : "домаћин (1:1)"
+    Domacinstvo ||--o{ Ukucanin : "укућани"
+    Osoba ||--o{ Ukucanin : "особа"
+    Adresa ||--o{ Osoba : "адреса"
+    Adresa ||--o{ Domacinstvo : "адреса"
+    Slava ||--o{ Domacinstvo : "слава (cross-schema)"
+    Osoba ||--o{ Krstenje : "дете, отац, мајка, кум"
+    Osoba ||--o{ Vencanje : "женик, невеста, кум, сватови"
+    Hram ||--o{ Krstenje : "храм"
+    Hram ||--o{ Vencanje : "храм"
+    Svestenik ||--o{ Krstenje : "обавио"
+    Svestenik ||--o{ Vencanje : "обавио"
+    Svestenik ||--o{ Adresa : "задужен за улицу"
+    Parohija ||--o{ Svestenik : "парохија"
+    CrkvenaOpstina ||--o{ Parohija : "црквена општина"
+    Eparhija ||--o{ CrkvenaOpstina : "епархија"
+    Zanimanje ||--o{ Osoba : "занимање"
+    Veroispovest ||--o{ Osoba : "вероисповест"
+    Narodnost ||--o{ Osoba : "народност"
+```
+
+Кључни модели (`Krstenje`, `Vencanje`, `Osoba`, `Svestenik`, `Domacinstvo`, `Adresa`, `Ukucanin`) користе [`simple_history`](https://django-simple-history.readthedocs.io/) за audit лог промена — свака тенант шема зато носи и пратеће `registar_historical*` табеле.
+
+> За детаљан ER приказ саме SQL шеме (нпр. увоз у [dbdiagram.io](https://dbdiagram.io/)) покрени `./scripts/schema_dump.sh` — генерише `schema.sql` за изабрану тенант шему (подразумевано `crkva_sv_petke_cukarica`; промени преко `TENANT_SCHEMA=…`).
 
 ### Forms
 
