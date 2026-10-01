@@ -29,6 +29,63 @@ from registar.models import Domacinstvo, Osoba, Ukucanin
 from registar.models.krstenje import Krstenje
 from registar.models.vencanje import Vencanje
 
+OSNOVNI_PODACI = (
+    "pol",
+    "datum_rodjenja",
+    "mesto_rodjenja",
+    "adresa_id",
+    "tel_fiksni",
+    "tel_mobilni",
+    "zanimanje_id",
+    "veroispovest_id",
+    "narodnost_id",
+    "devojacko",
+    "gradjansko_ime",
+)
+
+DOPUNSKI_PODACI = (
+    "pol",
+    "datum_rodjenja",
+    "mesto_rodjenja",
+    "vreme_rodjenja",
+    "devojacko",
+    "gradjansko_ime",
+    "adresa_id",
+    "tel_fiksni",
+    "tel_mobilni",
+    "zanimanje_id",
+    "veroispovest_id",
+    "narodnost_id",
+    "parohijan",
+)
+
+DOPUNSKI_PODACI_DOMACINSTVA = (
+    "adresa_id",
+    "slava_id",
+    "tel_fiksni",
+    "tel_mobilni",
+    "napomena",
+    "slavska_vodica",
+    "vaskrsnja_vodica",
+)
+
+VEZE_NA_OSOBU = [
+    (Krstenje, ["dete", "otac", "majka", "kum"]),
+    (
+        Vencanje,
+        [
+            "zenik",
+            "nevesta",
+            "kum",
+            "svekar",
+            "svekrva",
+            "tast",
+            "tasta",
+            "stari_svat",
+        ],
+    ),
+]
+
 
 def _norm(s):
     return (s or "").strip().lower()
@@ -38,28 +95,65 @@ def _osoba_key(p: Osoba) -> tuple:
     return (_norm(p.ime), _norm(p.prezime))
 
 
-def _osoba_richness(p: Osoba) -> int:
-    """Higher score = keep this row as canonical."""
-    score = 0
-    for fld in (
-        "pol",
-        "datum_rodjenja",
-        "mesto_rodjenja",
-        "adresa_id",
-        "tel_fiksni",
-        "tel_mobilni",
-        "zanimanje_id",
-        "veroispovest_id",
-        "narodnost_id",
-        "devojacko",
-        "gradjansko_ime",
-    ):
-        if getattr(p, fld, None):
-            score += 1
+def _popunjenost(p: Osoba) -> int:
+    """Колико је запис особе потпун: број попуњених поља из OSNOVNI_PODACI.
+
+    Парохијан вреди 2. Од дупликата канонска остаје особа са највећом
+    попуњеношћу.
+    """
+    score = sum(1 for fld in OSNOVNI_PODACI if getattr(p, fld, None))
     if p.parohijan:
         score += 2
-    # tie-breaker: lower uid = older = more likely the original
     return score
+
+
+def _dopuni_prazna_polja(cilj, izvor, polja) -> None:
+    """Препиши у `cilj` вредности из `izvor` за поља која су у `cilj` празна."""
+    for f in polja:
+        if not getattr(cilj, f) and getattr(izvor, f):
+            setattr(cilj, f, getattr(izvor, f))
+
+
+def _signal(p: Osoba, adrese_domacinstava: dict) -> tuple | None:
+    """Најјачи сигнал идентитета особе, по приоритету.
+
+    Фиксни телефон, па мобилни, па канонска адреса, па адреса домаћинства
+    чији је особа домаћин. `None` ако особа нема ниједан.
+    """
+    if p.tel_fiksni:
+        return ("tel_fiksni", str(p.tel_fiksni))
+    if p.tel_mobilni:
+        return ("tel_mobilni", str(p.tel_mobilni))
+    if p.adresa_id:
+        return ("adresa", p.adresa_id)
+    if adrese_domacinstava.get(p.pk):
+        return ("dom_adresa", adrese_domacinstava[p.pk])
+    return None
+
+
+def _adrese_domacinstava(osobe: list[Osoba]) -> dict:
+    """uid домаћина → adresa_id његовог домаћинства (само где адреса постоји)."""
+    return {
+        d.domacin_id: d.adresa_id
+        for d in Domacinstvo.objects.filter(domacin__in=osobe).only(
+            "domacin_id", "adresa_id"
+        )
+        if d.adresa_id
+    }
+
+
+def _podeli_po_signalu(osobe: list[Osoba]) -> tuple[dict, list[Osoba]]:
+    """Подели особе истог имена у подгрупе по сигналу; врати и оне без сигнала."""
+    adrese = _adrese_domacinstava(osobe)
+    podgrupe: dict = defaultdict(list)
+    bez_signala = []
+    for p in osobe:
+        sig = _signal(p, adrese)
+        if sig is None:
+            bez_signala.append(p)
+        else:
+            podgrupe[sig].append(p)
+    return podgrupe, bez_signala
 
 
 class Command(BaseCommand):
@@ -79,7 +173,6 @@ class Command(BaseCommand):
             ),
         )
 
-    # ------------------------------------------------------------------ #
     def handle(self, *args, **opts):
         from django_tenants.utils import get_tenant_model, tenant_context
 
@@ -94,20 +187,18 @@ class Command(BaseCommand):
             with tenant_context(zakupac):
                 self._phase_osoba(dry_run=dry)
 
-    # ---------------------- спајање домаћинстава ---------------------- #
     def _merge_dom_into(self, canonical: Domacinstvo, dupe: Domacinstvo):
-        for f in ("adresa_id", "slava_id", "tel_fiksni", "tel_mobilni", "napomena"):
-            if not getattr(canonical, f) and getattr(dupe, f):
-                setattr(canonical, f, getattr(dupe, f))
-        canonical.slavska_vodica = canonical.slavska_vodica or dupe.slavska_vodica
-        canonical.vaskrsnja_vodica = canonical.vaskrsnja_vodica or dupe.vaskrsnja_vodica
+        _dopuni_prazna_polja(canonical, dupe, DOPUNSKI_PODACI_DOMACINSTVA)
         canonical.save()
         self._move_ukucani(canonical, dupe)
         dupe.delete()
 
     def _move_ukucani(self, canonical: Domacinstvo, dupe: Domacinstvo):
-        """Move Ukucanin rows from dupe → canonical, skipping rows that would
-        violate the unique_osoba_per_domacinstvo constraint."""
+        """Пребаци укућане из `dupe` у `canonical`.
+
+        Ред чија је особа већ укућанин у `canonical` се брише уместо да
+        прекрши `unique_osoba_per_domacinstvo`.
+        """
         canon_osobe = set(
             Ukucanin.objects.filter(domacinstvo=canonical).values_list(
                 "osoba_id", flat=True
@@ -120,90 +211,60 @@ class Command(BaseCommand):
                 u.domacinstvo = canonical
                 u.save(update_fields=["domacinstvo"])
 
-    # ---------------------------- особа ------------------------------- #
-    OSOBA_FKS = [
-        (Krstenje, ["dete", "otac", "majka", "kum"]),
-        (
-            Vencanje,
-            [
-                "zenik",
-                "nevesta",
-                "kum",
-                "svekar",
-                "svekrva",
-                "tast",
-                "tasta",
-                "stari_svat",
-            ],
-        ),
-    ]
-
     def _phase_osoba(self, dry_run: bool):
+        """Спаја особе истог имена по подгрупама истог сигнала.
+
+        Свака подгрупа са бар две особе се спаја у најбогатију од њих;
+        особе без пара (без сигнала или са јединственим сигналом) иду на
+        људски преглед. Група не мора цела да дели један сигнал — ред 1 може
+        да дели сигнал А, а редови 2 и 3 сигнал Б.
+        """
         self.stdout.write(self.style.MIGRATE_LABEL("\n— Спајање дупликата особа —"))
+        merged = 0
+        reported = []
+        for k, osobe in self._grupe_istog_imena().items():
+            spojeno, za_pregled = self._obradi_grupu(osobe, dry_run)
+            merged += spojeno
+            if za_pregled:
+                reported.append((k, za_pregled))
+        self._izvestaj(merged, reported, dry_run)
+
+    def _grupe_istog_imena(self) -> dict:
+        """Групе од бар две особе истог (нормализованог) имена и презимена."""
         groups = defaultdict(list)
         for p in Osoba.objects.all():
             k = _osoba_key(p)
             if k != ("", ""):
                 groups[k].append(p)
+        return {k: lst for k, lst in groups.items() if len(lst) >= 2}
 
+    def _obradi_grupu(self, osobe: list[Osoba], dry_run: bool) -> tuple[int, list]:
+        """Спој подгрупе једне групе; врати број спојених и особе за преглед."""
+        podgrupe, za_pregled = _podeli_po_signalu(osobe)
         merged = 0
-        reported = []
-        for k, lst in groups.items():
-            if len(lst) < 2:
+        delimicno = False
+        for clanovi in podgrupe.values():
+            if len(clanovi) < 2:
+                za_pregled.extend(clanovi)
+                delimicno = True
                 continue
-            # Sub-group same-name osobe by safety signal (canonical address,
-            # domacinstvo address, fiksni, mobilni). Each sub-group of size >= 2
-            # merges into one canonical osoba; remaining singletons are
-            # reported for human review. Previous code required the WHOLE
-            # group to share one signal, which left partial-match groups
-            # (e.g. row1 shares signal A; rows 2+3 share signal B) untouched.
-            subgroups: dict = defaultdict(list)
-            singletons = []
-            dom_by_osoba = {
-                d.domacin_id: d.adresa_id
-                for d in Domacinstvo.objects.filter(domacin__in=lst).only(
-                    "domacin_id", "adresa_id"
-                )
-                if d.adresa_id
-            }
-            for p in lst:
-                # Pick the strongest signal present, in priority order.
-                sig = None
-                if p.tel_fiksni:
-                    sig = ("tel_fiksni", str(p.tel_fiksni))
-                elif p.tel_mobilni:
-                    sig = ("tel_mobilni", str(p.tel_mobilni))
-                elif p.adresa_id:
-                    sig = ("adresa", p.adresa_id)
-                elif dom_by_osoba.get(p.pk):
-                    sig = ("dom_adresa", dom_by_osoba[p.pk])
-                if sig is None:
-                    singletons.append(p)
-                else:
-                    subgroups[sig].append(p)
+            merged += self._spoji_podgrupu(clanovi, dry_run)
 
-            partial = False
-            for sig, members in subgroups.items():
-                if len(members) < 2:
-                    singletons.extend(members)
-                    partial = True
-                    continue
-                canonical = max(members, key=_osoba_richness)
-                for dupe in members:
-                    if dupe.pk == canonical.pk:
-                        continue
-                    if dry_run:
-                        merged += 1
-                        continue
-                    with transaction.atomic():
-                        self._merge_osoba_into(canonical, dupe)
-                        merged += 1
+        if za_pregled and (len(za_pregled) + len(podgrupe) > 1 or delimicno):
+            return merged, za_pregled
+        return merged, []
 
-            if singletons and (
-                len(singletons) + sum(1 for _ in subgroups) > 1 or partial
-            ):
-                reported.append((k, singletons))
+    def _spoji_podgrupu(self, clanovi: list[Osoba], dry_run: bool) -> int:
+        """Спој све чланове у најбогатијег; врати број спојених (и у dry-run)."""
+        canonical = max(clanovi, key=_popunjenost)
+        duple = [p for p in clanovi if p.pk != canonical.pk]
+        if not dry_run:
+            for dupe in duple:
+                with transaction.atomic():
+                    self._merge_osoba_into(canonical, dupe)
+        return len(duple)
 
+    def _izvestaj(self, merged: int, reported: list, dry_run: bool) -> None:
         prefix = "би се" if dry_run else ""
         self.stdout.write(f"  {prefix} спојено {merged} дупл. особа")
         self.stdout.write(
@@ -214,42 +275,38 @@ class Command(BaseCommand):
                 f"uid={p.uid}/pol={p.pol or '—'}/tel={p.tel_fiksni or p.tel_mobilni or '—'}"
                 for p in lst
             )
-            print(f"    '{k[0]} {k[1]}': " + detalji)
+            self.stdout.write(f"    '{k[0]} {k[1]}': " + detalji)
 
     def _merge_osoba_into(self, canonical: Osoba, dupe: Osoba):
-        # 1. Copy missing fields canonical <- dupe
-        for f in (
-            "pol",
-            "datum_rodjenja",
-            "mesto_rodjenja",
-            "vreme_rodjenja",
-            "devojacko",
-            "gradjansko_ime",
-            "adresa_id",
-            "tel_fiksni",
-            "tel_mobilni",
-            "zanimanje_id",
-            "veroispovest_id",
-            "narodnost_id",
-        ):
-            if not getattr(canonical, f) and getattr(dupe, f):
-                setattr(canonical, f, getattr(dupe, f))
-        if dupe.parohijan and not canonical.parohijan:
-            canonical.parohijan = True
+        """Спој `dupe` у `canonical` и обриши `dupe`.
+
+        Редом: допуни празна поља, реши судар домаћинстава (OneToOne
+        домаћин), пребаци укућане и FK из крштења/венчања, па обриши дупликат
+        (каскаде не окидају јер су све везе већ пребачене).
+        """
+        _dopuni_prazna_polja(canonical, dupe, DOPUNSKI_PODACI)
         canonical.save()
+        self._prebaci_domacinstvo(canonical, dupe)
+        self._prebaci_ukucanstva(canonical, dupe)
+        for model, fields in VEZE_NA_OSOBU:
+            for fname in fields:
+                model.objects.filter(**{fname: dupe}).update(**{fname: canonical})
+        dupe.delete()
 
-        # 2. Handle Domacinstvo OneToOne collision
+    def _prebaci_domacinstvo(self, canonical: Osoba, dupe: Osoba) -> None:
+        """Домаћинство дупликата постаје канонског, или се спаја са његовим."""
         dupe_dom = Domacinstvo.objects.filter(domacin=dupe).first()
-        if dupe_dom:
-            canon_dom = Domacinstvo.objects.filter(domacin=canonical).first()
-            if canon_dom and canon_dom.pk != dupe_dom.pk:
-                self._merge_dom_into(canon_dom, dupe_dom)
-            else:
-                dupe_dom.domacin = canonical
-                dupe_dom.save()
+        if not dupe_dom:
+            return
+        canon_dom = Domacinstvo.objects.filter(domacin=canonical).first()
+        if canon_dom and canon_dom.pk != dupe_dom.pk:
+            self._merge_dom_into(canon_dom, dupe_dom)
+        else:
+            dupe_dom.domacin = canonical
+            dupe_dom.save()
 
-        # 3. Repoint other FKs
-        # Move Ukucanin rows, dedupe on collision
+    def _prebaci_ukucanstva(self, canonical: Osoba, dupe: Osoba) -> None:
+        """Укућанства дупликата прелазе на канонску; дупла чланства се бришу."""
         canon_doms = set(
             Ukucanin.objects.filter(osoba=canonical).values_list(
                 "domacinstvo_id", flat=True
@@ -261,9 +318,3 @@ class Command(BaseCommand):
             else:
                 u.osoba = canonical
                 u.save(update_fields=["osoba"])
-        for model, fields in self.OSOBA_FKS:
-            for fname in fields:
-                model.objects.filter(**{fname: dupe}).update(**{fname: canonical})
-
-        # 4. Delete dupe (cascades won't fire because we've moved all refs)
-        dupe.delete()
