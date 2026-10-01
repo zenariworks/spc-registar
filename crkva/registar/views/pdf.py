@@ -26,7 +26,7 @@ class HistorySnapshotMixin:
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        from registar.history import history_for
+        from registar.istorija import history_for
 
         obj = self.object
         context["history_entries"] = history_for(obj)

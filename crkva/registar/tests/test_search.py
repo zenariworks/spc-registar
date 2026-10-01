@@ -1,8 +1,8 @@
-"""Тестови за обједињену претрагу (``registar.search``).
+"""Тестови за обједињену претрагу (``registar.pretraga``).
 
 Раније је иста логика постојала на четири места (``SearchMixin``,
 ``search_view`` двапут и непотребни ``filters/*_filter.py``). Сада је један
-извор истине у :mod:`registar.search`; овде се потврђује: претрага по имену
+извор истине у :mod:`registar.pretraga`; овде се потврђује: претрага по имену
 (ћир/лат), по датуму, AND семантика више термина и сужавање резултата.
 Issue #295 (раније #222).
 """
@@ -13,7 +13,7 @@ import datetime
 
 from django.test import TestCase
 from registar.models import Hram, Krstenje, Osoba, Vencanje
-from registar.search import search_queryset
+from registar.pretraga import search_queryset
 
 KRSTENJE_FIELDS = [
     "dete__ime",

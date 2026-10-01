@@ -1,7 +1,7 @@
 """Заједнички миксини за приказе."""
 
 from registar.forms import SearchForm
-from registar.search import search_queryset
+from registar.pretraga import search_queryset
 
 PAGE_SIZE_CHOICES = [10, 25, 50, 100]
 PAGE_SIZE_DEFAULT = 10
