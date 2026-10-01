@@ -35,8 +35,8 @@ from registar.models import (
 from registar.utils.migracija.address import dodaj_adresu, rasclani_adresu
 from registar.utils.migracija.cache import (
     LookupCache,
-    normalise_hram_naziv,
-    normalise_zanimanje,
+    normalizuj_naziv_hrama,
+    normalizuj_zanimanje,
 )
 from registar.utils.migracija.errors import RecordContext, RecordSkipped
 from registar.utils.migracija.helpers import (
@@ -237,10 +237,10 @@ class Command(MigrationCommand):
         self._zanimanje = LookupCache(
             Zanimanje,
             "naziv",
-            key_normaliser=normalise_zanimanje,
+            key_normaliser=normalizuj_zanimanje,
             extra_defaults={"sifra": ""},
         )
-        self._hram = LookupCache(Hram, "naziv", key_normaliser=normalise_hram_naziv)
+        self._hram = LookupCache(Hram, "naziv", key_normaliser=normalizuj_naziv_hrama)
         self._vera.warm()
         self._narod.warm()
         self._svestenici = {s.uid: s for s in Svestenik.objects.all()}

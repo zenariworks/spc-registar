@@ -5,7 +5,7 @@
 from datetime import date, time
 
 from django.test import TestCase
-from registar.utils.migracija.cache import normalise_hram_naziv, normalise_zanimanje
+from registar.utils.migracija.cache import normalizuj_naziv_hrama, normalizuj_zanimanje
 from registar.utils.migracija.errors import RecordContext, RecordSkipped
 from registar.utils.migracija.helpers import (
     cirilica,
@@ -148,22 +148,22 @@ class CyrIntTests(TestCase):
 
 class HramNormaliserTests(TestCase):
     def test_strips_literal_hram(self):
-        self.assertEqual(normalise_hram_naziv("hram Светог Саве"), "Светог Саве")
-        self.assertEqual(normalise_hram_naziv("Hram Светог Саве"), "Светог Саве")
-        self.assertEqual(normalise_hram_naziv("храм Светог Саве"), "Светог Саве")
+        self.assertEqual(normalizuj_naziv_hrama("hram Светог Саве"), "Светог Саве")
+        self.assertEqual(normalizuj_naziv_hrama("Hram Светог Саве"), "Светог Саве")
+        self.assertEqual(normalizuj_naziv_hrama("храм Светог Саве"), "Светог Саве")
 
     def test_keeps_clean_naziv(self):
-        self.assertEqual(normalise_hram_naziv("Светог Саве"), "Светог Саве")
+        self.assertEqual(normalizuj_naziv_hrama("Светог Саве"), "Светог Саве")
 
     def test_empty_falls_back(self):
-        self.assertEqual(normalise_hram_naziv(""), "Непознат храм")
-        self.assertEqual(normalise_hram_naziv(None), "Непознат храм")
+        self.assertEqual(normalizuj_naziv_hrama(""), "Непознат храм")
+        self.assertEqual(normalizuj_naziv_hrama(None), "Непознат храм")
 
 
 class ZanimanjeNormaliserTests(TestCase):
     def test_lowercases(self):
-        self.assertEqual(normalise_zanimanje("Учитељ"), "учитељ")
-        self.assertEqual(normalise_zanimanje("УЧИТЕЉ"), "учитељ")
+        self.assertEqual(normalizuj_zanimanje("Учитељ"), "учитељ")
+        self.assertEqual(normalizuj_zanimanje("УЧИТЕЉ"), "учитељ")
 
 
 class RecordContextTests(TestCase):
