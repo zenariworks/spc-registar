@@ -43,7 +43,7 @@ OSNOVNI_PODACI = (
     "gradjansko_ime",
 )
 
-POLJA_DOPUNE_OSOBE = (
+DOPUNSKI_PODACI = (
     "pol",
     "datum_rodjenja",
     "mesto_rodjenja",
@@ -59,7 +59,7 @@ POLJA_DOPUNE_OSOBE = (
     "parohijan",
 )
 
-POLJA_DOPUNE_DOMACINSTVA = (
+DOPUNSKI_PODACI_DOMACINSTVA = (
     "adresa_id",
     "slava_id",
     "tel_fiksni",
@@ -69,7 +69,7 @@ POLJA_DOPUNE_DOMACINSTVA = (
     "vaskrsnja_vodica",
 )
 
-OSOBA_FKS = [
+VEZE_NA_OSOBU = [
     (Krstenje, ["dete", "otac", "majka", "kum"]),
     (
         Vencanje,
@@ -159,8 +159,6 @@ def _podeli_po_signalu(osobe: list[Osoba]) -> tuple[dict, list[Osoba]]:
 class Command(BaseCommand):
     help = "Спајање дупликата особа"
 
-    OSOBA_FKS = OSOBA_FKS
-
     def add_arguments(self, parser):
         parser.add_argument(
             "--dry-run", action="store_true", help="Само пријави, не мењај базу"
@@ -190,7 +188,7 @@ class Command(BaseCommand):
                 self._phase_osoba(dry_run=dry)
 
     def _merge_dom_into(self, canonical: Domacinstvo, dupe: Domacinstvo):
-        _dopuni_prazna_polja(canonical, dupe, POLJA_DOPUNE_DOMACINSTVA)
+        _dopuni_prazna_polja(canonical, dupe, DOPUNSKI_PODACI_DOMACINSTVA)
         canonical.save()
         self._move_ukucani(canonical, dupe)
         dupe.delete()
@@ -286,11 +284,11 @@ class Command(BaseCommand):
         домаћин), пребаци укућане и FK из крштења/венчања, па обриши дупликат
         (каскаде не окидају јер су све везе већ пребачене).
         """
-        _dopuni_prazna_polja(canonical, dupe, POLJA_DOPUNE_OSOBE)
+        _dopuni_prazna_polja(canonical, dupe, DOPUNSKI_PODACI)
         canonical.save()
         self._prebaci_domacinstvo(canonical, dupe)
         self._prebaci_ukucanstva(canonical, dupe)
-        for model, fields in self.OSOBA_FKS:
+        for model, fields in VEZE_NA_OSOBU:
             for fname in fields:
                 model.objects.filter(**{fname: dupe}).update(**{fname: canonical})
         dupe.delete()
