@@ -7,65 +7,61 @@
    via the CSS in info.css.
 
    This script intercepts clicks on:
-     - [data-action="enter-edit"]  : switch to edit mode (no page nav)
-     - [data-action="cancel-edit"] : revert to view mode, reset form
-   It also reinitializes select2 widgets that were hidden when the page
-   loaded so they render at the correct width once revealed.
+     - [data-action="enter-edit"]  : switch to edit mode (no page nav) and
+                                     replace the URL with the link's href
+     - [data-action="cancel-edit"] : reset the form (re-syncing select2 via
+                                     a change event), revert to view mode and
+                                     replace the URL with data-view-url
+   On entering edit mode, select2 widgets that were initialised while hidden
+   (width 0) are rebuilt so they render at the correct width, and focus moves
+   to the first visible editable field for keyboard users.
    ========================================================================== */
 
 (function () {
+    const FIRST_EDITABLE =
+        ".info-row--editable input:not([type=hidden]):not([disabled])," +
+        " .info-row--editable select:not([disabled])," +
+        " .info-row--editable textarea:not([disabled])";
+    const SELECT2_WIDGETS =
+        "select.django-select2, select[data-autocomplete-light-function], select.select2-hidden-accessible";
 
     function root() {
         return document.querySelector("[data-edit-toggle-root]");
     }
 
-    function setMode(node, mode) {
-        if (!node) return;
-        node.setAttribute("data-mode", mode);
-        if (mode === "edit") {
-            reinitSelect2(node);
-            // Hand focus to the first visible input for keyboard users.
-            const first = node.querySelector(
-                ".info-row--editable input:not([type=hidden]):not([disabled]),"
-                + " .info-row--editable select:not([disabled]),"
-                + " .info-row--editable textarea:not([disabled])"
-            );
-            if (first && typeof first.focus === "function") {
-                try { first.focus({ preventScroll: true }); } catch (_e) { first.focus(); }
-            }
-        }
+    function replaceUrl(url) {
+        if (!url) return;
+        if (new URL(url, window.location.href).origin !== window.location.origin) return;
+        window.history.replaceState({}, "", url);
     }
 
     function reinitSelect2(node) {
-        if (!window.jQuery || !window.jQuery.fn || !window.jQuery.fn.select2) return;
         const $ = window.jQuery;
-        // select2 widgets initialised while hidden render with width 0;
-        // tell them to recompute now that the row is visible.
-        $(node).find("select.django-select2, select[data-autocomplete-light-function], select.select2-hidden-accessible").each(function () {
+        if (!$?.fn?.select2) return;
+        $(node).find(SELECT2_WIDGETS).each(function () {
             const $sel = $(this);
-            if ($sel.data("select2")) {
-                try { $sel.select2("destroy"); } catch (_e) { /* ignore */ }
-            }
+            if ($sel.data("select2")) $sel.select2("destroy");
         });
-        // django-select2 binds on document.ready; we trigger its init helper
-        // if available, otherwise reapply the default constructor.
         if (typeof $.fn.djangoSelect2 === "function") {
             $(node).find("select.django-select2").djangoSelect2();
         } else {
-            $(node).find("select.django-select2, select.select2-hidden-accessible").each(function () {
-                try { $(this).select2(); } catch (_e) { /* ignore */ }
-            });
+            $(node).find("select.django-select2, select.select2-hidden-accessible").select2();
         }
     }
 
-    function enterEditUrl(action) {
-        const href = action.getAttribute("href");
-        return href || null;
+    function setMode(node, mode) {
+        node.setAttribute("data-mode", mode);
+        if (mode !== "edit") return;
+        reinitSelect2(node);
+        const first = node.querySelector(FIRST_EDITABLE);
+        if (first) first.focus({ preventScroll: true });
     }
 
-    function viewUrl(node) {
-        const href = node.getAttribute("data-view-url");
-        return href || window.location.pathname;
+    function resetForm(node) {
+        const form = node.querySelector("form") || (node.tagName === "FORM" ? node : null);
+        if (!form) return;
+        form.reset();
+        if (window.jQuery) window.jQuery(form).find("select").trigger("change");
     }
 
     function onClick(e) {
@@ -77,25 +73,12 @@
         if (action.dataset.action === "enter-edit") {
             e.preventDefault();
             setMode(node, "edit");
-            const editHref = enterEditUrl(action);
-            if (editHref && window.history && window.history.replaceState) {
-                try { window.history.replaceState({}, "", editHref); } catch (_err) { /* ignore */ }
-            }
+            replaceUrl(action.getAttribute("href"));
         } else if (action.dataset.action === "cancel-edit") {
             e.preventDefault();
-            const form = node.querySelector("form") || (node.tagName === "FORM" ? node : null);
-            if (form && typeof form.reset === "function") {
-                form.reset();
-                // Re-sync select2 + radios after reset.
-                if (window.jQuery) {
-                    window.jQuery(form).find("select").trigger("change");
-                }
-            }
+            resetForm(node);
             setMode(node, "view");
-            const back = viewUrl(node);
-            if (back && window.history && window.history.replaceState) {
-                try { window.history.replaceState({}, "", back); } catch (_err) { /* ignore */ }
-            }
+            replaceUrl(node.getAttribute("data-view-url") || window.location.pathname);
         }
     }
 
