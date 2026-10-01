@@ -47,8 +47,8 @@
     }
 
     function prefillModal(parts, defaultPol, defaultParohijan) {
-        const imeEl = document.getElementById("modal-ime");
-        const prezimeEl = document.getElementById("modal-prezime");
+        const imeEl = document.querySelector("#osoba-modal #modal-ime");
+        const prezimeEl = document.querySelector("#osoba-modal #modal-prezime");
         if (imeEl) imeEl.value = parts.ime;
         if (prezimeEl) prezimeEl.value = parts.prezime;
         if (POL_VALUES.includes(defaultPol)) {

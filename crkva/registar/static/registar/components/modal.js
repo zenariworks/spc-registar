@@ -25,6 +25,10 @@
                            // default: appends new <option> to the Select2 widget
          }
 
+         Field inputs and toggle groups are looked up inside the modal, so
+         several modals on one page may reuse ids such as "modal-ime".
+         Opening a modal clears its inputs, errors and toggle selection.
+
    Global behaviours wired automatically:
      - Esc closes any open modal
      - Click on the overlay (not its child) closes
@@ -32,12 +36,41 @@
    ========================================================================== */
 
 (function () {
+    const TOGGLE_ITEM = ".tab-group__item";
+    const SAVE_FAILED = "Грешка при чувању. Покушајте поново.";
 
     const _openModals = new Set();
+    const _resetHandlers = {};
 
     function _csrfToken() {
         const el = document.querySelector("[name=csrfmiddlewaretoken]");
         return el ? el.value : "";
+    }
+
+    function _textInputs(overlay) {
+        return overlay.querySelectorAll("input[type=text]");
+    }
+
+    function _showError(overlay, msg) {
+        const err = overlay.querySelector(".error-text");
+        if (!err) return;
+        err.textContent = msg;
+        err.removeAttribute("hidden");
+        err.style.display = "block";
+    }
+
+    function _hideError(overlay) {
+        const err = overlay.querySelector(".error-text");
+        if (!err) return;
+        err.style.display = "none";
+        err.setAttribute("hidden", "");
+    }
+
+    function _focusFirstInput(overlay) {
+        setTimeout(() => {
+            const first = overlay.querySelector("input[type=text]");
+            if (first) first.focus();
+        }, 50);
     }
 
     function open(modalId, targetFieldId) {
@@ -50,18 +83,13 @@
         overlay.removeAttribute("hidden");
         overlay.style.display = "flex";
         _openModals.add(modalId);
-        // Clear inputs / errors
-        overlay.querySelectorAll("input[type=text]").forEach((i) => (i.value = ""));
+        _textInputs(overlay).forEach((i) => (i.value = ""));
         overlay
-            .querySelectorAll(".tab-group__item.is-active")
+            .querySelectorAll(TOGGLE_ITEM + ".is-active")
             .forEach((b) => b.classList.remove("is-active"));
-        const err = overlay.querySelector(".error-text");
-        if (err) { err.style.display = "none"; err.setAttribute("hidden", ""); }
-        // Focus the first input
-        setTimeout(() => {
-            const first = overlay.querySelector("input[type=text]");
-            if (first) first.focus();
-        }, 50);
+        _resetHandlers[modalId]?.();
+        _hideError(overlay);
+        _focusFirstInput(overlay);
     }
 
     function close(modalId) {
@@ -84,6 +112,50 @@
         }
     }
 
+    function _bindToggleGroups(overlay, toggleGroups, state) {
+        Object.entries(toggleGroups).forEach(([fieldName, groupId]) => {
+            const group = overlay.querySelector("#" + groupId);
+            if (!group) return;
+            const items = group.querySelectorAll(TOGGLE_ITEM);
+            items.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    items.forEach((b) => b.classList.remove("is-active"));
+                    btn.classList.add("is-active");
+                    state[fieldName] = btn.dataset.value;
+                });
+            });
+        });
+    }
+
+    function _bindEnterToSave(overlay, save) {
+        _textInputs(overlay).forEach((input) => {
+            input.addEventListener("keydown", (e) => {
+                if (e.key !== "Enter") return;
+                e.preventDefault();
+                save();
+            });
+        });
+    }
+
+    function _readValues(overlay, fields, toggleState) {
+        const values = {};
+        for (const f of fields) {
+            const el = overlay.querySelector("#modal-" + f);
+            if (el) values[f] = el.value.trim();
+        }
+        return Object.assign(values, toggleState);
+    }
+
+    function _post(url, values) {
+        const formData = new FormData();
+        Object.entries(values).forEach(([k, v]) => formData.append(k, v || ""));
+        return fetch(url, {
+            method: "POST",
+            headers: { "X-CSRFToken": _csrfToken() },
+            body: formData,
+        }).then((r) => r.json());
+    }
+
     function bindForm(modalId, options) {
         const overlay = document.getElementById(modalId);
         if (!overlay) {
@@ -102,90 +174,36 @@
             options || {},
         );
 
-        // Wire tab-group items (e.g. pol: M/Ж)
         const toggleState = {};
-        Object.entries(opts.toggleGroups).forEach(([fieldName, groupId]) => {
-            const group = document.getElementById(groupId);
-            if (!group) return;
-            group.querySelectorAll(".tab-group__item").forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    group
-                        .querySelectorAll(".tab-group__item")
-                        .forEach((b) => b.classList.remove("is-active"));
-                    btn.classList.add("is-active");
-                    toggleState[fieldName] = btn.dataset.value;
-                });
-            });
-        });
-
-        // Enter inside any text input → save
-        overlay.querySelectorAll("input[type=text]").forEach((input) => {
-            input.addEventListener("keydown", (e) => {
-                if (e.key === "Enter") {
-                    e.preventDefault();
-                    save();
-                }
-            });
-        });
-
-        function _showError(msg) {
-            const err = overlay.querySelector(".error-text");
-            if (err) {
-                err.textContent = msg;
-                err.removeAttribute("hidden");
-                err.style.display = "block";
-            }
-        }
+        _resetHandlers[modalId] = () => {
+            Object.keys(toggleState).forEach((k) => delete toggleState[k]);
+        };
 
         function save() {
-            const values = {};
-            for (const f of opts.fields) {
-                const el = document.getElementById("modal-" + f);
-                if (el) values[f] = el.value.trim();
-            }
-            Object.entries(toggleState).forEach(([k, v]) => {
-                values[k] = v;
-            });
-
-            // Validate required
-            const missing = opts.requiredFields.filter((f) => !values[f]);
-            if (missing.length) {
-                _showError(opts.requiredMessage);
+            const values = _readValues(overlay, opts.fields, toggleState);
+            if (opts.requiredFields.some((f) => !values[f])) {
+                _showError(overlay, opts.requiredMessage);
                 return;
             }
-            _showError("");
-            const err = overlay.querySelector(".error-text");
-            if (err) { err.style.display = "none"; err.setAttribute("hidden", ""); }
-
-            const formData = new FormData();
-            Object.entries(values).forEach(([k, v]) => formData.append(k, v || ""));
-
-            fetch(opts.url, {
-                method: "POST",
-                headers: { "X-CSRFToken": _csrfToken() },
-                body: formData,
-            })
-                .then((r) => r.json())
+            _hideError(overlay);
+            _post(opts.url, values)
                 .then((data) => {
                     if (data.error) {
-                        _showError(data.error);
+                        _showError(overlay, data.error);
                         return;
                     }
                     opts.onSuccess(data, overlay._targetFieldId);
                     close(modalId);
                 })
-                .catch(() => {
-                    _showError("Грешка при чувању. Покушајте поново.");
-                });
+                .catch(() => _showError(overlay, SAVE_FAILED));
         }
 
+        _bindToggleGroups(overlay, opts.toggleGroups, toggleState);
+        _bindEnterToSave(overlay, save);
+
         return {
-            open: function (targetFieldId) {
-                open(modalId, targetFieldId);
-            },
-            close: function () {
-                close(modalId);
-            },
+            open: (targetFieldId) => open(modalId, targetFieldId),
+            close: () => close(modalId),
             save: save,
         };
     }
