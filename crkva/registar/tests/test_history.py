@@ -40,10 +40,10 @@ class HistoryHelperTests(TestCase):
         s = Svestenik.objects.create(ime="Пера", prezime="Пера", zvanje="јереј")
         s.zvanje = "протојереј"
         s.save()
-        entries = history_for(s)
-        self.assertEqual(len(entries), 2)
-        changes = entries[0].changes
-        self.assertTrue(any(c.polje == "zvanje" for c in changes))
+        unosi = history_for(s)
+        self.assertEqual(len(unosi), 2)
+        izmene = unosi[0].changes
+        self.assertTrue(any(c.polje == "zvanje" for c in izmene))
 
 
 class HistoryPanelTemplateTests(TestCase):

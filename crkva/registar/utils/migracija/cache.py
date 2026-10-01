@@ -60,7 +60,7 @@ class LookupCache:
 _HRAM_LITERAL = re.compile(r"(?i)\bhram\b|\bхрам\b")
 
 
-def normalise_hram_naziv(naziv: str | None) -> str:
+def normalizuj_naziv_hrama(naziv: str | None) -> str:
     if not naziv:
         return "Непознат храм"
     stripped = _HRAM_LITERAL.sub("", naziv).strip()
@@ -70,5 +70,5 @@ def normalise_hram_naziv(naziv: str | None) -> str:
 # --- Zanimanje normaliser: lowercase ---
 
 
-def normalise_zanimanje(naziv: str) -> str:
+def normalizuj_zanimanje(naziv: str) -> str:
     return naziv.lower()
