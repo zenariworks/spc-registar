@@ -1,4 +1,4 @@
-"""Заједнички QuerySet за lookup моделе са нормализованим `naziv`.
+"""Заједничка основа за lookup моделе са нормализованим `naziv`.
 
 Narodnost/Zanimanje/Veroispovest нормализују `naziv` у `save()`, али
 `bulk_create`/`bulk_update` заобилазе `save()`, па case-insensitive
@@ -13,7 +13,10 @@ Narodnost/Zanimanje/Veroispovest нормализују `naziv` у `save()`, а�
 
 from __future__ import annotations
 
+import uuid
+
 from django.db import models
+from django.db.models.functions import Lower
 from registar.utils.tekst import normalizuj
 
 
@@ -33,3 +36,32 @@ class NazivQuerySet(models.QuerySet):
                 if getattr(obj, "naziv", None):
                     obj.naziv = normalizuj(obj.naziv)
         return super().bulk_update(objs, fields, *args, **kwargs)
+
+
+class NazivModel(models.Model):
+    """Апстрактна основа шифарника (Narodnost/Veroispovest/Zanimanje).
+
+    Даје `uid`, `naziv` са case-insensitive јединственим ограничењем
+    `<модел>_naziv_ci_uniq` и нормализацију `naziv` у `save()`, да
+    ограничење не пропусти дупликате са вишком размака (#252).
+    Подкласе могу поново да декларишу `naziv` ради другачијег `verbose_name`.
+    """
+
+    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
+    naziv = models.CharField(verbose_name="назив", max_length=255)
+
+    objects = NazivQuerySet.as_manager()
+
+    def __str__(self):
+        return f"{self.naziv}"
+
+    def save(self, *args, **kwargs):
+        if self.naziv:
+            self.naziv = normalizuj(self.naziv)
+        super().save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+        constraints = [
+            models.UniqueConstraint(Lower("naziv"), name="%(class)s_naziv_ci_uniq"),
+        ]

@@ -1,17 +1,11 @@
 """Модул модела занимања у бази података."""
 
-import uuid
-
 from django.db import models
-from django.db.models.functions import Lower
-from registar.models._naziv import NazivQuerySet
-from registar.utils.tekst import normalizuj
+from registar.models._naziv import NazivModel
 
 
-class Zanimanje(models.Model):
+class Zanimanje(NazivModel):
     """Класа која представља занимања."""
-
-    uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
 
     sifra = models.CharField(verbose_name="шифра", max_length=50)
     naziv = models.CharField(verbose_name="назив", max_length=255)
@@ -19,22 +13,7 @@ class Zanimanje(models.Model):
         verbose_name="женски назив", max_length=255, null=True
     )
 
-    objects = NazivQuerySet.as_manager()
-
-    def __str__(self):
-        return f"{self.naziv}"
-
-    def save(self, *args, **kwargs):
-        # Нормализуј назив да case-insensitive ограничење не пропусти
-        # дупликате са вишком размака (#252).
-        if self.naziv:
-            self.naziv = normalizuj(self.naziv)
-        super().save(*args, **kwargs)
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(Lower("naziv"), name="zanimanje_naziv_ci_uniq"),
-        ]
+    class Meta(NazivModel.Meta):
         db_table = "zanimanja"
         verbose_name = "Занимање"
         verbose_name_plural = "Занимања"
