@@ -29,7 +29,7 @@ from registar.models import Domacinstvo, Osoba, Ukucanin
 from registar.models.krstenje import Krstenje
 from registar.models.vencanje import Vencanje
 
-POLJA_BOGATSTVA = (
+POLJA_POPUNJENOSTI = (
     "pol",
     "datum_rodjenja",
     "mesto_rodjenja",
@@ -95,9 +95,13 @@ def _osoba_key(p: Osoba) -> tuple:
     return (_norm(p.ime), _norm(p.prezime))
 
 
-def _osoba_richness(p: Osoba) -> int:
-    """Већи број = ова особа остаје канонска (попуњена поља; парохијан вреди 2)."""
-    score = sum(1 for fld in POLJA_BOGATSTVA if getattr(p, fld, None))
+def _popunjenost(p: Osoba) -> int:
+    """Колико је запис особе потпун: број попуњених POLJA_POPUNJENOSTI.
+
+    Парохијан вреди 2. Од дупликата канонска остаје особа са највећом
+    попуњеношћу.
+    """
+    score = sum(1 for fld in POLJA_POPUNJENOSTI if getattr(p, fld, None))
     if p.parohijan:
         score += 2
     return score
@@ -254,7 +258,7 @@ class Command(BaseCommand):
 
     def _spoji_podgrupu(self, clanovi: list[Osoba], dry_run: bool) -> int:
         """Спој све чланове у најбогатијег; врати број спојених (и у dry-run)."""
-        canonical = max(clanovi, key=_osoba_richness)
+        canonical = max(clanovi, key=_popunjenost)
         duple = [p for p in clanovi if p.pk != canonical.pk]
         if not dry_run:
             for dupe in duple:
