@@ -29,7 +29,7 @@ from registar.models import Domacinstvo, Osoba, Ukucanin
 from registar.models.krstenje import Krstenje
 from registar.models.vencanje import Vencanje
 
-POLJA_POPUNJENOSTI = (
+OSNOVNI_PODACI = (
     "pol",
     "datum_rodjenja",
     "mesto_rodjenja",
@@ -96,12 +96,12 @@ def _osoba_key(p: Osoba) -> tuple:
 
 
 def _popunjenost(p: Osoba) -> int:
-    """Колико је запис особе потпун: број попуњених POLJA_POPUNJENOSTI.
+    """Колико је запис особе потпун: број попуњених поља из OSNOVNI_PODACI.
 
     Парохијан вреди 2. Од дупликата канонска остаје особа са највећом
     попуњеношћу.
     """
-    score = sum(1 for fld in POLJA_POPUNJENOSTI if getattr(p, fld, None))
+    score = sum(1 for fld in OSNOVNI_PODACI if getattr(p, fld, None))
     if p.parohijan:
         score += 2
     return score
