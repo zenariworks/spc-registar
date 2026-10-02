@@ -11,7 +11,7 @@ from registar.forms import DomacinstvoForm
 from registar.forms.domacinstvo import UkucaninFormSet
 from registar.models import Domacinstvo, Svestenik
 from registar.views.base import EditChromeMixin, RegistarCreateView, RegistarUpdateView
-from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from registar.views.mixins import InfiniteScrollMixin, ListControlsMixin, SearchMixin
 from registar.views.spiskovi import grupisi_po_ulici, razdvoji_zive_i_preminule
 from registar.views.territory import by_parish_filter, resolve_svestenik
 
@@ -30,7 +30,7 @@ unos_domacinstva = DomacinstvoCreate.as_view()
 
 
 class SpisakDomacinsta(
-    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+    LoginRequiredMixin, SearchMixin, ListControlsMixin, InfiniteScrollMixin, ListView
 ):
     """Приказује списак домаћинстава са могућношћу претраге и пагинације."""
 

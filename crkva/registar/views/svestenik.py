@@ -8,7 +8,7 @@ from django.views.generic import DetailView, ListView
 from registar.forms import SvestenikForm
 from registar.models.svestenik import Svestenik
 from registar.views.base import EditChromeMixin, RegistarCreateView, RegistarUpdateView
-from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from registar.views.mixins import InfiniteScrollMixin, ListControlsMixin, SearchMixin
 from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
 
 
@@ -26,7 +26,7 @@ unos_svestenika = SvestenikCreate.as_view()
 
 
 class SpisakSvestenika(
-    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+    LoginRequiredMixin, SearchMixin, ListControlsMixin, InfiniteScrollMixin, ListView
 ):
     """Приказује списак свештеника са могућностима претраге и пагинације."""
 

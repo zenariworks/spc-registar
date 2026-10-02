@@ -14,7 +14,7 @@ from registar.views.base import (
     RegistarCreateView,
     RegistarUpdateView,
 )
-from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from registar.views.mixins import InfiniteScrollMixin, ListControlsMixin, SearchMixin
 from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
 
 
@@ -32,7 +32,7 @@ unos_parohijana = ParohijanCreate.as_view()
 
 
 class SpisakParohijana(
-    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+    LoginRequiredMixin, SearchMixin, ListControlsMixin, InfiniteScrollMixin, ListView
 ):
     """Приказује списак парохијана са могућношћу претраге и пагинације."""
 
