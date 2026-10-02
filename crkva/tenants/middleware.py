@@ -12,12 +12,15 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 from django.db import connection
 from django.http import HttpRequest, HttpResponse
 from django_tenants.utils import schema_exists
 from tenants.permissions import prime_tenant_permissions
+
+if TYPE_CHECKING:
+    from tenants.models import Clanstvo, Zakupac
 
 SESSION_TENANT_KEY = "active_tenant_id"
 logger = logging.getLogger(__name__)
@@ -46,7 +49,7 @@ def _aktivno_clanstvo(user, tenant):
     ).first()
 
 
-def _iz_sesije(request: HttpRequest, user):
+def _iz_sesije(request: HttpRequest, user) -> tuple[Zakupac, Clanstvo | None] | None:
     """Парохија запамћена у сесији, ако је активна и корисник сме у њу.
 
     Суперкорисник улази у било коју парохију без чланства. Неактивна или
@@ -54,26 +57,27 @@ def _iz_sesije(request: HttpRequest, user):
     """
     from tenants.models import Zakupac
 
-    if not hasattr(request, "session"):
+    session = getattr(request, "session", None)
+    if session is None:
         return None
-    session_tid = request.session.get(SESSION_TENANT_KEY)
+    session_tid = session.get(SESSION_TENANT_KEY)
     if not session_tid:
         return None
     try:
         tenant = Zakupac.objects.get(pk=session_tid, is_active=True)
     except Zakupac.DoesNotExist:
-        request.session.pop(SESSION_TENANT_KEY, None)
+        session.pop(SESSION_TENANT_KEY, None)
         return None
     if user is not None and user.is_superuser:
         return tenant, None
     membership = _aktivno_clanstvo(user, tenant)
     if membership is not None:
         return tenant, membership
-    request.session.pop(SESSION_TENANT_KEY, None)
+    session.pop(SESSION_TENANT_KEY, None)
     return None
 
 
-def _iz_clanstva(request: HttpRequest, user):
+def _iz_clanstva(request: HttpRequest, user) -> tuple[Zakupac, Clanstvo | None] | None:
     """Парохија првог активног чланства (подразумевано, па најстарије).
 
     Изабрана парохија се памти у сесији; без чланства враћа None.
@@ -92,7 +96,7 @@ def _iz_clanstva(request: HttpRequest, user):
     return membership.parohija, membership
 
 
-def _podrazumevana():
+def _podrazumevana() -> tuple[Zakupac | None, None]:
     """Подразумевана парохија, без чланства; ``(None, None)`` ако је нема.
 
     Пријављени корисник који стигне довде нема активно чланство нигде, па (с
@@ -130,7 +134,7 @@ class SessionTenantMiddleware:
             self._restore(prior_tenant)
 
     @staticmethod
-    def _resolve_tenant(request: HttpRequest):
+    def _resolve_tenant(request: HttpRequest) -> tuple[Zakupac | None, Clanstvo | None]:
         """Враћа ``(tenant, membership)``: сесија, па чланство, па подразумевана.
 
         ``membership`` је активни ``Clanstvo`` позиваоца у изабраној парохији
@@ -140,9 +144,13 @@ class SessionTenantMiddleware:
         """
         user = _korisnik(request)
         izbor = _iz_sesije(request, user)
-        if izbor is None and user is not None:
+        if izbor is not None:
+            return izbor
+        if user is not None:
             izbor = _iz_clanstva(request, user)
-        return izbor or _podrazumevana()
+            if izbor is not None:
+                return izbor
+        return _podrazumevana()
 
     @staticmethod
     def _activate(tenant) -> None:
