@@ -7,12 +7,13 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from simple_history.models import HistoricalRecords
 
+from ._osoba_polja import naziv_polja_osobe, polje_osobe, popunjeno_polje_osobe
 from .hram import Hram
 from .parohijan import Osoba
 from .svestenik import Svestenik
 
 
-class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
+class Vencanje(TimeStampedModel):
     """Класа која представља венчања."""
 
     uid = models.UUIDField(default=uuid.uuid4, primary_key=True, editable=False)
@@ -145,91 +146,45 @@ class Vencanje(TimeStampedModel):  # pylint: disable=too-many-public-methods
 
     history = HistoricalRecords(user_db_constraint=False)
 
-    @property
-    def ime_zenika(self):
-        """Име женика из везаног Osoba objekta."""
-        return self.zenik.ime if self.zenik else ""
+    ime_zenika = polje_osobe("zenik", "ime", opis="Име женика.")
+    prezime_zenika = polje_osobe("zenik", "prezime", opis="Презиме женика.")
+    zanimanje_zenika = naziv_polja_osobe("zenik", "zanimanje", opis="Занимање женика.")
+    veroispovest_zenika = popunjeno_polje_osobe(
+        "zenik", "veroispovest", opis="Вероисповест женика."
+    )
+    narodnost_zenika = popunjeno_polje_osobe(
+        "zenik", "narodnost", opis="Народност женика."
+    )
+    datum_rodjenja_zenika = polje_osobe(
+        "zenik", "datum_rodjenja", prazno=None, opis="Датум рођења женика."
+    )
+    mesto_rodjenja_zenika = polje_osobe(
+        "zenik", "mesto_rodjenja", opis="Место рођења женика."
+    )
+    adresa_zenika = polje_osobe("zenik", "adresa", prazno=None, opis="Адреса женика.")
 
-    @property
-    def prezime_zenika(self):
-        """Презиме женика из везаног Osoba objekta."""
-        return self.zenik.prezime if self.zenik else ""
-
-    @property
-    def zanimanje_zenika(self):
-        """Занимање женика из везаног Osoba objekta."""
-        return (
-            str(self.zenik.zanimanje) if self.zenik and self.zenik.zanimanje_id else ""
-        )
-
-    @property
-    def veroispovest_zenika(self):
-        """Вероисповест женика из везаног Osoba objekta."""
-        return self.zenik.veroispovest if self.zenik and self.zenik.veroispovest else ""
-
-    @property
-    def narodnost_zenika(self):
-        """Народност женика из везаног Osoba objekta."""
-        return self.zenik.narodnost if self.zenik and self.zenik.narodnost else ""
-
-    @property
-    def datum_rodjenja_zenika(self):
-        """Датум рођења женика из везаног Osoba objekta."""
-        return self.zenik.datum_rodjenja if self.zenik else None
-
-    @property
-    def mesto_rodjenja_zenika(self):
-        """Место рођења женика из везаног Osoba objekta."""
-        return self.zenik.mesto_rodjenja if self.zenik else ""
-
-    @property
-    def ime_neveste(self):
-        """Име невесте из везаног Osoba objekta."""
-        return self.nevesta.ime if self.nevesta else ""
-
-    @property
-    def prezime_neveste(self):
-        """Девојачко презиме невесте из везаног Osoba objekta."""
-        return self.nevesta.devojacko if self.nevesta and self.nevesta.devojacko else ""
-
-    @property
-    def zanimanje_neveste(self):
-        """Занимање невесте из везаног Osoba objekta."""
-        return (
-            str(self.nevesta.zanimanje)
-            if self.nevesta and self.nevesta.zanimanje_id
-            else ""
-        )
-
-    @property
-    def veroispovest_neveste(self):
-        """Вероисповест невесте из везаног Osoba objekta."""
-        return self.nevesta.veroispovest if self.nevesta else ""
-
-    @property
-    def narodnost_neveste(self):
-        """Народност невесте из везаног Osoba objekta."""
-        return self.nevesta.narodnost if self.nevesta else ""
-
-    @property
-    def datum_rodjenja_neveste(self):
-        """Датум рођења невесте из везаног Osoba objekta."""
-        return self.nevesta.datum_rodjenja if self.nevesta else None
-
-    @property
-    def mesto_rodjenja_neveste(self):
-        """Место рођења невесте из везаног Osoba objekta."""
-        return self.nevesta.mesto_rodjenja if self.nevesta else ""
-
-    @property
-    def adresa_zenika(self):
-        """Адреса женика из везаног Osoba objekta."""
-        return self.zenik.adresa if self.zenik else None
-
-    @property
-    def adresa_neveste(self):
-        """Адреса невесте из везаног Osoba objekta."""
-        return self.nevesta.adresa if self.nevesta else None
+    ime_neveste = polje_osobe("nevesta", "ime", opis="Име невесте.")
+    prezime_neveste = popunjeno_polje_osobe(
+        "nevesta", "devojacko", opis="Девојачко презиме невесте."
+    )
+    zanimanje_neveste = naziv_polja_osobe(
+        "nevesta", "zanimanje", opis="Занимање невесте."
+    )
+    veroispovest_neveste = polje_osobe(
+        "nevesta", "veroispovest", opis="Вероисповест невесте (None кад није уписана)."
+    )
+    narodnost_neveste = polje_osobe(
+        "nevesta", "narodnost", opis="Народност невесте (None кад није уписана)."
+    )
+    datum_rodjenja_neveste = polje_osobe(
+        "nevesta", "datum_rodjenja", prazno=None, opis="Датум рођења невесте."
+    )
+    mesto_rodjenja_neveste = polje_osobe(
+        "nevesta", "mesto_rodjenja", opis="Место рођења невесте."
+    )
+    adresa_neveste = polje_osobe(
+        "nevesta", "adresa", prazno=None, opis="Адреса невесте."
+    )
 
     @staticmethod
     def _spoji(*delovi):
