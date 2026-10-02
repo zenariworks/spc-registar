@@ -28,19 +28,12 @@ from typing import Iterable
 
 from django.apps import apps
 from django.conf import settings
+from django.core.exceptions import FieldDoesNotExist
 from django.core.management.base import BaseCommand
 from django.db.models import Model
 from django.db.models.fields.related import ForeignKey, ManyToManyField, OneToOneField
 from django.db.models.fields.reverse_related import ForeignObjectRel
 
-# ---------------------------------------------------------------------------
-# Root-variable heuristic table.
-#
-# Maps a template variable name (the first component of a dotted chain) to a
-# model name in the ``registar`` app. Loop variables introduced via
-# ``{% for X in Y %}`` are added dynamically; this table is the fallback for
-# context variables coming from views.
-# ---------------------------------------------------------------------------
 ROOT_TO_MODEL: dict[str, str] = {
     "krstenje": "Krstenje",
     "vencanje": "Vencanje",
@@ -64,14 +57,17 @@ ROOT_TO_MODEL: dict[str, str] = {
     "tast": "Osoba",
     "tasta": "Osoba",
     "stari_svat": "Osoba",
-    # ``entry`` and ``change`` in _history_panel.html are HistoryEntry /
-    # FieldChange dataclasses (see registar/istorija.py), not Django models,
-    # so we deliberately leave them out of the table -- the audit can't
-    # introspect dataclass fields and would flag every access.
 }
+"""Root-variable heuristic table: template variable name → ``registar`` model.
 
-# Loop collection names → element model name. Used to type ``X`` in
-# ``{% for X in Y %}`` when ``Y`` is a known collection.
+Loop variables introduced via ``{% for X in Y %}`` are added dynamically; this
+table is the fallback for context variables coming from views. ``entry`` and
+``change`` in ``_history_panel.html`` are HistoryEntry / FieldChange
+dataclasses (see ``registar/istorija.py``), not Django models, so they are
+deliberately left out -- the audit can't introspect dataclass fields and would
+flag every access.
+"""
+
 COLLECTION_TO_MODEL: dict[str, str] = {
     "domacinstva": "Domacinstvo",
     "krstenja": "Krstenje",
@@ -83,14 +79,11 @@ COLLECTION_TO_MODEL: dict[str, str] = {
     "hramovi": "Hram",
     "ukucani": "Ukucanin",
 }
+"""Loop collection name → element model, to type ``X`` in ``{% for X in Y %}``."""
 
-# Attributes that Django provides on every QuerySet / Manager / related
-# descriptor. Walking the chain stops here -- they don't have to exist as
-# fields, but we cannot introspect deeper without running queries.
 QUERYSET_TERMINALS = {"all", "count", "first", "last", "exists", "filter", "exclude"}
+"""QuerySet / Manager attributes that end the walk without running queries."""
 
-# Template-built-in pseudo-attributes that any object effectively has access
-# to. Stop walking when seen.
 TEMPLATE_BUILTINS = {
     "pk",
     "id",
@@ -99,9 +92,8 @@ TEMPLATE_BUILTINS = {
     "DoesNotExist",
     "MultipleObjectsReturned",
 }
+"""Pseudo-attributes every model effectively has; the walk stops on them."""
 
-# Django template filters / tag fragments we never want to mistake for
-# attribute access while parsing.
 TEMPLATE_FILTER_TOKENS = {
     "default",
     "default_if_none",
@@ -122,14 +114,60 @@ TEMPLATE_FILTER_TOKENS = {
     "stringformat",
     "floatformat",
 }
+"""Filter / tag fragments that must not be mistaken for attribute access."""
+
+SKIP_ROOTS = {
+    "request",
+    "form",
+    "view",
+    "block",
+    "user",
+    "perms",
+    "messages",
+    "csrf_token",
+    "is_paginated",
+    "page_obj",
+    "paginator",
+    "object_list",
+    "object",
+    "field",
+    "forloop",
+    "STATIC_URL",
+    "MEDIA_URL",
+    "LANGUAGE_CODE",
+    "True",
+    "False",
+    "None",
+}
+"""Roots that are not model context: ``request.user.x``, ``form.x``, ``view.x`` …"""
+
+DATETIME_ATTRS = {"year", "month", "day", "hour", "minute", "second"}
+"""Attributes allowed on date/time fields."""
+
+VIEW_ANNOTATED_QUERYSETS = {"zivi_clanovi", "preminuli_clanovi"}
+"""Lists the views attach to Domacinstvo in a loop (domacinstvo_view, slava_view).
+
+They are not ``Prefetch(to_attr=...)`` attributes, so they lack the
+``prefetched_`` prefix, and templates guard them with ``{% if %}``.
+"""
+
+TOKEN_RE = re.compile(r"\{[%{]\s*(.+?)\s*[%}]\}", re.DOTALL)
+"""A ``{{ ... }}`` or ``{% ... %}`` construct; group 1 is its body."""
+
+FOR_RE = re.compile(r"for\s+([\w,\s]+?)\s+in\s+([\w\.]+)")
+
+CHAIN_RE = re.compile(r"\b([a-zA-Z_][\w]*(?:\.[a-zA-Z_][\w]*)+)\b")
+"""A dotted chain ``foo.bar(.baz)*``; bare ``foo`` is skipped since it can't fail silently."""
 
 
 @dataclass
 class Finding:
+    """One reported chain; ``severity`` is ``"HARD"`` or ``"SOFT"``."""
+
     file: str
     line: int
     chain: str
-    severity: str  # "HARD" or "SOFT"
+    severity: str
     reason: str
 
     def format(self) -> str:
@@ -138,75 +176,47 @@ class Finding:
         )
 
 
-# ---------------------------------------------------------------------------
-# Template parsing
-# ---------------------------------------------------------------------------
-
-# Regex that captures the raw expression inside ``{{ ... }}`` and
-# ``{% ... %}`` constructs. We post-process the body to extract the dotted
-# chain(s) that look like ``foo.bar.baz`` (i.e. resolvable against the
-# template context).
-VARIABLE_RE = re.compile(r"\{\{\s*(.+?)\s*\}\}", re.DOTALL)
-TAG_RE = re.compile(r"\{%\s*(.+?)\s*%\}", re.DOTALL)
-FOR_RE = re.compile(r"for\s+([\w,\s]+?)\s+in\s+([\w\.]+)")
-
-# A dotted chain candidate: identifier(.identifier)+ . We require at least one
-# dot so that bare ``foo`` (which doesn't fail silently in any interesting
-# way -- it's just rendered as the str()) is skipped.
-CHAIN_RE = re.compile(r"\b([a-zA-Z_][\w]*(?:\.[a-zA-Z_][\w]*)+)\b")
-
-
 def iter_chains_with_lines(text: str) -> Iterable[tuple[int, str, dict[str, str]]]:
     """Yield ``(line, chain, loop_vars_so_far)`` for every dotted chain.
 
-    ``loop_vars_so_far`` accumulates ``{% for X in Y %}`` bindings discovered
-    earlier in the file. This is approximate: we don't track ``{% endfor %}``
-    pop semantics; loops that share a variable name across the file will
-    settle on the most recent binding. For an audit that's fine.
+    Tags and variables are processed in document order, so ``{% for X in Y %}``
+    bindings are seen before chains that use them. ``loop_vars_so_far``
+    accumulates those bindings. This is approximate: ``{% endfor %}`` is not
+    tracked, so loops that share a variable name across the file settle on the
+    most recent binding. For an audit that's fine.
+
+    Tag bodies are scanned whole (``{% if foo.bar %}``,
+    ``{% url 'x' uid=obj.adresa.ulica %}``); variable bodies lose their filters
+    first.
     """
     loop_vars: dict[str, str] = {}
-
-    # Walk the file character by character, keeping a running line number.
-    # We process ``{% ... %}`` and ``{{ ... }}`` in document order so that
-    # for-loop bindings are seen before chains that use them.
-    token_re = re.compile(r"\{[%{]\s*(.+?)\s*[%}]\}", re.DOTALL)
-    for m in token_re.finditer(text):
+    for m in TOKEN_RE.finditer(text):
         line = text.count("\n", 0, m.start()) + 1
         body = m.group(1)
-        opening = text[m.start() : m.start() + 2]
-
-        if opening == "{%":
-            for_match = FOR_RE.search(body)
-            if for_match:
-                names = [n.strip() for n in for_match.group(1).split(",") if n.strip()]
-                collection = for_match.group(2)
-                # Decide the element type. Prefer the table; otherwise fall
-                # back to "drop the trailing 's'" heuristic; otherwise leave
-                # untyped (None).
-                collection_root = collection.split(".")[0]
-                model_name = COLLECTION_TO_MODEL.get(collection_root)
-                if model_name is None and collection_root in ROOT_TO_MODEL:
-                    # ``for ukucanin in domacinstvo.ukucani.all`` etc. -- the
-                    # collection root is a known root variable. We can't
-                    # generally resolve ``.ukucani.all`` here, so leave the
-                    # element type to the variable-name table.
-                    pass
-                for n in names:
-                    if model_name:
-                        loop_vars[n] = model_name
-                    elif n in ROOT_TO_MODEL:
-                        loop_vars[n] = ROOT_TO_MODEL[n]
-            # Tag bodies often reference variables (``{% if foo.bar %}``,
-            # ``{% url 'x' uid=obj.adresa.ulica %}``). Treat them like a
-            # variable expression.
-            for chain_match in CHAIN_RE.finditer(body):
-                yield line, chain_match.group(1), dict(loop_vars)
+        if text.startswith("{%", m.start()):
+            _bind_loop_vars(body, loop_vars)
         else:
-            # ``{{ ... }}`` -- one or more chains, possibly with filters.
-            # Strip filter pipes and their arguments before scanning.
-            cleaned = strip_filters(body)
-            for chain_match in CHAIN_RE.finditer(cleaned):
-                yield line, chain_match.group(1), dict(loop_vars)
+            body = strip_filters(body)
+        for chain_match in CHAIN_RE.finditer(body):
+            yield line, chain_match.group(1), dict(loop_vars)
+
+
+def _bind_loop_vars(tag_body: str, loop_vars: dict[str, str]) -> None:
+    """Types the names of a ``{% for %}`` tag.
+
+    The collection table wins; otherwise a loop variable that is itself a known
+    root name (``for ukucanin in domacinstvo.ukucani.all``) keeps that type.
+    Anything else stays untyped.
+    """
+    for_match = FOR_RE.search(tag_body)
+    if not for_match:
+        return
+    names = [n.strip() for n in for_match.group(1).split(",") if n.strip()]
+    model_name = COLLECTION_TO_MODEL.get(for_match.group(2).split(".")[0])
+    for n in names:
+        tip = model_name or ROOT_TO_MODEL.get(n)
+        if tip:
+            loop_vars[n] = tip
 
 
 def strip_filters(expr: str) -> str:
@@ -215,13 +225,7 @@ def strip_filters(expr: str) -> str:
     ``foo.bar|default:"x"|length`` becomes ``foo.bar``. Filter names and their
     arguments are not attribute chains; ignoring them avoids false positives.
     """
-    # Split on '|', keep the first segment.
     return expr.split("|", 1)[0]
-
-
-# ---------------------------------------------------------------------------
-# Model walk
-# ---------------------------------------------------------------------------
 
 
 def resolve_model(name: str) -> type[Model] | None:
@@ -246,50 +250,33 @@ def step(model: type[Model], attr: str) -> tuple[str, object]:
       ``target`` is ``None``
     * ``"missing"`` -- attribute does not exist on the model
 
-    The caller decides severity.
+    Attributes added at runtime via ``Prefetch(to_attr="prefetched_xxx")`` are
+    invisible to ``_meta.get_field`` and ``dir(cls)``; by convention they are
+    all named ``prefetched_*`` and treated as opaque querysets, like the
+    view-annotated lists. The caller decides severity.
     """
     if attr in TEMPLATE_BUILTINS:
         return "scalar", None
-
-    # Try the Django field cache first -- it's authoritative.
+    if attr.startswith("prefetched_") or attr in VIEW_ANNOTATED_QUERYSETS:
+        return "queryset", None
     try:
         field = model._meta.get_field(attr)
-    except Exception:
-        field = None
-
-    # Attributes added at runtime via ``Prefetch(to_attr="prefetched_xxx")``
-    # are invisible to ``_meta.get_field`` and to ``dir(cls)``. By convention
-    # all our prefetch annotations are named ``prefetched_*`` (see e.g.
-    # ``parohijan_view.SpisakParohijana``); treat them as opaque querysets so
-    # the audit doesn't crow about a real-but-dynamic attribute.
-    # View-annotated attributes computed in the view loop (not via
-    # Prefetch(to_attr=...), so not prefetched_*-prefixed): e.g.
-    # Domacinstvo.zivi_clanovi / preminuli_clanovi set in
-    # domacinstvo_view / slava_view and guarded with {% if %} in templates.
-    if attr.startswith("prefetched_") or attr in {"zivi_clanovi", "preminuli_clanovi"}:
-        return "queryset", None
-
-    if field is not None:
-        if isinstance(field, (ForeignKey, OneToOneField)):
-            return "model", field.related_model
-        if isinstance(field, ManyToManyField):
-            return "queryset", field.related_model
-        if isinstance(field, ForeignObjectRel):
-            # Reverse relation. One-to-one is a model; the rest are querysets.
-            if field.one_to_one:
-                return "model", field.related_model
-            return "queryset", field.related_model
-        return "scalar", field
-
-    # Fall back to Python attribute lookup.
-    cls_attr = getattr(model, attr, None)
-    if cls_attr is None:
-        return "missing", None
-    if isinstance(cls_attr, property):
+    except FieldDoesNotExist:
+        if getattr(model, attr, None) is None:
+            return "missing", None
         return "property", None
-    if callable(cls_attr):
-        return "property", None
-    return "property", None
+    return _field_kind(field)
+
+
+def _field_kind(field) -> tuple[str, object]:
+    """``step`` result for a Django field; reverse one-to-one is a model."""
+    if isinstance(field, (ForeignKey, OneToOneField)):
+        return "model", field.related_model
+    if isinstance(field, ManyToManyField):
+        return "queryset", field.related_model
+    if isinstance(field, ForeignObjectRel):
+        return ("model" if field.one_to_one else "queryset"), field.related_model
+    return "scalar", field
 
 
 def walk(model: type[Model], parts: list[str]) -> tuple[str, str] | None:
@@ -298,66 +285,69 @@ def walk(model: type[Model], parts: list[str]) -> tuple[str, str] | None:
     Returns ``None`` if everything resolves cleanly. Otherwise returns
     ``(severity, reason)``.
     """
-    current_kind = "model"
-    current_target: object = model
-
+    kind: str = "model"
+    target: object = model
     for i, attr in enumerate(parts):
-        if current_kind != "model":
-            # We're trying to access ``.attr`` on something that isn't a
-            # model. Decide severity by what we landed on at the previous
-            # step.
-            if current_kind == "scalar":
-                # The chain accesses an attribute on a non-relational field.
-                # This is the classic bug (CharField.naziv, DateField.year is
-                # OK but not auditable -- still report so the human can decide).
-                # Allow a tiny whitelist of well-known datetime attrs.
-                if attr in {"year", "month", "day", "hour", "minute", "second"}:
-                    return None
-                # Allow ``.url`` on file/image fields -- handled later if
-                # needed. For now, hard.
-                field = current_target
-                ftype = type(field).__name__ if field is not None else "scalar"
-                return (
-                    "HARD",
-                    f"step '{attr}' accesses attribute on {ftype} "
-                    f"(parent: {'.'.join(parts[:i])})",
-                )
-            if current_kind == "queryset":
-                if attr in QUERYSET_TERMINALS:
-                    # ``foo.bar.all`` etc. is the terminal; anything further
-                    # we can't really judge.
-                    return None
-                # ``parohijan.prefetched_ukucanstva.0`` -- numeric index into a
-                # Python list. Template-resolvable, opaque to introspection.
-                if attr.isdigit():
-                    return None
-                # ``foo.related.attr`` -- can't iterate without query; soft.
-                return (
-                    "SOFT",
-                    f"step '{attr}' on queryset (parent: {'.'.join(parts[:i])})",
-                )
-            if current_kind == "property":
-                # Can't know the property's return type. Soft.
-                return (
-                    "SOFT",
-                    f"step '{attr}' after property/method "
-                    f"(parent: {'.'.join(parts[:i])})",
-                )
-
-        kind, target = step(current_target, attr)  # type: ignore[arg-type]
-        if kind == "missing":
-            return (
-                "HARD",
-                f"step '{attr}' not found on " f"{current_target.__name__}",  # type: ignore[union-attr]
-            )
-        current_kind, current_target = kind, target
-
+        if kind != "model":
+            return _step_past_model(kind, target, attr, ".".join(parts[:i]))
+        next_kind, next_target = step(target, attr)
+        if next_kind == "missing":
+            return "HARD", f"step '{attr}' not found on {target.__name__}"
+        kind, target = next_kind, next_target
     return None
 
 
-# ---------------------------------------------------------------------------
-# Command
-# ---------------------------------------------------------------------------
+def _step_past_model(
+    kind: str, target: object, attr: str, parent: str
+) -> tuple[str, str] | None:
+    """Judge ``.attr`` on something that is not a model.
+
+    * scalar -- the classic bug (``CharField.naziv``) is HARD; a few datetime
+      attributes are allowed.
+    * queryset -- terminals (``.all``) and numeric list indexes
+      (``prefetched_ukucanstva.0``) end the walk; anything else needs a query
+      to judge, so SOFT.
+    * property/method -- unknown return type, so SOFT.
+    """
+    if kind == "scalar":
+        if attr in DATETIME_ATTRS:
+            return None
+        ftype = type(target).__name__ if target is not None else "scalar"
+        return (
+            "HARD",
+            f"step '{attr}' accesses attribute on {ftype} (parent: {parent})",
+        )
+    if kind == "queryset":
+        if attr in QUERYSET_TERMINALS or attr.isdigit():
+            return None
+        return "SOFT", f"step '{attr}' on queryset (parent: {parent})"
+    return "SOFT", f"step '{attr}' after property/method (parent: {parent})"
+
+
+def _root_model(chain: str, loop_vars: dict[str, str]) -> type[Model] | None:
+    """Model of the chain's root variable, or None if the root is not audited."""
+    root = chain.split(".")[0]
+    if root in SKIP_ROOTS or root in TEMPLATE_FILTER_TOKENS:
+        return None
+    model_name = loop_vars.get(root) or ROOT_TO_MODEL.get(root)
+    if not model_name:
+        return None
+    return resolve_model(model_name)
+
+
+def audit_template(text: str, file: str, severity: str) -> tuple[list[Finding], int]:
+    """Findings for one template (filtered by ``severity``) and chains checked."""
+    findings: list[Finding] = []
+    checked = 0
+    for line, chain, loop_vars in iter_chains_with_lines(text):
+        model = _root_model(chain, loop_vars)
+        if model is None:
+            continue
+        checked += 1
+        result = walk(model, chain.split(".")[1:])
+        if result is not None and severity in ("ALL", result[0]):
+            findings.append(Finding(file, line, chain, *result))
+    return findings, checked
 
 
 class Command(BaseCommand):
@@ -379,8 +369,7 @@ class Command(BaseCommand):
     def handle(self, *args, **opts):
         templates_dir = opts["templates_dir"]
         if templates_dir is None:
-            base = Path(settings.BASE_DIR)
-            templates_dir = base / "registar" / "templates"
+            templates_dir = Path(settings.BASE_DIR) / "registar" / "templates"
         templates_dir = Path(templates_dir)
 
         if not templates_dir.exists():
@@ -389,71 +378,18 @@ class Command(BaseCommand):
 
         findings: list[Finding] = []
         chains_checked = 0
-
         for html in sorted(templates_dir.rglob("*.html")):
-            text = html.read_text(encoding="utf-8")
-            for line, chain, loop_vars in iter_chains_with_lines(text):
-                parts = chain.split(".")
-                root = parts[0]
+            found, checked = audit_template(
+                html.read_text(encoding="utf-8"),
+                str(html.relative_to(templates_dir.parent)),
+                opts["severity"],
+            )
+            findings += found
+            chains_checked += checked
+        self._report(findings, chains_checked)
 
-                # Skip obvious non-context references: ``request.user.x``,
-                # ``form.x``, ``view.x``, template-tag positional args, etc.
-                if root in {
-                    "request",
-                    "form",
-                    "view",
-                    "block",
-                    "user",
-                    "perms",
-                    "messages",
-                    "csrf_token",
-                    "is_paginated",
-                    "page_obj",
-                    "paginator",
-                    "object_list",
-                    "object",
-                    "field",
-                    "forloop",
-                    "STATIC_URL",
-                    "MEDIA_URL",
-                    "LANGUAGE_CODE",
-                    "True",
-                    "False",
-                    "None",
-                }:
-                    continue
-
-                # Skip filter argument fragments like ``default:"foo.bar"``.
-                if root in TEMPLATE_FILTER_TOKENS:
-                    continue
-
-                model_name = loop_vars.get(root) or ROOT_TO_MODEL.get(root)
-                if not model_name:
-                    continue  # Unknown root -- skip silently.
-
-                model = resolve_model(model_name)
-                if model is None:
-                    continue
-
-                chains_checked += 1
-                result = walk(model, parts[1:])
-                if result is None:
-                    continue
-                severity, reason = result
-                if opts["severity"] != "ALL" and severity != opts["severity"]:
-                    continue
-
-                rel_path = html.relative_to(templates_dir.parent)
-                findings.append(
-                    Finding(
-                        file=str(rel_path),
-                        line=line,
-                        chain=chain,
-                        severity=severity,
-                        reason=reason,
-                    )
-                )
-
+    def _report(self, findings: list[Finding], chains_checked: int) -> None:
+        """Counts first, then HARD findings, then SOFT ones."""
         hard = [f for f in findings if f.severity == "HARD"]
         soft = [f for f in findings if f.severity == "SOFT"]
 
