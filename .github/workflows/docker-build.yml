@@ -20,7 +20,14 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    # docker compose интерполира environment сервиса app и при build-у, а
+    # standalone профил захтева SECRET_KEY и DB_PASS (`:?`, #337). Те вредности
+    # се користе само при покретању контејнера — нису build аргументи и не
+    # улазе у слику — па су овде намерно лажне, само да интерполација прође.
     - name: Build and push Docker Compose app image
+      env:
+        SECRET_KEY: build-only-not-used
+        DB_PASS: build-only-not-used
       run: |
         docker compose build app
         docker compose push app
