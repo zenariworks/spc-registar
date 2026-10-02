@@ -9,6 +9,7 @@ from django.db import models
 from model_utils.models import TimeStampedModel
 from simple_history.models import HistoricalRecords
 
+from ._osoba_polja import naziv_polja_osobe, polje_osobe, popunjeno_polje_osobe
 from .hram import Hram
 from .parohijan import Osoba
 from .svestenik import Svestenik
@@ -79,7 +80,6 @@ class Krstenje(TimeStampedModel):
         related_name="krstenja_kao_kum",
         verbose_name="кум",
     )
-    # ostali podaci o detetu
     zivorodjeno = models.BooleanField(verbose_name="живорођено", default=True)
     po_redu = models.PositiveSmallIntegerField(
         verbose_name="по реду мајци",
@@ -95,7 +95,6 @@ class Krstenje(TimeStampedModel):
     )
     telesna_mana = models.BooleanField(verbose_name="телесна мана", default=False)
 
-    # podaci o svesteniku
     svestenik = models.ForeignKey(
         Svestenik,
         on_delete=models.SET_NULL,
@@ -105,7 +104,6 @@ class Krstenje(TimeStampedModel):
         verbose_name="свештеник",
     )
 
-    # podaci iz matične knjige - anagraf
     mesto_registracije = models.CharField(
         max_length=255, verbose_name="место регистрације", null=True, blank=True
     )
@@ -123,134 +121,44 @@ class Krstenje(TimeStampedModel):
 
     history = HistoricalRecords(user_db_constraint=False)
 
-    @property
-    def ime_deteta(self):
-        """Име детета из везаног Osoba objekta."""
-        return self.dete.ime if self.dete else ""
+    ime_deteta = polje_osobe("dete", "ime", opis="Име детета.")
+    prezime_deteta = polje_osobe("dete", "prezime", opis="Презиме детета.")
+    pol_deteta = polje_osobe("dete", "pol", opis="Пол детета.")
+    datum_rodjenja = polje_osobe(
+        "dete", "datum_rodjenja", prazno=None, opis="Датум рођења детета."
+    )
+    vreme_rodjenja = polje_osobe("dete", "vreme_rodjenja", opis="Време рођења детета.")
+    mesto_rodjenja = polje_osobe("dete", "mesto_rodjenja", opis="Место рођења детета.")
+    gradjansko_ime_deteta = popunjeno_polje_osobe(
+        "dete", "gradjansko_ime", opis="Грађанско име детета."
+    )
+    adresa_deteta = polje_osobe("dete", "adresa", prazno=None, opis="Адреса детета.")
 
-    @property
-    def prezime_deteta(self):
-        """Презиме детета из везаног Osoba objekta."""
-        return self.dete.prezime if self.dete else ""
+    ime_oca = polje_osobe("otac", "ime", opis="Име оца.")
+    prezime_oca = polje_osobe("otac", "prezime", opis="Презиме оца.")
+    zanimanje_oca = naziv_polja_osobe("otac", "zanimanje", opis="Занимање оца.")
+    veroispovest_oca = popunjeno_polje_osobe(
+        "otac", "veroispovest", opis="Вероисповест оца."
+    )
+    narodnost_oca = popunjeno_polje_osobe("otac", "narodnost", opis="Народност оца.")
+    adresa_oca = polje_osobe("otac", "adresa", prazno=None, opis="Адреса оца.")
 
-    @property
-    def pol_deteta(self):
-        """Пол детета из везаног Osoba objekta."""
-        return self.dete.pol if self.dete else ""
+    ime_majke = polje_osobe("majka", "ime", opis="Име мајке.")
+    prezime_majke = polje_osobe("majka", "prezime", opis="Презиме мајке.")
+    zanimanje_majke = naziv_polja_osobe("majka", "zanimanje", opis="Занимање мајке.")
+    veroispovest_majke = popunjeno_polje_osobe(
+        "majka", "veroispovest", opis="Вероисповест мајке."
+    )
+    narodnost_majke = popunjeno_polje_osobe(
+        "majka", "narodnost", opis="Народност мајке."
+    )
+    adresa_majke = polje_osobe("majka", "adresa", prazno=None, opis="Адреса мајке.")
 
-    @property
-    def datum_rodjenja(self):
-        """Датум рођења детета из везаног Osoba objekta."""
-        return self.dete.datum_rodjenja if self.dete else None
-
-    @property
-    def vreme_rodjenja(self):
-        """Време рођења детета из везаног Osoba objekta."""
-        return self.dete.vreme_rodjenja if self.dete else ""
-
-    @property
-    def mesto_rodjenja(self):
-        """Место рођења детета из везаног Osoba objekta."""
-        return self.dete.mesto_rodjenja if self.dete else ""
-
-    @property
-    def ime_oca(self):
-        """Име оца из везаног Osoba objekta."""
-        return self.otac.ime if self.otac else ""
-
-    @property
-    def prezime_oca(self):
-        """Презиме оца из везаног Osoba objekta."""
-        return self.otac.prezime if self.otac else ""
-
-    @property
-    def zanimanje_oca(self):
-        """Занимање оца из везаног Osoba objekta."""
-        return str(self.otac.zanimanje) if self.otac and self.otac.zanimanje_id else ""
-
-    @property
-    def veroispovest_oca(self):
-        """Вероисповест оца из везаног Osoba objekta."""
-        return self.otac.veroispovest if self.otac and self.otac.veroispovest else ""
-
-    @property
-    def narodnost_oca(self):
-        """Народност оца из везаног Osoba objekta."""
-        return self.otac.narodnost if self.otac and self.otac.narodnost else ""
-
-    @property
-    def ime_majke(self):
-        """Име мајке из везаног Osoba objekta."""
-        return self.majka.ime if self.majka else ""
-
-    @property
-    def prezime_majke(self):
-        """Презиме мајке из везаног Osoba objekta."""
-        return self.majka.prezime if self.majka else ""
-
-    @property
-    def zanimanje_majke(self):
-        """Занимање мајке из везаног Osoba objekta."""
-        return (
-            str(self.majka.zanimanje) if self.majka and self.majka.zanimanje_id else ""
-        )
-
-    @property
-    def veroispovest_majke(self):
-        """Вероисповест мајке из везаног Osoba objekta."""
-        return self.majka.veroispovest if self.majka and self.majka.veroispovest else ""
-
-    @property
-    def narodnost_majke(self):
-        """Народност мајке из везаног Osoba objekta."""
-        return self.majka.narodnost if self.majka and self.majka.narodnost else ""
-
-    @property
-    def ime_kuma(self):
-        """Име кума из везаног Osoba objekta."""
-        return self.kum.ime if self.kum else ""
-
-    @property
-    def prezime_kuma(self):
-        """Презиме кума из везаног Osoba objekta."""
-        return self.kum.prezime if self.kum else ""
-
-    @property
-    def zanimanje_kuma(self):
-        """Занимање кума из везаног Osoba objekta."""
-        return str(self.kum.zanimanje) if self.kum and self.kum.zanimanje_id else ""
-
-    @property
-    def gradjansko_ime_deteta(self):
-        """Грађанско име детета из везаног Osoba objekta."""
-        return (
-            self.dete.gradjansko_ime if self.dete and self.dete.gradjansko_ime else ""
-        )
-
-    @property
-    def adresa_deteta(self):
-        """Адреса детета из везаног Osoba objekta."""
-        return self.dete.adresa if self.dete else None
-
-    @property
-    def adresa_oca(self):
-        """Адреса оца из везаног Osoba objekta."""
-        return self.otac.adresa if self.otac else None
-
-    @property
-    def adresa_majke(self):
-        """Адреса мајке из везаног Osoba objekta."""
-        return self.majka.adresa if self.majka else None
-
-    @property
-    def adresa_kuma(self):
-        """Адреса кума из везаног Osoba objekta."""
-        return self.kum.adresa if self.kum else None
-
-    @property
-    def mesto_kuma(self):
-        """Место адресе кума из везаног Osoba objekta."""
-        return str(self.kum.adresa) if self.kum and self.kum.adresa else ""
+    ime_kuma = polje_osobe("kum", "ime", opis="Име кума.")
+    prezime_kuma = polje_osobe("kum", "prezime", opis="Презиме кума.")
+    zanimanje_kuma = naziv_polja_osobe("kum", "zanimanje", opis="Занимање кума.")
+    adresa_kuma = polje_osobe("kum", "adresa", prazno=None, opis="Адреса кума.")
+    mesto_kuma = naziv_polja_osobe("kum", "adresa", opis="Адреса кума као текст.")
 
     @property
     def get_pol_deteta_display(self):
