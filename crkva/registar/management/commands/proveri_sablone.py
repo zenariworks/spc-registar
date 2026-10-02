@@ -1,22 +1,22 @@
-"""Audit Django templates for attribute chains that the model schema cannot resolve.
+"""Ревизија Django шаблона: ланци атрибута које шема модела не може да разреши.
 
-Templates render `{{ obj.foo.bar }}` to the empty string when `.bar` does not
-exist on `foo`. This command walks every template in `crkva/registar/templates/`,
-extracts every dotted variable chain, infers the type of the root variable from
-a small heuristic table (plus `{% for X in Y %}` loop inference), and reports
-chains that cannot be resolved against the Django model schema.
+Шаблон `{{ obj.foo.bar }}` рендерује празан стринг кад `.bar` не постоји на
+`foo`. Ова команда пролази кроз све шаблоне у `crkva/registar/templates/`,
+издваја сваки ланац са тачкама, тип коренске променљиве закључује из мале
+табеле (уз закључивање из `{% for X in Y %}` петљи) и пријављује ланце који се
+не могу разрешити према шеми Django модела.
 
-Two severities are emitted:
+Две тежине налаза:
 
-* ``HARD``  -- chain whose root resolves to a known model and at least one step
-  of the dotted access is provably wrong (e.g. attribute access on a
-  ``CharField``, missing model attribute/property, wrong related name).
-* ``SOFT``  -- chain rooted at a known model but the audit cannot finish walking
-  it (e.g. crossed a custom property whose return type is unknown). Reported as
-  context only; intentionally noisy.
+* ``HARD``  -- корен ланца је познат модел, а бар један корак је сигурно
+  погрешан (нпр. атрибут на ``CharField``-у, непостојећи атрибут/својство
+  модела, погрешан назив обрнуте везе).
+* ``SOFT``  -- корен је познат модел, али ревизија не може да прође цео ланац
+  (нпр. прешла је преко својства чији тип повратне вредности није познат).
+  Само као контекст; намерно бучно.
 
-The command is intentionally approximate: false positives are preferred over
-false negatives. The goal is a triage list, not a rejection gate.
+Команда је намерно приближна: боље лажно упозорење него пропуштена грешка.
+Циљ је списак за преглед, а не капија која одбија измене.
 """
 
 from __future__ import annotations
@@ -58,14 +58,13 @@ ROOT_TO_MODEL: dict[str, str] = {
     "tasta": "Osoba",
     "stari_svat": "Osoba",
 }
-"""Root-variable heuristic table: template variable name → ``registar`` model.
+"""Табела коренских променљивих: назив променљиве у шаблону → модел у ``registar``.
 
-Loop variables introduced via ``{% for X in Y %}`` are added dynamically; this
-table is the fallback for context variables coming from views. ``entry`` and
-``change`` in ``_history_panel.html`` are HistoryEntry / FieldChange
-dataclasses (see ``registar/istorija.py``), not Django models, so they are
-deliberately left out -- the audit can't introspect dataclass fields and would
-flag every access.
+Променљиве петљи из ``{% for X in Y %}`` додају се успут; ова табела је
+резерва за контекст који шаљу прикази. ``entry`` и ``change`` из
+``_history_panel.html`` су dataclass-ови HistoryEntry / FieldChange (види
+``registar/istorija.py``), а не Django модели, па су намерно изостављени --
+ревизија не може да прочита поља dataclass-а и пријавила би сваки приступ.
 """
 
 COLLECTION_TO_MODEL: dict[str, str] = {
@@ -79,10 +78,10 @@ COLLECTION_TO_MODEL: dict[str, str] = {
     "hramovi": "Hram",
     "ukucani": "Ukucanin",
 }
-"""Loop collection name → element model, to type ``X`` in ``{% for X in Y %}``."""
+"""Назив колекције петље → модел елемента, за тип ``X`` у ``{% for X in Y %}``."""
 
 QUERYSET_TERMINALS = {"all", "count", "first", "last", "exists", "filter", "exclude"}
-"""QuerySet / Manager attributes that end the walk without running queries."""
+"""Атрибути QuerySet-а / Manager-а на којима пролаз стаје, без упита у базу."""
 
 TEMPLATE_BUILTINS = {
     "pk",
@@ -92,7 +91,7 @@ TEMPLATE_BUILTINS = {
     "DoesNotExist",
     "MultipleObjectsReturned",
 }
-"""Pseudo-attributes every model effectively has; the walk stops on them."""
+"""Псеудо-атрибути које сваки модел у пракси има; пролаз на њима стаје."""
 
 TEMPLATE_FILTER_TOKENS = {
     "default",
@@ -114,7 +113,7 @@ TEMPLATE_FILTER_TOKENS = {
     "stringformat",
     "floatformat",
 }
-"""Filter / tag fragments that must not be mistaken for attribute access."""
+"""Делови филтера / тагова које не треба сматрати приступом атрибуту."""
 
 SKIP_ROOTS = {
     "request",
@@ -139,30 +138,30 @@ SKIP_ROOTS = {
     "False",
     "None",
 }
-"""Roots that are not model context: ``request.user.x``, ``form.x``, ``view.x`` …"""
+"""Коренови који нису контекст модела: ``request.user.x``, ``form.x``, ``view.x`` …"""
 
 DATETIME_ATTRS = {"year", "month", "day", "hour", "minute", "second"}
-"""Attributes allowed on date/time fields."""
+"""Атрибути дозвољени на пољима датума/времена."""
 
 VIEW_ANNOTATED_QUERYSETS = {"zivi_clanovi", "preminuli_clanovi"}
-"""Lists the views attach to Domacinstvo in a loop (domacinstvo_view, slava_view).
+"""Спискови које прикази у петљи качe на Domacinstvo (domacinstvo_view, slava_view).
 
-They are not ``Prefetch(to_attr=...)`` attributes, so they lack the
-``prefetched_`` prefix, and templates guard them with ``{% if %}``.
+Нису ``Prefetch(to_attr=...)`` атрибути, па немају префикс ``prefetched_``, а
+шаблони их чувају са ``{% if %}``.
 """
 
 TOKEN_RE = re.compile(r"\{[%{]\s*(.+?)\s*[%}]\}", re.DOTALL)
-"""A ``{{ ... }}`` or ``{% ... %}`` construct; group 1 is its body."""
+"""Конструкција ``{{ ... }}`` или ``{% ... %}``; група 1 је њено тело."""
 
 FOR_RE = re.compile(r"for\s+([\w,\s]+?)\s+in\s+([\w\.]+)")
 
 CHAIN_RE = re.compile(r"\b([a-zA-Z_][\w]*(?:\.[a-zA-Z_][\w]*)+)\b")
-"""A dotted chain ``foo.bar(.baz)*``; bare ``foo`` is skipped since it can't fail silently."""
+"""Ланац са тачкама ``foo.bar(.baz)*``; само ``foo`` се прескаче јер не може тихо да омане."""
 
 
 @dataclass
 class Finding:
-    """One reported chain; ``severity`` is ``"HARD"`` or ``"SOFT"``."""
+    """Један пријављени ланац; ``severity`` је ``"HARD"`` или ``"SOFT"``."""
 
     file: str
     line: int
@@ -177,17 +176,17 @@ class Finding:
 
 
 def iter_chains_with_lines(text: str) -> Iterable[tuple[int, str, dict[str, str]]]:
-    """Yield ``(line, chain, loop_vars_so_far)`` for every dotted chain.
+    """Даје ``(line, chain, loop_vars_so_far)`` за сваки ланац са тачкама.
 
-    Tags and variables are processed in document order, so ``{% for X in Y %}``
-    bindings are seen before chains that use them. ``loop_vars_so_far``
-    accumulates those bindings. This is approximate: ``{% endfor %}`` is not
-    tracked, so loops that share a variable name across the file settle on the
-    most recent binding. For an audit that's fine.
+    Тагови и променљиве се обрађују редом из документа, па се везивања из
+    ``{% for X in Y %}`` виде пре ланаца који их користе. ``loop_vars_so_far``
+    скупља та везивања. Ово је приближно: ``{% endfor %}`` се не прати, па
+    петље које у истом фајлу деле назив променљиве задржавају последње
+    везивање. За ревизију је то довољно.
 
-    Tag bodies are scanned whole (``{% if foo.bar %}``,
-    ``{% url 'x' uid=obj.adresa.ulica %}``); variable bodies lose their filters
-    first.
+    Тело тага се претражује цело (``{% if foo.bar %}``,
+    ``{% url 'x' uid=obj.adresa.ulica %}``), а телу променљиве се прво
+    уклањају филтери.
     """
     loop_vars: dict[str, str] = {}
     for m in TOKEN_RE.finditer(text):
@@ -202,11 +201,11 @@ def iter_chains_with_lines(text: str) -> Iterable[tuple[int, str, dict[str, str]
 
 
 def _bind_loop_vars(tag_body: str, loop_vars: dict[str, str]) -> None:
-    """Types the names of a ``{% for %}`` tag.
+    """Додељује тип називима из тага ``{% for %}``.
 
-    The collection table wins; otherwise a loop variable that is itself a known
-    root name (``for ukucanin in domacinstvo.ukucani.all``) keeps that type.
-    Anything else stays untyped.
+    Предност има табела колекција; иначе променљива петље која је и сама
+    познат назив корена (``for ukucanin in domacinstvo.ukucani.all``) задржава
+    тај тип. Све остало остаје без типа.
     """
     for_match = FOR_RE.search(tag_body)
     if not for_match:
@@ -220,16 +219,17 @@ def _bind_loop_vars(tag_body: str, loop_vars: dict[str, str]) -> None:
 
 
 def strip_filters(expr: str) -> str:
-    """Drop filter pipes from a variable expression body.
+    """Уклања филтере из тела израза променљиве.
 
-    ``foo.bar|default:"x"|length`` becomes ``foo.bar``. Filter names and their
-    arguments are not attribute chains; ignoring them avoids false positives.
+    ``foo.bar|default:"x"|length`` постаје ``foo.bar``. Називи филтера и
+    њихови аргументи нису ланци атрибута; њихово занемаривање спречава лажна
+    упозорења.
     """
     return expr.split("|", 1)[0]
 
 
 def resolve_model(name: str) -> type[Model] | None:
-    """Look up a model class by short name in the ``registar`` app."""
+    """Класа модела по кратком називу у апликацији ``registar``."""
     try:
         return apps.get_model("registar", name)
     except LookupError:
@@ -237,23 +237,21 @@ def resolve_model(name: str) -> type[Model] | None:
 
 
 def step(model: type[Model], attr: str) -> tuple[str, object]:
-    """Take one step along a dotted chain.
+    """Један корак дуж ланца са тачкама.
 
-    Returns ``(kind, target)`` where ``kind`` is one of:
+    Враћа ``(kind, target)``, где је ``kind`` једно од:
 
-    * ``"model"`` -- resolved to another model class; ``target`` is the class
-    * ``"scalar"`` -- resolved to a non-relational field; ``target`` is the
-      field instance
-    * ``"queryset"`` -- resolved to a reverse FK / M2M manager; ``target`` is
-      the model class of the queryset element
-    * ``"property"`` -- resolved to a property/method we cannot introspect;
-      ``target`` is ``None``
-    * ``"missing"`` -- attribute does not exist on the model
+    * ``"model"`` -- други модел; ``target`` је класа модела
+    * ``"scalar"`` -- поље које није веза; ``target`` је инстанца поља
+    * ``"queryset"`` -- обрнута FK / M2M веза; ``target`` је модел елемента
+    * ``"property"`` -- својство/метода коју не можемо да испитамо;
+      ``target`` је ``None``
+    * ``"missing"`` -- атрибут не постоји на моделу
 
-    Attributes added at runtime via ``Prefetch(to_attr="prefetched_xxx")`` are
-    invisible to ``_meta.get_field`` and ``dir(cls)``; by convention they are
-    all named ``prefetched_*`` and treated as opaque querysets, like the
-    view-annotated lists. The caller decides severity.
+    Атрибути додати у току рада преко ``Prefetch(to_attr="prefetched_xxx")``
+    невидљиви су за ``_meta.get_field`` и ``dir(cls)``; по договору сви носе
+    назив ``prefetched_*`` и третирају се као непрозирни queryset-ови, као и
+    спискови које додају прикази. Тежину одређује позивалац.
     """
     if attr in TEMPLATE_BUILTINS:
         return "scalar", None
@@ -269,7 +267,7 @@ def step(model: type[Model], attr: str) -> tuple[str, object]:
 
 
 def _field_kind(field) -> tuple[str, object]:
-    """``step`` result for a Django field; reverse one-to-one is a model."""
+    """Резултат ``step`` за Django поље; обрнута веза један-на-један је модел."""
     if isinstance(field, (ForeignKey, OneToOneField)):
         return "model", field.related_model
     if isinstance(field, ManyToManyField):
@@ -280,10 +278,9 @@ def _field_kind(field) -> tuple[str, object]:
 
 
 def walk(model: type[Model], parts: list[str]) -> tuple[str, str] | None:
-    """Walk a chain rooted at ``model``.
+    """Пролаз кроз ланац са кореном у ``model``.
 
-    Returns ``None`` if everything resolves cleanly. Otherwise returns
-    ``(severity, reason)``.
+    Враћа ``None`` ако се све уредно разреши, иначе ``(severity, reason)``.
     """
     kind: str = "model"
     target: object = model
@@ -300,14 +297,14 @@ def walk(model: type[Model], parts: list[str]) -> tuple[str, str] | None:
 def _step_past_model(
     kind: str, target: object, attr: str, parent: str
 ) -> tuple[str, str] | None:
-    """Judge ``.attr`` on something that is not a model.
+    """Оцена ``.attr`` на нечему што није модел.
 
-    * scalar -- the classic bug (``CharField.naziv``) is HARD; a few datetime
-      attributes are allowed.
-    * queryset -- terminals (``.all``) and numeric list indexes
-      (``prefetched_ukucanstva.0``) end the walk; anything else needs a query
-      to judge, so SOFT.
-    * property/method -- unknown return type, so SOFT.
+    * скалар -- класична грешка (``CharField.naziv``) је HARD; неколико
+      атрибута датума/времена је дозвољено.
+    * queryset -- завршни атрибути (``.all``) и бројчани индекси списка
+      (``prefetched_ukucanstva.0``) завршавају пролаз; за све остало треба
+      упит, па SOFT.
+    * својство/метода -- тип повратне вредности није познат, па SOFT.
     """
     if kind == "scalar":
         if attr in DATETIME_ATTRS:
@@ -325,7 +322,7 @@ def _step_past_model(
 
 
 def _root_model(chain: str, loop_vars: dict[str, str]) -> type[Model] | None:
-    """Model of the chain's root variable, or None if the root is not audited."""
+    """Модел коренске променљиве ланца, или None ако се корен не проверава."""
     root = chain.split(".")[0]
     if root in SKIP_ROOTS or root in TEMPLATE_FILTER_TOKENS:
         return None
@@ -336,7 +333,7 @@ def _root_model(chain: str, loop_vars: dict[str, str]) -> type[Model] | None:
 
 
 def audit_template(text: str, file: str, severity: str) -> tuple[list[Finding], int]:
-    """Findings for one template (filtered by ``severity``) and chains checked."""
+    """Налази једног шаблона (по ``severity``) и број проверених ланаца."""
     findings: list[Finding] = []
     checked = 0
     for line, chain, loop_vars in iter_chains_with_lines(text):
@@ -351,19 +348,19 @@ def audit_template(text: str, file: str, severity: str) -> tuple[list[Finding], 
 
 
 class Command(BaseCommand):
-    help = "Audit registar templates for unresolvable attribute chains."
+    help = "Ревизија registar шаблона: ланци атрибута које модел не може да разреши."
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--templates-dir",
             default=None,
-            help="Override templates root (defaults to crkva/registar/templates).",
+            help="Други корен шаблона (подразумевано crkva/registar/templates).",
         )
         parser.add_argument(
             "--severity",
             choices=["HARD", "SOFT", "ALL"],
             default="ALL",
-            help="Filter findings by severity (default ALL).",
+            help="Филтер налаза по тежини (подразумевано ALL).",
         )
 
     def handle(self, *args, **opts):
@@ -389,7 +386,7 @@ class Command(BaseCommand):
         self._report(findings, chains_checked)
 
     def _report(self, findings: list[Finding], chains_checked: int) -> None:
-        """Counts first, then HARD findings, then SOFT ones."""
+        """Прво бројеви, па HARD налази, па SOFT налази."""
         hard = [f for f in findings if f.severity == "HARD"]
         soft = [f for f in findings if f.severity == "SOFT"]
 
