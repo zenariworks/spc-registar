@@ -1,19 +1,20 @@
 """Миграција домаћинстава и укућана из hsp_domacini + hsp_ukucani.
 
 Креира Osoba (домаћин), Adresa, Domacinstvo, и Ukucanin записе. За разлику
-од miграcija_vencanja/krstenja, овде имамо два изворна table-а; код је
-донекле линеаран, али сада дели исте помоћнике из `registar.utils.migracija`.
+од миграције венчања/крштења, овде имамо две изворне табеле; код је
+донекле линеаран, али дели исте помоћнике из `registar.utils.migracija`.
 """
 
 # pylint: disable=missing-function-docstring,missing-class-docstring,attribute-defined-outside-init,too-many-locals,broad-exception-caught,not-callable
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import Dict, Iterable
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError, connection, transaction
-from registar.models import Domacinstvo, Osoba, Slava, Ukucanin
+from registar.models import Adresa, Domacinstvo, Osoba, Slava, Ukucanin
 from registar.utils.migracija.address import nadji_dodaj_adresu, warm_adresa_cache
 from registar.utils.migracija.helpers import cirilica, izdvoj_devojacko
 from registar.utils.migracija.osoba_repo import (
@@ -25,6 +26,93 @@ from registar.utils.migracija.osoba_repo import (
 from registar.utils.migracija.pol import pol_prema_imenu
 from registar.utils.migracija.slava_map import resolve_slava
 from registar.uvoz.osnovno import MigrationCommand
+
+DOMACINI_SQL = """
+    SELECT "DOM_RBR", "DOM_IME", "DOM_RBRUL", "DOM_BROJ", "DOM_OZNAKA",
+           "DOM_STAN", "DOM_TELDIR", "DOM_TELMOB", "DOM_RBRSL",
+           "DOM_SLAVOD", "DOM_USKVOD", "DOM_NAPOM"
+    FROM hsp_domacini
+    WHERE "DOM_RBR" IS NOT NULL AND "DOM_IME" IS NOT NULL
+    ORDER BY "DOM_RBR"
+"""
+
+
+@dataclass
+class _Domacin:
+    """Домаћин из једног реда hsp_domacini, спреман за упис."""
+
+    uid: int
+    ime: str
+    prezime: str
+    devojacko: str
+    adresa: Adresa
+    tel_f: str | None
+    tel_m: str | None
+
+
+def _ime_domacina(puno_ime: str) -> tuple[str, str, str]:
+    """(име, презиме, девојачко) из пуног имена домаћина.
+
+    Домаћин са презименом само у облику „р.<девојачко>“ не може да се направи
+    без удатог презимена, па девојачко постаје и презиме — ред се не губи, а
+    команда за чишћење (popravi_devojacka) може касније да га поново раздвоји.
+    """
+    ime, puno_prezime = (puno_ime.split(" ", 1) + [""])[:2]
+    vencano, devojacko = izdvoj_devojacko(puno_prezime)
+    return ime, vencano or devojacko, devojacko
+
+
+def _vodica(vrednost: str | None) -> bool:
+    """„D“ у колони водице; NULL је False (колоне су NOT NULL, #340)."""
+    return bool(vrednost and vrednost.strip() == "D")
+
+
+def _dopune(osoba: Osoba, d: _Domacin) -> dict:
+    """Поља постојеће особе која су празна, а домаћин их има."""
+    updates = {} if osoba.parohijan else {"parohijan": True}
+    for polje, postojece, novo in (
+        ("adresa", osoba.adresa_id, d.adresa),
+        ("tel_fiksni", osoba.tel_fiksni, d.tel_f),
+        ("tel_mobilni", osoba.tel_mobilni, d.tel_m),
+        ("devojacko", osoba.devojacko, d.devojacko),
+    ):
+        if not postojece and novo:
+            updates[polje] = novo
+    if not osoba.pol:
+        pol = pol_prema_imenu(d.ime)
+        if pol:
+            updates["pol"] = pol
+    return updates
+
+
+def _osoba_domacina(d: _Domacin) -> tuple[Osoba, bool]:
+    """Постојећа особа истог имена са заједничким сигналом, или нова.
+
+    Пореди се са СВИМ особама истог имена у кешу и спаја у прву која дели
+    сигнал (адреса, фиксни или мобилни). Тако ред #3 који дели сигнал са
+    редом #2 (а не са #1) и даље бива спојен уместо да се направи нова особа.
+    Постојећој особи се допуњују само празна поља.
+    """
+    osoba = nadji_osobu(d.ime, d.prezime, adresa=d.adresa, tel_f=d.tel_f, tel_m=d.tel_m)
+    if osoba is None:
+        return Osoba.objects.get_or_create(
+            uid=d.uid,
+            defaults={
+                "ime": d.ime,
+                "prezime": d.prezime,
+                "devojacko": d.devojacko or None,
+                "parohijan": True,
+                "adresa": d.adresa,
+                "tel_fiksni": d.tel_f,
+                "tel_mobilni": d.tel_m,
+                "pol": pol_prema_imenu(d.ime),
+            },
+        )
+    updates = _dopune(osoba, d)
+    if updates:
+        Osoba.objects.filter(pk=osoba.pk).update(**updates)
+        osoba.refresh_from_db()
+    return osoba, False
 
 
 class Command(MigrationCommand):
@@ -43,7 +131,6 @@ class Command(MigrationCommand):
             Ukucanin.objects.all().delete()
             Domacinstvo.objects.all().delete()
 
-        # Warm in-memory caches so the hot loop hits dicts, not the DB.
         n_adr = warm_adresa_cache()
         n_os = warm_osoba_cache()
         self.stdout.write(f"Загрејано: {n_adr} адреса, {n_os} особа у кешу.")
@@ -56,12 +143,7 @@ class Command(MigrationCommand):
         self._create_parohijani_and_domacinstva(limit=limit)
 
         if not self._dry_run:
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "SELECT setval(pg_get_serial_sequence('osobe', 'uid'), "
-                    "(SELECT COALESCE(MAX(uid), 1) FROM osobe))"
-                )
-            self.stdout.write("Ресетован аутоинкремент за осoбе.")
+            self._resetuj_sekvencu_osoba()
 
         self.stdout.write("Креирам укућане...")
         records = self.take(self._prepare_ukucanin_records(), limit)
@@ -74,7 +156,14 @@ class Command(MigrationCommand):
         else:
             self._drop_staging_tables()
 
-    # ---------------- Ulice cache ----------------
+    def _resetuj_sekvencu_osoba(self) -> None:
+        """Аутоинкремент особа после уписа домаћина са задатим uid-овима."""
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "SELECT setval(pg_get_serial_sequence('osobe', 'uid'), "
+                "(SELECT COALESCE(MAX(uid), 1) FROM osobe))"
+            )
+        self.stdout.write("Ресетован аутоинкремент за осoбе.")
 
     def _build_ulice_cache(self) -> Dict[int, str]:
         cache: Dict[int, str] = {}
@@ -87,230 +176,169 @@ class Command(MigrationCommand):
                     cache[sifra] = naziv
         return cache
 
-    # ---------------- Domaćin pass ----------------
-
     def _create_parohijani_and_domacinstva(self, limit: int = 0) -> None:
+        """Пролаз кроз домаћине: особа, адреса и домаћинство по реду.
+
+        Попуњава и `_dbf_uid_to_osoba_uid` (DBF шифра домаћина → uid особе),
+        преко које пролаз укућана налази домаћинство и за спојене домаћине.
+        Хватају се само грешке података; OperationalError, ProgrammingError
+        и KeyboardInterrupt прекидају увоз уместо да се тихо забележе.
+        """
         dodato_parohijana = 0
         dodato_domacinstava = 0
         self._dbf_uid_to_osoba_uid: Dict[int, int] = {}
 
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT "DOM_RBR", "DOM_IME", "DOM_RBRUL", "DOM_BROJ", "DOM_OZNAKA",
-                       "DOM_STAN", "DOM_TELDIR", "DOM_TELMOB", "DOM_RBRSL",
-                       "DOM_SLAVOD", "DOM_USKVOD", "DOM_NAPOM"
-                FROM hsp_domacini
-                WHERE "DOM_RBR" IS NOT NULL AND "DOM_IME" IS NOT NULL
-                ORDER BY "DOM_RBR"
-                """
-            )
-            rows = cursor.fetchall()
-
-        if limit:
-            rows = rows[:limit]
-
-        for row in rows:
-            (
-                uid_raw,
-                puno_ime,
-                ulica_uid_raw,
-                broj_ulice,
-                _oznaka_ulice,
-                broj_stana,
-                telefon_fiksni,
-                telefon_mobilni,
-                slava_uid_raw,
-                slavska_vodica,
-                uskrsnja_vodica,
-                napomena,
-            ) = row
-
+        for row in self._domacini(limit):
             try:
-                parohijan_uid = int(uid_raw)
-                ulica_uid = int(ulica_uid_raw) if ulica_uid_raw else None
-                slava_uid = int(slava_uid_raw) if slava_uid_raw else None
-
-                puno_ime = cirilica(puno_ime)
-                if not puno_ime:
-                    continue
-
-                ime, puno_prezime = (puno_ime.split(" ", 1) + [""])[:2]
-                vencano, devojacko = izdvoj_devojacko(puno_prezime)
-                # Domaćin records with only a "р.<devojacko>" surname can't
-                # be created without a married surname — fall back to the
-                # devojacko value so the row isn't lost, and the cleanup
-                # command (popravi_devojacka) can re-split it later.
-                prezime = vencano or devojacko
-                if not ime or not prezime:
-                    self.log_skip(
-                        f"Парохијан UID {parohijan_uid}: непотпуно име '{puno_ime}'"
-                    )
-                    continue
-
-                if self._dry_run:
-                    dodato_parohijana += 1
-                    dodato_domacinstava += 1
-                    continue
-
-                ulica_naziv = self.ulice_cache.get(ulica_uid, "") if ulica_uid else ""
-                adresa = nadji_dodaj_adresu(
-                    ulica=ulica_naziv,
-                    broj=cirilica(str(broj_ulice or "")),
-                    broj_stana=cirilica(str(broj_stana or "")),
-                    mesto="Чукарица",
-                    sprat="",
-                    primedba=cirilica(napomena or ""),
-                )
-
-                # #255: покретне славе се преводе на засебни покретни
-                # ред (PK != стара DOM_RBRSL сифра); фиксне иду по PK.
-                slava = resolve_slava(slava_uid, Slava)
-
-                tel_f = (telefon_fiksni or "").strip() or None
-                tel_m = (telefon_mobilni or "").strip() or None
-
-                # Name-based dedup: scan every same-name Osoba already in the
-                # cache; merge into the first one that shares a safety signal
-                # (canonical Adresa, tel_fiksni, or tel_mobilni). Comparing
-                # against ALL same-name candidates (not just the first cached)
-                # catches the case where row #1 has signal A and rows #2 and
-                # #3 share signal B — without this loop #3 would be created
-                # fresh instead of merging into #2.
-                with transaction.atomic():
-                    # Per-row atomic: ако упис домаћинства падне, поништи и
-                    # особу — ред не сме да остане напола направљен. Бројачи,
-                    # кеш и dbf-uid мапа се ажурирају ТЕК по успешном commit-у
-                    # (испод), да не показују на поништену особу (#340).
-                    match = nadji_osobu(
-                        ime, prezime, adresa=adresa, tel_f=tel_f, tel_m=tel_m
-                    )
-                    if match is not None:
-                        osoba = match
-                        p_created = False
-                        updates = {}
-                        if not osoba.parohijan:
-                            updates["parohijan"] = True
-                        if not osoba.adresa_id and adresa is not None:
-                            updates["adresa"] = adresa
-                        if not osoba.tel_fiksni and tel_f:
-                            updates["tel_fiksni"] = tel_f
-                        if not osoba.tel_mobilni and tel_m:
-                            updates["tel_mobilni"] = tel_m
-                        if not osoba.devojacko and devojacko:
-                            updates["devojacko"] = devojacko
-                        if not osoba.pol:
-                            inferred_pol = pol_prema_imenu(ime)
-                            if inferred_pol:
-                                updates["pol"] = inferred_pol
-                        if updates:
-                            Osoba.objects.filter(pk=osoba.pk).update(**updates)
-                            osoba.refresh_from_db()
-                    else:
-                        osoba, p_created = Osoba.objects.get_or_create(
-                            uid=parohijan_uid,
-                            defaults={
-                                "ime": ime,
-                                "prezime": prezime,
-                                "devojacko": devojacko or None,
-                                "parohijan": True,
-                                "adresa": adresa,
-                                "tel_fiksni": tel_f,
-                                "tel_mobilni": tel_m,
-                                "pol": pol_prema_imenu(ime),
-                            },
-                        )
-
-                    _, d_created = Domacinstvo.objects.get_or_create(
-                        domacin=osoba,
-                        defaults={
-                            "adresa": adresa,
-                            "slava": slava,
-                            "tel_fiksni": tel_f,
-                            "tel_mobilni": tel_m,
-                            # bool(): DOM_SLAVOD/DOM_USKVOD може бити NULL →
-                            # `x and ...` враћа None, а колоне су NOT NULL. Раније
-                            # је то рушило упис домаћинства (особа остане сирота);
-                            # сад експлицитно False (#340).
-                            "slavska_vodica": bool(
-                                slavska_vodica and slavska_vodica.strip() == "D"
-                            ),
-                            "vaskrsnja_vodica": bool(
-                                uskrsnja_vodica and uskrsnja_vodica.strip() == "D"
-                            ),
-                            "napomena": cirilica(napomena or ""),
-                        },
-                    )
-
-                # Пост-commit: кеширај особу (idempotent на pk) да наредни
-                # редови истог имена match-ују преко nadji_osobu, упиши
-                # dbf-uid -> canonical osoba (ukucani pass резолвује UK_RBRDOM),
-                # и увећај бројаче тек кад је ред стварно уписан.
-                if p_created:
-                    dodato_parohijana += 1
-                cache_osoba(osoba)
-                self._dbf_uid_to_osoba_uid[parohijan_uid] = osoba.uid
-                if d_created:
-                    dodato_domacinstava += 1
-
+                ishod = self._obradi_domacina(row)
             except (ValueError, IntegrityError, ValidationError) as e:
-                # Narrow except so OperationalError / ProgrammingError / KeyboardInterrupt
-                # propagate and abort the run instead of being silently logged.
-                self.log_error(f"Грешка за домаћина UID {uid_raw}: {e}")
+                self.log_error(f"Грешка за домаћина UID {row[0]}: {e}")
                 continue
+            if ishod is not None:
+                dodato_parohijana += ishod[0]
+                dodato_domacinstava += ishod[1]
 
         self.stdout.write(
             f"Креирано {dodato_parohijana} парохијана и {dodato_domacinstava} домаћинстава."
         )
 
-    # ---------------- Ukucanin pass ----------------
+    @staticmethod
+    def _domacini(limit: int) -> list[tuple]:
+        """Редови hsp_domacini по шифри, највише `limit` (0 = сви)."""
+        with connection.cursor() as cursor:
+            cursor.execute(DOMACINI_SQL)
+            rows = cursor.fetchall()
+        return rows[:limit] if limit else rows
+
+    def _obradi_domacina(self, row: tuple) -> tuple[bool, bool] | None:
+        """Упис једног домаћина; враћа (нова особа, ново домаћинство) или None.
+
+        Особа и домаћинство иду у исту трансакцију: ако упис домаћинства падне,
+        поништава се и особа, да ред не остане напола направљен. Кеш, мапа
+        DBF шифри и бројачи се ажурирају тек после успешног commit-а, да не
+        показују на поништену особу (#340).
+        """
+        (
+            uid_raw,
+            puno_ime,
+            ulica_uid_raw,
+            broj_ulice,
+            _oznaka_ulice,
+            broj_stana,
+            telefon_fiksni,
+            telefon_mobilni,
+            slava_uid_raw,
+            slavska_vodica,
+            uskrsnja_vodica,
+            napomena,
+        ) = row
+        parohijan_uid = int(uid_raw)
+        ulica_uid = int(ulica_uid_raw) if ulica_uid_raw else None
+        slava_uid = int(slava_uid_raw) if slava_uid_raw else None
+
+        puno_ime = cirilica(puno_ime)
+        if not puno_ime:
+            return None
+        ime, prezime, devojacko = _ime_domacina(puno_ime)
+        if not ime or not prezime:
+            self.log_skip(f"Парохијан UID {parohijan_uid}: непотпуно име '{puno_ime}'")
+            return None
+        if self._dry_run:
+            return True, True
+
+        d = _Domacin(
+            uid=parohijan_uid,
+            ime=ime,
+            prezime=prezime,
+            devojacko=devojacko,
+            adresa=self._adresa(ulica_uid, broj_ulice, broj_stana, napomena),
+            tel_f=(telefon_fiksni or "").strip() or None,
+            tel_m=(telefon_mobilni or "").strip() or None,
+        )
+        slava = resolve_slava(slava_uid, Slava)
+
+        with transaction.atomic():
+            osoba, p_created = _osoba_domacina(d)
+            _, d_created = Domacinstvo.objects.get_or_create(
+                domacin=osoba,
+                defaults={
+                    "adresa": d.adresa,
+                    "slava": slava,
+                    "tel_fiksni": d.tel_f,
+                    "tel_mobilni": d.tel_m,
+                    "slavska_vodica": _vodica(slavska_vodica),
+                    "vaskrsnja_vodica": _vodica(uskrsnja_vodica),
+                    "napomena": cirilica(napomena or ""),
+                },
+            )
+
+        cache_osoba(osoba)
+        self._dbf_uid_to_osoba_uid[parohijan_uid] = osoba.uid
+        return p_created, d_created
+
+    def _adresa(self, ulica_uid, broj_ulice, broj_stana, napomena) -> Adresa:
+        """Адреса домаћина на Чукарици, са називом улице из hsp_ulice."""
+        ulica_naziv = self.ulice_cache.get(ulica_uid, "") if ulica_uid else ""
+        return nadji_dodaj_adresu(
+            ulica=ulica_naziv,
+            broj=cirilica(str(broj_ulice or "")),
+            broj_stana=cirilica(str(broj_stana or "")),
+            mesto="Чукарица",
+            sprat="",
+            primedba=cirilica(napomena or ""),
+        )
 
     def _prepare_ukucanin_records(self) -> Iterable[dict | None]:
-        # Resolve via dbf-uid -> osoba-uid -> domacinstvo so deduped parohijani
-        # still match their ukucani.
-        osoba_to_dom: Dict[int, Domacinstvo] = {
-            d.domacin.uid: d for d in Domacinstvo.objects.select_related("domacin")
-        }
-        domacinstva_cache: Dict[int, Domacinstvo] = {}
-        for dbf_uid, osoba_uid in self._dbf_uid_to_osoba_uid.items():
-            dom = osoba_to_dom.get(osoba_uid)
-            if dom is not None:
-                domacinstva_cache[dbf_uid] = dom
-
+        """Подаци за Ukucanin по реду hsp_ukucani; None за ред који се прескаче."""
+        domacinstva = self._domacinstva_po_dbf_uid()
         with connection.cursor() as cursor:
             cursor.execute(
                 'SELECT "UK_RBRDOM", "UK_IME" FROM hsp_ukucani ORDER BY "UK_RBRDOM"'
             )
             for uid_raw, ime_raw in cursor.fetchall():
-                uid = int(uid_raw) if uid_raw else 0
-                raw_ime = cirilica(ime_raw or "")
+                yield self._ukucanin(uid_raw, ime_raw, domacinstva)
 
-                if uid == 0 or uid not in domacinstva_cache or not raw_ime:
-                    yield None
-                    continue
+    def _domacinstva_po_dbf_uid(self) -> Dict[int, Domacinstvo]:
+        """DBF шифра домаћина → домаћинство, преко особе.
 
-                domacinstvo = domacinstva_cache[uid]
-                prezime = domacinstvo.domacin.prezime
+        Иде преко uid-а особе, па и спојени (дедуплицирани) домаћини налазе
+        своје укућане.
+        """
+        osoba_to_dom: Dict[int, Domacinstvo] = {
+            d.domacin.uid: d for d in Domacinstvo.objects.select_related("domacin")
+        }
+        return {
+            dbf_uid: osoba_to_dom[osoba_uid]
+            for dbf_uid, osoba_uid in self._dbf_uid_to_osoba_uid.items()
+            if osoba_uid in osoba_to_dom
+        }
 
-                preminuo = raw_ime.startswith("+")
-                ime = raw_ime[1:].strip() if preminuo else raw_ime
+    def _ukucanin(
+        self, uid_raw, ime_raw, domacinstva: Dict[int, Domacinstvo]
+    ) -> dict | None:
+        """Укућанин са презименом домаћина; „+“ испред имена значи преминуо."""
+        uid = int(uid_raw) if uid_raw else 0
+        raw_ime = cirilica(ime_raw or "")
+        domacinstvo = domacinstva.get(uid) if uid else None
+        if domacinstvo is None or not raw_ime:
+            return None
 
-                osoba = nadji_dodaj_osobu(
-                    ime, prezime, parohijan=False, pol=pol_prema_imenu(ime)
-                )
-                if not osoba:
-                    self.log_skip(f"Не могу креирати особу: {ime} {prezime}")
-                    yield None
-                    continue
+        prezime = domacinstvo.domacin.prezime
+        preminuo = raw_ime.startswith("+")
+        ime = raw_ime[1:].strip() if preminuo else raw_ime
 
-                yield {
-                    "domacinstvo": domacinstvo,
-                    "osoba": osoba,
-                    "ime_ukucana": ime,
-                    "preminuo": preminuo,
-                }
-
-    # ---------------- Cleanup ----------------
+        osoba = nadji_dodaj_osobu(
+            ime, prezime, parohijan=False, pol=pol_prema_imenu(ime)
+        )
+        if not osoba:
+            self.log_skip(f"Не могу креирати особу: {ime} {prezime}")
+            return None
+        return {
+            "domacinstvo": domacinstvo,
+            "osoba": osoba,
+            "ime_ukucana": ime,
+            "preminuo": preminuo,
+        }
 
     def _drop_staging_tables(self) -> None:
         with connection.cursor() as cursor:
