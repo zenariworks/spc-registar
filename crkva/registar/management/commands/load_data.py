@@ -1,9 +1,11 @@
-"""Top-level data load orchestrator (mock / DBF / fixture)."""
+"""Оркестратор учитавања података: mock сејање, DBF увоз или fixture."""
 
 from __future__ import annotations
 
 import random as random_module
+from dataclasses import dataclass
 from pathlib import Path
+from types import ModuleType
 
 from django.core.management import call_command
 from django.core.management.base import BaseCommand, CommandError
@@ -19,30 +21,49 @@ from registar.uvoz.seed import (
 )
 
 
+@dataclass(frozen=True)
 class Step:
-    def __init__(
-        self,
-        modul,
-        label,
-        *,
-        takes_source=True,
-        takes_count=True,
-        takes_tenant=True,
-        takes_seed=True,
-        takes_reset=True,
-        default_count=None,
-        divisor=1,
-    ):
-        self.naziv = modul.__name__.rsplit(".", 1)[-1]
-        self.modul = modul
-        self.oznaka = label
-        self.takes_source = takes_source
-        self.takes_count = takes_count
-        self.takes_tenant = takes_tenant
-        self.takes_seed = takes_seed
-        self.takes_reset = takes_reset
-        self.default_count = default_count
-        self.divisor = divisor
+    """Један корак mock сејања и аргументи које његова команда прима.
+
+    `default_count` важи без `--count`; са њим корак добија
+    `--count // divisor`, а најмање 1.
+    """
+
+    modul: ModuleType
+    oznaka: str
+    takes_source: bool = True
+    takes_count: bool = True
+    takes_tenant: bool = True
+    takes_seed: bool = True
+    takes_reset: bool = True
+    default_count: int | None = None
+    divisor: int = 1
+
+    @property
+    def naziv(self) -> str:
+        """Назив команде корака (последњи део имена модула)."""
+        return self.modul.__name__.rsplit(".", 1)[-1]
+
+    def kwargs(self, opts: dict) -> dict:
+        """Аргументи за команду корака из опција `load_data`."""
+        kwargs = {}
+        if self.takes_source:
+            kwargs["source"] = "mock"
+        if self.takes_tenant:
+            kwargs["tenant"] = opts["tenant"]
+        if self.takes_count:
+            kwargs["count"] = self._count(opts["count"])
+        if self.takes_seed and opts["seed"] is not None:
+            kwargs["seed"] = opts["seed"]
+        if self.takes_reset and opts["reset"]:
+            kwargs["reset"] = True
+        return kwargs
+
+    def _count(self, base_count: int | None) -> int | None:
+        """Број записа: подразумевани, или базни број скалиран делиоцем."""
+        if base_count is None:
+            return self.default_count
+        return max(1, base_count // self.divisor)
 
 
 PIPELINE: list[Step] = [
@@ -61,6 +82,20 @@ PIPELINE: list[Step] = [
     Step(unos_krstenja, "Крштења", default_count=25, divisor=4),
     Step(unos_vencanja, "Венчања", default_count=10, divisor=10),
 ]
+
+
+def izaberi_korake(only: str | None) -> list[Step]:
+    """Кораци из `--only` (зарезом одвојени називи), или сви без њега."""
+    if not only:
+        return list(PIPELINE)
+    nazivi = only.split(",")
+    koraci = [s for s in PIPELINE if s.naziv in nazivi]
+    if not koraci:
+        raise CommandError(
+            f"--only не одговара ниједном кораку. Доступни: "
+            f"{', '.join(s.naziv for s in PIPELINE)}"
+        )
+    return koraci
 
 
 class Command(BaseCommand):
@@ -115,62 +150,40 @@ class Command(BaseCommand):
             raise CommandError(f"Непознат извор: {source!r}")
 
     def _zasej_mock(self, opts) -> None:
-        only = opts["only"].split(",") if opts["only"] else None
-        steps = [s for s in PIPELINE if not only or s.naziv in only]
-        if only and not steps:
-            raise CommandError(
-                f"--only не одговара ниједном кораку. Доступни: "
-                f"{', '.join(s.naziv for s in PIPELINE)}"
-            )
-
-        if any(s.takes_tenant for s in steps) and not opts["tenant"]:
+        """Покреће изабране кораке сејања редом (или их само наводи уз --dry-run)."""
+        koraci = izaberi_korake(opts["only"])
+        if any(s.takes_tenant for s in koraci) and not opts["tenant"]:
             raise CommandError(
                 "--tenant је обавезан за per-tenant seedere. "
                 "Пример: --tenant crkva_sv_nikole_zaandam"
             )
 
-        base_count = opts["count"]
-
         self.stdout.write(
             self.style.MIGRATE_HEADING(
-                f"load_data --from mock  ({len(steps)} корака, "
+                f"load_data --from mock  ({len(koraci)} корака, "
                 f"tenant={opts['tenant'] or '—'}, reset={opts['reset']})"
             )
         )
-
-        for korak in steps:
-            self.stdout.write(
-                self.style.MIGRATE_HEADING(
-                    f"\n→ {korak.oznaka}  (manage.py {korak.naziv})"
-                )
-            )
-            if opts["dry_run"]:
-                self.stdout.write("  (dry-run — прескачем)")
-                continue
-
-            kwargs = {}
-            if korak.takes_source:
-                kwargs["source"] = "mock"
-            if korak.takes_tenant:
-                kwargs["tenant"] = opts["tenant"]
-            if korak.takes_count:
-                if base_count is not None:
-                    kwargs["count"] = max(1, base_count // korak.divisor)
-                else:
-                    kwargs["count"] = korak.default_count
-            if korak.takes_seed and opts["seed"] is not None:
-                kwargs["seed"] = opts["seed"]
-            if korak.takes_reset and opts["reset"]:
-                kwargs["reset"] = True
-
-            call_command(korak.modul.Command(), **kwargs)
+        for korak in koraci:
+            self._pokreni_korak(korak, opts)
 
         if opts["dry_run"]:
             self.stdout.write(self.style.NOTICE("\nDry-run завршен."))
         else:
             self.stdout.write(self.style.SUCCESS("\nload_data завршен."))
 
+    def _pokreni_korak(self, korak: Step, opts) -> None:
+        """Наслов корака, па позив његове команде (осим уз --dry-run)."""
+        self.stdout.write(
+            self.style.MIGRATE_HEADING(f"\n→ {korak.oznaka}  (manage.py {korak.naziv})")
+        )
+        if opts["dry_run"]:
+            self.stdout.write("  (dry-run — прескачем)")
+            return
+        call_command(korak.modul.Command(), **korak.kwargs(opts))
+
     def _migriraj_dbf(self, source: str, opts) -> None:
+        """DBF увоз под шемом закупца: load_dbf → unos_sifarnika → importuj_dbf."""
         if not opts["tenant"]:
             raise CommandError("--tenant је обавезан за DBF увоз.")
 
