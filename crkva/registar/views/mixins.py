@@ -4,23 +4,12 @@ from registar.forms import SearchForm
 from registar.pretraga import search_queryset
 
 PAGE_SIZE_CHOICES = [10, 25, 50, 100]
-PAGE_SIZE_DEFAULT = 10
+PRIKAZI = ("kartice", "tabela")
+PRIKAZ_COOKIE_MAX_AGE = 60 * 60 * 24 * 365
 
 
-class ListControlsMixin:
-    """Pagination (per_page), sorting (sort) and card/table view (prikaz) for list views.
-
-    Each view declares:
-        sort_options = [
-            ("prezime", "Презиме А-Ш"),
-            ("-prezime", "Презиме Ш-А"),
-            ("-created", "Најновије"),
-        ]
-        tabela_kolone = ["Име", "Презиме", ...]  # заглавља за табеларни приказ (#378)
-    """
-
-    sort_options: list[tuple[str, str]] = []
-    tabela_kolone: list[str] = []
+class PaginationMixin:
+    """Величина стране из `?per_page`, ограничена на PAGE_SIZE_CHOICES."""
 
     def get_paginate_by(self, queryset):
         try:
@@ -31,12 +20,48 @@ class ListControlsMixin:
             return per_page
         return super().get_paginate_by(queryset)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["page_size_choices"] = PAGE_SIZE_CHOICES
+        context["current_page_size"] = self.get_paginate_by(self.object_list)
+        return context
+
+
+class SortMixin:
+    """Сортирање из `?sort`, ограничено на понуђене `sort_options`.
+
+    Сваки приказ дефинише:
+        sort_options = [
+            ("prezime", "Презиме А-Ш"),
+            ("-prezime", "Презиме Ш-А"),
+            ("-created", "Најновије"),
+        ]
+    """
+
+    sort_options: list[tuple[str, str]] = []
+
     def get_ordering(self):
         sort = self.request.GET.get("sort", "")
         allowed = [opt[0] for opt in self.sort_options]
         if sort in allowed:
             return [sort]
         return super().get_ordering() or []
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["sort_options"] = self.sort_options
+        context["current_sort"] = self.request.GET.get("sort", "")
+        return context
+
+
+class PrikazMixin:
+    """Приказ картице ↔ табела (#378), запамћен у колачићу.
+
+    Сваки приказ дефинише:
+        tabela_kolone = ["Име", "Презиме", ...]  # заглавља за табеларни приказ
+    """
+
+    tabela_kolone: list[str] = []
 
     def get_prikaz(self):
         """Тренутни приказ: „tabela" или „kartice".
@@ -45,7 +70,7 @@ class ListControlsMixin:
         (последње што је корисник изабрао), па подразумевано „kartice" (#378).
         """
         izbor = self.request.GET.get("prikaz")
-        if izbor in ("tabela", "kartice"):
+        if izbor in PRIKAZI:
             return izbor
         if self.request.COOKIES.get("prikaz") == "tabela":
             return "tabela"
@@ -55,36 +80,31 @@ class ListControlsMixin:
         """Памти последњи избор приказа у колачићу кад га корисник изричито мења."""
         response = super().get(request, *args, **kwargs)
         izbor = request.GET.get("prikaz")
-        if izbor in ("tabela", "kartice"):
+        if izbor in PRIKAZI:
             response.set_cookie(
-                "prikaz", izbor, max_age=60 * 60 * 24 * 365, samesite="Lax"
+                "prikaz", izbor, max_age=PRIKAZ_COOKIE_MAX_AGE, samesite="Lax"
             )
         return response
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        current_size = self.get_paginate_by(self.get_queryset())
-        current_sort = self.request.GET.get("sort", "")
-        context["page_size_choices"] = PAGE_SIZE_CHOICES
-        context["current_page_size"] = current_size
-        context["sort_options"] = self.sort_options
-        context["current_sort"] = current_sort
+        """Додаје тренутни приказ и упите за прелаз на други приказ.
 
-        # Приказ картице ↔ табела (#378). Чувамо остале параметре упита; `page`
-        # одбацујемо да пребацивање приказа врати на прву страну.
+        Остали параметри упита се чувају, а `page` се одбацује да би промена
+        приказа вратила на прву страну.
+        """
+        context = super().get_context_data(**kwargs)
         context["prikaz"] = self.get_prikaz()
         context["tabela_kolone"] = self.tabela_kolone
         params = self.request.GET.copy()
         params.pop("page", None)
-        params["prikaz"] = "kartice"
-        context["qs_kartice"] = params.urlencode()
-        params["prikaz"] = "tabela"
-        context["qs_tabela"] = params.urlencode()
+        for prikaz in PRIKAZI:
+            params["prikaz"] = prikaz
+            context["qs_" + prikaz] = params.urlencode()
         return context
 
 
-# Keep old name as alias
-PageSizeMixin = ListControlsMixin
+class ListControlsMixin(PaginationMixin, SortMixin, PrikazMixin):
+    """Величина стране, сортирање и приказ картице/табела за спискове."""
 
 
 class SearchMixin:

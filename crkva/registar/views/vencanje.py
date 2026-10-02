@@ -10,7 +10,7 @@ from registar.models.vencanje import Vencanje
 from registar.services.izdavalac import get_izdavalac
 from registar.views.base import RegistarCreateView, RegistarUpdateView
 from registar.views.calibrate import render_calibrate
-from registar.views.mixins import InfiniteScrollMixin, PageSizeMixin, SearchMixin
+from registar.views.mixins import InfiniteScrollMixin, ListControlsMixin, SearchMixin
 from registar.views.pdf import HistorySnapshotMixin, PdfDetailView
 from tenants.permissions import tenant_role_required
 
@@ -29,7 +29,7 @@ VENCANJE_RELATED = (
 
 
 class SpisakVencanja(
-    LoginRequiredMixin, SearchMixin, PageSizeMixin, InfiniteScrollMixin, ListView
+    LoginRequiredMixin, SearchMixin, ListControlsMixin, InfiniteScrollMixin, ListView
 ):
     """Приказује списак венчања са могућностима претраге и пагинације."""
 
