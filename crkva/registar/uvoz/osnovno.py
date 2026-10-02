@@ -131,36 +131,39 @@ class MigrationCommand(BaseCommand):
         batch_size: int = 500,
         dry_run: bool = False,
     ) -> int:
+        """Уписује записе у пакетима и враћа број стварно уписаних редова.
+
+        Празни (``None``) записи се прескачу. Уз ``dry_run`` ништа се не уписује,
+        а враћа се процена (број записа).
+        """
         batch: list = []
         created_count = 0
-
-        def _upisi(redovi: list) -> None:
-            nonlocal created_count
-            if not redovi:
-                return
-            if dry_run:
-                created_count += len(redovi)  # процена (ништа се не уписује)
-                return
-            # ignore_conflicts=True: прескочени (конфликтни) редови на Postgres
-            # немају PK; бројимо само стварно уметнуте да „created" не буде
-            # прецењен (#340).
-            upisani = self.target_model.objects.bulk_create(
-                redovi, ignore_conflicts=True
-            )
-            created_count += sum(1 for o in upisani if o.pk is not None)
-
         for idx, data in enumerate(records, start=1):
             if data is None:
                 continue
             batch.append(self.target_model(**data))
-
             if len(batch) >= batch_size:
-                _upisi(batch)
+                created_count += self._upisi_paket(batch, dry_run)
                 batch = []
                 self.stdout.write(f"Обрађено {idx} записа...")
+        return created_count + self._upisi_paket(batch, dry_run)
 
-        _upisi(batch)
-        return created_count
+    def _upisi_paket(self, redovi: list, dry_run: bool) -> int:
+        """Уписује један пакет и враћа број нових редова у циљној табели.
+
+        ``bulk_create(ignore_conflicts=True)`` на Postgres-у не враћа PK ни за
+        уписане ни за прескочене (конфликтне) редове, а са PK-ом који се додељује
+        у Python-у (нпр. ``uuid4``) PK имају сви. Зато се нови редови броје као
+        разлика броја редова пре и после уписа, у истој трансакцији (#340).
+        """
+        if not redovi:
+            return 0
+        if dry_run:
+            return len(redovi)
+        menadzer = self.target_model.objects
+        pre = menadzer.count()
+        menadzer.bulk_create(redovi, ignore_conflicts=True)
+        return menadzer.count() - pre
 
     # --- Iteration helper for refactored migrations ---
 
