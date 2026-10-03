@@ -1,7 +1,9 @@
 """Тестови за парсер вероисповести и народности."""
 
+import re
+
 from django.test import TestCase
-from registar.utils.parser import rasclani_vera_narodnost
+from registar.utils.parser import NARODNOSTI, VEROISPOVESTI, rasclani_vera_narodnost
 
 
 class ParseVeraNarodnostTest(TestCase):
@@ -156,3 +158,16 @@ class ParseVeraNarodnostTest(TestCase):
         """Тест за case-insensitive претрагу."""
         p1, _p2 = rasclani_vera_narodnost("православни")
         self.assertEqual(p1["veroispovest"], "Православна")
+
+    def test_korejska_narodnost(self):
+        """Корејанци добијају корејску народност."""
+        p1, _p2 = rasclani_vera_narodnost("православни корејанци")
+        self.assertEqual(p1["narodnost"], "Корејска")
+
+    def test_kljucevi_i_vrednosti_su_cirilicni(self):
+        """Ниједан кључ ни вредност у мапама нема латинична слова."""
+        latinica = re.compile("[A-Za-z]")
+        for mapa in (VEROISPOVESTI, NARODNOSTI):
+            for tekst in (*mapa, *mapa.values()):
+                with self.subTest(tekst=tekst):
+                    self.assertIsNone(latinica.search(tekst))
