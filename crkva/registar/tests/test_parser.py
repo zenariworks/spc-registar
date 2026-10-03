@@ -2,11 +2,16 @@
 
 import re
 
-from django.test import TestCase
-from registar.utils.parser import NARODNOSTI, VEROISPOVESTI, rasclani_vera_narodnost
+from django.test import SimpleTestCase
+from registar.utils.parser import (
+    NARODNOSTI,
+    VEROISPOVESTI,
+    _napravi_pretragu,
+    rasclani_vera_narodnost,
+)
 
 
-class ParseVeraNarodnostTest(TestCase):
+class ParseVeraNarodnostTest(SimpleTestCase):
     """Тестови за parse_vera_narodnost функцију."""
 
     # --- Празни/None улази ---
@@ -91,6 +96,14 @@ class ParseVeraNarodnostTest(TestCase):
         self.assertEqual(p2["veroispovest"], "Римокатоличка")
         self.assertIsNone(p2["narodnost"])
 
+    def test_tri_dela_druga_osoba_je_ostatak_teksta(self):
+        """Са два „ и “ прва особа је до првог, а друга је цео остатак текста."""
+        p1, p2 = rasclani_vera_narodnost(
+            "православни срби и римокатолици хрвати и муслимани"
+        )
+        self.assertEqual(p1, {"veroispovest": "Православна", "narodnost": "Српска"})
+        self.assertEqual(p2, {"veroispovest": "Римокатоличка", "narodnost": "Хрватска"})
+
     def test_muslim_and_orthodox(self):
         """Тест за муслимана и православну Српкињу."""
         p1, p2 = rasclani_vera_narodnost("Муслиман и Православна Српкиња")
@@ -171,3 +184,26 @@ class ParseVeraNarodnostTest(TestCase):
             for tekst in (*mapa, *mapa.values()):
                 with self.subTest(tekst=tekst):
                     self.assertIsNone(latinica.search(tekst))
+
+
+class NapraviPretraguTest(SimpleTestCase):
+    """Тестови за _napravi_pretragu (regex од кључева мапе)."""
+
+    def test_svaki_kljuc_se_pronalazi(self):
+        """Regex проналази сваки кључ мапе, као алтернативу."""
+        pretraga = _napravi_pretragu({"срб": "Српска", "хрват": "Хрватска"})
+        self.assertEqual(pretraga.search("неки хрват").group(), "хрват")
+        self.assertEqual(pretraga.search("срби").group(), "срб")
+        self.assertIsNone(pretraga.search("немац"))
+
+    def test_bez_obzira_na_velika_slova(self):
+        """Поклапање не зависи од великих и малих слова."""
+        pretraga = _napravi_pretragu({"срб": "Српска"})
+        self.assertEqual(pretraga.search("СРБИН").group(), "СРБ")
+        self.assertTrue(pretraga.flags & re.IGNORECASE)
+
+    def test_posebni_znakovi_su_doslovni(self):
+        """Знакови као „.“ у кључу се траже дословно, не као regex."""
+        pretraga = _napravi_pretragu({"а.б": "X"})
+        self.assertIsNotNone(pretraga.search("а.б"))
+        self.assertIsNone(pretraga.search("аxб"))
