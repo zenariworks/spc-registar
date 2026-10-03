@@ -4,10 +4,15 @@
 # where UP007 already covers Optional. Re-add "UP045" when the pin is bumped.
 target-version = "py313"
 [lint]
-extend-select = ["UP007"]
+extend-select = ["UP007", "DJ", "S"]
+ignore = ["DJ001"]
 
 [lint.per-file-ignores]
 # Package __init__.py files re-export names to form the package public API
 # (consumed e.g. by urls.py via `from registar.views import ...`). Such
 # imports are "unused" only within the __init__ itself — not a defect.
 "__init__.py" = ["F401"]
+"**/tests/**" = ["S101", "S105", "S106", "S608"]
+"**/test_*.py" = ["S101", "S105", "S106", "S608"]
+"crkva/registar/mock/**" = ["S101", "S311"]
+"crkva/registar/uvoz/seed/**" = ["S101", "S311"]

@@ -23,6 +23,12 @@ class Parohija(models.Model):
 
     _ROMAN_DIGITS = {"1": "I", "2": "II", "3": "III", "4": "IV", "5": "V"}
 
+    class Meta:
+        managed = True
+        db_table: str = "parohije"
+        verbose_name: str = "Парохија"
+        verbose_name_plural: str = "Парохије"
+
     def __str__(self) -> str:
         # Legacy data: a single digit naziv was rendered as the matching
         # roman numeral. For any other (and now far more common) naziv,
@@ -31,9 +37,3 @@ class Parohija(models.Model):
         if self.naziv in self._ROMAN_DIGITS:
             return self._ROMAN_DIGITS[self.naziv]
         return self.naziv or ""
-
-    class Meta:
-        managed = True
-        db_table: str = "parohije"
-        verbose_name: str = "Парохија"
-        verbose_name_plural: str = "Парохије"

@@ -21,7 +21,7 @@ def _safe(value):
     термина, грешка). У супротном сирова вредност из базе се рендерује
     неескејповано → складиштени XSS (#375).
     """
-    return mark_safe(escape("" if value is None else str(value)))
+    return mark_safe(escape("" if value is None else str(value)))  # noqa: S308
 
 
 @register.filter
@@ -65,7 +65,7 @@ def markiraj(value, upit):
         original = "" if value is None else str(value)
         escaped = escape(original)
         highlighted = pattern.sub(replace, escaped)
-        return mark_safe(highlighted)
+        return mark_safe(highlighted)  # noqa: S308
     except Exception:
         # Fallback: still escaped+safe so the contract holds on errors too.
         return _safe(value)

@@ -17,11 +17,11 @@ class CrkvenaOpstina(models.Model):
         Eparhija, on_delete=models.SET_NULL, null=True, verbose_name="епархија"
     )
 
-    def __str__(self) -> str:
-        return f"{self.naziv}, {self.eparhija}"
-
     class Meta:
         managed = True
         db_table: str = "crkvene_opstine"
         verbose_name: str = "Црквена општина"
         verbose_name_plural: str = "Црквене општине"
+
+    def __str__(self) -> str:
+        return f"{self.naziv}, {self.eparhija}"

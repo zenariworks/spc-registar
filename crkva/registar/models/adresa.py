@@ -45,17 +45,6 @@ class Adresa(models.Model):
 
     history = HistoricalRecords(user_db_constraint=False)
 
-    def __str__(self):
-        parts = [self.ulica, self.broj]
-        if self.sprat:
-            parts.append(f"спрат {self.sprat}")
-        if self.broj_stana:
-            parts.append(f"стан {self.broj_stana}")
-        result = " ".join(p for p in parts if p)
-        if self.mesto:
-            result = f"{result}, {self.mesto}" if result else self.mesto
-        return result or "—"
-
     class Meta:
         managed = True
         db_table = "adrese"
@@ -73,3 +62,14 @@ class Adresa(models.Model):
                 name="unique_adresa_normalized",
             ),
         ]
+
+    def __str__(self):
+        parts = [self.ulica, self.broj]
+        if self.sprat:
+            parts.append(f"спрат {self.sprat}")
+        if self.broj_stana:
+            parts.append(f"стан {self.broj_stana}")
+        result = " ".join(p for p in parts if p)
+        if self.mesto:
+            result = f"{result}, {self.mesto}" if result else self.mesto
+        return result or "—"

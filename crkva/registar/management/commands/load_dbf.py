@@ -181,7 +181,7 @@ class Command(BaseCommand):
         placeholders = ", ".join("%s" for _ in columns)
 
         create_sql = f"CREATE TABLE IF NOT EXISTS {table_name} ({column_defs})"
-        insert_sql = f"INSERT INTO {table_name} ({column_list}) VALUES ({placeholders})"
+        insert_sql = f"INSERT INTO {table_name} ({column_list}) VALUES ({placeholders})"  # noqa: S608
 
         total_inserted = 0
 

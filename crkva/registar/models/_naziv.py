@@ -52,6 +52,12 @@ class NazivModel(models.Model):
 
     objects = NazivQuerySet.as_manager()
 
+    class Meta:
+        abstract = True
+        constraints = [
+            models.UniqueConstraint(Lower("naziv"), name="%(class)s_naziv_ci_uniq"),
+        ]
+
     def __str__(self):
         return f"{self.naziv}"
 
@@ -59,9 +65,3 @@ class NazivModel(models.Model):
         if self.naziv:
             self.naziv = normalizuj(self.naziv)
         super().save(*args, **kwargs)
-
-    class Meta:
-        abstract = True
-        constraints = [
-            models.UniqueConstraint(Lower("naziv"), name="%(class)s_naziv_ci_uniq"),
-        ]

@@ -15,13 +15,13 @@ class Hram(models.Model):
         max_length=100, verbose_name="место", blank=True, default=""
     )
 
-    def __str__(self):
-        if self.mesto:
-            return f"{self.naziv}, {self.mesto}"
-        return self.naziv
-
     class Meta:
         managed = True
         db_table = "hramovi"
         verbose_name = "Храм"
         verbose_name_plural = "Храмови"
+
+    def __str__(self):
+        if self.mesto:
+            return f"{self.naziv}, {self.mesto}"
+        return self.naziv

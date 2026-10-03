@@ -339,7 +339,7 @@ class Command(MigrationCommand):
     def _fetch_records(self) -> Iterator[KrstenjeZapis]:
         """Чита записе из staging табеле."""
         columns = ", ".join(f'"{col}"' for col in SOURCE_COLUMNS)
-        query = f'SELECT {columns} FROM {self.staging_table} ORDER BY "K_SIFRA"'
+        query = f'SELECT {columns} FROM {self.staging_table} ORDER BY "K_SIFRA"'  # noqa: S608
 
         with connection.cursor() as cursor:
             cursor.execute(query)

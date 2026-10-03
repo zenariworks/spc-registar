@@ -304,7 +304,7 @@ class Command(MigrationCommand):
 
     def _fetch_records(self) -> Iterator[VencanjeRecord]:
         kolone = ", ".join(f'"{c}"' for c in SOURCE_COLUMNS)
-        query = f'SELECT {kolone} FROM {self.staging_table} ORDER BY "V_SIFRA"'
+        query = f'SELECT {kolone} FROM {self.staging_table} ORDER BY "V_SIFRA"'  # noqa: S608
         with connection.cursor() as cursor:
             cursor.execute(query)
             for row in cursor.fetchall():

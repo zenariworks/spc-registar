@@ -21,11 +21,11 @@ class Eparhija(models.Model):
     naziv = models.CharField(max_length=100, verbose_name="назив")
     sediste = models.CharField(max_length=100, verbose_name="седиште")
 
-    def __str__(self) -> str:
-        return f"{self.nivo} - {self.naziv}"
-
     class Meta:
         managed = True
         db_table = "eparhije"
         verbose_name = "Епархија"
         verbose_name_plural = "Епархије"
+
+    def __str__(self) -> str:
+        return f"{self.nivo} - {self.naziv}"
