@@ -23,6 +23,7 @@ from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
 from registar.models import Hram, Krstenje, Osoba, Svestenik, Vencanje
+from registar.models._osoba_polja import mala
 from tenants.models import Clanstvo, Uloga, Zakupac
 
 User = get_user_model()
@@ -394,9 +395,9 @@ class VencanjeDetailRenderTests(TestCase):
 
     def test_vera_i_narodnost_mala_slova(self):
         # вера/народност су заједничке именице → мала слова (Православна→православна)
-        self.assertEqual(Vencanje._mala("Православна"), "православна")
-        self.assertEqual(Vencanje._mala("Српска"), "српска")
-        self.assertEqual(Vencanje._mala(None), "")
+        self.assertEqual(mala("Православна"), "православна")
+        self.assertEqual(mala("Српска"), "српска")
+        self.assertEqual(mala(None), "")
 
     def test_prazni_roditelji_ne_prave_prazne_redove(self):
         # родитељи нису постављени → празни описи и без празних <span> редова
