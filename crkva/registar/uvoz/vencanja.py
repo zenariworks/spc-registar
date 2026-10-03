@@ -304,7 +304,6 @@ class Command(MigrationCommand):
 
     def _fetch_records(self) -> Iterator[VencanjeRecord]:
         kolone = ", ".join(f'"{c}"' for c in SOURCE_COLUMNS)
-        # S608: Табела и колоне су константе модула (staging_table, SOURCE_COLUMNS), не улаз корисника.
         query = f'SELECT {kolone} FROM {self.staging_table} ORDER BY "V_SIFRA"'  # noqa: S608
         with connection.cursor() as cursor:
             cursor.execute(query)

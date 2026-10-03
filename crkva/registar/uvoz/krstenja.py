@@ -339,7 +339,6 @@ class Command(MigrationCommand):
     def _fetch_records(self) -> Iterator[KrstenjeZapis]:
         """Чита записе из staging табеле."""
         columns = ", ".join(f'"{col}"' for col in SOURCE_COLUMNS)
-        # S608: Табела и колоне су константе модула (staging_table, SOURCE_COLUMNS), не улаз корисника.
         query = f'SELECT {columns} FROM {self.staging_table} ORDER BY "K_SIFRA"'  # noqa: S608
 
         with connection.cursor() as cursor:

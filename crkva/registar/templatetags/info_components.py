@@ -162,6 +162,5 @@ def info_section(content, title, icon=None, inline=False, show_mode=None):
         icon_html,
         title,
         ul_cls,
-        # S308: content је већ рендерован садржај блока (simple_block_tag), аутоескејпован при рендеровању.
         mark_safe(content),  # noqa: S308
     )
