@@ -60,7 +60,6 @@ coverage:
 	cd crkva && coverage run --rcfile=../.coveragerc manage.py test --keepdb --parallel 1
 	cd crkva && coverage report --rcfile=../.coveragerc
 
-# Diff coverage: changed lines vs origin/main must be covered (#414). Run after `make coverage`.
 diff-cover:
 	cd crkva && coverage xml --rcfile=../.coveragerc --fail-under=0 -o ../coverage.xml
 	diff-cover coverage.xml --compare-branch=origin/main --fail-under=80

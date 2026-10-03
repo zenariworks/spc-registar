@@ -39,7 +39,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          # diff-cover пореди са основном граном PR-а, па треба цела историја.
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -62,7 +61,6 @@ jobs:
         if: github.event_name == 'pull_request'
         working-directory: crkva
         run: |
-          # Праг укупне покривености већ проверава корак изнад.
           coverage xml --rcfile=../.coveragerc --fail-under=0 -o ../coverage.xml
           cd .. && diff-cover coverage.xml --compare-branch="origin/${{ github.base_ref }}" --fail-under=80
       - name: Deploy checks (informational)
