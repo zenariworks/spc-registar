@@ -145,13 +145,3 @@ def rasclani_vera_narodnost(
     drugi = _rasclani_segment(osobe[1]) if len(osobe) == 2 else None
 
     return prvi, drugi
-
-
-def get_canonical_vere() -> list[str]:
-    """Врати канонске називе вероисповести."""
-    return sorted(set(VEROISPOVESTI.values()))
-
-
-def get_canonical_narodnosti() -> list[str]:
-    """Врати канонске називе народности."""
-    return sorted(set(NARODNOSTI.values()))
