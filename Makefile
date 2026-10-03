@@ -1,6 +1,6 @@
 .PHONY: help dev-up dev-down dev-logs dev-shell dev-migrate dev-makemigrations \
         standalone-up standalone-down standalone-logs \
-        prod-up prod-down prod-logs prod-migrate build clean coverage
+        prod-up prod-down prod-logs prod-migrate build clean coverage diff-cover
 
 help:
 	@echo "Available commands:"
@@ -15,6 +15,7 @@ help:
 	@echo "  make build            - Build app image"
 	@echo "  make clean            - Remove containers, volumes, images"
 	@echo "  make coverage         - Run tests under coverage (bare-metal venv)"
+	@echo "  make diff-cover       - Coverage of lines changed vs origin/main (after make coverage)"
 
 # Development (профил dev → сервис app-dev)
 dev-up:
@@ -58,3 +59,8 @@ clean:
 coverage:
 	cd crkva && coverage run --rcfile=../.coveragerc manage.py test --keepdb --parallel 1
 	cd crkva && coverage report --rcfile=../.coveragerc
+
+# Diff coverage: changed lines vs origin/main must be covered (#414). Run after `make coverage`.
+diff-cover:
+	cd crkva && coverage xml --rcfile=../.coveragerc --fail-under=0 -o ../coverage.xml
+	diff-cover coverage.xml --compare-branch=origin/main --fail-under=80

@@ -5,6 +5,7 @@
 -r requirements.txt
 # Test coverage measurement (make coverage)
 coverage==7.14.1
+diff-cover==10.6.0
 
 # Django template linter (pre-commit hook)
 djlint==1.36.4
