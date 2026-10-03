@@ -17,16 +17,19 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.decorators import login_not_required
 from django.db import DatabaseError, connection
 from django.http import JsonResponse
 from django.urls import include, path
 
 
+@login_not_required
 def healthz(_request):
     """Liveness probe: process is up."""
     return JsonResponse({"status": "ok"})
 
 
+@login_not_required
 def readyz(_request):
     """Readiness probe: process can talk to the database."""
     try:
