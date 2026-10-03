@@ -167,7 +167,8 @@ def main(argv: list[str]) -> int:
         "1",
         "--verbosity=1",
     ]
-    return subprocess.run(cmd, cwd=REPO_ROOT, check=False).returncode
+    # S603: Листа аргумената без shell=True; ознаке тестова долазе из git diff-а овог репозиторијума.
+    return subprocess.run(cmd, cwd=REPO_ROOT, check=False).returncode  # noqa: S603
 
 
 if __name__ == "__main__":

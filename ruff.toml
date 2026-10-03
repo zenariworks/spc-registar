@@ -1,13 +1,24 @@
 # Ruff configuration.
-# Defaults (E, F, ...) plus UP007 (PEP 604: `X | Y` over `Union`/`Optional`).
+# Defaults (E, F, ...) plus UP007 (PEP 604: `X | Y` over `Union`/`Optional`),
+# DJ (flake8-django) and S (flake8-bandit security checks) — #415.
 # UP045 splits Optional out but needs ruff >= 0.9; pinned hook is v0.8.4,
 # where UP007 already covers Optional. Re-add "UP045" when the pin is bumped.
 target-version = "py313"
 [lint]
-extend-select = ["UP007"]
+extend-select = ["UP007", "DJ", "S"]
+# DJ001 (null=True on string fields): fixing it needs a NULL -> "" data
+# migration in every tenant schema, tracked in #420. Remove once done.
+ignore = ["DJ001"]
 
 [lint.per-file-ignores]
 # Package __init__.py files re-export names to form the package public API
 # (consumed e.g. by urls.py via `from registar.views import ...`). Such
 # imports are "unused" only within the __init__ itself — not a defect.
 "__init__.py" = ["F401"]
+# Tests: throwaway passwords (password="x"), plain assert and raw SQL fixtures.
+"**/tests/**" = ["S101", "S105", "S106", "S608"]
+"**/test_*.py" = ["S101", "S105", "S106", "S608"]
+# Synthetic seed data, not security-relevant: `random` for fake people and
+# `assert` sanity checks on the generated rows.
+"crkva/registar/mock/**" = ["S101", "S311"]
+"crkva/registar/uvoz/seed/**" = ["S101", "S311"]
