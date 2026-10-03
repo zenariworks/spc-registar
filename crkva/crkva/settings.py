@@ -150,7 +150,6 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    # #417: сви погледи траже пријаву; јавни су означени са @login_not_required.
     "django.contrib.auth.middleware.LoginRequiredMiddleware",
     "tenants.middleware.SessionTenantMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
