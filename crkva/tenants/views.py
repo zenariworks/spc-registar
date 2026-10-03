@@ -37,7 +37,7 @@ def promena_parohije(request: HttpRequest, parohija_id: int) -> HttpResponse:
 
     request.session[SESSION_TENANT_KEY] = parohija.pk
 
-    next_url = request.POST.get("next") or request.META.get("HTTP_REFERER")
+    next_url = request.POST.get("next") or request.headers.get("referer")
     fallback_url = reverse("pocetna")
     if not next_url or not url_has_allowed_host_and_scheme(
         url=next_url,

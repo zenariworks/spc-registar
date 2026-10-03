@@ -14,14 +14,16 @@ class SvestenikAdmin(ImportExportMixin, admin.ModelAdmin):
     ordering = ("prezime", "ime")
     raw_id_fields = ("user",)
 
+    @admin.display(
+        description="Име и презиме",
+        ordering="ime",
+    )
     def get_full_name(self, obj):
         return f"{obj.ime} {obj.prezime}"
 
-    get_full_name.short_description = "Име и презиме"
-    get_full_name.admin_order_field = "ime"
-
+    @admin.display(
+        description="Парохија",
+        ordering="parohija__naziv",
+    )
     def get_parohija(self, obj):
         return obj.parohija.naziv if obj.parohija else "Нема"
-
-    get_parohija.short_description = "Парохија"
-    get_parohija.admin_order_field = "parohija__naziv"

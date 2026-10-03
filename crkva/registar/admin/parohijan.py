@@ -30,12 +30,11 @@ class ParohijanAdmin(ImportExportMixin, admin.ModelAdmin):
         "veroispovest__naziv",
     ]
 
+    @admin.display(description="Име и Презиме")
     def get_full_name(self, obj):
         """Врати пуно име особе."""
         devojacko = f", ({obj.devojacko})" if obj.devojacko else ""
         return f"{obj.ime} {obj.prezime}{devojacko}"
-
-    get_full_name.short_description = "Име и Презиме"
 
     fieldsets = (
         (
