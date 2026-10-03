@@ -59,7 +59,7 @@ jobs:
           # fail_under у .coveragerc обара CI ако покривеност падне испод прага (#303).
           coverage report --rcfile=../.coveragerc
       - name: Diff coverage (нов код у PR-у)
-        if: github.event_name == pull_request
+        if: github.event_name == 'pull_request'
         working-directory: crkva
         run: |
           # Праг укупне покривености већ проверава корак изнад.
