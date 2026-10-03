@@ -10,9 +10,9 @@ from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 from tenants.models import Clanstvo, Uloga, Zakupac
 
-User = get_user_model()
+Korisnik = get_user_model()
 
-URLS = ("calibrate_krstenje", "calibrate_vencanje")
+STRANICE = ("calibrate_krstenje", "calibrate_vencanje")
 
 
 @override_settings(CALIBRATION_ENABLED=True)
@@ -21,41 +21,43 @@ class CalibrateAccessTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        tenant = Zakupac.objects.get(schema_name="test_tenant")
-        cls.kancelarija = User.objects.create_user(username="kanc-cal", password="x")
-        Clanstvo.objects.create(
-            korisnik=cls.kancelarija, parohija=tenant, uloga=Uloga.KANCELARIJA
+        parohija = Zakupac.objects.get(schema_name="test_tenant")
+        cls.kancelarija = Korisnik.objects.create_user(
+            username="kanc-cal", password="x"
         )
-        cls.pregled = User.objects.create_user(username="pregled-cal", password="x")
         Clanstvo.objects.create(
-            korisnik=cls.pregled, parohija=tenant, uloga=Uloga.PREGLED
+            korisnik=cls.kancelarija, parohija=parohija, uloga=Uloga.KANCELARIJA
+        )
+        cls.pregled = Korisnik.objects.create_user(username="pregled-cal", password="x")
+        Clanstvo.objects.create(
+            korisnik=cls.pregled, parohija=parohija, uloga=Uloga.PREGLED
         )
 
-    def _client(self, user=None):
-        client = Client()
-        if user is not None:
-            client.force_login(user)
-        return client
+    def _klijent(self, korisnik=None):
+        klijent = Client()
+        if korisnik is not None:
+            klijent.force_login(korisnik)
+        return klijent
 
     def test_anonymous_redirects_to_login(self):
         """Анонимни корисник иде на пријаву, страница се не приказује."""
-        client = self._client()
-        for name in URLS:
-            with self.subTest(name=name):
-                response = client.get(reverse(name))
-                self.assertEqual(response.status_code, 302)
-                self.assertIn("/prijava/", response["Location"])
+        klijent = self._klijent()
+        for stranica in STRANICE:
+            with self.subTest(stranica=stranica):
+                odgovor = klijent.get(reverse(stranica))
+                self.assertEqual(odgovor.status_code, 302)
+                self.assertIn("/prijava/", odgovor["Location"])
 
     def test_role_without_write_access_forbidden(self):
         """Улога „Преглед“ (само читање) добија 403."""
-        client = self._client(self.pregled)
-        for name in URLS:
-            with self.subTest(name=name):
-                self.assertEqual(client.get(reverse(name)).status_code, 403)
+        klijent = self._klijent(self.pregled)
+        for stranica in STRANICE:
+            with self.subTest(stranica=stranica):
+                self.assertEqual(klijent.get(reverse(stranica)).status_code, 403)
 
     def test_kancelarija_can_open(self):
         """Канцеларија (уписује крштења и венчања) отвара обе странице."""
-        client = self._client(self.kancelarija)
-        for name in URLS:
-            with self.subTest(name=name):
-                self.assertEqual(client.get(reverse(name)).status_code, 200)
+        klijent = self._klijent(self.kancelarija)
+        for stranica in STRANICE:
+            with self.subTest(stranica=stranica):
+                self.assertEqual(klijent.get(reverse(stranica)).status_code, 200)

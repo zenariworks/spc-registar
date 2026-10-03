@@ -8,6 +8,8 @@
 - Велики пост, Божићни пост, Успенски пост, Апостолски пост
 - Трапаве седмице (без поста)
 - Среда и петак (општи пост)
+
+Већина провера је за 2026. годину, када је Васкрс 12. априла.
 """
 
 import datetime as dt
@@ -28,8 +30,9 @@ from registar.utils.post import (
     veliki_post,
 )
 
-GODINA = 2026  # Васкрс је 12. април
+GODINA = 2026
 GODINE = range(2020, 2030)
+PONEDELJAK, SREDA, NEDELJA = 0, 2, 6
 
 
 def datum(mesec, dan, godina=GODINA):
@@ -57,16 +60,16 @@ class _PostBase(TestCase):
 
     def assert_granice(self, dani, unutra=(), van=()):
         """Сви датуми из `unutra` су у скупу, ниједан из `van` није."""
-        for d in unutra:
-            self.assertIn(d, dani)
-        for d in van:
-            self.assertNotIn(d, dani)
+        for dan in unutra:
+            self.assertIn(dan, dani)
+        for dan in van:
+            self.assertNotIn(dan, dani)
 
     def assert_post(self, dan, tip):
         """tip_posta: дан је постни, задатог типа."""
-        result = tip_posta(dan)
-        self.assertTrue(result["je_post"])
-        self.assertEqual(result["type"], tip)
+        rezultat = tip_posta(dan)
+        self.assertTrue(rezultat["je_post"])
+        self.assertEqual(rezultat["type"], tip)
 
     def assert_nije_post(self, dan):
         """tip_posta: дан није постни."""
@@ -77,9 +80,8 @@ class CalcVaskrsTestCase(TestCase):
     """Тестови за рачунање православног Васкрса (Гаусов алгоритам)."""
 
     def test_known_easter_dates(self):
-        """Верификација познатих датума православног Васкрса."""
-        # Извор: https://www.timeanddate.com/holidays/common/orthodox-easter-day
-        known_dates = {
+        """Познати датуми православног Васкрса (timeanddate.com, orthodox-easter-day)."""
+        poznati_datumi = {
             2020: (4, 19),
             2021: (5, 2),
             2022: (4, 24),
@@ -92,34 +94,36 @@ class CalcVaskrsTestCase(TestCase):
             2029: (4, 8),
             2030: (4, 28),
         }
-        for year, (mesec, dan) in known_dates.items():
-            with self.subTest(year=year):
-                self.assertEqual(Slava.sracunaj_vaskrs(year), datum(mesec, dan, year))
+        for godina, (mesec, dan) in poznati_datumi.items():
+            with self.subTest(godina=godina):
+                self.assertEqual(
+                    Slava.sracunaj_vaskrs(godina), datum(mesec, dan, godina)
+                )
 
     def test_easter_always_sunday(self):
         """Васкрс увек пада у недељу."""
-        for year in range(2000, 2050):
-            vaskrs = Slava.sracunaj_vaskrs(year)
+        for godina in range(2000, 2050):
+            vaskrs = Slava.sracunaj_vaskrs(godina)
             self.assertEqual(
-                vaskrs.weekday(), 6, f"Васкрс {year} ({vaskrs}) није недеља"
+                vaskrs.weekday(), NEDELJA, f"Васкрс {godina} ({vaskrs}) није недеља"
             )
 
     def test_easter_in_valid_range(self):
         """Васкрс пада између 22. марта и 8. маја (грегоријански)."""
-        for year in range(1900, 2100):
-            vaskrs = Slava.sracunaj_vaskrs(year)
+        for godina in range(1900, 2100):
+            vaskrs = Slava.sracunaj_vaskrs(godina)
             self.assertTrue(
-                datum(3, 22, year) <= vaskrs <= datum(5, 8, year),
-                f"Васкрс {year} ({vaskrs}) ван опсега",
+                datum(3, 22, godina) <= vaskrs <= datum(5, 8, godina),
+                f"Васкрс {godina} ({vaskrs}) ван опсега",
             )
 
     def test_easter_never_repeats_same_date_too_often(self):
         """Васкрс не пада на исти датум више од 3 године заредом."""
-        dates = [Slava.sracunaj_vaskrs(y) for y in range(2000, 2100)]
-        for i in range(len(dates) - 3):
+        datumi = [Slava.sracunaj_vaskrs(godina) for godina in range(2000, 2100)]
+        for i in range(len(datumi) - 3):
             self.assertFalse(
-                dates[i] == dates[i + 1] == dates[i + 2] == dates[i + 3],
-                f"Исти датум Васкрса 4 године заредом: {dates[i]}",
+                datumi[i] == datumi[i + 1] == datumi[i + 2] == datumi[i + 3],
+                f"Исти датум Васкрса 4 године заредом: {datumi[i]}",
             )
 
 
@@ -128,31 +132,31 @@ class GreatLentTestCase(_PostBase):
 
     def test_great_lent_duration(self):
         """Велики пост траје 48 дана (Чисти понедељак до Велике суботе)."""
-        for year in GODINE:
-            lent = veliki_post(year)
-            self.assertEqual(len(lent), 48, f"Велики пост {year}: {len(lent)} дана")
+        for godina in GODINE:
+            post = veliki_post(godina)
+            self.assertEqual(len(post), 48, f"Велики пост {godina}: {len(post)} дана")
 
     def test_great_lent_ends_before_easter(self):
         """Велики пост се завршава дан пре Васкрса."""
-        for year in GODINE:
+        for godina in GODINE:
             self.assert_granice(
-                veliki_post(year),
-                unutra=[od_vaskrsa(-1, year)],
-                van=[od_vaskrsa(0, year)],
+                veliki_post(godina),
+                unutra=[od_vaskrsa(-1, godina)],
+                van=[od_vaskrsa(0, godina)],
             )
 
     def test_great_lent_starts_clean_monday(self):
         """Велики пост почиње Чистим понедељком."""
-        for year in GODINE:
-            self.assertIn(cisti_ponedeljak(year), veliki_post(year))
-            self.assertEqual(cisti_ponedeljak(year).weekday(), 0)  # понедељак
+        for godina in GODINE:
+            self.assertIn(cisti_ponedeljak(godina), veliki_post(godina))
+            self.assertEqual(cisti_ponedeljak(godina).weekday(), PONEDELJAK)
 
     def test_great_lent_2026(self):
-        """Велики пост 2026: 23. фебруар - 11. април."""
+        """Велики пост 2026: од Чистог понедељка 23. фебруара до Велике суботе 11. априла."""
         self.assert_granice(
             veliki_post(GODINA),
-            unutra=[datum(2, 23), datum(4, 11)],  # Чисти понедељак, Велика субота
-            van=[datum(4, 12), datum(2, 22)],  # Васкрс, дан пре
+            unutra=[datum(2, 23), datum(4, 11)],
+            van=[datum(4, 12), datum(2, 22)],
         )
 
 
@@ -161,17 +165,17 @@ class CheesefarWeekTestCase(_PostBase):
 
     def test_cheesefare_duration(self):
         """Бели мрс траје 7 дана."""
-        for year in GODINE:
-            cheese = beli_mrs(year)
-            self.assertEqual(len(cheese), 7, f"Бели мрс {year}: {len(cheese)} дана")
+        for godina in GODINE:
+            beli = beli_mrs(godina)
+            self.assertEqual(len(beli), 7, f"Бели мрс {godina}: {len(beli)} дана")
 
     def test_cheesefare_ends_before_great_lent(self):
         """Бели мрс се завршава дан пре Великог поста."""
-        for year in GODINE:
+        for godina in GODINE:
             self.assert_granice(
-                beli_mrs(year),
-                unutra=[cisti_ponedeljak(year) - dt.timedelta(days=1)],
-                van=[cisti_ponedeljak(year)],
+                beli_mrs(godina),
+                unutra=[cisti_ponedeljak(godina) - dt.timedelta(days=1)],
+                van=[cisti_ponedeljak(godina)],
             )
 
 
@@ -180,30 +184,30 @@ class ApostlesFastTestCase(_PostBase):
 
     def test_apostles_fast_starts_after_pentecost(self):
         """Апостолски пост почиње понедељак после Духова."""
-        for year in GODINE:
-            fast = apostolski_post(year)
-            if not fast:
+        for godina in GODINE:
+            post = apostolski_post(godina)
+            if not post:
                 continue
-            self.assertEqual(duhovi(year).weekday(), 6)  # недеља
-            expected_start = duhovi(year) + dt.timedelta(days=1)
-            self.assertIn(expected_start, fast)
-            self.assertEqual(expected_start.weekday(), 0)  # понедељак
+            self.assertEqual(duhovi(godina).weekday(), NEDELJA)
+            pocetak = duhovi(godina) + dt.timedelta(days=1)
+            self.assertIn(pocetak, post)
+            self.assertEqual(pocetak.weekday(), PONEDELJAK)
 
     def test_apostles_fast_ends_july_11(self):
-        """Апостолски пост се завршава 11. јула (Петровдан eve)."""
-        for year in GODINE:
-            fast = apostolski_post(year)
-            if not fast:
+        """Апостолски пост се завршава 11. јула (уочи Петровдана)."""
+        for godina in GODINE:
+            post = apostolski_post(godina)
+            if not post:
                 continue
             self.assert_granice(
-                fast, unutra=[datum(7, 11, year)], van=[datum(7, 12, year)]
+                post, unutra=[datum(7, 11, godina)], van=[datum(7, 12, godina)]
             )
 
     def test_apostles_fast_variable_length(self):
         """Апостолски пост варира у дужини зависно од Васкрса."""
-        lengths = {len(apostolski_post(year)) for year in GODINE}
+        duzine = {len(apostolski_post(godina)) for godina in GODINE}
         self.assertTrue(
-            len(lengths) > 1, "Апостолски пост би требало да варира у дужини"
+            len(duzine) > 1, "Апостолски пост би требало да варира у дужини"
         )
 
 
@@ -253,17 +257,16 @@ class TrapaveWeeksTestCase(_PostBase):
         )
 
     def test_post_pentecost_trapava_starts_monday_after_duhovi(self):
-        """Трапава седмица после Педесетнице почиње понедељак после Духова (#253)."""
-        self.assertEqual(duhovi().weekday(), 6)  # недеља
-        # понедељак (Васкрс+50) кроз недељу (Васкрс+56) после Духова су трапави
+        """Трапава седмица после Педесетнице: од понедељка (Васкрс+50) до недеље (Васкрс+56), #253."""
+        self.assertEqual(duhovi().weekday(), NEDELJA)
         self.assert_granice(
             trapave_sedmice(GODINA), unutra=[od_vaskrsa(i) for i in range(50, 57)]
         )
 
     def test_wednesday_in_trapava_not_fasting(self):
-        """Среда у трапавој седмици није постни дан."""
-        sreda = od_vaskrsa(3)  # Светла седмица почиње понедељком
-        self.assertEqual(sreda.weekday(), 2)
+        """Среда у Светлој седмици (Васкрс+3) није постни дан."""
+        sreda = od_vaskrsa(3)
+        self.assertEqual(sreda.weekday(), SREDA)
         self.assertFalse(
             je_post(sreda), f"{sreda} је среда у Светлој седмици, не пости се"
         )
@@ -330,9 +333,9 @@ class GetFastingTypeTestCase(_PostBase):
 
     def test_return_dict_structure(self):
         """Повратни речник увек има тачне кључеве."""
-        result = tip_posta(datum(6, 15))
+        rezultat = tip_posta(datum(6, 15))
         for kljuc in ("je_post", "type", "display", "description"):
-            self.assertIn(kljuc, result)
+            self.assertIn(kljuc, rezultat)
 
 
 class IsFastingDayTestCase(TestCase):
@@ -367,27 +370,28 @@ class FastingCacheTests(TestCase):
 
     def test_db_fasting_days_cached_per_year(self):
         """Први позив чита базу, сваки следећи за исту годину не."""
-        with CaptureQueriesContext(connection) as cold:
+        with CaptureQueriesContext(connection) as hladno:
             postni_dani_iz_baze(GODINA)
-        self.assertGreaterEqual(len(cold.captured_queries), 1)
-        with CaptureQueriesContext(connection) as warm:
+        self.assertGreaterEqual(len(hladno.captured_queries), 1)
+        with CaptureQueriesContext(connection) as toplo:
             for _ in range(30):
                 postni_dani_iz_baze(GODINA)
-        self.assertEqual(len(warm.captured_queries), 0)
+        self.assertEqual(len(toplo.captured_queries), 0)
 
     def test_je_post_loop_single_year_query(self):
-        """je_post за 12 дана исте године не пита базу по позиву."""
-        with CaptureQueriesContext(connection) as ctx:
+        """je_post за 12 дана исте године чита постове из базе једном.
+
+        Раније је било ~12 истоветних упита; дозвољен је и SET search_path.
+        """
+        with CaptureQueriesContext(connection) as upiti:
             for mesec in range(1, 13):
                 je_post(datum(mesec, 15))
-        # Сви дани исте године → DB постови се читају једном, не по позиву
-        # (раније ~12 истоветних упита). Допуштамо и SET search_path.
-        self.assertLessEqual(len(ctx.captured_queries), 2)
+        self.assertLessEqual(len(upiti.captured_queries), 2)
 
     def test_year_functions_return_frozenset(self):
         """Годишње функције враћају frozenset (безбедно за кеш)."""
-        for fn in (veliki_post, apostolski_post, postni_dani_iz_baze):
-            self.assertIsInstance(fn(GODINA), frozenset)
+        for funkcija in (veliki_post, apostolski_post, postni_dani_iz_baze):
+            self.assertIsInstance(funkcija(GODINA), frozenset)
 
     def test_clear_resets_cache(self):
         """obrisi_kes_posta празни кеш."""
