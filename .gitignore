@@ -138,3 +138,5 @@ site/
 
 # file-based cache (DJANGO_CACHE_DIR)
 .django_cache/
+
+mutants/

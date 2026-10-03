@@ -14,17 +14,24 @@ from registar.models._osoba_polja import (
 )
 
 
-class Upis:
-    """Упис са једном везаном особом."""
+def napravi_upis():
+    """Нова класа уписа са једном везаном особом.
 
-    ime = polje_osobe("osoba", "ime", opis="Име.")
-    datum = polje_osobe("osoba", "datum", prazno=None)
-    vera = popunjeno_polje_osobe("osoba", "vera")
-    zanimanje = naziv_polja_osobe("osoba", "zanimanje")
-    opis = opis_veze("osoba", opis="Опис особе.")
+    Класа се прави у самом тесту, а не при увозу модула, да би мутационо
+    тестирање (mutmut) видело измене у фабрикама.
+    """
 
-    def __init__(self, osoba):
-        self.osoba = osoba
+    class Upis:
+        ime = polje_osobe("osoba", "ime", opis="Име.")
+        datum = polje_osobe("osoba", "datum", prazno=None)
+        vera = popunjeno_polje_osobe("osoba", "vera")
+        zanimanje = naziv_polja_osobe("osoba", "zanimanje")
+        opis = opis_veze("osoba", opis="Опис особе.")
+
+        def __init__(self, osoba):
+            self.osoba = osoba
+
+    return Upis
 
 
 class Zanimanje:
@@ -39,7 +46,7 @@ class OsobaPoljaTests(SimpleTestCase):
 
     def test_without_person_returns_empty_value(self):
         """Без особе: задата празна вредност, односно празан стринг."""
-        upis = Upis(None)
+        upis = napravi_upis()(None)
         self.assertEqual(upis.ime, "")
         self.assertIsNone(upis.datum)
         self.assertEqual(upis.vera, "")
@@ -47,25 +54,35 @@ class OsobaPoljaTests(SimpleTestCase):
 
     def test_with_person_returns_field_as_is(self):
         """polje_osobe враћа вредност поља непромењену, и кад је None."""
-        self.assertEqual(Upis(SimpleNamespace(ime="Ана")).ime, "Ана")
-        self.assertIsNone(Upis(SimpleNamespace(ime=None)).ime)
+        self.assertEqual(napravi_upis()(SimpleNamespace(ime="Ана")).ime, "Ана")
+        self.assertIsNone(napravi_upis()(SimpleNamespace(ime=None)).ime)
 
     def test_filled_field_or_empty_string(self):
         """popunjeno_polje_osobe враћа сам објекат или празан стринг."""
         vera = object()
-        self.assertIs(Upis(SimpleNamespace(vera=vera)).vera, vera)
-        self.assertEqual(Upis(SimpleNamespace(vera=None)).vera, "")
+        self.assertIs(napravi_upis()(SimpleNamespace(vera=vera)).vera, vera)
+        self.assertEqual(napravi_upis()(SimpleNamespace(vera=None)).vera, "")
 
     def test_named_field_is_text(self):
         """naziv_polja_osobe враћа текстуални приказ поља."""
         self.assertEqual(
-            Upis(SimpleNamespace(zanimanje=Zanimanje())).zanimanje, "учитељ"
+            napravi_upis()(SimpleNamespace(zanimanje=Zanimanje())).zanimanje, "учитељ"
         )
-        self.assertEqual(Upis(SimpleNamespace(zanimanje=None)).zanimanje, "")
+        self.assertEqual(napravi_upis()(SimpleNamespace(zanimanje=None)).zanimanje, "")
 
     def test_property_has_docstring(self):
         """Опис се преноси у docstring својства."""
-        self.assertEqual(Upis.ime.__doc__, "Име.")
+        self.assertEqual(napravi_upis().ime.__doc__, "Име.")
+
+    def test_property_without_description_has_empty_docstring(self):
+        """Без описа ниједна фабрика не даје docstring."""
+        for svojstvo in (
+            polje_osobe("osoba", "ime"),
+            popunjeno_polje_osobe("osoba", "vera"),
+            naziv_polja_osobe("osoba", "zanimanje"),
+            opis_veze("osoba"),
+        ):
+            self.assertFalse(svojstvo.__doc__)
 
 
 class OpisOsobeTests(SimpleTestCase):
@@ -103,6 +120,6 @@ class OpisOsobeTests(SimpleTestCase):
             zanimanje=Zanimanje(),
             adresa=SimpleNamespace(mesto="Зандам"),
         )
-        self.assertEqual(Upis(osoba).opis, "Марко Илић, учитељ, Зандам")
-        self.assertEqual(Upis(None).opis, "")
-        self.assertEqual(Upis.opis.__doc__, "Опис особе.")
+        self.assertEqual(napravi_upis()(osoba).opis, "Марко Илић, учитељ, Зандам")
+        self.assertEqual(napravi_upis()(None).opis, "")
+        self.assertEqual(napravi_upis().opis.__doc__, "Опис особе.")

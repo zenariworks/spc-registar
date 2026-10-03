@@ -1,6 +1,6 @@
 .PHONY: help dev-up dev-down dev-logs dev-shell dev-migrate dev-makemigrations \
         standalone-up standalone-down standalone-logs \
-        prod-up prod-down prod-logs prod-migrate build clean coverage diff-cover
+        prod-up prod-down prod-logs prod-migrate build clean coverage diff-cover mutmut
 
 help:
 	@echo "Available commands:"
@@ -16,6 +16,7 @@ help:
 	@echo "  make clean            - Remove containers, volumes, images"
 	@echo "  make coverage         - Run tests under coverage (bare-metal venv)"
 	@echo "  make diff-cover       - Coverage of lines changed vs origin/main (after make coverage)"
+	@echo "  make mutmut           - Mutation testing of pure modules (separate venv from requirements-mutmut.txt)"
 
 # Development (профил dev → сервис app-dev)
 dev-up:
@@ -63,3 +64,6 @@ coverage:
 diff-cover:
 	cd crkva && coverage xml --rcfile=../.coveragerc --fail-under=0 -o ../coverage.xml
 	diff-cover coverage.xml --compare-branch=origin/main --fail-under=80
+
+mutmut:
+	cd crkva && rm -rf mutants && mutmut run; mutmut results

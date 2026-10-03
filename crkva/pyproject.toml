@@ -1,0 +1,13 @@
+[tool.mutmut]
+source_paths = ["registar", "kalendar", "tenants", "crkva"]
+also_copy = ["manage.py"]
+process_isolation = "forkserver"
+forkserver_warmup = "none"
+only_mutate = [
+    "registar/models/_osoba_polja.py",
+    "registar/utils/parser.py",
+]
+pytest_add_cli_args_test_selection = [
+    "registar/tests/test_osoba_polja.py",
+    "registar/tests/test_parser.py",
+]
