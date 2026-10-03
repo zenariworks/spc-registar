@@ -24,7 +24,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-  # Django: rewrite deprecated patterns for the installed version (#416)
   - repo: https://github.com/adamchainz/django-upgrade
     rev: 1.33.0
     hooks:

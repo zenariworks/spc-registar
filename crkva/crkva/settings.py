@@ -262,7 +262,6 @@ COMPRESS_CSS_FILTERS = [
     "compressor.filters.cssmin.rCSSMinFilter",
 ]
 
-# DEFAULT_AUTO_FIELD: од Django 6.0 подразумевано BigAutoField (#416).
 
 FIXTURE_DIRS = [os.path.join(BASE_DIR, "fixtures")]
 
