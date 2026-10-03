@@ -24,6 +24,12 @@ repos:
         pass_filenames: false
         always_run: true
 
+  - repo: https://github.com/adamchainz/django-upgrade
+    rev: 1.33.0
+    hooks:
+      - id: django-upgrade
+        args: [--target-version, "6.0"]
+
   # Python code formatting and linting
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.4

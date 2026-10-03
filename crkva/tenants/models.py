@@ -119,7 +119,7 @@ class Clanstvo(models.Model):
     )
     uloga = models.CharField(
         max_length=20,
-        choices=Uloga.choices,
+        choices=Uloga,
         default=Uloga.PREGLED,
     )
     is_default = models.BooleanField(
